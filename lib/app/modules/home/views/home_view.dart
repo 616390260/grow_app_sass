@@ -1,4 +1,7 @@
+import 'package:do_task_project/app/core/constants/image_assets.dart';
+import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
 import 'widgets/lucky_wheel_widget.dart';
@@ -19,31 +22,51 @@ class HomeView extends BaseView<HomeController> {
 
   @override
   Widget buildContent(BuildContext context) {
+    // 设置沉浸式状态栏
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+    );
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color(0xFF4A90E2),
-            Color(0xFF7BB3F0),
-            Color(0xFFF5F7FA),
+            Color(0xFF477DF2), // #477DF2
+            Color(0xFF47ABF2), // #47ABF2
+            Color(0xFFF2F5FA), // #F2F5FA
           ],
-          stops: [0.0, 0.3, 1.0],
+          stops: [0.0, 0.2, 0.4],
         ),
       ),
-      child: SafeArea(
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              _buildHeader(),
-              _buildStatisticsCards(),
-              const PromotionBannerWidget(),
-              _buildRecommendedTasks(),
-              const SizedBox(height: 100), // 为底部导航留空间
-            ],
-          ),
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          children: [
+            // 添加状态栏高度的间距
+            SizedBox(height: MediaQuery.of(context).padding.top),
+            _buildHeader(),
+            _buildStatisticsCards(),
+            Container(
+              margin: const EdgeInsets.all(15),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  ImageAssets.homeBanner,
+                  width: double.infinity,
+                  height: 190,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            _buildRecommendedTasks(),
+            const SizedBox(height: 55),
+          ],
         ),
       ),
     );
@@ -56,56 +79,47 @@ class HomeView extends BaseView<HomeController> {
   /// 构建头部
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
       child: Row(
         children: [
           // 应用图标
           Container(
-            width: 40,
-            height: 40,
+            width: 50,
+            height: 50,
             decoration: BoxDecoration(
               color: Colors.black87,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(
-              Icons.apps,
-              color: Colors.white,
-              size: 24,
-            ),
+            child: const Icon(Icons.apps, color: Colors.white, size: 24),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 14),
           // 应用名称
           Text(
             I18nKeys.appTitle.tr,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const Spacer(),
           // 下载APP按钮
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.white.withOpacity(0.3)),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(25),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
-                  Icons.download,
-                  color: Colors.white,
-                  size: 16,
-                ),
-                const SizedBox(width: 4),
+                Image.asset(ImageAssets.homeDownload, width: 14, height: 14),
+                const SizedBox(width: 2),
                 Text(
                   I18nKeys.downloadApp.tr,
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
+                    color: AppTheme.loginColor,
+                    fontSize: 12,
                   ),
                 ),
               ],
@@ -119,8 +133,8 @@ class HomeView extends BaseView<HomeController> {
   /// 统计 + 快捷功能（与参考图一致合并为同一白卡）
   Widget _buildStatisticsCards() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      margin: const EdgeInsets.only(left: 15, right: 15, top: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 19, vertical: 17),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -135,96 +149,94 @@ class HomeView extends BaseView<HomeController> {
       child: Column(
         children: [
           // 顶部三项统计
-          Obx(() => Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Text(
-                          controller.accountBalance.value.toString(),
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2C3E50),
-                          ),
+          Obx(
+            () => Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      Text(
+                        controller.accountBalance.value.toString(),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.threeColor,
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          I18nKeys.accountBalance.tr,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF7F8C8D),
-                            fontWeight: FontWeight.w500,
-                          ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        I18nKeys.accountBalance.tr,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.nineColor,
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Container(
-                    width: 1,
-                    height: 28,
-                    color: const Color(0xFFE5E7EB),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Text(
-                          controller.dailyEarnings.value.toString(),
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2C3E50),
-                          ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Text(
+                        controller.dailyEarnings.value.toString(),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.threeColor,
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          I18nKeys.todayEarnings.tr,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: const Color(0xFF7F8C8D),
-                            fontWeight: FontWeight.w500,
-                          ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        I18nKeys.todayEarnings.tr,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.nineColor,
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Container(
-                    width: 1,
-                    height: 28,
-                    color: const Color(0xFFE5E7EB),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Text(
-                          controller.promotionEarnings.value.toString(),
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2C3E50),
-                          ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Text(
+                        controller.promotionEarnings.value.toString(),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.threeColor,
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          I18nKeys.todayPromotionEarnings.tr,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF7F8C8D),
-                            fontWeight: FontWeight.w500,
-                          ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        I18nKeys.todayPromotionEarnings.tr,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.nineColor,
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              )),
-          const SizedBox(height: 16),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 21),
           // 下方两项快捷功能
           Row(
             children: [
-              Expanded(child: LuckyWheelWidget(onTap: controller.onLuckyWheelTap)),
-               const SizedBox(width: 12),
-              Expanded(child: SignInCalendarWidget(onTap: controller.onSignInCalendarTap)),
+              Expanded(
+                child: LuckyWheelWidget(onTap: controller.onLuckyWheelTap),
+              ),
+              const SizedBox(width: 18),
+              Expanded(
+                child: SignInCalendarWidget(
+                  onTap: controller.onSignInCalendarTap,
+                ),
+              ),
             ],
           ),
         ],
@@ -235,34 +247,59 @@ class HomeView extends BaseView<HomeController> {
   /// 构建推荐任务
   Widget _buildRecommendedTasks() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 15),
+      padding: EdgeInsets.only(left: 12, top: 17, right: 14, bottom: 9),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             I18nKeys.recommendedTasks.tr,
             style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.threeColor,
             ),
           ),
-          const SizedBox(height: 16),
-          TaskCardWidget(
-            title: I18nKeys.autoPointsTaskNo1.tr,
-            description: I18nKeys.taskDesc1.tr,
-            buttonText: I18nKeys.startTask.tr,
-            onTap: () => controller.onTaskCardTap('task_1'),
-          ),
-          TaskCardWidget(
-            title: I18nKeys.autoPointsTaskNo1.tr,
-            description: I18nKeys.taskDesc1.tr,
-            buttonText: I18nKeys.startTask.tr,
-            onTap: () => controller.onTaskCardTap('task_2'),
+          const SizedBox(height: 13),
+          ListView.builder(
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _getTaskList().length,
+            itemBuilder: (context, index) {
+              final task = _getTaskList()[index];
+              return TaskCardWidget(
+                title: task['title'],
+                description: task['description'],
+                buttonText: task['buttonText'],
+                onTap: () => controller.onTaskCardTap(task['id']),
+              );
+            },
           ),
         ],
       ),
     );
   }
 
+  /// 获取任务列表数据
+  List<Map<String, dynamic>> _getTaskList() {
+    return [
+      {
+        'id': 'task_1',
+        'title': I18nKeys.autoPointsTaskNo1.tr,
+        'description': I18nKeys.taskDesc1.tr,
+        'buttonText': I18nKeys.startTask.tr,
+      },
+      {
+        'id': 'task_2',
+        'title': I18nKeys.autoPointsTaskNo1.tr,
+        'description': I18nKeys.taskDesc1.tr,
+        'buttonText': I18nKeys.startTask.tr,
+      },
+    ];
+  }
 }

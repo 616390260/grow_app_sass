@@ -1,3 +1,5 @@
+import 'package:do_task_project/app/core/constants/image_assets.dart';
+import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class TaskCardWidget extends StatelessWidget {
@@ -17,75 +19,79 @@ class TaskCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(left: 2, bottom: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: AppTheme.bgColor,
+        borderRadius: BorderRadius.circular(5),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 任务图标
           Container(
-            width: 48,
-            height: 48,
+            width: 32,
+            height: 32,
+            margin: const EdgeInsets.only(left: 13, top: 11),
             decoration: BoxDecoration(
-              color: const Color(0xFFFF8A00).withOpacity(0.12),
-              borderRadius: BorderRadius.circular(24),
+              color: const Color(0xFFFF8E6A),
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: const Icon(
-              Icons.savings,
-              color: Color(0xFFFF8A00),
-              size: 24,
-            ),
+            child: Image.asset(ImageAssets.homeTask, width: 14, height: 14),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 14),
           // 任务信息
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF2C3E50),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 9),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                      color: AppTheme.threeColor,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF7F8C8D),
+                  const SizedBox(height: 7),
+                  Text(
+                    description,
+                    maxLines: 2,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: AppTheme.nineColor,
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
           ),
           // 开始按钮
-          GestureDetector(
-            onTap: onTap,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF4A90E2),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                buttonText,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
+          SizedBox(
+            height: 80, // 给按钮区域一个固定高度
+            child: Align(
+              alignment: Alignment.center,
+              child: Container(
+                margin: EdgeInsets.only(left: 11, right: 12),
+                child: GestureDetector(
+                  onTap: onTap,
+                  child: Container(
+                    padding: const EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF4A90E2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      buttonText,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),

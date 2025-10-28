@@ -1,3 +1,5 @@
+import 'package:do_task_project/app/core/constants/image_assets.dart';
+import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,11 +17,11 @@ class LuckyWheelWidget extends StatelessWidget {
         height: 50,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFFE8F4FD), Color(0xFFD1E9FB)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            colors: [Color(0xFFCEDEFF), Color(0xFFF0F5FF)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -32,33 +34,23 @@ class LuckyWheelWidget extends StatelessWidget {
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(left: 16),
+                padding: const EdgeInsets.only(left: 15),
                 child: Text(
                   'lucky_wheel'.tr,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF2C3E50),
+                    color: AppTheme.threeColor,
                   ),
                 ),
               ),
             ),
             Container(
-              width: 36,
-              height: 36,
-              margin: const EdgeInsets.only(right: 12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E88E5),
-                borderRadius: BorderRadius.circular(25),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF1E88E5).withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: const Icon(Icons.casino, color: Colors.white, size: 24),
+              width: 39,
+              height: 34,
+              margin: const EdgeInsets.only(right: 14),
+
+              child: Image.asset(ImageAssets.homeWheel, fit: BoxFit.cover),
             ),
           ],
         ),

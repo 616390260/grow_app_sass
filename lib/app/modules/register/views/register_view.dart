@@ -61,7 +61,7 @@ class RegisterView extends BaseView<RegisterController> {
                         // 注册表单
                         _buildRegisterForm(),
 
-                        const SizedBox(height: 47),
+                        const SizedBox(height: 43),
 
                         // 注册按钮
                         _buildRegisterButton(),
@@ -161,7 +161,7 @@ class RegisterView extends BaseView<RegisterController> {
           placeholder: I18nKeys.accountPlaceholder.tr,
           controller: controller.accountController,
           focusNode: controller.accountFocus,
-          errorText: controller.accountError,
+          errorText: controller.accountErrorRx,
           onSubmitted: (_) => controller.passwordFocus.requestFocus(),
         ),
         Container(
@@ -176,7 +176,7 @@ class RegisterView extends BaseView<RegisterController> {
           placeholder: I18nKeys.passwordPlaceholder.tr,
           controller: controller.passwordController,
           focusNode: controller.passwordFocus,
-          errorText: controller.passwordError,
+          errorText: controller.passwordErrorRx,
           isPasswordVisible: () => controller.isPasswordVisible,
           onToggleVisibility: controller.togglePasswordVisibility,
           onSubmitted: (_) => controller.confirmPasswordFocus.requestFocus(),
@@ -193,7 +193,7 @@ class RegisterView extends BaseView<RegisterController> {
           placeholder: I18nKeys.confirmPasswordPlaceholder.tr,
           controller: controller.confirmPasswordController,
           focusNode: controller.confirmPasswordFocus,
-          errorText: controller.confirmPasswordError,
+          errorText: controller.confirmPasswordErrorRx,
           isPasswordVisible: () => controller.isConfirmPasswordVisible,
           onToggleVisibility: controller.toggleConfirmPasswordVisibility,
           onSubmitted: (_) => controller.inviteCodeFocus.requestFocus(),
@@ -210,7 +210,7 @@ class RegisterView extends BaseView<RegisterController> {
           placeholder: I18nKeys.inviteCodePlaceholder.tr,
           controller: controller.inviteCodeController,
           focusNode: controller.inviteCodeFocus,
-          errorText: controller.inviteCodeError,
+          errorText: controller.inviteCodeErrorRx,
           onSubmitted: (_) => controller.register(),
         ),
         Container(
@@ -325,11 +325,11 @@ class RegisterView extends BaseView<RegisterController> {
       final isLoading = controller.isLoading;
       return SizedBox(
         width: double.infinity,
-        height: 48,
+        height: 55,
         child: ElevatedButton(
           onPressed: isLoading ? null : controller.register,
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF0B65FF),
+            backgroundColor: AppTheme.loginColor,
             foregroundColor: Colors.white,
             elevation: 0,
             shape: RoundedRectangleBorder(
@@ -350,7 +350,7 @@ class RegisterView extends BaseView<RegisterController> {
                   I18nKeys.register.tr,
                   style: const TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
         ),
@@ -361,34 +361,6 @@ class RegisterView extends BaseView<RegisterController> {
   Widget _buildBottomSection() {
     return Column(
       children: [
-        const SizedBox(height: 32),
-        
-        // 注册按钮
-        SizedBox(
-          width: double.infinity,
-          height: 48,
-          child: ElevatedButton(
-            onPressed: controller.register,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryColor,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text(
-              '注册',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ),
-        
-        const SizedBox(height: 24),
-        
         // 登录链接
         _buildLoginLink(),
       ],
@@ -401,19 +373,16 @@ class RegisterView extends BaseView<RegisterController> {
       children: [
         Text(
           I18nKeys.alreadyHaveAccount.tr,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Color(0xFF666666),
-          ),
+          style: const TextStyle(fontSize: 13, color: AppTheme.nineColor),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: 2),
         GestureDetector(
           onTap: controller.goToLogin,
           child: Text(
             I18nKeys.login.tr,
             style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFF0B65FF),
+              fontSize: 13,
+              color: AppTheme.loginColor,
               fontWeight: FontWeight.w500,
             ),
           ),

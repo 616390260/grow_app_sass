@@ -58,7 +58,7 @@ class AppTranslations extends Translations {
       'confirm_password_placeholder': '再次输入密码',
       'invite_code_placeholder': '请输入邀请码(选填)',
       'already_have_account': '已有账号？',
-      'login': '登录',
+      'login': '立即登录',
       // Validation messages
       'account_required': '请输入账号',
       'account_too_short': '账号长度至少6位',

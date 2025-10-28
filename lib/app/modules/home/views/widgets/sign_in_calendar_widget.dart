@@ -1,3 +1,5 @@
+import 'package:do_task_project/app/core/constants/image_assets.dart';
+import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,11 +17,11 @@ class SignInCalendarWidget extends StatelessWidget {
         height: 50,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFFFFF3E0), Color(0xFFFFE0B2)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            colors: [Color(0xFFFFDFD5), Color(0xFFFFF6F3)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -32,37 +34,23 @@ class SignInCalendarWidget extends StatelessWidget {
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(left: 16),
+                padding: const EdgeInsets.only(left: 15),
                 child: Text(
                   'sign_in_calendar'.tr,
                   style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF2C3E50),
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.threeColor,
                   ),
                 ),
               ),
             ),
             Container(
-              width: 36,
+              width: 42,
               height: 36,
               margin: const EdgeInsets.only(right: 12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFF9800),
-                borderRadius: BorderRadius.circular(25),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFFFF9800).withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.calendar_today,
-                color: Colors.white,
-                size: 24,
-              ),
+
+              child: Image.asset(ImageAssets.homeSign, fit: BoxFit.cover),
             ),
           ],
         ),

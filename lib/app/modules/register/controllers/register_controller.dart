@@ -29,15 +29,19 @@ class RegisterController extends BaseController {
   // 表单验证状态
   final _accountError = ''.obs;
   String get accountError => _accountError.value;
+  RxString get accountErrorRx => _accountError;
 
   final _passwordError = ''.obs;
   String get passwordError => _passwordError.value;
+  RxString get passwordErrorRx => _passwordError;
 
   final _confirmPasswordError = ''.obs;
   String get confirmPasswordError => _confirmPasswordError.value;
+  RxString get confirmPasswordErrorRx => _confirmPasswordError;
 
   final _inviteCodeError = ''.obs;
   String get inviteCodeError => _inviteCodeError.value;
+  RxString get inviteCodeErrorRx => _inviteCodeError;
 
   // API调用管理器
   final _apiCallManager = ApiCallManager();

@@ -12,6 +12,7 @@ class AppTheme {
   static const Color lineColor = Color(0xFFF4F5F9);
   static const Color loginColor = Color(0xFF477DF2);
   static const Color nineColor = Color(0xFF999999);
+  static const Color bgColor = Color(0xFFF2F5FA);
 
   // 浅色主题
   static ThemeData get lightTheme {
