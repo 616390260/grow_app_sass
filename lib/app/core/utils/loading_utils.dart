@@ -7,7 +7,7 @@ class LoadingUtils {
   static bool _isLoading = false;
 
   /// 显示Loading对话框
-  static void showLoading({
+  static void showLoading({    
     String? message,
     bool barrierDismissible = false,
   }) {
@@ -17,7 +17,7 @@ class LoadingUtils {
     Get.dialog(
       LoadingDialog(message: message),
       barrierDismissible: barrierDismissible,
-      barrierColor: Colors.black54,
+      barrierColor: Colors.transparent, // 修改为透明背景
     );
   }
 
@@ -92,7 +92,23 @@ class LoadingDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
-      child: LoadingStyle.buildDialogLoadingWidget(message: message),
+      child: Center(
+        // 直接使用loading指示器，去掉容器背景
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LoadingStyle.circularProgressIndicator,
+            if (message != null) ...[
+              SizedBox(height: LoadingStyle.defaultSpacing),
+              Text(
+                message!,
+                style: Get.textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }
@@ -112,11 +128,12 @@ class FullScreenLoadingDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
-      child: Scaffold(
-        backgroundColor: backgroundColor ?? Colors.white.withOpacity(0.8),
-        body: Center(
+      child: Container(
+        // 使用透明容器替代Scaffold
+        color: Colors.transparent,
+        child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               const CircularProgressIndicator(
                 strokeWidth: 3,

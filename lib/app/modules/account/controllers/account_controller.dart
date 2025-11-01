@@ -1,24 +1,23 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
-import '../../../core/managers/api_call_manager.dart';
-import '../../../core/utils/api_result.dart';
 import '../../../routes/app_pages.dart';
 import '../../../data/services/auth_api_service.dart';
 import '../../../data/services/user_credentials_service.dart';
+import '../../../core/constants/app_constants.dart';
+import '../../../data/models/user_model.dart';
 
 class AccountController extends BaseController {
   // 用户信息
   final userName = 'Alen'.obs;
+  final avatar = ''.obs;
   final referralCode = 'ILKBWU94'.obs;
-  final pointsBalance = 100.obs; // 积分
+  final pointsBalance = 100.0.obs; // 积分
   final trxBalance = 0.04.obs; // TRX 余额
   final showBalance = true.obs;
-
-  // API调用管理器
-  final _apiCallManager = ApiCallManager();
   
   // 认证API服务
   final _authApiService = AuthApiService();
@@ -29,36 +28,25 @@ class AccountController extends BaseController {
   @override
   void onInit() {
     super.onInit();
-    loadUserInfo();
+    // 懒加载：不在这里自动加载数据，等待tab切换时由MainController加载
   }
 
   void loadUserInfo() async {
-    setLoading(true);
-    final result = await _apiCallManager.call<Map<String, dynamic>>(
-      apiCall: () async {
-        await Future.delayed(const Duration(milliseconds: 500));
-        // 模拟返回用户信息
-        return ApiResult.success(
-          data: {
-            'userName': 'Alen',
-            'referralCode': 'ILKBWU94',
-            'pointsBalance': 100,
-            'trxBalance': 0.04,
-          },
-        );
-      },
-      showLoading: false,
-    );
+    try {
+      setLoading(true);
+      // 直接使用AuthApiService返回的UserModel对象
+      final user = await _authApiService.getUserInfo<UserModel>();
 
-    if (result.isSuccess) {
-      final data = result.data ?? {};
-      userName.value = data['userName'] ?? 'Alen';
-      referralCode.value = data['referralCode'] ?? 'ILKBWU94';
-      pointsBalance.value = data['pointsBalance'] ?? 100;
-      trxBalance.value = data['trxBalance'] ?? 0.04;
+      userName.value = user.userName ?? '';
+      avatar.value = user.avatar ?? '';
+      referralCode.value = user.inviteCode ?? '';
+      pointsBalance.value = user.points ?? 0.0;
+      trxBalance.value = user.exchangeRate?? 0.0;
+          // 注意：UserModel中没有trxBalance字段，暂时保留默认值
       setSuccess();
-    } else {
-      setError(result.message);
+    } catch (e) {
+      debugPrint('加载用户信息失败: $e');
+      setSuccess(); // 确保即使出错也设置为成功状态
     }
   }
 
@@ -75,7 +63,7 @@ class AccountController extends BaseController {
 
   // 交互入口
   void onWithdrawTap() {
-    showInfoMessage(I18nKeys.accountWithdrawal.tr);
+    Get.toNamed(Routes.ACCOUNT_WITHDRAWAL);
   }
 
   void onIncomeDetailsTap() {
@@ -83,11 +71,12 @@ class AccountController extends BaseController {
   }
 
   void onWithdrawalOrdersTap() {
-    showInfoMessage(I18nKeys.withdrawalOrders.tr);
+    // Navigate to withdrawal orders page
+    Get.toNamed(Routes.WITHDRAWAL_ORDERS);
   }
 
   void onChangePasswordTap() {
-    showInfoMessage(I18nKeys.changePassword.tr);
+    Get.toNamed(Routes.CHANGE_PASSWORD);
   }
 
   void onLanguageSettingsTap() {
@@ -121,27 +110,24 @@ class AccountController extends BaseController {
 
   /// 执行退出登录操作
   Future<void> _performLogout() async {
-    final result = await _apiCallManager.call<Map<String, dynamic>>(
-      apiCall: () async {
-        return await _authApiService.logout();
-      },
-      showLoading: true,
-      loadingMessage: '退出中...',
-      showSuccessMessage: true,
-      successMessage: '退出成功',
-      showErrorMessage: true,
-    );
-
-    // 无论API调用成功与否，都执行本地清理操作
-    await _clearLocalData();
-
-    if (result.isSuccess) {
-      // 退出成功，跳转到登录页
+    try {
+      setLoading(true);
+      // 直接调用AuthApiService的logout方法
+      await _authApiService.logout();
+      
+      // 无论API调用成功与否，都执行本地清理操作
+      await _clearLocalData();
+      
+      showSuccessMessage('退出成功');
       Get.offAllNamed(Routes.LOGIN);
-    } else {
-      // 即使API调用失败，也跳转到登录页（因为本地数据已清理）
+    } catch (e) {
+      debugPrint('退出登录失败: $e');
+      // 即使API调用失败，也执行本地清理操作
+      await _clearLocalData();
       showInfoMessage('已清除本地数据，请重新登录');
       Get.offAllNamed(Routes.LOGIN);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -150,6 +136,8 @@ class AccountController extends BaseController {
     try {
       // 清除用户凭据
       await _credentialsService.clearCredentials();
+      // 清除本地token
+      await GetStorage().remove(AppConstants.storageKeyUserToken);
       
       // 清除用户信息
       userName.value = '';

@@ -1,7 +1,6 @@
 import '../../../domain/entities/task.dart';
 import '../models/task_model.dart';
 import '../../core/services/http_service.dart';
-import '../../core/utils/api_result.dart';
 
 /// 任务API服务类
 class TaskApiService {
@@ -12,7 +11,7 @@ class TaskApiService {
   static const String _taskStatsEndpoint = '/api/tasks/stats';
 
   /// 获取所有任务
-  Future<ApiResult<List<Task>>> getAllTasks({
+  Future<List<Task>> getAllTasks({
     int page = 1,
     int limit = 20,
     String? status,
@@ -27,207 +26,176 @@ class TaskApiService {
       if (search != null && search.isNotEmpty) 'search': search,
     };
 
-    final response = await _httpService.get<List<Task>>(
+    final data = await _httpService.get<List<dynamic>>(
       _tasksEndpoint,
       queryParameters: queryParams,
-      fromJson: (data) {
-        if (data is List) {
-          return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
-        }
-        return <Task>[];
-      },
     );
 
-    return response;
+    if (data is List) {
+      return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
+    }
+    return <Task>[];
   }
 
   /// 根据ID获取任务
-  Future<ApiResult<Task>> getTaskById(String taskId) async {
-    final response = await _httpService.get<Task>(
+  Future<Task> getTaskById(String taskId) async {
+    final data = await _httpService.get<Map<String, dynamic>>(
       '$_tasksEndpoint/$taskId',
-      fromJson: (data) => TaskModel.fromJson(data).toEntity(),
     );
 
-    return response;
+    return TaskModel.fromJson(data).toEntity();
   }
 
   /// 创建新任务
-  Future<ApiResult<Task>> createTask(Task task) async {
+  Future<Task> createTask(Task task) async {
     final taskModel = TaskModel.fromEntity(task);
     
-    final response = await _httpService.post<Task>(
+    final data = await _httpService.postData<Map<String, dynamic>>(
       _tasksEndpoint,
       data: taskModel.toJson(),
-      fromJson: (data) => TaskModel.fromJson(data).toEntity(),
     );
 
-    return response;
+    return TaskModel.fromJson(data).toEntity();
   }
 
   /// 更新任务
-  Future<ApiResult<Task>> updateTask(String taskId, Task task) async {
+  Future<Task> updateTask(String taskId, Task task) async {
     final taskModel = TaskModel.fromEntity(task);
     
-    final response = await _httpService.put<Task>(
+    final data = await _httpService.putData<Map<String, dynamic>>(
       '$_tasksEndpoint/$taskId',
       data: taskModel.toJson(),
-      fromJson: (data) => TaskModel.fromJson(data).toEntity(),
     );
 
-    return response;
+    return TaskModel.fromJson(data).toEntity();
   }
 
   /// 删除任务
-  Future<ApiResult<bool>> deleteTask(String taskId) async {
-    final response = await _httpService.delete<bool>(
+  Future<bool> deleteTask(String taskId) async {
+    await _httpService.deleteData<dynamic>(
       '$_tasksEndpoint/$taskId',
-      fromJson: (data) => true,
     );
-
-    return response;
+    return true;
   }
 
   /// 批量删除任务
-  Future<ApiResult<bool>> deleteTasks(List<String> taskIds) async {
-    final response = await _httpService.post<bool>(
+  Future<bool> deleteTasks(List<String> taskIds) async {
+    await _httpService.postData<dynamic>(
       '$_tasksEndpoint/batch-delete',
       data: {'task_ids': taskIds},
-      fromJson: (data) => true,
     );
-
-    return response;
+    return true;
   }
 
   /// 标记任务为已完成
-  Future<ApiResult<Task>> markTaskAsCompleted(String taskId) async {
-    final response = await _httpService.put<Task>(
+  Future<Task> markTaskAsCompleted(String taskId) async {
+    final data = await _httpService.putData<Map<String, dynamic>>(
       '$_tasksEndpoint/$taskId/complete',
-      fromJson: (data) => TaskModel.fromJson(data).toEntity(),
     );
 
-    return response;
+    return TaskModel.fromJson(data).toEntity();
   }
 
   /// 标记任务为进行中
-  Future<ApiResult<Task>> markTaskAsInProgress(String taskId) async {
-    final response = await _httpService.put<Task>(
+  Future<Task> markTaskAsInProgress(String taskId) async {
+    final data = await _httpService.putData<Map<String, dynamic>>(
       '$_tasksEndpoint/$taskId/in-progress',
-      fromJson: (data) => TaskModel.fromJson(data).toEntity(),
     );
 
-    return response;
+    return TaskModel.fromJson(data).toEntity();
   }
 
   /// 获取任务统计信息
-  Future<ApiResult<Map<String, int>>> getTaskStatistics() async {
-    final response = await _httpService.get<Map<String, int>>(
+  Future<Map<String, int>> getTaskStatistics() async {
+    final data = await _httpService.get<Map<String, dynamic>>(
       _taskStatsEndpoint,
-      fromJson: (data) {
-        if (data is Map<String, dynamic>) {
-          return data.map((key, value) => MapEntry(key, value as int));
-        }
-        return <String, int>{};
-      },
     );
 
-    return response;
+    if (data is Map<String, dynamic>) {
+      return data.map((key, value) => MapEntry(key, value as int));
+    }
+    return <String, int>{};
   }
 
   /// 搜索任务
-  Future<ApiResult<List<Task>>> searchTasks(String query, {
+  Future<List<Task>> searchTasks(String query, {
     int page = 1,
     int limit = 20,
   }) async {
-    final response = await _httpService.get<List<Task>>(
+    final data = await _httpService.get<List<dynamic>>(
       '$_tasksEndpoint/search',
       queryParameters: {
         'q': query,
         'page': page,
         'limit': limit,
       },
-      fromJson: (data) {
-        if (data is List) {
-          return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
-        }
-        return <Task>[];
-      },
     );
 
-    return response;
+    if (data is List) {
+      return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
+    }
+    return <Task>[];
   }
 
   /// 按状态获取任务
-  Future<ApiResult<List<Task>>> getTasksByStatus(TaskStatus status) async {
-    final response = await _httpService.get<List<Task>>(
+  Future<List<Task>> getTasksByStatus(TaskStatus status) async {
+    final data = await _httpService.get<List<dynamic>>(
       '$_tasksEndpoint/by-status',
       queryParameters: {'status': status.index},
-      fromJson: (data) {
-        if (data is List) {
-          return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
-        }
-        return <Task>[];
-      },
     );
 
-    return response;
+    if (data is List) {
+      return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
+    }
+    return <Task>[];
   }
 
   /// 按优先级获取任务
-  Future<ApiResult<List<Task>>> getTasksByPriority(TaskPriority priority) async {
-    final response = await _httpService.get<List<Task>>(
+  Future<List<Task>> getTasksByPriority(TaskPriority priority) async {
+    final data = await _httpService.get<List<dynamic>>(
       '$_tasksEndpoint/by-priority',
       queryParameters: {'priority': priority.index},
-      fromJson: (data) {
-        if (data is List) {
-          return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
-        }
-        return <Task>[];
-      },
     );
 
-    return response;
+    if (data is List) {
+      return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
+    }
+    return <Task>[];
   }
 
   /// 获取过期任务
-  Future<ApiResult<List<Task>>> getOverdueTasks() async {
-    final response = await _httpService.get<List<Task>>(
+  Future<List<Task>> getOverdueTasks() async {
+    final data = await _httpService.get<List<dynamic>>(
       '$_tasksEndpoint/overdue',
-      fromJson: (data) {
-        if (data is List) {
-          return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
-        }
-        return <Task>[];
-      },
     );
 
-    return response;
+    if (data is List) {
+      return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
+    }
+    return <Task>[];
   }
 
   /// 获取今日任务
-  Future<ApiResult<List<Task>>> getTodayTasks() async {
-    final response = await _httpService.get<List<Task>>(
+  Future<List<Task>> getTodayTasks() async {
+    final data = await _httpService.get<List<dynamic>>(
       '$_tasksEndpoint/today',
-      fromJson: (data) {
-        if (data is List) {
-          return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
-        }
-        return <Task>[];
-      },
     );
 
-    return response;
+    if (data is List) {
+      return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
+    }
+    return <Task>[];
   }
 
   /// 同步任务到服务器
-  Future<ApiResult<bool>> syncTasks(List<Task> tasks) async {
+  Future<bool> syncTasks(List<Task> tasks) async {
     final tasksData = tasks.map((task) => TaskModel.fromEntity(task).toJson()).toList();
     
-    final response = await _httpService.post<bool>(
+    await _httpService.postData<dynamic>(
       '$_tasksEndpoint/sync',
       data: {'tasks': tasksData},
-      fromJson: (data) => true,
     );
 
-    return response;
+    return true;
   }
 }

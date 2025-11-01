@@ -1,119 +1,101 @@
-/// API调用结果封装类
+/// API调用结果封装类 - 格式：{"code": 200, "msg": "操作成功", "data": T}
 class ApiResult<T> {
-  final bool isSuccess;
+  final int code;
+  final String msg;
   final T? data;
-  final String message;
-  final int? errorCode;
-  final Exception? exception;
+
+  bool get isSuccess => code == 200;
 
   const ApiResult._({
-    required this.isSuccess,
+    required this.code,
+    required this.msg,
     this.data,
-    required this.message,
-    this.errorCode,
-    this.exception,
   });
 
   /// 成功结果
   factory ApiResult.success({
     T? data,
-    String message = '操作成功',
+    String msg = '操作成功',
+    int code = 200,
   }) {
     return ApiResult._(
-      isSuccess: true,
+      code: code,
+      msg: msg,
       data: data,
-      message: message,
     );
   }
 
   /// 失败结果
   factory ApiResult.failure({
-    required String message,
-    int? errorCode,
-    Exception? exception,
+    required String msg,
+    int code = 400,
   }) {
     return ApiResult._(
-      isSuccess: false,
-      message: message,
-      errorCode: errorCode,
-      exception: exception,
+      code: code,
+      msg: msg,
     );
   }
 
   /// 网络错误
   factory ApiResult.networkError({
-    String message = '网络连接失败，请检查网络设置',
-    Exception? exception,
+    String msg = '网络连接失败，请检查网络设置',
   }) {
     return ApiResult._(
-      isSuccess: false,
-      message: message,
-      errorCode: -1,
-      exception: exception,
+      code: -1,
+      msg: msg,
     );
   }
 
   /// 服务器错误
   factory ApiResult.serverError({
-    String message = '服务器错误，请稍后重试',
-    int? errorCode,
-    Exception? exception,
+    String msg = '服务器错误，请稍后重试',
+    int code = 500,
   }) {
     return ApiResult._(
-      isSuccess: false,
-      message: message,
-      errorCode: errorCode ?? 500,
-      exception: exception,
+      code: code,
+      msg: msg,
     );
   }
 
   /// 未知错误
   factory ApiResult.unknownError({
-    String message = '未知错误，请稍后重试',
-    Exception? exception,
+    String msg = '未知错误，请稍后重试',
   }) {
     return ApiResult._(
-      isSuccess: false,
-      message: message,
-      errorCode: -999,
-      exception: exception,
+      code: -999,
+      msg: msg,
     );
   }
 
   /// 数据为空错误
   factory ApiResult.emptyData({
-    String message = '暂无数据',
+    String msg = '暂无数据',
   }) {
     return ApiResult._(
-      isSuccess: false,
-      message: message,
-      errorCode: 404,
+      code: 404,
+      msg: msg,
     );
   }
 
   /// 权限错误
   factory ApiResult.unauthorized({
-    String message = '权限不足，请重新登录',
+    String msg = '权限不足，请重新登录',
   }) {
     return ApiResult._(
-      isSuccess: false,
-      message: message,
-      errorCode: 401,
+      code: 401,
+      msg: msg,
     );
   }
 
   /// 参数错误
   factory ApiResult.invalidParams({
-    String message = '参数错误',
+    String msg = '参数错误',
   }) {
     return ApiResult._(
-      isSuccess: false,
-      message: message,
-      errorCode: 400,
+      code: 400,
+      msg: msg,
     );
   }
-
-
 
   /// 转换数据类型
   ApiResult<R> map<R>(R Function(T data) mapper) {
@@ -122,19 +104,17 @@ class ApiResult<T> {
         final mappedData = mapper(data!);
         return ApiResult.success(
           data: mappedData,
-          message: message,
+          msg: msg,
         );
       } catch (e) {
         return ApiResult.failure(
-          message: '数据转换失败: ${e.toString()}',
-          exception: e is Exception ? e : Exception(e.toString()),
+          msg: '数据转换失败: ${e.toString()}',
         );
       }
     } else {
       return ApiResult.failure(
-        message: message,
-        errorCode: errorCode,
-        exception: exception,
+        msg: msg,
+        code: code,
       );
     }
   }
@@ -146,15 +126,13 @@ class ApiResult<T> {
         return next(data!);
       } catch (e) {
         return ApiResult.failure(
-          message: '处理失败: ${e.toString()}',
-          exception: e is Exception ? e : Exception(e.toString()),
+          msg: '处理失败: ${e.toString()}',
         );
       }
     } else {
       return ApiResult.failure(
-        message: message,
-        errorCode: errorCode,
-        exception: exception,
+        msg: msg,
+        code: code,
       );
     }
   }
@@ -167,7 +145,7 @@ class ApiResult<T> {
     if (isSuccess && data != null) {
       return data!;
     } else {
-      throw exception ?? Exception(message);
+      throw Exception(msg);
     }
   }
 
@@ -178,6 +156,6 @@ class ApiResult<T> {
 
   @override
   String toString() {
-    return 'ApiResult{isSuccess: $isSuccess, message: $message, errorCode: $errorCode, hasData: ${data != null}}';
+    return 'ApiResult{code: $code, msg: $msg, hasData: ${data != null}}';
   }
 }

@@ -1,13 +1,14 @@
 import 'package:do_task_project/app/core/constants/image_assets.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
+import 'package:do_task_project/app/modules/vip_details/components/vip_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
 import 'widgets/lucky_wheel_widget.dart';
 import 'widgets/sign_in_calendar_widget.dart';
-import 'widgets/promotion_banner_widget.dart';
 import 'widgets/task_card_widget.dart';
+import 'widgets/banner_carousel_widget.dart';
 import '../../../core/base/base_view.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 
@@ -52,17 +53,15 @@ class HomeView extends BaseView<HomeController> {
             SizedBox(height: MediaQuery.of(context).padding.top),
             _buildHeader(),
             _buildStatisticsCards(),
-            Container(
-              margin: const EdgeInsets.all(15),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  ImageAssets.homeBanner,
-                  width: double.infinity,
-                  height: 190,
-                  fit: BoxFit.cover,
-                ),
-              ),
+            BannerCarouselWidget(
+              bannerImages: [
+                ImageAssets.homeBanner,
+                ImageAssets.homeBanner,
+                ImageAssets.homeBanner,
+              ],
+              onBannerTap: (index) {
+                controller.onBannerTap(index);
+              },
             ),
             _buildRecommendedTasks(),
             const SizedBox(height: 55),
@@ -94,35 +93,60 @@ class HomeView extends BaseView<HomeController> {
           ),
           const SizedBox(width: 14),
           // 应用名称
-          Text(
-            I18nKeys.appTitle.tr,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-            ),
+          GestureDetector(
+            onTap: controller.onVipDetailsTap,
+            child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                I18nKeys.appTitle.tr,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Row(
+                children: [
+                  Obx(() => VipBadge(text: controller.vipLevel.value.isEmpty ? 'Vip0' : controller.vipLevel.value)),
+                  const SizedBox(width: 2),
+                  Text(
+                    'VIP详情 >',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
           ),
           const Spacer(),
           // 下载APP按钮
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(ImageAssets.homeDownload, width: 14, height: 14),
-                const SizedBox(width: 2),
-                Text(
-                  I18nKeys.downloadApp.tr,
-                  style: const TextStyle(
-                    color: AppTheme.loginColor,
-                    fontSize: 12,
+          GestureDetector(
+            onTap: controller.onDownloadAppTap,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(ImageAssets.homeDownload, width: 14, height: 14),
+                  const SizedBox(width: 2),
+                  Text(
+                    I18nKeys.downloadApp.tr,
+                    style: const TextStyle(
+                      color: AppTheme.loginColor,
+                      fontSize: 12,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

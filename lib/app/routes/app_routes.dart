@@ -14,6 +14,13 @@ abstract class Routes {
   static const LOGIN = _Paths.LOGIN;
   static const LUCKY_WHEEL = _Paths.LUCKY_WHEEL;
   static const SIGN_IN_CALENDAR = _Paths.SIGN_IN_CALENDAR;
+  static const CHANGE_PASSWORD = _Paths.CHANGE_PASSWORD;
+  static const VIP_DETAILS = _Paths.VIP_DETAILS;
+  static const INVITE_FRIEND = _Paths.INVITE_FRIEND;
+  static const WHATSAPP_TASK = _Paths.WHATSAPP_TASK;
+  static const ACCOUNT_WITHDRAWAL = _Paths.ACCOUNT_WITHDRAWAL;
+  static const PAYMENT_METHOD = _Paths.PAYMENT_METHOD;
+  static const WITHDRAWAL_ORDERS = _Paths.WITHDRAWAL_ORDERS;
 }
 
 /// 路由路径定义
@@ -30,4 +37,11 @@ abstract class _Paths {
   static const LOGIN = '/login';
   static const LUCKY_WHEEL = '/lucky-wheel';
   static const SIGN_IN_CALENDAR = '/sign-in-calendar';
+  static const CHANGE_PASSWORD = '/change-password';
+  static const VIP_DETAILS = '/vip-details';
+  static const INVITE_FRIEND = '/invite_friend';
+  static const WHATSAPP_TASK = '/whatsapp_task';
+  static const ACCOUNT_WITHDRAWAL = '/account-withdrawal';
+  static const PAYMENT_METHOD = '/payment-method';
+  static const WITHDRAWAL_ORDERS = '/withdrawal-orders';
 }

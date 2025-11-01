@@ -1,4 +1,7 @@
+import 'package:do_task_project/app/core/constants/image_assets.dart';
+import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_view.dart';
 import '../../../core/i18n/i18n_keys.dart';
@@ -9,25 +12,17 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return AppBar(
-      backgroundColor: const Color(0xFF4A90E2),
-      elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-        onPressed: () => Get.back(),
+    // 设置状态栏为透明文字
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent, // 状态栏透明
+        statusBarIconBrightness: Brightness.light, // 状态栏图标为白色
+        statusBarBrightness: Brightness.dark, // iOS状态栏图标为暗色
       ),
-      centerTitle: true,
-      title: Text(
-        '签到', // 参考图标题
-        style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
-      ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.more_horiz, color: Colors.white),
-          onPressed: () {},
-        )
-      ],
     );
+
+    // 返回null表示不显示AppBar
+    return null;
   }
 
   @override
@@ -40,26 +35,53 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF4A90E2), Color(0xFF7BB3F0), Color(0xFFF5F7FA)],
-          stops: [0.0, 0.4, 1.0],
+          colors: [Color(0xFF477DF2), Color(0xFF47ABF2), Color(0xFFF9F9F9)],
+          stops: [0.0, 0.4, 0.7],
         ),
       ),
-      child: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+      child: Column(
+        children: [
+          // 添加状态栏高度的占位空间
+          SizedBox(height: MediaQuery.of(context).padding.top),
+          // 添加返回按钮和标题
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            child: Row(
               children: [
-                _buildTopSection(),
-                const SizedBox(height: 16),
-                _buildCalendarCard(),
-                const SizedBox(height: 20),
-                _buildSignButton(),
+                IconButton(
+                  icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                  onPressed: () => Get.back(),
+                ),
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      '签到',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 48), // 平衡返回按钮的宽度
               ],
             ),
           ),
-        ),
+          // 使用Expanded包装内容，确保填充剩余空间
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _buildTopSection(),
+                  _buildCalendarCard(),
+                 const SizedBox(height: 40),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -68,13 +90,13 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
     return Obx(() {
       final streak = controller.streakDays.value;
       final remaining = controller.daysRemainingToReward;
+      final rewardPoints = controller.rewardPoints.value;
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        padding: const EdgeInsets.only(left: 21, right: 19),
         child: Row(
           children: [
             // 左侧文字信息
             Expanded(
-              flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -83,151 +105,83 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                     children: [
                       const Text(
                         '已连续签到',
-                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.yellow.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          '$streak',
-                          style: const TextStyle(color: Colors.yellow, fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 4),
+                      Text(
+                        '$streak',
+                        style: const TextStyle(
+                            color: AppTheme.signYellowColor,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
                       const Text(
                         '天',
-                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
                   // "再连续 7 天领 5000 积分" 胶囊
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
+                  Row(
+                    children: [
+                      Text(
+                        '再连签 ',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
-                    ),
-                    child: Text(
-                      '再连续 $remaining 天领 ${controller.rewardPoints} ${I18nKeys.points.tr}',
-                      style: const TextStyle(
-                        color: Colors.black87, 
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
                       ),
-                    ),
+                      Text(
+                        '$remaining',
+                        style: const TextStyle(
+                            color: AppTheme.signYellowColor,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Text(
+                        ' 天领 ',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Text(
+                        '${rewardPoints} ',
+                        style: const TextStyle(
+                          color: AppTheme.signYellowColor,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Text(
+                        '${I18nKeys.points.tr}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 16),
             // 右侧图片
-            Expanded(
-              flex: 1,
-              child: Container(
-                height: 120,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: const Center(
-                  child: Icon(Icons.calendar_month, color: Colors.white, size: 56),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    });
-  }
-
-  Widget _buildHero() {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Container(
-        width: 120,
-        height: 120,
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.15),
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: const Center(
-          child: Icon(Icons.calendar_month, color: Colors.white, size: 56),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTopInfo() {
-    return Obx(() {
-      final streak = controller.streakDays.value;
-      final remaining = controller.daysRemainingToReward;
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          children: [
-            // "已连续签到 7 天"
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  '已连续签到',
-                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.yellow.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '$streak',
-                    style: const TextStyle(color: Colors.yellow, fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                const Text(
-                  '天',
-                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            // "再连续 7 天领 5000 积分" 胶囊
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.9),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Text(
-                '再连续 $remaining 天领 ${controller.rewardPoints} ${I18nKeys.points.tr}',
-                style: const TextStyle(
-                  color: Colors.black87, 
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
+            Image.asset(ImageAssets.signBg, width: 145, height: 110),
           ],
         ),
       );
@@ -246,10 +200,10 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
       final cells = offset + totalDays;
 
       return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8),
+        margin: const EdgeInsets.symmetric(horizontal: 15),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -260,34 +214,48 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
         ),
         child: Column(
           children: [
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
             Text(
               '签到日历 $year.${month.toString().padLeft(2, '0')}',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black87),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.threeColor,
+              ),
             ),
             const SizedBox(height: 16),
             // 周标签
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 28),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: const [
-                  _WeekLabel('日'), _WeekLabel('一'), _WeekLabel('二'), _WeekLabel('三'), _WeekLabel('四'), _WeekLabel('五'), _WeekLabel('六'),
+                  _WeekLabel('日'),
+                  _WeekLabel('一'),
+                  _WeekLabel('二'),
+                  _WeekLabel('三'),
+                  _WeekLabel('四'),
+                  _WeekLabel('五'),
+                  _WeekLabel('六'),
                 ],
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             // 日历格子
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24), // 增加垂直padding
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 2,
+              ), // 增加垂直padding
               child: GridView.builder(
+                padding: EdgeInsets.zero, // 移除默认padding
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 7,
-                  mainAxisSpacing: 12, // 减少行间距
+                  mainAxisSpacing: 2, // 减少行间距
                   crossAxisSpacing: 8,
-                  childAspectRatio: 0.6, // 调整宽高比给更多垂直空间
+                  childAspectRatio: 0.7, // 调整宽高比给更多垂直空间
                 ),
                 itemCount: cells,
                 itemBuilder: (context, index) {
@@ -295,13 +263,22 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                     return const SizedBox.shrink();
                   }
                   final day = index - offset + 1;
-                  final isToday = day == today.day && month == today.month && year == today.year;
+                  final isToday =
+                      day == today.day &&
+                      month == today.month &&
+                      year == today.year;
                   final isChecked = checked.contains(day);
-                  return _DayCell(day: day, isToday: isToday, isChecked: isChecked);
+                  return _DayCell(
+                    day: day,
+                    isToday: isToday,
+                    isChecked: isChecked,
+                  );
                 },
               ),
             ),
-            const SizedBox(height: 8), // 增加底部间距
+            const SizedBox(height: 10), 
+             _buildSignButton(),
+            const SizedBox(height: 22), // 增加底部间距
           ],
         ),
       );
@@ -310,43 +287,45 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
 
   Widget _buildSignButton() {
     return Obx(() {
-      final canSign = !controller.checkedDays.value.contains(controller.today.day);
+      // ignore: invalid_use_of_protected_member
       return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 24),
+        margin: const EdgeInsets.symmetric(horizontal: 50),
         child: GestureDetector(
-          onTap: canSign ? controller.checkInToday : null,
+          onTap: !controller.isCheckedIn.value ? controller.checkInToday : null,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             width: double.infinity,
-            height: 50,
+            height: 44,
             decoration: BoxDecoration(
-              gradient: canSign 
-                ? const LinearGradient(
-                    colors: [Color(0xFF5CB3FF), Color(0xFF3D8BFF)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  )
-                : LinearGradient(
-                    colors: [Colors.grey.shade400, Colors.grey.shade500],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+              gradient: !controller.isCheckedIn.value
+                  ? const LinearGradient(
+                      colors: [Color(0xFF47B9F2), Color(0xFF477DF2 )],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    )
+                  : LinearGradient(
+                      colors: [Colors.grey.shade400, Colors.grey.shade500],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
               borderRadius: BorderRadius.circular(25),
-              boxShadow: canSign ? [
-                BoxShadow(
-                  color: const Color(0xFF3D8BFF).withOpacity(0.4),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ] : [],
+              boxShadow: !controller.isCheckedIn.value
+                  ? [
+                      BoxShadow(
+                        color: const Color(0xFF3D8BFF).withOpacity(0.4),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : [],
             ),
             alignment: Alignment.center,
             child: Text(
-              canSign ? '立即签到' : '今天已签到',
+              !controller.isCheckedIn.value ? '立即签到' : '今天已签到',
               style: const TextStyle(
-                color: Colors.white, 
-                fontSize: 16, 
-                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
                 letterSpacing: 0.5,
               ),
             ),
@@ -365,7 +344,11 @@ class _WeekLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: const TextStyle(fontSize: 12, color: Color(0xFF7F8C8D), fontWeight: FontWeight.w500),
+      style: const TextStyle(
+        fontSize: 13,
+        color: AppTheme.threeColor,
+        fontWeight: FontWeight.w500,
+      ),
     );
   }
 }
@@ -374,14 +357,18 @@ class _DayCell extends StatelessWidget {
   final int day;
   final bool isToday;
   final bool isChecked;
-  const _DayCell({required this.day, required this.isToday, required this.isChecked});
+  const _DayCell({
+    required this.day,
+    required this.isToday,
+    required this.isChecked,
+  });
 
   @override
   Widget build(BuildContext context) {
     final Color bgColor;
     final Color borderColor;
     final Color textColor;
-    
+
     if (isToday) {
       bgColor = const Color(0xFF3D8BFF);
       borderColor = const Color(0xFF3D8BFF);
@@ -413,27 +400,27 @@ class _DayCell extends StatelessWidget {
             child: Text(
               '$day',
               style: TextStyle(
-                fontSize: 14, 
-                fontWeight: FontWeight.w600, 
-                color: textColor
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: textColor,
               ),
             ),
           ),
           // 今天标签 - 占用剩余空间
           Expanded(
-            child: isToday 
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 2),
-                  child: Text(
-                    '今天',
-                    style: const TextStyle(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w500, 
-                      color: Color(0xFF3D8BFF)
+            child: isToday
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      '今天',
+                      style: const TextStyle(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF3D8BFF),
+                      ),
                     ),
-                  ),
-                )
-              : const SizedBox.shrink(),
+                  )
+                : const SizedBox.shrink(),
           ),
         ],
       ),

@@ -21,9 +21,21 @@ class ErrorHandlerCenter {
     }
     
     return ApiResult.failure(
-      message: errorMessage,
-      errorCode: errorCode,
+      msg: errorMessage,
+      code: errorCode ?? 400,
     );
+  }
+
+  /// 处理错误码 - 直接抛出异常
+  Exception handleErrorCodeException(int? errorCode, String? message, {bool skipSpecialHandling = false}) {
+    final errorMessage = _getErrorMessage(errorCode, message);
+    
+    // 特殊错误码处理（可选择跳过）
+    if (!skipSpecialHandling) {
+      _handleSpecialErrorCode(errorCode);
+    }
+    
+    return Exception(errorMessage);
   }
 
   /// 处理异常
@@ -36,9 +48,22 @@ class ErrorHandlerCenter {
       return _handleFormatException<T>(exception);
     } else {
       return ApiResult.failure(
-        message: customMessage ?? I18nKeys.errorUnknown.tr,
-        errorCode: -1,
-      );
+      msg: customMessage ?? I18nKeys.errorUnknown.tr,
+      code: -1,
+    );
+    }
+  }
+
+  /// 处理异常 - 直接抛出异常
+  Exception handleExceptionException(Exception exception, {String? customMessage}) {
+    if (exception is DioException) {
+      return _handleDioExceptionException(exception);
+    } else if (exception is SocketException) {
+      return _handleSocketExceptionException(exception);
+    } else if (exception is FormatException) {
+      return _handleFormatExceptionException(exception);
+    } else {
+      return Exception(customMessage ?? I18nKeys.errorUnknown.tr);
     }
   }
 
@@ -49,8 +74,8 @@ class ErrorHandlerCenter {
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
         return ApiResult.failure(
-          message: I18nKeys.errorTimeout.tr,
-          errorCode: 408,
+          msg: I18nKeys.errorTimeout.tr,
+          code: 408,
         );
       
       case DioExceptionType.badResponse:
@@ -60,34 +85,67 @@ class ErrorHandlerCenter {
       
       case DioExceptionType.cancel:
         return ApiResult.failure(
-          message: '请求已取消',
-          errorCode: -2,
+          msg: '请求已取消',
+          code: -2,
         );
       
       case DioExceptionType.connectionError:
       case DioExceptionType.unknown:
       default:
         return ApiResult.failure(
-          message: I18nKeys.errorNetwork.tr,
-          errorCode: -3,
+          msg: I18nKeys.errorNetwork.tr,
+          code: -3,
         );
+    }
+  }
+
+  /// 处理Dio异常 - 直接抛出异常
+  Exception _handleDioExceptionException(DioException e) {
+    switch (e.type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        return Exception(I18nKeys.errorTimeout.tr);
+      
+      case DioExceptionType.badResponse:
+        final statusCode = e.response?.statusCode;
+        final message = e.response?.data?['message'] ?? e.message;
+        return handleErrorCodeException(statusCode, message);
+      
+      case DioExceptionType.cancel:
+        return Exception('请求已取消');
+      
+      case DioExceptionType.connectionError:
+      case DioExceptionType.unknown:
+      default:
+        return Exception(I18nKeys.errorNetwork.tr);
     }
   }
 
   /// 处理Socket异常
   ApiResult<T> _handleSocketException<T>(SocketException e) {
     return ApiResult.failure(
-      message: I18nKeys.errorNetwork.tr,
-      errorCode: -4,
+      msg: I18nKeys.errorNetwork.tr,
+      code: -4,
     );
+  }
+
+  /// 处理Socket异常 - 直接抛出异常
+  Exception _handleSocketExceptionException(SocketException e) {
+    return Exception(I18nKeys.errorNetwork.tr);
   }
 
   /// 处理格式异常
   ApiResult<T> _handleFormatException<T>(FormatException e) {
     return ApiResult.failure(
-      message: '数据格式错误',
-      errorCode: -5,
+      msg: '数据格式错误',
+      code: -5,
     );
+  }
+
+  /// 处理格式异常 - 直接抛出异常
+  Exception _handleFormatExceptionException(FormatException e) {
+    return Exception('数据格式错误');
   }
 
   /// 获取错误消息
@@ -140,9 +198,6 @@ class ErrorHandlerCenter {
       case 401:
         _handleUnauthorized();
         break;
-      case 403:
-        _handleForbidden();
-        break;
       default:
         break;
     }
@@ -157,13 +212,8 @@ class ErrorHandlerCenter {
     Get.offAllNamed('/login');
   }
 
-  /// 处理禁止访问错误
+  // 处理禁止访问错误：去除直接弹提示，由上层统一展示
   void _handleForbidden() {
-    // 显示权限不足提示
-    Get.snackbar(
-      '权限不足',
-      I18nKeys.error403.tr,
-      snackPosition: SnackPosition.TOP,
-    );
+    // 保留方法以兼容旧调用，但不做UI提示，避免重复弹窗
   }
 }

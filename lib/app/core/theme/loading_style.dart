@@ -119,42 +119,38 @@ class LoadingStyle {
   }
 
   /// 对话框式 Loading 组件
-  static Widget buildDialogLoadingWidget({
+  static Widget buildDialogLoadingWidget({    
     String? message,
     EdgeInsets? padding,
   }) {
     return Center(
-      child: Container(
-        padding: padding ?? const EdgeInsets.all(24),
-        decoration: dialogDecoration,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            circularProgressIndicator,
-            if (message != null) ...[
-              SizedBox(height: defaultSpacing),
-              Text(
-                message,
-                style: Get.textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
-            ],
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          circularProgressIndicator,
+          if (message != null) ...[
+            SizedBox(height: defaultSpacing),
+            Text(
+              message,
+              style: Get.textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
 
   /// 全屏 Loading 组件
-  static Widget buildFullScreenLoadingWidget({
+  static Widget buildFullScreenLoadingWidget({    
     String? message,
     Color? backgroundColor,
   }) {
-    return Scaffold(
-      backgroundColor: backgroundColor ?? Colors.white.withOpacity(0.8),
-      body: Center(
+    return Container(
+      color: Colors.transparent,
+      child: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             circularProgressIndicator,
             if (message != null) ...[
@@ -172,7 +168,7 @@ class LoadingStyle {
   }
 
   /// 进度 Loading 组件
-  static Widget buildProgressLoadingWidget({
+  static Widget buildProgressLoadingWidget({    
     required double progress,
     String? message,
     EdgeInsets? padding,
@@ -182,7 +178,10 @@ class LoadingStyle {
       child: Container(
         padding: padding ?? const EdgeInsets.all(24),
         margin: margin ?? const EdgeInsets.symmetric(horizontal: 40),
-        decoration: dialogDecoration,
+        decoration: dialogDecoration.copyWith(
+          color: Colors.transparent,
+          boxShadow: [],
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

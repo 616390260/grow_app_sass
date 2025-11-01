@@ -1,48 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
-import '../../../core/managers/api_call_manager.dart';
-import '../../../core/utils/api_result.dart';
 import '../../../routes/app_pages.dart';
 import '../../../data/services/auth_api_service.dart';
 import '../../../data/services/user_credentials_service.dart';
+import '../../../core/constants/app_constants.dart';
 
 class LoginController extends BaseController {
   // 表单控制器
   final accountController = TextEditingController();
   final passwordController = TextEditingController();
-  
+
   // 焦点控制器
   final accountFocusNode = FocusNode();
   final passwordFocusNode = FocusNode();
-  
+
   // 响应式变量
   final isPasswordVisible = false.obs;
   final rememberPassword = false.obs;
   final accountError = ''.obs;
   final passwordError = ''.obs;
 
-  // API调用管理器
-  final _apiCallManager = ApiCallManager();
-  
   // 用户凭据服务
   final _credentialsService = UserCredentialsService();
+
+  // 认证API服务
+  final _authApiService = AuthApiService();
 
   @override
   void onInit() {
     super.onInit();
-    
+
     // 加载保存的凭据
     _loadSavedCredentials();
-    
+
     // 监听输入变化，清除错误信息
     accountController.addListener(() {
       if (accountError.value.isNotEmpty) {
         accountError.value = '';
       }
     });
-    
+
     passwordController.addListener(() {
       if (passwordError.value.isNotEmpty) {
         passwordError.value = '';
@@ -125,35 +125,41 @@ class LoginController extends BaseController {
     final account = accountController.text.trim();
     final password = passwordController.text;
 
-    final result = await _apiCallManager.call<Map<String, dynamic>>(
-      apiCall: () async {
-        final api = AuthApiService();
-        return await api.login(
-          account: account,
-          password: password,
-        );
-      },
-      showLoading: true,
-      loadingMessage: '登录中...',
-      showSuccessMessage: true,
-      successMessage: I18nKeys.loginSuccess.tr,
-      showErrorMessage: true,
-    );
-    
-    if (result.isSuccess) {
+    try {
+      setLoading(true);
+      // 直接调用AuthApiService的login方法
+      final token = await _authApiService.login(
+        account: account,
+        password: password,
+      );
+
       setSuccess();
-      
+      showSuccessMessage(I18nKeys.loginSuccess.tr);
+      // 解析并保存token到本地（data字段为token字符串）
+      try {
+        print(token);
+        if (token.isNotEmpty) {
+          final storage = GetStorage();
+          await storage.write(AppConstants.storageKeyUserToken, token);
+        }
+      } catch (_) {
+        // 忽略token解析异常，避免影响登录流程
+      }
+
       // 保存凭据（如果用户选择记住密码）
       await _credentialsService.saveCredentials(
         account: account,
         password: password,
         rememberPassword: rememberPassword.value,
       );
-      
+
       // 登录成功后跳转到主页
       Get.offAllNamed(Routes.MAIN);
-    } else {
-      setError(result.message);
+    } catch (e) {
+      setError('登录失败: $e');
+      showErrorMessage('登录失败: $e');
+    } finally {
+      setLoading(false);
     }
   }
 

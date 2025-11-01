@@ -1,6 +1,10 @@
+import 'package:json_annotation/json_annotation.dart';
 import '../../../domain/entities/task.dart';
 
+part 'task_model.g.dart';
+
 /// 任务数据模型类 - 用于数据持久化和序列化
+@JsonSerializable()
 class TaskModel extends Task {
   const TaskModel({
     required super.id,
@@ -31,56 +35,28 @@ class TaskModel extends Task {
 
   /// 从JSON创建模型
   factory TaskModel.fromJson(Map<String, dynamic> json) {
-    return TaskModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      priority: TaskPriority.values[json['priority'] as int],
-      status: TaskStatus.values[json['status'] as int],
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      dueDate: json['dueDate'] != null 
-          ? DateTime.parse(json['dueDate'] as String) 
-          : null,
-      completedAt: json['completedAt'] != null 
-          ? DateTime.parse(json['completedAt'] as String) 
-          : null,
-      tags: (json['tags'] as String?)?.split(',') ?? [],
-    );
+    return _$TaskModelFromJson(json);
   }
 
   /// 从Map创建模型（用于数据库）
   factory TaskModel.fromMap(Map<String, dynamic> map) {
-    return TaskModel(
-      id: map['id'] as String,
-      title: map['title'] as String,
-      description: map['description'] as String,
-      priority: TaskPriority.values[map['priority'] as int],
-      status: TaskStatus.values[map['status'] as int],
-      createdAt: DateTime.parse(map['created_at'] as String),
-      dueDate: map['due_date'] != null 
-          ? DateTime.parse(map['due_date'] as String) 
-          : null,
-      completedAt: map['completed_at'] != null 
-          ? DateTime.parse(map['completed_at'] as String) 
-          : null,
-      tags: (map['tags'] as String?)?.split(',') ?? [],
-    );
+    // 由于数据库存储的时间格式与JSON不同，需要单独处理
+    final parsedMap = {
+      'id': map['id'] as String,
+      'title': map['title'] as String,
+      'description': map['description'] as String,
+      'priority': map['priority'] as int,
+      'status': map['status'] as int,
+      'createdAt': DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int).toIso8601String(),
+      'dueDate': map['dueDate'] != null ? DateTime.fromMillisecondsSinceEpoch(map['dueDate'] as int).toIso8601String() : null,
+      'completedAt': map['completedAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['completedAt'] as int).toIso8601String() : null,
+      'tags': map['tags'] as String,
+    };
+    return _$TaskModelFromJson(parsedMap);
   }
 
   /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'description': description,
-      'priority': priority.index,
-      'status': status.index,
-      'createdAt': createdAt.toIso8601String(),
-      'dueDate': dueDate?.toIso8601String(),
-      'completedAt': completedAt?.toIso8601String(),
-      'tags': tags.join(','),
-    };
-  }
+  Map<String, dynamic> toJson() => _$TaskModelToJson(this);
 
   /// 转换为Map（用于数据库）
   Map<String, dynamic> toMap() {
@@ -90,9 +66,9 @@ class TaskModel extends Task {
       'description': description,
       'priority': priority.index,
       'status': status.index,
-      'created_at': createdAt.toIso8601String(),
-      'due_date': dueDate?.toIso8601String(),
-      'completed_at': completedAt?.toIso8601String(),
+      'createdAt': createdAt.millisecondsSinceEpoch,
+      'dueDate': dueDate?.millisecondsSinceEpoch,
+      'completedAt': completedAt?.millisecondsSinceEpoch,
       'tags': tags.join(','),
     };
   }

@@ -10,6 +10,12 @@ class ImageAssets {
   // 默认图片路径
   static const String _defaultPath = '$_basePath/default';
 
+  static const String home = '$_basePath/home.svg';
+  static const String promotion = '$_basePath/promotion.svg';
+  static const String tasks = '$_basePath/task.svg';
+  static const String service = '$_basePath/service.svg';
+  static const String account = '$_basePath/account.svg';
+
   // 登录相关图片
   static const String loginBg = '$_basePath/login_bg.png';
   static const String loginPswCheck = '$_basePath/login_psw_check.png';
@@ -19,6 +25,27 @@ class ImageAssets {
   static const String homeSign = '$_basePath/home_sign.png';
   static const String homeBanner = '$_basePath/home_banner.webp';
   static const String homeTask = '$_basePath/home_task.png';
+  static const String mineBg = '$_basePath/mine_bg.webp';
+  static const String mineMsg = '$_basePath/mine_msg.svg';
+  static const String mineService = '$_basePath/mine_service.svg';
+  static const String mineSwitch = '$_basePath/mine_switch.svg';
+  static const String mineAccount = '$_basePath/mine_account.svg';
+  static const String rightGray = '$_basePath/right_gray.svg';
+  static const String mineIncome = '$_basePath/mine_income.svg';
+  static const String mineWithdraw = '$_basePath/mine_withdraw.svg';
+  static const String minePsw = '$_basePath/mine_psw.svg';
+  static const String mineLanguage = '$_basePath/mine_language.svg';
+  static const String vipCrown = '$_basePath/vip_crown.svg';
+  static const String signBg = '$_basePath/sign_bg.png';
+  static const String inviteWhatsapp = '$_basePath/invite_whats.png';
+  static const String inviteFacebook = '$_basePath/invite_fb.png';
+  static const String inviteTelegram = '$_basePath/invite_tele.png';
+  static const String inviteBoxAble = '$_basePath/invite_box_able.png';
+  static const String inviteBoxUnAble = '$_basePath/invite_box_disable.png';
+  static const String rewardBg = '$_basePath/reward_bg.png';
+  static const String wheelBg = '$_basePath/wheel_bg.png';
+  static const String wheelPoint = '$_basePath/wheel_point.png';
+  static const String inviteBg = '$_basePath/invite_bg.webp';
 
   // 多语言横幅图片
   static const String welcomeBannerZhCn = '$_basePath/zh_CN/welcome_banner.svg';

@@ -1,8 +1,12 @@
+import 'package:dio/io.dart';
+import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../controllers/account_controller.dart';
 import '../../../core/base/base_view.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
+import '../../../core/constants/image_assets.dart';
 
 class AccountView extends BaseView<AccountController> {
   const AccountView({Key? key}) : super(key: key);
@@ -26,169 +30,210 @@ class AccountView extends BaseView<AccountController> {
                 Container(
                   height: 274,
                   decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF4A90E2), Color(0xFF6BB9F0)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                    image: DecorationImage(
+                      image: AssetImage(ImageAssets.mineBg),
+                      fit: BoxFit.cover,
                     ),
                   ),
                   child: SafeArea(
                     bottom: false,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
+                        horizontal: 15,
+                        vertical: 26,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 9, top: 23),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.qr_code,
-                                    color: Colors.white,
-                                  ),
-                                  onPressed: () {},
-                                ),
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.chat_bubble_outline,
-                                    color: Colors.white,
-                                  ),
-                                  onPressed: () {},
-                                ),
-                              ],
-                            ),
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const CircleAvatar(
-                                radius: 28,
-                                backgroundColor: Colors.white,
-                                child: Icon(
-                                  Icons.person,
-                                  size: 32,
-                                  color: Color(0xFF4A90E2),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    controller.userName.value,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600,
+                                CircleAvatar(
+                                  radius: 32,
+
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: ClipOval(
+                                      child: Image.network(
+                                        controller.avatar.value,
+                                        width: 64,
+                                        height: 64,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stackTrace) =>
+                                            const Icon(Icons.error),
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
-                                  Row(
+                                ),
+                                const SizedBox(width: 17),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        '${I18nKeys.referralCode.tr}: ',
-                                        style: const TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                      Text(
-                                        controller.referralCode.value,
+                                        controller.userName.value,
                                         style: const TextStyle(
                                           color: Colors.white,
-                                          fontSize: 13,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            '${I18nKeys.referralCode.tr}: ',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          Flexible(
+                                            child: Text(
+                                              controller.referralCode.value,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 5),
+                                          GestureDetector(
+                                            onTap: controller.copyReferral,
+                                            child: const Icon(
+                                              Icons.copy,
+                                              color: Colors.white,
+                                              size: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 30),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {},
+                                        child: Container(
+                                          padding: const EdgeInsets.all(6),
+                                          child: SvgPicture.asset(
+                                            ImageAssets.mineService,
+                                            color: Colors.white,
+                                            width: 22,
+                                            height: 22,
+                                          ),
                                         ),
                                       ),
-                                      const SizedBox(width: 6),
+                                      const SizedBox(width: 7),
                                       GestureDetector(
-                                        onTap: controller.copyReferral,
-                                        child: const Icon(
-                                          Icons.copy,
-                                          color: Colors.white70,
-                                          size: 16,
+                                        onTap: () {},
+                                        child: Container(
+                                          padding: const EdgeInsets.all(6),
+                                          child: SvgPicture.asset(
+                                            ImageAssets.mineMsg,
+                                            color: Colors.white,
+                                            width: 23,
+                                            height: 22,
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
                 Positioned(
-                  left: 16,
-                  right: 16,
-                  bottom: -60,
+                  left: 15,
+                  right: 15,
+                  bottom: -23,
                   child: _buildBalanceCard(context, primary),
                 ),
               ],
             ),
-            const SizedBox(height: 80),
+            const SizedBox(height: 25),
 
             // 功能列表
             _buildActionItem(
               context,
               icon: Icons.account_balance_wallet,
-              iconBg: const Color(0xFF7B61FF),
+              iconBg: const Color(0xFF6A5FF9),
               title: I18nKeys.accountWithdrawal.tr,
+              imagePath: ImageAssets.mineAccount,
               onTap: controller.onWithdrawTap,
             ),
             _buildDivider(),
             _buildActionItem(
               context,
               icon: Icons.assessment_outlined,
-              iconBg: const Color(0xFF3A84FF),
+              iconBg: const Color(0xFF427AF2),
               title: I18nKeys.incomeDetails.tr,
+              imagePath: ImageAssets.mineIncome,
               onTap: controller.onIncomeDetailsTap,
             ),
             _buildDivider(),
             _buildActionItem(
               context,
               icon: Icons.receipt_long,
-              iconBg: const Color(0xFFFFA24C),
+              iconBg: const Color(0xFFF7B257),
               title: I18nKeys.withdrawalOrders.tr,
+              imagePath: ImageAssets.mineWithdraw,
               onTap: controller.onWithdrawalOrdersTap,
             ),
             _buildDivider(),
             _buildActionItem(
               context,
               icon: Icons.lock_outline,
-              iconBg: const Color(0xFFFF6B6B),
+              iconBg: const Color(0xFFFF8E6A),
               title: I18nKeys.changePassword.tr,
+              imagePath: ImageAssets.minePsw,
               onTap: controller.onChangePasswordTap,
             ),
             _buildDivider(),
             _buildActionItem(
               context,
               icon: Icons.language,
-              iconBg: const Color(0xFF0B65FF),
+              iconBg: const Color(0xFF002F95),
               title: I18nKeys.languageSettings.tr,
+              imagePath: ImageAssets.mineLanguage,
               onTap: controller.onLanguageSettingsTap,
             ),
-
-            const SizedBox(height: 24),
+            _buildDivider(),
+            const SizedBox(height: 43),
             Center(
               child: TextButton(
                 onPressed: controller.onLogoutTap,
                 child: Text(
                   I18nKeys.logout.tr,
                   style: const TextStyle(
-                    color: Color(0xFFFF4D4F),
-                    fontSize: 16,
+                    color: Color(0xFFFF6A6A),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
                   ),
                 ),
               ),
             ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -199,16 +244,10 @@ class AccountView extends BaseView<AccountController> {
     return Obx(() {
       final bool visible = controller.showBalance.value;
       return Container(
+        height: 108,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Stack(
           children: [
@@ -217,20 +256,25 @@ class AccountView extends BaseView<AccountController> {
               right: 0,
               top: 0,
               child: Container(
-                width: 48,
-                height: 24,
+                width: 78,
+                height: 28,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEFF4FF),
+                  color: AppTheme.loginColor.withOpacity(0.6),
                   borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(16),
-                    bottomLeft: Radius.circular(12),
+                    topRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(40),
                   ),
-                  border: Border.all(color: const Color(0xFFE3ECFF)),
+                ),
+                child: SvgPicture.asset(
+                  ImageAssets.mineSwitch,
+                  width: 24,
+                  height: 24,
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.only(left: 22, top: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -239,11 +283,12 @@ class AccountView extends BaseView<AccountController> {
                       Text(
                         I18nKeys.accountBalance.tr,
                         style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.threeColor,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 4),
                       InkWell(
                         onTap: controller.toggleBalanceVisibility,
                         child: Icon(
@@ -254,48 +299,51 @@ class AccountView extends BaseView<AccountController> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 19),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             visible
                                 ? controller.pointsBalance.value.toString()
                                 : '***',
                             style: const TextStyle(
-                              fontSize: 28,
+                              fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(width: 13),
                           Text(
                             I18nKeys.pointsLabel.tr,
                             style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 13,
+                              color: AppTheme.nineColor,
+                              fontSize: 14,
                             ),
                           ),
                         ],
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                      const SizedBox(width: 80),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             visible
                                 ? controller.trxBalance.value.toStringAsFixed(2)
                                 : '***',
                             style: const TextStyle(
-                              fontSize: 28,
+                              fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          const Text(
+                          const SizedBox(width: 13),
+                          Text(
                             'TRX',
-                            style: TextStyle(color: Colors.grey, fontSize: 13),
+                            style: TextStyle(
+                              color: AppTheme.nineColor,
+                              fontSize: 14,
+                            ),
                           ),
                         ],
                       ),
@@ -315,26 +363,46 @@ class AccountView extends BaseView<AccountController> {
     required IconData icon,
     required Color iconBg,
     required String title,
+    required String imagePath,
     required VoidCallback onTap,
   }) {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 21, vertical: 12),
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: 34,
+              height: 34,
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: iconBg,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(17),
               ),
-              child: Icon(icon, color: Colors.white),
+              child: SvgPicture.asset(
+                imagePath,
+                width: 17,
+                height: 17,
+                color: backgroundColor,
+              ),
             ),
-            const SizedBox(width: 12),
-            Expanded(child: Text(title, style: const TextStyle(fontSize: 16))),
-            const Icon(Icons.chevron_right, color: Colors.grey),
+            const SizedBox(width: 11),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppTheme.threeColor,
+                ),
+              ),
+            ),
+            SvgPicture.asset(
+              ImageAssets.rightGray,
+              width: 15,
+              height: 15,
+              color: AppTheme.nineColor,
+            ),
           ],
         ),
       ),
@@ -342,6 +410,11 @@ class AccountView extends BaseView<AccountController> {
   }
 
   Widget _buildDivider() {
-    return const Divider(height: 1, indent: 16, endIndent: 16);
+    return const Divider(
+      height: 0.5,
+      indent: 20,
+      endIndent: 20,
+      color: AppTheme.dddColor,
+    );
   }
 }

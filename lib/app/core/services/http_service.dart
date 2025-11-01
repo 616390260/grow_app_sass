@@ -1,12 +1,13 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' as getx;
+import 'package:get_storage/get_storage.dart';
 import '../config/environment_config.dart';
-import '../utils/api_result.dart';
+import '../utils/json_convert.dart';
 import 'error_handler_center.dart';
+import '../constants/app_constants.dart';
 
 /// HTTP服务类 - 重构后的统一版本
 class HttpService extends getx.GetxService {
@@ -72,6 +73,20 @@ class HttpService extends getx.GetxService {
           return;
         }
 
+        // 注入token到请求头
+        try {
+          final storage = GetStorage();
+          final token = storage.read<String>(AppConstants.storageKeyUserToken);
+          if (token != null && token.isNotEmpty) {
+            // 常见约定：Authorization Bearer；根据后端需求可调整
+            options.headers['Authorization'] = 'Bearer $token';
+            // 同时保留简洁的token键，兼容不同后端实现
+            options.headers['APP-TOKEN'] = token;
+          }
+        } catch (_) {
+          // 读取存储失败时忽略，不影响正常请求
+        }
+
         _logRequest(options);
         handler.next(options);
       },
@@ -121,214 +136,197 @@ class HttpService extends getx.GetxService {
     }
   }
 
-  /// 统一的HTTP请求方法 - 消除重复逻辑
-  Future<ApiResult<T>> _executeRequest<T>(
-    String method,
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    T Function(dynamic)? fromJson,
-  }) async {
-    try {
-      late Response response;
-      
-      switch (method.toUpperCase()) {
-        case 'GET':
-          response = await _dio.get(
-            path,
-            queryParameters: queryParameters,
-            options: options,
-          );
-          break;
-        case 'POST':
-          response = await _dio.post(
-            path,
-            data: data,
-            queryParameters: queryParameters,
-            options: options,
-          );
-          break;
-        case 'PUT':
-          response = await _dio.put(
-            path,
-            data: data,
-            queryParameters: queryParameters,
-            options: options,
-          );
-          break;
-        case 'DELETE':
-          response = await _dio.delete(
-            path,
-            data: data,
-            queryParameters: queryParameters,
-            options: options,
-          );
-          break;
-        default:
-          throw ArgumentError('Unsupported HTTP method: $method');
-      }
-      
-      return _handleResponse<T>(response, fromJson);
-    } on DioException catch (e) {
-      return _errorHandler.handleException<T>(e);
-    } catch (e) {
-      return _errorHandler.handleException<T>(Exception(e.toString()));
-    }
-  }
 
   /// GET请求
-  Future<ApiResult<T>> get<T>(
+  Future<T> get<T>(
     String path, {
     Map<String, dynamic>? queryParameters,
     Options? options,
-    T Function(dynamic)? fromJson,
-  }) => _executeRequest<T>('GET', path, 
-      queryParameters: queryParameters, 
-      options: options, 
-      fromJson: fromJson);
-
-  /// POST请求
-  Future<ApiResult<T>> post<T>(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    T Function(dynamic)? fromJson,
-  }) => _executeRequest<T>('POST', path, 
-      data: data, 
-      queryParameters: queryParameters, 
-      options: options, 
-      fromJson: fromJson);
-
-  /// PUT请求
-  Future<ApiResult<T>> put<T>(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    T Function(dynamic)? fromJson,
-  }) => _executeRequest<T>('PUT', path, 
-      data: data, 
-      queryParameters: queryParameters, 
-      options: options, 
-      fromJson: fromJson);
-
-  /// DELETE请求
-  Future<ApiResult<T>> delete<T>(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    T Function(dynamic)? fromJson,
-  }) => _executeRequest<T>('DELETE', path, 
-      data: data, 
-      queryParameters: queryParameters, 
-      options: options, 
-      fromJson: fromJson);
-
-  /// 文件上传
-  Future<ApiResult<T>> uploadFile<T>(
-    String path,
-    File file, {
-    String? fileName,
-    Map<String, dynamic>? data,
-    ProgressCallback? onSendProgress,
-    T Function(dynamic)? fromJson,
   }) async {
     try {
-      final formData = FormData.fromMap({
-        'file': await MultipartFile.fromFile(
-          file.path,
-          filename: fileName ?? file.path.split('/').last,
-        ),
-        if (data != null) ...data,
-      });
-
-      final response = await _dio.post(
+      final response = await _dio.get(
         path,
-        data: formData,
-        onSendProgress: onSendProgress,
-      );
-      return _handleResponse<T>(response, fromJson);
-    } on DioException catch (e) {
-      return _errorHandler.handleException<T>(e);
-    } catch (e) {
-      return _errorHandler.handleException<T>(Exception('文件上传失败: $e'));
-    }
-  }
-
-  /// 文件下载
-  Future<ApiResult<String>> downloadFile(
-    String urlPath,
-    String savePath, {
-    ProgressCallback? onReceiveProgress,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-  }) async {
-    try {
-      await _dio.download(
-        urlPath,
-        savePath,
-        onReceiveProgress: onReceiveProgress,
         queryParameters: queryParameters,
         options: options,
       );
-      return ApiResult.success(data: savePath, message: '文件下载成功');
+      return _handleResponseData<T>(response);
     } on DioException catch (e) {
-      return _errorHandler.handleException<String>(e);
+      throw _errorHandler.handleExceptionException(e);
     } catch (e) {
-      return _errorHandler.handleException<String>(Exception('文件下载失败: $e'));
+      throw _errorHandler.handleExceptionException(Exception(e.toString()));
     }
   }
 
-  /// 处理响应 - 简化版本
-  ApiResult<T> _handleResponse<T>(
+
+  /// POST请求 - 直接返回泛型对象
+  Future<T> postData<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
+    try {
+      final response = await _dio.post(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      );
+      return _handleResponseData<T>(response);
+    } on DioException catch (e) {
+      throw _errorHandler.handleExceptionException(e);
+    } catch (e) {
+      throw _errorHandler.handleExceptionException(Exception(e.toString()));
+    }
+  }
+
+  /// PUT请求 - 直接返回泛型对象
+  Future<T> putData<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
+    try {
+      final response = await _dio.put(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      );
+      return _handleResponseData<T>(response);
+    } on DioException catch (e) {
+      throw _errorHandler.handleExceptionException(e);
+    } catch (e) {
+      throw _errorHandler.handleExceptionException(Exception(e.toString()));
+    }
+  }
+
+
+  /// DELETE请求 - 直接返回泛型对象
+  Future<T> deleteData<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
+    try {
+      final response = await _dio.delete(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      );
+      return _handleResponseData<T>(response);
+    } on DioException catch (e) {
+      throw _errorHandler.handleExceptionException(e);
+    } catch (e) {
+      throw _errorHandler.handleExceptionException(Exception(e.toString()));
+    }
+  }
+
+
+
+
+  /// 处理响应 - 使用JsonConvert进行类型转换
+  /// 增强对json_serializable注解的模型类的支持
+  T _handleResponseData<T>(
     Response response,
-    T Function(dynamic)? fromJson,
   ) {
     // 检查HTTP状态码
     if (response.statusCode != 200 && response.statusCode != 201) {
-      return _errorHandler.handleErrorCode<T>(response.statusCode, 'HTTP请求失败');
+      throw _errorHandler.handleErrorCode<T>(response.statusCode, 'HTTP请求失败');
     }
 
-    final data = response.data;
+    final responseData = response.data;
     
-    // 检查响应体中的业务code
-    if (data is Map<String, dynamic>) {
-      final code = data['code'] as int?;
-      final message = data['msg'] as String? ?? 
-                     data['message'] as String? ?? 
+    // 检查响应体中的业务code（处理标准API响应格式）
+    if (responseData is Map<String, dynamic>) {
+      final code = responseData['code'] as int?;
+      final message = responseData['msg'] as String? ?? 
+                     responseData['message'] as String? ?? 
                      '请求成功';
       
       if (code == 200) {
-        // 业务逻辑成功
-        if (fromJson != null) {
-          try {
-            final convertedData = fromJson(data);
-            return ApiResult.success(data: convertedData, message: message);
-          } catch (e) {
-            return ApiResult.failure(message: '数据解析失败: $e', errorCode: code);
-          }
+        // 业务逻辑成功，从响应中提取data字段
+        final businessData = responseData['data'];
+        
+        // 如果直接请求的是bool类型，并且data字段是bool，直接返回
+        if (T == bool && businessData is bool) {
+          return businessData as T;
         }
-        return ApiResult.success(data: data as T, message: message);
+        
+        return _convertDataToType<T>(businessData ?? responseData); 
       } else {
-        // 业务逻辑失败，使用错误处理中心
-        return _errorHandler.handleErrorCode<T>(code, message);
+        // 业务逻辑失败，统一抛出异常，确保错误能够被上层捕获处理
+        throw _errorHandler.handleErrorCode<T>(code, message);
       }
     }
 
-    // 非Map格式响应
-    if (fromJson != null && data != null) {
+    // 非标准API响应格式（非Map），直接进行类型转换
+    return _convertDataToType<T>(responseData);
+  }
+  
+  /// 通用数据类型转换方法
+  /// 将任意类型数据转换为指定的泛型类型
+  T _convertDataToType<T>(dynamic data) {
+    try {
+      // 1. 优先尝试使用JsonConvert进行转换
+      final result = JsonConvert.fromJsonAsT<T>(data);
+      print(result);
+      if (result != null) {
+        return result;
+      }
+      
+      // 2. 针对Map类型数据的特殊处理（支持json_serializable）
+      if (data is Map<String, dynamic>) {
+        try {
+          // 对于需要自定义转换的类型，直接返回Map供调用方处理
+          return data as T;
+        } catch (_) {
+          // 继续尝试其他方式
+        }
+      }
+      
+      // 3. 处理基本类型转换
+      if (T == String) {
+        return data.toString() as T;
+      } else if (T == int && data is num) {
+        return data.toInt() as T;
+      } else if (T == double && data is num) {
+        return data.toDouble() as T;
+      } else if (T == bool) {
+        print('处理bool类型: $data, 类型: ${data.runtimeType}');
+        if (data is bool) {
+          // 直接返回bool类型数据
+          return data as T;
+        } else if (data is num) {
+          // 数字转换为bool
+          return (data != 0) as T;
+        } else if (data is String) {
+          // 字符串转换为bool
+          final lowerData = data.toLowerCase();
+          return (lowerData == 'true' || lowerData == '1' || lowerData == 'yes' || lowerData == 'on') as T;
+        }
+        // 如果以上都不匹配，尝试toString后再判断
+        final stringValue = data?.toString()?.toLowerCase();
+        if (stringValue != null) {
+          return (stringValue == 'true' || stringValue == '1' || stringValue == 'yes' || stringValue == 'on') as T;
+        }
+        // 默认返回false
+        return false as T;
+      }
+      
+      // 4. 尝试直接类型转换作为最后手段
       try {
-        final convertedData = fromJson(data);
-        return ApiResult.success(data: convertedData);
+        return data as T;
       } catch (e) {
-        return ApiResult.failure(message: '数据解析失败: $e');
+        throw Exception('类型转换失败: 无法将响应数据转换为类型 $T: $e');
       }
+    } catch (e) {
+        final errorMsg = e is Exception ? e.toString() : '未知类型转换异常';
+        throw Exception('类型转换异常: $errorMsg');
     }
-
-    return ApiResult.success(data: data as T);
   }
 
   /// 取消所有请求
@@ -466,6 +464,14 @@ class HttpService extends getx.GetxService {
       return data.toString();
     }
   }
+
+
+
+
+
+
+
+
 
   /// 隐藏敏感数据
   String _maskSensitiveData(String data) {

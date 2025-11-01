@@ -33,7 +33,7 @@ class MessageUtils {
         Icons.error,
         color: Get.theme.colorScheme.error,
       ),
-      duration: const Duration(seconds: 4),
+      duration: const Duration(seconds: 2),
     );
   }
 
@@ -49,7 +49,7 @@ class MessageUtils {
         Icons.warning,
         color: Colors.orange,
       ),
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 2),
     );
   }
 
@@ -65,7 +65,7 @@ class MessageUtils {
         Icons.info,
         color: Get.theme.colorScheme.primary,
       ),
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 2),
     );
   }
 

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
-import '../../../core/managers/api_call_manager.dart';
 import '../../../data/services/auth_api_service.dart';
 
 class RegisterController extends BaseController {
@@ -43,8 +42,8 @@ class RegisterController extends BaseController {
   String get inviteCodeError => _inviteCodeError.value;
   RxString get inviteCodeErrorRx => _inviteCodeError;
 
-  // API调用管理器
-  final _apiCallManager = ApiCallManager();
+  // 认证API服务
+  final _authApiService = AuthApiService();
 
   @override
   void onInit() {
@@ -179,25 +178,25 @@ class RegisterController extends BaseController {
     final confirmPassword = confirmPasswordController.text;
     final inviteCode = inviteCodeController.text.trim();
 
-    setLoading(true);
-    final result = await _apiCallManager.call<Map<String, dynamic>>(
-      apiCall: () async {
-        final api = AuthApiService();
-        return await api.register(
-          account: account,
-          password: password,
-          confirmPassword: confirmPassword,
-          inviteCode: inviteCode.isNotEmpty ? inviteCode : null,
-        );
-      },
-      showLoading: false,
-    );
-    if (result.isSuccess) {
+    try {
+      setLoading(true);
+      // 直接调用AuthApiService的register方法
+      await _authApiService.register(
+        account: account,
+        password: password,
+        confirmPassword: confirmPassword,
+        inviteCode: inviteCode.isNotEmpty ? inviteCode : null,
+      );
+      
       setSuccess();
+      showSuccessMessage('注册成功');
       // 注册成功后跳转到登录页面
       Get.offNamed(Routes.LOGIN);
-    } else {
-      setError(result.message);
+    } catch (e) {
+      setError('注册失败: $e');
+      showErrorMessage('注册失败: $e');
+    } finally {
+      setLoading(false);
     }
   }
 

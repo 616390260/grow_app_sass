@@ -1,4 +1,6 @@
+import 'package:do_task_project/app/core/constants/image_assets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 
@@ -15,7 +17,7 @@ class BottomNavigationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80,
+      height: 56,
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -28,17 +30,17 @@ class BottomNavigationWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _buildNavItem(0, Icons.home, I18nKeys.home.tr),
-          _buildNavItem(1, Icons.trending_up, I18nKeys.promotion.tr),
-          _buildNavItem(2, Icons.assignment, I18nKeys.tasks.tr),
-          _buildNavItem(3, Icons.psychology, I18nKeys.smart.tr),
-          _buildNavItem(4, Icons.person, I18nKeys.account.tr),
+          _buildNavItem(0, ImageAssets.home, I18nKeys.home.tr),
+          _buildNavItem(1, ImageAssets.promotion, I18nKeys.promotion.tr),
+          _buildNavItem(2, ImageAssets.tasks, I18nKeys.tasks.tr),
+          _buildNavItem(3, ImageAssets.service, I18nKeys.service.tr),
+          _buildNavItem(4, ImageAssets.account, I18nKeys.account.tr),
         ],
       ),
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, String label) {
+  Widget _buildNavItem(int index, String imagePath, String label) {
     final isSelected = currentIndex == index;
 
     return Expanded(
@@ -52,18 +54,23 @@ class BottomNavigationWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 24,
-                color: isSelected ? const Color(0xFF4A90E2) : const Color(0xFF95A5A6),
+              SvgPicture.asset(
+                imagePath,
+                width: 20,
+                height: 20,
+                color: isSelected
+                    ? const Color(0xFF427AF2)
+                    : const Color(0xFFDDDDDD),
               ),
               const SizedBox(height: 4),
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 12,
-                  color: isSelected ? const Color(0xFF4A90E2) : const Color(0xFF95A5A6),
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  fontSize: 10,
+                  color: isSelected
+                      ? const Color(0xFF427AF2)
+                      : const Color(0xFF999999),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],

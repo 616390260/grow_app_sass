@@ -23,20 +23,17 @@ class ApiErrorHandler {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
         return ApiResult.networkError(
-          message: '连接超时，请检查网络连接',
-          exception: error,
+          msg: '连接超时，请检查网络连接',
         );
       
       case DioExceptionType.sendTimeout:
         return ApiResult.networkError(
-          message: '请求超时，请稍后重试',
-          exception: error,
+          msg: '请求超时，请稍后重试',
         );
       
       case DioExceptionType.receiveTimeout:
         return ApiResult.networkError(
-          message: '响应超时，请稍后重试',
-          exception: error,
+          msg: '响应超时，请稍后重试',
         );
       
       case DioExceptionType.badResponse:
@@ -44,8 +41,8 @@ class ApiErrorHandler {
       
       case DioExceptionType.cancel:
         return ApiResult.failure(
-          message: '请求已取消',
-          exception: error,
+          msg: '请求已取消',
+          code: -2,
         );
       
       case DioExceptionType.connectionError:
@@ -53,27 +50,23 @@ class ApiErrorHandler {
         final hasConnection = await _checkNetworkConnection();
         if (!hasConnection) {
           return ApiResult.networkError(
-            message: '无网络连接，请检查网络设置',
-            exception: error,
+            msg: '无网络连接，请检查网络设置',
           );
         } else {
           return ApiResult.networkError(
-            message: '网络连接异常，请稍后重试',
-            exception: error,
+            msg: '网络连接异常，请稍后重试',
           );
         }
       
       case DioExceptionType.badCertificate:
         return ApiResult.networkError(
-          message: '证书验证失败',
-          exception: error,
+          msg: '证书验证失败',
         );
       
       case DioExceptionType.unknown:
       default:
         return ApiResult.unknownError(
-          message: '网络请求失败: ${error.message}',
-          exception: error,
+          msg: '网络请求失败: ${error.message}',
         );
     }
   }
@@ -96,36 +89,34 @@ class ApiErrorHandler {
     switch (statusCode) {
       case 400:
         return ApiResult.invalidParams(
-          message: message.isNotEmpty ? message : '请求参数错误',
+          msg: message.isNotEmpty ? message : '请求参数错误',
         );
       
       case 401:
         return ApiResult.unauthorized(
-          message: message.isNotEmpty ? message : '未授权，请重新登录',
+          msg: message.isNotEmpty ? message : '未授权，请重新登录',
         );
       
       case 403:
         return ApiResult.failure(
-          message: message.isNotEmpty ? message : '权限不足',
-          errorCode: 403,
-          exception: error,
+          msg: message.isNotEmpty ? message : '权限不足',
+          code: 403,
         );
       
       case 404:
         return ApiResult.emptyData(
-          message: message.isNotEmpty ? message : '请求的资源不存在',
+          msg: message.isNotEmpty ? message : '请求的资源不存在',
         );
       
       case 422:
         return ApiResult.invalidParams(
-          message: message.isNotEmpty ? message : '数据验证失败',
+          msg: message.isNotEmpty ? message : '数据验证失败',
         );
       
       case 429:
         return ApiResult.failure(
-          message: message.isNotEmpty ? message : '请求过于频繁，请稍后重试',
-          errorCode: 429,
-          exception: error,
+          msg: message.isNotEmpty ? message : '请求过于频繁，请稍后重试',
+          code: 429,
         );
       
       case 500:
@@ -133,16 +124,14 @@ class ApiErrorHandler {
       case 503:
       case 504:
         return ApiResult.serverError(
-          message: message.isNotEmpty ? message : '服务器错误，请稍后重试',
-          errorCode: statusCode,
-          exception: error,
+          msg: message.isNotEmpty ? message : '服务器错误，请稍后重试',
+          code: statusCode ?? 500,
         );
       
       default:
         return ApiResult.failure(
-          message: message.isNotEmpty ? message : 'HTTP错误: $statusCode',
-          errorCode: statusCode,
-          exception: error,
+          msg: message.isNotEmpty ? message : 'HTTP错误: $statusCode',
+          code: statusCode ?? 500,
         );
     }
   }
@@ -150,24 +139,22 @@ class ApiErrorHandler {
   /// 处理Socket错误
   static ApiResult<T> _handleSocketError<T>(SocketException error) {
     return ApiResult.networkError(
-      message: '网络连接失败，请检查网络设置',
-      exception: error,
+      msg: '网络连接失败，请检查网络设置',
     );
   }
 
   /// 处理格式化错误
   static ApiResult<T> _handleFormatError<T>(FormatException error) {
     return ApiResult.failure(
-      message: '数据格式错误',
-      exception: error,
+      msg: '数据格式错误',
+      code: -5,
     );
   }
 
   /// 处理通用错误
   static ApiResult<T> _handleGenericError<T>(Exception error) {
     return ApiResult.unknownError(
-      message: '未知错误: ${error.toString()}',
-      exception: error,
+      msg: '未知错误: ${error.toString()}',
     );
   }
 
@@ -188,22 +175,20 @@ class ApiErrorHandler {
   }) async {
     try {
       final result = await apiCall();
-      return ApiResult.success(data: result);
+      return ApiResult.success(data: result, msg: '操作成功');
     } catch (e) {
       if (e is Exception) {
         final errorResult = await handleError<T>(e);
         if (errorMessage != null) {
           return ApiResult.failure(
-            message: errorMessage,
-            errorCode: errorResult.errorCode,
-            exception: errorResult.exception,
-          );
+          msg: errorMessage,
+          code: errorResult.code,
+        );
         }
         return errorResult;
       } else {
         return ApiResult.unknownError(
-          message: errorMessage ?? '未知错误: ${e.toString()}',
-          exception: Exception(e.toString()),
+          msg: errorMessage ?? '未知错误: ${e.toString()}',
         );
       }
     }
@@ -216,7 +201,7 @@ class ApiErrorHandler {
     Duration delay = const Duration(seconds: 1),
     bool Function(ApiResult<T> result)? shouldRetry,
   }) async {
-    ApiResult<T> lastResult = ApiResult.failure(message: '未执行');
+    ApiResult<T> lastResult = ApiResult.failure(msg: '未执行', code: -1);
     
     for (int attempt = 0; attempt <= maxRetries; attempt++) {
       try {
@@ -232,10 +217,10 @@ class ApiErrorHandler {
         }
         
         // 某些错误不应该重试
-        if (lastResult.errorCode == 401 || 
-            lastResult.errorCode == 403 || 
-            lastResult.errorCode == 400 ||
-            lastResult.errorCode == 422) {
+        if (lastResult.code == 401 || 
+            lastResult.code == 403 || 
+            lastResult.code == 400 ||
+            lastResult.code == 422) {
           break;
         }
         

@@ -52,16 +52,40 @@ abstract class BaseView<T extends BaseController> extends GetView<T> {
   /// 构建页面主体
   Widget _buildBody(BuildContext context) {
     return Obx(() {
-      switch (controller.pageState) {
-        case PageState.loading:
-          return showLoadingState ? _buildLoadingWidget() : buildContent(context);
-        case PageState.error:
-          return showErrorState ? _buildErrorContent(context) : buildContent(context);
-        case PageState.empty:
-          return showEmptyState ? _buildEmptyWidget() : buildContent(context);
-        default:
-          return enableRefresh ? _buildRefreshableContent(context) : buildContent(context);
+      // 基础内容
+      Widget content;
+      
+      // 根据页面状态确定显示的基础内容
+      if (controller.pageState == PageState.error && showErrorState) {
+        content = _buildErrorContent(context);
+      } else if (controller.pageState == PageState.empty && showEmptyState) {
+        content = _buildEmptyWidget();
+      } else {
+        content = enableRefresh ? _buildRefreshableContent(context) : buildContent(context);
       }
+      
+      // 如果是加载状态，在内容上方显示对话框样式的加载指示器
+      if (controller.pageState == PageState.loading && showLoadingState) {
+        return Stack(
+          children: [
+            // 基础内容保持可见
+            content,
+            // 在上层显示对话框样式的加载指示器（半透明背景）
+            Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5), // 设置为半透明黑色背景
+                  borderRadius: BorderRadius.circular(12.0), // 添加圆角使对话框更美观
+                ),
+                padding: EdgeInsets.all(20.0), // 添加内边距
+                child: _buildLoadingWidget(),
+              ),
+            ),
+          ],
+        );
+      }
+      
+      return content;
     });
   }
 
@@ -80,15 +104,6 @@ abstract class BaseView<T extends BaseController> extends GetView<T> {
     return LoadingStyle.buildLoadingWidget();
   }
 
-  /// 构建错误状态组件
-  Widget _buildErrorWidget() {
-    return LoadingStyle.buildErrorWidget(
-      message: controller.errorMessage.isNotEmpty 
-          ? controller.errorMessage 
-          : '未知错误',
-      onRetry: () => controller.refreshData(),
-    );
-  }
 
   /// 构建带错误提示的内容
   Widget _buildErrorContent(BuildContext context) {

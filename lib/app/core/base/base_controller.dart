@@ -33,6 +33,8 @@ abstract class BaseController extends GetxController {
     _isLoading.value = loading;
     if (loading) {
       _pageState.value = PageState.loading;
+    } else {
+      _pageState.value = PageState.initial;
     }
   }
 
@@ -84,6 +86,7 @@ abstract class BaseController extends GetxController {
       snackPosition: SnackPosition.TOP,
       backgroundColor: Get.theme.colorScheme.error,
       colorText: Get.theme.colorScheme.onError,
+      duration: const Duration(seconds: 2),
     );
   }
 
@@ -95,6 +98,7 @@ abstract class BaseController extends GetxController {
       snackPosition: SnackPosition.TOP,
       backgroundColor: Get.theme.colorScheme.secondary,
       colorText: Get.theme.colorScheme.onSecondary,
+      duration: const Duration(seconds: 2),
     );
   }
 
@@ -104,6 +108,7 @@ abstract class BaseController extends GetxController {
       '提示',
       message,
       snackPosition: SnackPosition.TOP,
+      duration: const Duration(seconds: 2),
     );
   }
 
