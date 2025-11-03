@@ -21,6 +21,7 @@ abstract class Routes {
   static const ACCOUNT_WITHDRAWAL = _Paths.ACCOUNT_WITHDRAWAL;
   static const PAYMENT_METHOD = _Paths.PAYMENT_METHOD;
   static const WITHDRAWAL_ORDERS = _Paths.WITHDRAWAL_ORDERS;
+  static const INCOME_DETAILS = _Paths.INCOME_DETAILS;
 }
 
 /// 路由路径定义
@@ -44,4 +45,5 @@ abstract class _Paths {
   static const ACCOUNT_WITHDRAWAL = '/account-withdrawal';
   static const PAYMENT_METHOD = '/payment-method';
   static const WITHDRAWAL_ORDERS = '/withdrawal-orders';
+  static const INCOME_DETAILS = '/income-details';
 }

@@ -36,8 +36,18 @@ class I18nKeys {
   static const promotionPage = 'promotion_page';
   static const tasks = 'tasks';
   static const tasksPage = 'tasks_page';
-  static const smart = 'smart';
-  static const smartPage = 'smart_page';
+  static const smart = 'customer_service';
+  static const smartPage = 'customer_service_page';
+  
+  // Customer Service Page
+  static const customerServiceTitle = 'customer_service_title';
+  static const onlineServiceGreeting = 'online_service_greeting';
+  static const contactCustomerService = 'contact_customer_service';
+  static const consultNow = 'consult_now';
+  static const telegramGroup = 'telegram_group';
+  static const joinNow = 'join_now';
+  static const platformGuide = 'platform_guide';
+  static const clickHere = 'click_here';
   static const account = 'account';
   static const accountPage = 'account_page';
   static const service = 'service';
@@ -48,6 +58,16 @@ class I18nKeys {
   static const pointsLabel = 'points';
   static const accountWithdrawal = 'account_withdrawal';
   static const incomeDetails = 'income_details';
+  static const incomeType = 'income_type';
+  static const incomeAmount = 'income_amount';
+  static const incomeTime = 'income_time';
+  static const allTypes = 'all_types';
+  static const allTime = 'all_time';
+  static const selectType = 'select_type';
+  static const selectTime = 'select_time';
+  static const today = 'today';
+  static const thisWeek = 'this_week';
+  static const thisMonth = 'this_month';
   static const withdrawalOrders = 'withdrawal_orders';
   static const withdrawalOrderList = 'withdrawal_order_list';
   static const withdrawalAmount = 'withdrawal_amount';

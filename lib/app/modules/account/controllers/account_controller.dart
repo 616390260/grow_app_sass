@@ -66,8 +66,9 @@ class AccountController extends BaseController {
     Get.toNamed(Routes.ACCOUNT_WITHDRAWAL);
   }
 
+  // 收益明细点击事件
   void onIncomeDetailsTap() {
-    showInfoMessage(I18nKeys.incomeDetails.tr);
+    Get.toNamed(Routes.INCOME_DETAILS);
   }
 
   void onWithdrawalOrdersTap() {

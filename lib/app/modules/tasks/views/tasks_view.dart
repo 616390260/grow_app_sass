@@ -1,5 +1,6 @@
 import 'package:do_task_project/app/core/constants/image_assets.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
+import 'package:do_task_project/app/data/models/home_info_model.dart';
 import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,7 +10,7 @@ import '../../../core/base/base_view.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 
 class TasksView extends BaseView<TasksController> {
-  TasksView({Key? key}) : super(key: key);
+  const TasksView({Key? key}) : super(key: key);
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
@@ -43,85 +44,92 @@ class TasksView extends BaseView<TasksController> {
           colors: [Color(0xFF477DF2), Color(0xFF47ABF2), Color(0xFFF9F9F9)],
         ),
       ),
-      padding: const EdgeInsets.only(top: 16, left: 15, right: 15, bottom: 20),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            // 任务列表
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
+      child: Stack(
+        children: [
+          // 主内容区域
+          Positioned(
+            top: 16,
+            left: 15,
+            right: 15,
+            child: SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 标题
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12, left: 17),
-                    child: Text(
-                      '任务列表',
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w800,
-                        color: AppTheme.threeColor,
-                      ),
+                  // 任务列表
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 标题
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12, left: 17),
+                          child: Text(
+                            'WhatsApp',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                              color: AppTheme.threeColor,
+                            ),
+                          ),
+                        ),
+                        // 任务列表
+                        Obx(() {
+                          return ListView.builder(
+                            padding: EdgeInsets.only(
+                              left: 14,
+                              right: 14,
+                              top: 3,
+                              bottom: 19,
+                            ),
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: controller.tasks.length,
+                            itemBuilder: (context, index) {
+                              final task = controller.tasks[index];
+                              return TaskCard(
+                                titleKey: task.title??'任务标题',
+                                descriptionKey: task.description??'任务描述',
+                                onStartTask: () => _startTask(task),
+                              );
+                            },
+                          );
+                        }),
+                      ],
                     ),
                   ),
-                  // 任务列表
-                  Obx(() {
-                    return ListView.builder(
-                      padding: EdgeInsets.only(
-                        left: 14,
-                        right: 14,
-                        top: 3,
-                        bottom: 19,
+
+                  // 底部提示文本
+                  Container(
+                    margin: const EdgeInsets.only(top: 20),
+                    child: Text(
+                      I18nKeys.taskNote.tr,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppTheme.threeColor,
                       ),
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: controller.tasks.length,
-                      itemBuilder: (context, index) {
-                        final task = controller.tasks[index];
-                        return TaskCard(
-                          title: task.title ?? '',
-                          description: task.description ?? '',
-                          onStartTask: () => _startTask(task),
-                        );
-                      },
-                    );
-                  }),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
                 ],
               ),
             ),
-
-            // 底部提示文本
-            Container(
-              margin: const EdgeInsets.only(top: 20),
-              child: Text(
-                I18nKeys.taskNote.tr,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: AppTheme.threeColor,
-                ),
-                textAlign: TextAlign.left,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-
-
-  void _startTask(dynamic task) {
+  void _startTask(RecommendTaskModel task) {
     // 这里可以实现任务开始的逻辑
     Get.toNamed(Routes.WHATSAPP_TASK, arguments: task.id);
   }
@@ -129,87 +137,105 @@ class TasksView extends BaseView<TasksController> {
 
 // 任务卡片组件
 class TaskCard extends StatelessWidget {
-  final String title;
-  final String description;
+  final String titleKey;
+  final String descriptionKey;
   final VoidCallback onStartTask;
 
   const TaskCard({
     Key? key,
-    required this.title,
-    required this.description,
+    required this.titleKey,
+    required this.descriptionKey,
     required this.onStartTask,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppTheme.bgColor,
         borderRadius: BorderRadius.circular(5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 任务图标
-          Container(
-            width: 32,
-            height: 32,
-            padding: const EdgeInsets.all(6),
-            margin: const EdgeInsets.only(left: 13, top: 11),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFF8E6A),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Image.asset(ImageAssets.homeTask, width: 14, height: 14),
-          ),
-          const SizedBox(width: 14),
-          // 任务信息
+          // 左侧任务信息
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 9),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800,
-                      color: AppTheme.threeColor,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 任务图标和标题
+                Row(
+                  children: [
+                    Container(
+                      width: 32,
+                      height: 32,
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFF6B00),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Image.asset(
+                        ImageAssets.homeTask,
+                        width: 18,
+                        height: 18,
+                      ),
                     ),
-                  ),
-                  Text(
-                    description,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: AppTheme.nineColor,
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            titleKey.tr,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w800,
+                              color: AppTheme.threeColor,
+                            ),
+                          ),
+                          Text(
+                            descriptionKey.tr,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: AppTheme.nineColor,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                    const SizedBox(width: 11),
+                    // 右侧开始任务按钮
+                    GestureDetector(
+                      onTap: onStartTask,
+                      child: Container(
+                        padding: const EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryColor,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Text(
+                          '开始任务',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                    )
+                  ],
+                ),
+              ],
             ),
           ),
-          const SizedBox(width: 11),
-          // 右侧开始任务按钮
-          GestureDetector(
-            onTap: onStartTask,
-            child: Container(
-              padding: const EdgeInsets.all(7),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryColor,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Text(
-                '开始任务',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-          )
         ],
       ),
     );

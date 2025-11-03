@@ -180,6 +180,58 @@ class RecommendTaskModel {
   Map<String, dynamic> toJson() => _$RecommendTaskModelToJson(this);
 }
 
+/// 任务列表响应模型
+@JsonSerializable()
+class TaskListResponse {
+  @JsonKey(name: 'records')
+  final List<RecommendTaskModel>? records;
+
+  @JsonKey(name: 'total')
+  final int? total;
+
+  @JsonKey(name: 'size')
+  final int? size;
+
+  @JsonKey(name: 'current')
+  final int? current;
+
+  @JsonKey(name: 'orders')
+  final List<dynamic>? orders;
+
+  @JsonKey(name: 'optimizeCountSql')
+  final bool? optimizeCountSql;
+
+  @JsonKey(name: 'searchCount')
+  final bool? searchCount;
+
+  @JsonKey(name: 'maxLimit')
+  final int? maxLimit;
+
+  @JsonKey(name: 'countId')
+  final String? countId;
+
+  @JsonKey(name: 'pages')
+  final int? pages;
+
+  TaskListResponse({
+    this.records,
+    this.total,
+    this.size,
+    this.current,
+    this.orders,
+    this.optimizeCountSql,
+    this.searchCount,
+    this.maxLimit,
+    this.countId,
+    this.pages,
+  });
+
+  factory TaskListResponse.fromJson(Map<String, dynamic> json) =>
+      _$TaskListResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TaskListResponseToJson(this);
+}
+
 /// 旧的推荐任务模型（不再使用）
 @JsonSerializable()
 class OldRecommendTaskModel {

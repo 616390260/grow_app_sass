@@ -89,15 +89,15 @@ class AuthApiService {
     required String oldPassword,
     required String newPassword,
   }) async {
-    final data = <String, dynamic>{
+    final queryParameters = <String, dynamic>{
       'oldPassword': oldPassword,
       'newPassword': newPassword,
     };
 
-    // 使用 HttpService 的 postData 方法，直接返回泛型对象
-    return await _httpService.postData<Map<String, dynamic>>(
+    // 使用 HttpService 的 get 方法，直接返回泛型对象
+    return await _httpService.get<Map<String, dynamic>>(
       'app/user/updatePassword',
-      data: data,
+      queryParameters: queryParameters,
     );
   }
 }

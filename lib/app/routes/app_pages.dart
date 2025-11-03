@@ -35,6 +35,8 @@ import '../modules/lucky_wheel/views/lucky_wheel_view.dart';
 import '../modules/sign_in_calendar/bindings/sign_in_calendar_binding.dart';
 import '../modules/sign_in_calendar/views/sign_in_calendar_view.dart';
 import '../modules/change_password/bindings/change_password_binding.dart';
+import '../modules/income_details/bindings/income_details_binding.dart';
+import '../modules/income_details/views/income_details_view.dart';
 
 part 'app_routes.dart';
 
@@ -142,6 +144,12 @@ class AppPages {
       name: Routes.WITHDRAWAL_ORDERS,
       page: () => const WithdrawalOrdersView(),
       binding: WithdrawalOrdersBinding(),
+    ),
+    // 收益明细页
+    GetPage(
+      name: Routes.INCOME_DETAILS,
+      page: () => IncomeDetailsPage(),
+      binding: IncomeDetailsBinding(),
     ),
   ];
 }

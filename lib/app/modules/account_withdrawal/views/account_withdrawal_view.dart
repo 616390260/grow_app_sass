@@ -15,7 +15,7 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
     return AppBar(
       title: Text(
         I18nKeys.accountWithdrawal.tr,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
       ),
       centerTitle: true,
       leading: const BackButton(),
@@ -31,32 +31,40 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
   @override
   Widget buildContent(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 转出到部分
-          _buildCountrySelectionSection(),
-          
-          const SizedBox(height: 20),
-          
-          // 地址部分
-          _buildAddressSection(),
-          
-          const SizedBox(height: 20),
-          
-          // 转出金额部分
-          _buildAmountSection(),
-          
-          const SizedBox(height: 20),
-          
-          // 确定按钮
-          _buildConfirmButton(),
-          
-          const SizedBox(height: 20),
-          
-          // 提现说明部分
-          _buildDescriptionSection(),
+          Container(height: 10, color: AppTheme.bgColor),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildCountrySelectionSection(),
+
+                const SizedBox(height: 20),
+
+                // 地址部分
+                _buildAddressSection(),
+
+                const SizedBox(height: 20),
+
+                // 转出金额部分
+                _buildAmountSection(),
+
+                const SizedBox(height: 20),
+
+                // 确定按钮
+                _buildConfirmButton(),
+
+                const SizedBox(height: 20),
+
+                // 提现说明部分
+                _buildDescriptionSection(),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -77,37 +85,34 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
         ),
         const SizedBox(height: 12),
         Wrap(
-          spacing: 10,
+          spacing: 20,
           runSpacing: 10,
           children: controller.countries.map((country) {
-            bool isSelected = controller.selectedCountry.value == country['key'];
+            bool isSelected =
+                controller.selectedCountry.value == country['key'];
             return ElevatedButton(
               onPressed: () {
                 controller.selectCountry(country['key']!);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: isSelected 
-                  ? AppTheme.primaryColor 
-                  : Colors.white,
-                foregroundColor: isSelected 
-                  ? Colors.white 
-                  : AppTheme.sixColor,
-                minimumSize: const Size(80, 36),
+                backgroundColor: AppTheme.bgColor,
+                foregroundColor: isSelected
+                    ? AppTheme.primaryColor
+                    : AppTheme.sixColor,
+                minimumSize: const Size(00, 30),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(3),
                   side: BorderSide(
-                    color: isSelected 
-                      ? AppTheme.primaryColor 
-                      : AppTheme.sixColor,
-                    width: 1,
+                    color: isSelected
+                        ? AppTheme.primaryColor
+                        : AppTheme.nineColor,
+                    width: 0.5,
                   ),
                 ),
               ),
               child: Text(
                 country['label']!,
-                style: TextStyle(
-                  fontSize: 14,
-                ),
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
               ),
             );
           }).toList(),
@@ -124,8 +129,8 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
         Text(
           I18nKeys.address.tr,
           style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
             color: AppTheme.threeColor,
           ),
         ),
@@ -134,18 +139,16 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
           height: 44,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            border: Border.all(color: AppTheme.dddColor),
-            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: AppTheme.nineColor, width: 0.5),
+
+            borderRadius: BorderRadius.circular(5),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 '${I18nKeys.nigeria.tr} ${I18nKeys.addNigeria.tr}',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppTheme.nineColor,
-                ),
+                style: TextStyle(fontSize: 14, color: AppTheme.nineColor),
               ),
               GestureDetector(
                 onTap: () {
@@ -159,7 +162,7 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -173,21 +176,23 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
           children: [
             Text(
               I18nKeys.withdrawAmount.tr,
               style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
                 color: AppTheme.threeColor,
               ),
             ),
+            const SizedBox(width: 10),
             Text(
               '${I18nKeys.withdrawFee.tr}${controller.withdrawalFee.toStringAsFixed(2)}${I18nKeys.points.tr}',
               style: TextStyle(
-                fontSize: 12,
-                color: Colors.red,
+                fontSize: 14,
+                color: AppTheme.ff6a6aColor,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -195,20 +200,19 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
         ),
         const SizedBox(height: 12),
         Container(
-          height: 44,
+          height: 48,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            border: Border.all(color: AppTheme.dddColor),
-            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: AppTheme.nineColor, width: 0.5),
+            borderRadius: BorderRadius.circular(5),
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
             children: [
               Text(
                 '${I18nKeys.maxWithdraw.tr} ',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppTheme.nineColor,
-                ),
+                style: TextStyle(fontSize: 14, color: AppTheme.nineColor),
               ),
               Expanded(
                 child: TextField(
@@ -219,10 +223,7 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
                   ),
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppTheme.threeColor,
-                  ),
+                  style: TextStyle(fontSize: 14, color: AppTheme.threeColor),
                 ),
               ),
             ],
@@ -234,7 +235,7 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: AppTheme.threeColor,
+            color: AppTheme.nineColor,
           ),
         ),
       ],
@@ -251,17 +252,12 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primaryColor,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         ),
         child: Text(
-              I18nKeys.withdrawConfirm.tr,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+          I18nKeys.withdrawConfirm.tr,
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+        ),
       ),
     );
   }
@@ -274,18 +270,15 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
         Text(
           I18nKeys.withdrawDescription.tr,
           style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
             color: AppTheme.threeColor,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 7),
         Text(
           '${I18nKeys.minWithdrawAmount.tr}\n${I18nKeys.dailyWithdrawLimit.tr}\n${I18nKeys.withdrawTips.tr}',
-          style: TextStyle(
-            fontSize: 12,
-            color: AppTheme.sixColor,
-          ),
+          style: TextStyle(fontSize: 13, color: AppTheme.sixColor,fontWeight: FontWeight.w500),
         ),
       ],
     );

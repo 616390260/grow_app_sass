@@ -46,6 +46,8 @@ class ImageAssets {
   static const String wheelBg = '$_basePath/wheel_bg.png';
   static const String wheelPoint = '$_basePath/wheel_point.png';
   static const String inviteBg = '$_basePath/invite_bg.webp';
+  static const String serviceBg = '$_basePath/service_bg.png';
+  static const String serviceGuide = '$_basePath/service_guide.png';
 
   // 多语言横幅图片
   static const String welcomeBannerZhCn = '$_basePath/zh_CN/welcome_banner.svg';

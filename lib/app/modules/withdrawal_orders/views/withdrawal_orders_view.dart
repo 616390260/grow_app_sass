@@ -56,7 +56,8 @@ class WithdrawalOrdersView extends BaseView<WithdrawalOrdersController> {
       color: const Color(0xFFF5F5F5),
       child: Column(
         children: [
-          _buildFilterBar(),
+          _buildFilterSection(),
+          _buildListHeader(),
           Expanded(
             child: Obx(() {
               if (controller.orders.isEmpty) {
@@ -66,7 +67,7 @@ class WithdrawalOrdersView extends BaseView<WithdrawalOrdersController> {
                   itemCount: controller.orders.length,
                   itemBuilder: (context, index) {
                     final order = controller.orders[index];
-                    return _buildOrderItem(order);
+                    return _buildOrderItem(order, index);
                   },
                 );
               }
@@ -77,23 +78,74 @@ class WithdrawalOrdersView extends BaseView<WithdrawalOrdersController> {
     );
   }
 
-  // 构建筛选栏
-  Widget _buildFilterBar() {
+  // 构建列表头部
+  Widget _buildListHeader() {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.only(left: 16, top: 13, bottom: 8),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              I18nKeys.withdrawalAmount.tr,
+              style: TextStyle(
+                fontSize: 14,
+                color: AppTheme.threeColor,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              I18nKeys.status.tr,
+              style: TextStyle(
+                fontSize: 14,
+                color: AppTheme.threeColor,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              I18nKeys.time.tr,
+              style: TextStyle(
+                fontSize: 14,
+                color: AppTheme.threeColor,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 构建筛选区域
+  Widget _buildFilterSection() {
     return Container(
       color: AppTheme.primaryColor,
-      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 52, vertical: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildFilterButton(
-            title: controller.selectedType.value,
-            options: controller.typeOptions,
-            onSelect: controller.selectType,
+            controller.selectedType.value,
+            controller.selectedType.value,
+                () {
+              _showTypeFilterDialog();
+            },
           ),
           _buildFilterButton(
-            title: controller.selectedTimeRange.value,
-            options: controller.timeRangeOptions,
-            onSelect: controller.selectTimeRange,
+            controller.selectedTimeRange.value,
+            controller.selectedTimeRange.value,
+                () {
+              _showTimeFilterDialog();
+            },
           ),
         ],
       ),
@@ -101,109 +153,215 @@ class WithdrawalOrdersView extends BaseView<WithdrawalOrdersController> {
   }
 
   // 构建筛选按钮
-  Widget _buildFilterButton({
-    required String title,
-    required List<String> options,
-    required Function(String) onSelect,
-  }) {
-    return PopupMenuButton<String>(
-      itemBuilder: (context) {
-        return options.map((option) {
-          return PopupMenuItem(
-            value: option,
-            child: Text(option),
-          );
-        }).toList();
-      },
-      onSelected: onSelect,
+  Widget _buildFilterButton(
+    String title,
+    String currentValue,
+    VoidCallback onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
       child: Row(
         children: [
-          Text(title, style: const TextStyle(fontSize: 15, color: Colors.white,fontWeight: FontWeight.w500)),
+          Text(
+            currentValue,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           const SizedBox(width: 4),
-          const Icon(Icons.arrow_drop_down, size: 16, color: Colors.white),
+          const Icon(Icons.arrow_drop_down, color: Colors.white),
         ],
       ),
     );
   }
 
-  // 构建订单列表项
-  Widget _buildOrderItem(WithdrawalOrder order) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  // 显示类型筛选对话框
+  void _showTypeFilterDialog() {
+    showModalBottomSheet(
+      context: Get.context!,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                I18nKeys.withdrawalAmount.tr,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF666666),
-                ),
-              ),
-              Text(
-                '¥${order.amount.toStringAsFixed(2)}',
-                style: const TextStyle(
+                I18nKeys.selectType.tr,
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFFE53935),
+                  color: AppTheme.threeColor,
                 ),
+              ),
+              const SizedBox(height: 16),
+              _buildFilterItem(
+                I18nKeys.allTypes.tr,
+                controller.selectedType.value,
+                    (value) {
+                  controller.selectType(value);
+                  Get.back();
+                },
+              ),
+              // 添加其他类型选项
+              _buildFilterItem(
+                '提现',
+                controller.selectedType.value,
+                    (value) {
+                  controller.selectType(value);
+                  Get.back();
+                },
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        );
+      },
+    );
+  }
+
+  // 显示时间筛选对话框
+  void _showTimeFilterDialog() {
+    showModalBottomSheet(
+      context: Get.context!,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                I18nKeys.status.tr,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF666666),
-                ),
-              ),
-              Text(
-                order.status,
+                I18nKeys.selectTime.tr,
                 style: TextStyle(
-                  fontSize: 14,
-                  color: _getStatusColor(order.status),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.threeColor,
                 ),
+              ),
+              const SizedBox(height: 16),
+              _buildFilterItem(
+                I18nKeys.allTime.tr,
+                controller.selectedTimeRange.value,
+                    (value) {
+                  controller.selectTimeRange(value);
+                  Get.back();
+                },
+              ),
+              _buildFilterItem(
+                I18nKeys.today.tr,
+                controller.selectedTimeRange.value,
+                    (value) {
+                  controller.selectTimeRange(value);
+                  Get.back();
+                },
+              ),
+              _buildFilterItem(
+                I18nKeys.thisWeek.tr,
+                controller.selectedTimeRange.value,
+                    (value) {
+                  controller.selectTimeRange(value);
+                  Get.back();
+                },
+              ),
+              _buildFilterItem(
+                I18nKeys.thisMonth.tr,
+                controller.selectedTimeRange.value,
+                    (value) {
+                  controller.selectTimeRange(value);
+                  Get.back();
+                },
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                I18nKeys.time.tr,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF666666),
+        );
+      },
+    );
+  }
+
+  // 构建筛选选项项
+  Widget _buildFilterItem(
+    String title,
+    String currentValue,
+    void Function(String) onSelect,
+  ) {
+    return GestureDetector(
+      onTap: () => onSelect(title),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: AppTheme.eeeColor)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: TextStyle(fontSize: 14, color: AppTheme.threeColor),
+            ),
+            if (title == currentValue)
+              const Icon(Icons.check, color: AppTheme.primaryColor),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 构建订单列表项
+  Widget _buildOrderItem(WithdrawalOrder order, int index) {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                // 提现金额
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    '¥${order.amount.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppTheme.primaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
-              ),
-              Text(
-                order.time,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF666666),
+                // 状态
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    order.status,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: _getStatusColor(order.status),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
-            ],
+                // 时间
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    order.time,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppTheme.sixColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // 添加分隔线
+          Container(
+            height: 0.5,
+            color: AppTheme.dddColor,
+            margin: const EdgeInsets.only(left: 19),
           ),
         ],
       ),
@@ -230,38 +388,17 @@ class WithdrawalOrdersView extends BaseView<WithdrawalOrdersController> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: const Color(0xFFF5F5F5),
-              borderRadius: BorderRadius.circular(60),
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE3F2FD),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                Icon(
-                  Icons.inbox_outlined,
-                  size: 40,
-                  color: Colors.blue.withOpacity(0.5),
-                ),
-              ],
-            ),
+          Icon(
+            Icons.inbox_outlined,
+            size: 60,
+            color: AppTheme.nineColor,
           ),
           const SizedBox(height: 16),
           Text(
             I18nKeys.noData.tr,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Color(0xFF999999),
+            style: TextStyle(
+              fontSize: 14,
+              color: AppTheme.nineColor,
             ),
           ),
         ],

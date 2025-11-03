@@ -123,10 +123,8 @@ class ChangePasswordController extends BaseController {
       
       showSuccessMessage('密码修改成功');
       
-      // 返回到上一页
-      Future.delayed(const Duration(seconds: 1), () {
-        Get.back();
-      });
+      // 关闭当前页面
+      Navigator.pop(Get.context!);
       
       setSuccess();
     } catch (e) {

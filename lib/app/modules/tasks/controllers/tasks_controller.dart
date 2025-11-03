@@ -3,7 +3,6 @@ import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../../../data/services/task_center_api_service.dart';
 import '../../../data/models/home_info_model.dart';
-
 class TasksController extends BaseController {
   final tasks = <RecommendTaskModel>[].obs;
   final TaskCenterApiService _taskApiService = TaskCenterApiService();
@@ -18,7 +17,6 @@ class TasksController extends BaseController {
   void onInit() {
     super.onInit();
     // 懒加载：不在这里自动加载数据，等待tab切换时由MainController加载
-    loadTasks();
   }
 
   /// 加载任务列表（支持分页）
@@ -42,18 +40,21 @@ class TasksController extends BaseController {
       setLoading(true);
       
       // 调用API获取任务列表
-      final List<RecommendTaskModel> newTasks = await _taskApiService.getTaskList(
+      final TaskListResponse response = await _taskApiService.getTaskList(
         page: _page,
         limit: _limit,
       );
-      
+      print('加载任务列表：$response');
+      // 提取任务数据
+      final List<RecommendTaskModel> newTasks = response.records ?? [];
+      print('新任务列表：$newTasks');
       // 更新任务列表
       if (isRefresh) {
         tasks.value = newTasks;
       } else {
         tasks.addAll(newTasks);
       }
-      
+      print('更新后的任务列表：$tasks.length');
       // 更新分页状态
       if (newTasks.length < _limit) {
         _hasMore = false; // 没有更多数据
