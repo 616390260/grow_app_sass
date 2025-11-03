@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart' as getx;
 import 'package:get_storage/get_storage.dart';
 import '../config/environment_config.dart';
@@ -72,6 +73,10 @@ class HttpService extends getx.GetxService {
           );
           return;
         }
+
+        // 添加app-type请求头：Web平台传2，Android/iOS平台传1
+        final appType = kIsWeb ? '2' : '1';
+        options.headers['app-type'] = appType;
 
         // 注入token到请求头
         try {

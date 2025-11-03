@@ -82,4 +82,22 @@ class AuthApiService {
     // 对于其他类型或转换失败的情况，直接返回响应数据
     return responseData as T;
   }
+  
+  /// 修改密码
+  /// 返回服务端原始数据 `Map<String, dynamic>`
+  Future<Map<String, dynamic>> updatePassword({
+    required String oldPassword,
+    required String newPassword,
+  }) async {
+    final data = <String, dynamic>{
+      'oldPassword': oldPassword,
+      'newPassword': newPassword,
+    };
+
+    // 使用 HttpService 的 postData 方法，直接返回泛型对象
+    return await _httpService.postData<Map<String, dynamic>>(
+      'app/user/updatePassword',
+      data: data,
+    );
+  }
 }

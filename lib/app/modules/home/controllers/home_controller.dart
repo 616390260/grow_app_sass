@@ -11,7 +11,7 @@ class HomeController extends BaseController {
   final promotionEarnings = 0.0.obs;
   final vipLevel = ''.obs;
   final accountPoints = 0.0.obs;
-  final announcements = <AnnouncementModel>[].obs;
+  final announcements = <BannerModel>[].obs;
   final recommendTasks = <RecommendTaskModel>[].obs;
   
   final HomeApiService _homeApiService = HomeApiService();
@@ -34,16 +34,16 @@ class HomeController extends BaseController {
       // 调用API获取首页数据
       final homeInfo = await _homeApiService.getHomeInfo();
       
-      // 更新统计数据 - 确保字段名与接口返回一致
-      accountPoints.value = homeInfo.accountPoints;
-      dailyEarnings.value = homeInfo.todayIncome;
-      promotionEarnings.value = homeInfo.todayPromotionIncome;
-      vipLevel.value = homeInfo.vipLevel;
-      announcements.value = homeInfo.announcements;
-      recommendTasks.value = homeInfo.recommendTasks;
+      // 更新统计数据 - 确保字段名与接口返回一致，并处理null值
+      accountPoints.value = homeInfo.accountPoints ?? 0.0;
+      dailyEarnings.value = homeInfo.todayIncome ?? 0.0;
+      promotionEarnings.value = homeInfo.todayPromotionIncome ?? 0.0;
+      vipLevel.value = homeInfo.vipLevel ?? '';
+      announcements.value = homeInfo.announcements ?? [];
+      recommendTasks.value = homeInfo.recommendTasks ?? [];
       
       // 保留现有的accountBalance字段，暂时使用accountPoints的值
-      accountBalance.value = homeInfo.accountPoints.toDouble();
+      accountBalance.value = (homeInfo.accountPoints ?? 0.0).toDouble();
       
       setSuccess();
     } catch (e) {
@@ -85,27 +85,31 @@ class HomeController extends BaseController {
    Get.toNamed(Routes.INVITE_FRIEND);
     // 这里可以添加实际的下载逻辑，例如打开应用商店链接或显示下载二维码
   }
-  
+
   // VIP详情点击
   void onVipDetailsTap() {
     Get.toNamed(Routes.VIP_DETAILS);
   }
 
+  // Banner点击处理
   void onBannerTap(int index) {
-    // 根据不同的banner索引执行不同的操作
-    switch (index) {
-      case 0:
-        // 第一个banner的点击事件
-        showSuccessMessage('点击了第一个banner');
-        break;
-      case 1:
-        // 第二个banner的点击事件
-        showSuccessMessage('点击了第二个banner');
-        break;
-      case 2:
-        // 第三个banner的点击事件
-        showSuccessMessage('点击了第三个banner');
-        break;
+    // 确保索引在有效范围内
+    if (index >= 0 && index < announcements.length) {
+      final banner = announcements[index];
+      // 根据banner的hyperLink或iosHyperLink字段打开链接
+      // 这里可以添加实际的跳转逻辑，例如打开网页链接
+      showSuccessMessage('点击了Banner: ${banner.title}');
+    }
+  }
+
+  // 推荐任务点击处理
+  void onRecommendTaskTap(int index) {
+    // 确保索引在有效范围内
+    if (index >= 0 && index < recommendTasks.length) {
+      final task = recommendTasks[index];
+      // 根据task的icon字段显示信息
+      // 这里可以添加实际的跳转逻辑，例如打开网页链接
+      Get.toNamed(Routes.WHATSAPP_TASK, arguments: task.id);
     }
   }
 }

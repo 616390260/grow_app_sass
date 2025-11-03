@@ -7,35 +7,35 @@ part 'home_info_model.g.dart';
 class HomeInfoModel {
   /// 账户积分
   @JsonKey(name: 'accountPoints')
-  final double? accountPoints;
+  final double accountPoints;
 
   /// 公告列表（Banner列表）
   @JsonKey(name: 'announcement')
-  final List<BannerModel>? announcements;
+  final List<BannerModel> announcements;
 
   /// 推荐任务列表
   @JsonKey(name: 'recommendTask')
-  final List<RecommendTaskModel>? recommendTasks;
+  final List<RecommendTaskModel> recommendTasks;
 
   /// 今日收入
   @JsonKey(name: 'todayIncome')
-  final double? todayIncome;
+  final double todayIncome;
 
   /// 今日推广收入
   @JsonKey(name: 'todayPromotionIncome')
-  final double? todayPromotionIncome;
+  final double todayPromotionIncome;
 
   /// VIP等级
   @JsonKey(name: 'vipLevel')
-  final String? vipLevel;
+  final String vipLevel;
 
   HomeInfoModel({
-    this.accountPoints,
-    this.announcements,
-    this.recommendTasks,
-    this.todayIncome,
-    this.todayPromotionIncome,
-    this.vipLevel,
+    required this.accountPoints,
+    required this.announcements,
+    required this.recommendTasks,
+    required this.todayIncome,
+    required this.todayPromotionIncome,
+    required this.vipLevel,
   });
 
   factory HomeInfoModel.fromJson(Map<String, dynamic> json) =>
@@ -48,62 +48,62 @@ class HomeInfoModel {
 @JsonSerializable()
 class BannerModel {
   @JsonKey(name: 'id')
-  final int? id;
+  final int id;
 
   @JsonKey(name: 'title')
-  final String? title;
+  final String title;
 
   @JsonKey(name: 'image')
-  final String? image;
+  final String image;
 
   @JsonKey(name: 'hyperLink')
-  final String? hyperLink;
+  final String hyperLink;
 
   @JsonKey(name: 'iosHyperLink')
-  final String? iosHyperLink;
+  final String iosHyperLink;
 
   @JsonKey(name: 'sort')
-  final int? sort;
+  final int sort;
 
   @JsonKey(name: 'status')
-  final String? status;
+  final String status;
 
   @JsonKey(name: 'createBy')
-  final String? createBy;
+  final String createBy;
 
   @JsonKey(name: 'createTime')
-  final String? createTime;
+  final String createTime;
 
   @JsonKey(name: 'updateBy')
-  final String? updateBy;
+  final String updateBy;
 
   @JsonKey(name: 'updateTime')
-  final String? updateTime;
+  final String updateTime;
 
   @JsonKey(name: 'remark')
-  final String? remark;
+  final String remark;
 
   @JsonKey(name: 'delFlag')
-  final String? delFlag;
+  final String delFlag;
 
   @JsonKey(name: 'params')
-  final Map<String, dynamic>? params;
+  final Map<String, dynamic> params;
 
   BannerModel({
-    this.id,
-    this.title,
-    this.image,
-    this.hyperLink,
-    this.iosHyperLink,
-    this.sort,
-    this.status,
-    this.createBy,
-    this.createTime,
-    this.updateBy,
-    this.updateTime,
-    this.remark,
-    this.delFlag,
-    this.params,
+    required this.id,
+    required this.title,
+    required this.image,
+    required this.hyperLink,
+    required this.iosHyperLink,
+    required this.sort,
+    required this.status,
+    required this.createBy,
+    required this.createTime,
+    required this.updateBy,
+    required this.updateTime,
+    required this.remark,
+    required this.delFlag,
+    required this.params,
   });
 
   factory BannerModel.fromJson(Map<String, dynamic> json) =>
@@ -116,62 +116,62 @@ class BannerModel {
 @JsonSerializable()
 class RecommendTaskModel {
   @JsonKey(name: 'createBy')
-  final String? createBy;
+  final String createBy;
 
   @JsonKey(name: 'createTime')
-  final String? createTime;
+  final String createTime;
 
   @JsonKey(name: 'delFlag')
-  final String? delFlag;
+  final String delFlag;
 
   @JsonKey(name: 'description')
-  final String? description;
+  final String description;
 
   @JsonKey(name: 'icon')
-  final String? icon;
+  final String icon;
 
   @JsonKey(name: 'id')
-  final int? id;
+  final int id;
 
   @JsonKey(name: 'params')
-  final Map<String, dynamic>? params;
+  final Map<String, dynamic> params;
 
   @JsonKey(name: 'recommend')
-  final String? recommend;
+  final String recommend;
 
   @JsonKey(name: 'remark')
-  final String? remark;
+  final String remark;
 
   @JsonKey(name: 'sort')
-  final int? sort;
+  final int sort;
 
   @JsonKey(name: 'status')
-  final String? status;
+  final String status;
 
   @JsonKey(name: 'title')
-  final String? title;
+  final String title;
 
   @JsonKey(name: 'updateBy')
-  final String? updateBy;
+  final String updateBy;
 
   @JsonKey(name: 'updateTime')
-  final String? updateTime;
+  final String updateTime;
 
   RecommendTaskModel({
-    this.createBy,
-    this.createTime,
-    this.delFlag,
-    this.description,
-    this.icon,
-    this.id,
-    this.params,
-    this.recommend,
-    this.remark,
-    this.sort,
-    this.status,
-    this.title,
-    this.updateBy,
-    this.updateTime,
+    required this.createBy,
+    required this.createTime,
+    required this.delFlag,
+    required this.description,
+    required this.icon,
+    required this.id,
+    required this.params,
+    required this.recommend,
+    required this.remark,
+    required this.sort,
+    required this.status,
+    required this.title,
+    required this.updateBy,
+    required this.updateTime,
   });
 
   factory RecommendTaskModel.fromJson(Map<String, dynamic> json) =>

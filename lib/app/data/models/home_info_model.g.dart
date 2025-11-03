@@ -8,16 +8,16 @@ part of 'home_info_model.dart';
 
 HomeInfoModel _$HomeInfoModelFromJson(Map<String, dynamic> json) =>
     HomeInfoModel(
-      accountPoints: (json['accountPoints'] as num).toDouble(),
-      announcements: (json['announcement'] as List<dynamic>)
-          .map((e) => AnnouncementModel.fromJson(e as Map<String, dynamic>))
+      accountPoints: (json['accountPoints'] as num?)?.toDouble(),
+      announcements: (json['announcement'] as List<dynamic>?)
+          ?.map((e) => BannerModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      recommendTasks: (json['recommendTask'] as List<dynamic>)
-          .map((e) => RecommendTaskModel.fromJson(e as Map<String, dynamic>))
+      recommendTasks: (json['recommendTask'] as List<dynamic>?)
+          ?.map((e) => RecommendTaskModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      todayIncome: (json['todayIncome'] as num).toDouble(),
-      todayPromotionIncome: (json['todayPromotionIncome'] as num).toDouble(),
-      vipLevel: json['vipLevel'] as String,
+      todayIncome: (json['todayIncome'] as num?)?.toDouble(),
+      todayPromotionIncome: (json['todayPromotionIncome'] as num?)?.toDouble(),
+      vipLevel: json['vipLevel'] as String?,
     );
 
 Map<String, dynamic> _$HomeInfoModelToJson(HomeInfoModel instance) =>
@@ -30,62 +30,57 @@ Map<String, dynamic> _$HomeInfoModelToJson(HomeInfoModel instance) =>
       'vipLevel': instance.vipLevel,
     };
 
-AnnouncementModel _$AnnouncementModelFromJson(Map<String, dynamic> json) =>
-    AnnouncementModel(
-      content: json['content'] as String,
-      createBy: json['createBy'] as String,
-      createTime: json['createTime'] as String,
-      delFlag: json['delFlag'] as String,
-      hyperLink: json['hyperLink'] as String,
-      id: (json['id'] as num).toInt(),
-      image: json['image'] as String,
-      iosHyperLink: json['iosHyperLink'] as String,
-      params: json['params'] as Map<String, dynamic>,
-      remark: json['remark'] as String,
-      sort: (json['sort'] as num).toInt(),
-      status: json['status'] as String,
-      title: json['title'] as String,
-      type: json['type'] as String,
-      updateBy: json['updateBy'] as String,
-      updateTime: json['updateTime'] as String,
-    );
+BannerModel _$BannerModelFromJson(Map<String, dynamic> json) => BannerModel(
+  id: (json['id'] as num?)?.toInt(),
+  title: json['title'] as String?,
+  image: json['image'] as String?,
+  hyperLink: json['hyperLink'] as String?,
+  iosHyperLink: json['iosHyperLink'] as String?,
+  sort: (json['sort'] as num?)?.toInt(),
+  status: json['status'] as String?,
+  createBy: json['createBy'] as String?,
+  createTime: json['createTime'] as String?,
+  updateBy: json['updateBy'] as String?,
+  updateTime: json['updateTime'] as String?,
+  remark: json['remark'] as String?,
+  delFlag: json['delFlag'] as String?,
+  params: json['params'] as Map<String, dynamic>?,
+);
 
-Map<String, dynamic> _$AnnouncementModelToJson(AnnouncementModel instance) =>
+Map<String, dynamic> _$BannerModelToJson(BannerModel instance) =>
     <String, dynamic>{
-      'content': instance.content,
-      'createBy': instance.createBy,
-      'createTime': instance.createTime,
-      'delFlag': instance.delFlag,
-      'hyperLink': instance.hyperLink,
       'id': instance.id,
+      'title': instance.title,
       'image': instance.image,
+      'hyperLink': instance.hyperLink,
       'iosHyperLink': instance.iosHyperLink,
-      'params': instance.params,
-      'remark': instance.remark,
       'sort': instance.sort,
       'status': instance.status,
-      'title': instance.title,
-      'type': instance.type,
+      'createBy': instance.createBy,
+      'createTime': instance.createTime,
       'updateBy': instance.updateBy,
       'updateTime': instance.updateTime,
+      'remark': instance.remark,
+      'delFlag': instance.delFlag,
+      'params': instance.params,
     };
 
 RecommendTaskModel _$RecommendTaskModelFromJson(Map<String, dynamic> json) =>
     RecommendTaskModel(
-      createBy: json['createBy'] as String,
-      createTime: json['createTime'] as String,
-      delFlag: json['delFlag'] as String,
-      description: json['description'] as String,
-      icon: json['icon'] as String,
-      id: (json['id'] as num).toInt(),
-      params: json['params'] as Map<String, dynamic>,
-      recommend: json['recommend'] as String,
-      remark: json['remark'] as String,
-      sort: (json['sort'] as num).toInt(),
-      status: json['status'] as String,
-      title: json['title'] as String,
-      updateBy: json['updateBy'] as String,
-      updateTime: json['updateTime'] as String,
+      createBy: json['createBy'] as String?,
+      createTime: json['createTime'] as String?,
+      delFlag: json['delFlag'] as String?,
+      description: json['description'] as String?,
+      icon: json['icon'] as String?,
+      id: (json['id'] as num?)?.toInt(),
+      params: json['params'] as Map<String, dynamic>?,
+      recommend: json['recommend'] as String?,
+      remark: json['remark'] as String?,
+      sort: (json['sort'] as num?)?.toInt(),
+      status: json['status'] as String?,
+      title: json['title'] as String?,
+      updateBy: json['updateBy'] as String?,
+      updateTime: json['updateTime'] as String?,
     );
 
 Map<String, dynamic> _$RecommendTaskModelToJson(RecommendTaskModel instance) =>
@@ -105,3 +100,41 @@ Map<String, dynamic> _$RecommendTaskModelToJson(RecommendTaskModel instance) =>
       'updateBy': instance.updateBy,
       'updateTime': instance.updateTime,
     };
+
+OldRecommendTaskModel _$OldRecommendTaskModelFromJson(
+  Map<String, dynamic> json,
+) => OldRecommendTaskModel(
+  createBy: json['createBy'] as String,
+  createTime: json['createTime'] as String,
+  delFlag: json['delFlag'] as String,
+  description: json['description'] as String,
+  icon: json['icon'] as String,
+  id: (json['id'] as num).toInt(),
+  params: json['params'] as Map<String, dynamic>,
+  recommend: json['recommend'] as String,
+  remark: json['remark'] as String,
+  sort: (json['sort'] as num).toInt(),
+  status: json['status'] as String,
+  title: json['title'] as String,
+  updateBy: json['updateBy'] as String,
+  updateTime: json['updateTime'] as String,
+);
+
+Map<String, dynamic> _$OldRecommendTaskModelToJson(
+  OldRecommendTaskModel instance,
+) => <String, dynamic>{
+  'createBy': instance.createBy,
+  'createTime': instance.createTime,
+  'delFlag': instance.delFlag,
+  'description': instance.description,
+  'icon': instance.icon,
+  'id': instance.id,
+  'params': instance.params,
+  'recommend': instance.recommend,
+  'remark': instance.remark,
+  'sort': instance.sort,
+  'status': instance.status,
+  'title': instance.title,
+  'updateBy': instance.updateBy,
+  'updateTime': instance.updateTime,
+};

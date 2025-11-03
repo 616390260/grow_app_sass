@@ -1,16 +1,16 @@
+import 'package:do_task_project/app/core/base/base_view.dart';
 import 'package:do_task_project/app/core/constants/image_assets.dart';
+import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
+import 'package:do_task_project/app/modules/home/controllers/home_controller.dart';
+import 'package:do_task_project/app/modules/home/views/widgets/banner_carousel_widget.dart';
+import 'package:do_task_project/app/modules/home/views/widgets/lucky_wheel_widget.dart';
+import 'package:do_task_project/app/modules/home/views/widgets/sign_in_calendar_widget.dart';
+import 'package:do_task_project/app/modules/home/views/widgets/task_card_widget.dart';
 import 'package:do_task_project/app/modules/vip_details/components/vip_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import '../controllers/home_controller.dart';
-import 'widgets/lucky_wheel_widget.dart';
-import 'widgets/sign_in_calendar_widget.dart';
-import 'widgets/task_card_widget.dart';
-import 'widgets/banner_carousel_widget.dart';
-import '../../../core/base/base_view.dart';
-import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 
 class HomeView extends BaseView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
@@ -53,16 +53,18 @@ class HomeView extends BaseView<HomeController> {
             SizedBox(height: MediaQuery.of(context).padding.top),
             _buildHeader(),
             _buildStatisticsCards(),
-            BannerCarouselWidget(
-              bannerImages: [
-                ImageAssets.homeBanner,
-                ImageAssets.homeBanner,
-                ImageAssets.homeBanner,
-              ],
-              onBannerTap: (index) {
-                controller.onBannerTap(index);
-              },
-            ),
+            // 使用Obx包装BannerCarouselWidget以响应数据变化
+            Obx(() {
+              return BannerCarouselWidget(
+                  bannerImages: controller.announcements
+                    .map((banner) => banner.image ?? '')
+                    .where((image) => image.isNotEmpty)
+                    .toList(),
+                onBannerTap: (index) {
+                  controller.onBannerTap(index);
+                },
+              );
+            }),
             _buildRecommendedTasks(),
             const SizedBox(height: 55),
           ],
@@ -71,11 +73,7 @@ class HomeView extends BaseView<HomeController> {
     );
   }
 
-  // 移除页面内的底部导航，改由 MainView 统一提供
-  @override
-  Widget? buildBottomNavigationBar(BuildContext context) => null;
-
-  /// 构建头部
+  /// 构建头部信息
   Widget _buildHeader() {
     return Container(
       padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
@@ -154,7 +152,7 @@ class HomeView extends BaseView<HomeController> {
     );
   }
 
-  /// 统计 + 快捷功能（与参考图一致合并为同一白卡）
+  /// 构建统计卡片
   Widget _buildStatisticsCards() {
     return Container(
       margin: const EdgeInsets.only(left: 15, right: 15, top: 15),
@@ -289,41 +287,26 @@ class HomeView extends BaseView<HomeController> {
             ),
           ),
           const SizedBox(height: 13),
-          ListView.builder(
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _getTaskList().length,
-            itemBuilder: (context, index) {
-              final task = _getTaskList()[index];
-              return TaskCardWidget(
-                title: task['title'],
-                description: task['description'],
-                buttonText: task['buttonText'],
-                onTap: () => controller.onTaskCardTap(task['id']),
-              );
-            },
-          ),
+          // 使用Obx包装ListView以响应数据变化
+          Obx(() {
+            return ListView.builder(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: controller.recommendTasks.length,
+              itemBuilder: (context, index) {
+                final task = controller.recommendTasks[index];
+                return TaskCardWidget(
+                  title: task.title ?? '',
+                  description: task.description ?? '',
+                  buttonText: I18nKeys.startTask.tr,
+                  onTap: () => controller.onRecommendTaskTap(index),
+                );
+              },
+            );
+          }),
         ],
       ),
     );
-  }
-
-  /// 获取任务列表数据
-  List<Map<String, dynamic>> _getTaskList() {
-    return [
-      {
-        'id': 'task_1',
-        'title': I18nKeys.autoPointsTaskNo1.tr,
-        'description': I18nKeys.taskDesc1.tr,
-        'buttonText': I18nKeys.startTask.tr,
-      },
-      {
-        'id': 'task_2',
-        'title': I18nKeys.autoPointsTaskNo1.tr,
-        'description': I18nKeys.taskDesc1.tr,
-        'buttonText': I18nKeys.startTask.tr,
-      },
-    ];
   }
 }

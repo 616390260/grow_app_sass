@@ -20,6 +20,7 @@ class ChangePasswordController extends BaseController {
   final isNewPasswordVisible = false.obs;
 
   // API服务
+  final _authApiService = AuthApiService();
 
   @override
   void onInit() {
@@ -114,11 +115,12 @@ class ChangePasswordController extends BaseController {
     try {
       setLoading(true);
       
-      // TODO: 这里需要调用修改密码的API
-      // 目前模拟API调用
-      await Future.delayed(const Duration(seconds: 1));
+      // 调用修改密码的API
+      await _authApiService.updatePassword(
+        oldPassword: oldPasswordController.text,
+        newPassword: newPasswordController.text,
+      );
       
-      // 模拟成功
       showSuccessMessage('密码修改成功');
       
       // 返回到上一页

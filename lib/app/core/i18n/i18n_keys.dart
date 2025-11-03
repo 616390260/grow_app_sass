@@ -268,6 +268,7 @@ class I18nKeys {
   static const promotionIncome = 'promotion_income';
   static const dailyResetTime = 'daily_reset_time';
   static const vipRewards = 'vip_rewards';
+  static const vipLevel = 'vip_level';
   static const growthValue = 'growth_value';
   static const promotionCommission = 'promotion_commission';
   static const reward = 'reward';

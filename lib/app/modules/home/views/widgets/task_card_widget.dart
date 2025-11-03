@@ -31,6 +31,7 @@ class TaskCardWidget extends StatelessWidget {
           Container(
             width: 32,
             height: 32,
+            padding: const EdgeInsets.all(6),
             margin: const EdgeInsets.only(left: 13, top: 11),
             decoration: BoxDecoration(
               color: const Color(0xFFFF8E6A),

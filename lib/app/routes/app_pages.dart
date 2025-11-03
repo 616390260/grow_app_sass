@@ -62,7 +62,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.TASKS,
-      page: () => const TasksView(),
+      page: () => TasksView(),
       binding: TasksBinding(),
     ),
     GetPage(
