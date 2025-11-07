@@ -198,6 +198,16 @@ class I18nKeys {
   static const india = 'india';
   static const philippines = 'philippines';
   static const indonesia = 'indonesia';
+  
+  // VIP Details Popup
+  static const vipDailyResetTime = 'vip_daily_reset_time';
+  static const vipDailyRewardTime = 'vip_daily_reward_time';
+  static const vipGrowthValue = 'vip_growth_value';
+  static const vipPromotionCommission = 'vip_promotion_commission';
+  static const vipReward = 'vip_reward';
+  static const vipOperation = 'vip_operation';
+  static const vipNotActivated = 'vip_not_activated';
+  static const vipRewardDescription = 'vip_reward_description';
   static const bangladesh = 'bangladesh';
   static const pakistan = 'pakistan';
   static const southAfrica = 'south_africa';

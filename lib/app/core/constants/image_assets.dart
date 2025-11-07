@@ -50,6 +50,7 @@ class ImageAssets {
   static const String serviceGuide = '$_basePath/service_guide.png';
   static const String onlinePhone = '$_basePath/online_phone.png';
   static const String iconEmpty = '$_basePath/icon_empty.png';
+  static const String iconClose = '$_basePath/icon_close.png';
 
   // 多语言横幅图片
   static const String welcomeBannerZhCn = '$_basePath/zh_CN/welcome_banner.svg';

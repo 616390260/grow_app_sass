@@ -17,6 +17,9 @@ VipDetailsModel _$VipDetailsModelFromJson(Map<String, dynamic> json) =>
       vipLevelList: (json['vipLevelList'] as List<dynamic>)
           .map((e) => VipLevelItemModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      vipTodayLevelList: (json['vipTodayLevelList'] as List<dynamic>)
+          .map((e) => VipLevelItemModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       currentVipLevel: json['currentVipLevel'] as String,
       totalPromotionPoints: (json['totalPromotionPoints'] as num).toInt(),
     );
@@ -30,18 +33,19 @@ Map<String, dynamic> _$VipDetailsModelToJson(VipDetailsModel instance) =>
       'currentPullNum': instance.currentPullNum,
       'subordinatePullNum': instance.subordinatePullNum,
       'vipLevelList': instance.vipLevelList,
+      'vipTodayLevelList': instance.vipTodayLevelList,
       'currentVipLevel': instance.currentVipLevel,
       'totalPromotionPoints': instance.totalPromotionPoints,
     };
 
 VipLevelItemModel _$VipLevelItemModelFromJson(Map<String, dynamic> json) =>
     VipLevelItemModel(
-      vipLevel: json['vipLevel'] as String,
-      promotionPoints: (json['promotionPoints'] as num).toInt(),
-      firstRewardPoints: (json['firstRewardPoints'] as num).toInt(),
-      rewardPoints: (json['rewardPoints'] as num).toInt(),
-      isActivated: json['isActivated'] as bool,
-      isReceived: json['isReceived'] as bool,
+      vipLevel: json['vipLevel'] as String?,
+      promotionPoints: (json['promotionPoints'] as num?)?.toInt(),
+      firstRewardPoints: (json['firstRewardPoints'] as num?)?.toInt(),
+      rewardPoints: (json['rewardPoints'] as num?)?.toInt(),
+      isActivated: json['isActivated'] as bool?,
+      isReceived: json['isReceived'] as bool?,
     );
 
 Map<String, dynamic> _$VipLevelItemModelToJson(VipLevelItemModel instance) =>

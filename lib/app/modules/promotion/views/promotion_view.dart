@@ -454,33 +454,46 @@ const SizedBox(height: 15),
           const SizedBox(height: 17),
           Obx(
             () => Text(
-              I18nKeys.currentReachLevel2RewardPoints.tr.replaceAll('{count}', controller.reachTwoStarUsers.value.toString()).replaceAll('{points}', controller.twoStarRewardPoints.value.toString()),
+              I18nKeys.currentReachLevel2RewardPoints.tr.replaceFirst('%s', controller.reachTwoStarUsers.value.toString()).replaceFirst('%s', controller.twoStarRewardPoints.value.toString()),
               style: const TextStyle(fontSize: 12, color:AppTheme.threeColor),
             ),
           ),
           const SizedBox(height: 17),
           Align(
             alignment: Alignment.center,
-            child: GestureDetector(
-              onTap: () {
-                Get.snackbar(I18nKeys.tip.tr, I18nKeys.noRewardAvailable.tr);
-              },
-              child: Container(
-                alignment: Alignment.center,
-                height: 40,
-                width: 170,
-                margin: EdgeInsets.only(bottom: 5),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF477DF2), Color(0xFF47B9F2)],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
+            child: Obx(() {
+              bool hasReceived = controller.isReceived.value;
+              
+              return GestureDetector(
+                onTap: hasReceived ? () {
+                  // TODO: 实现领取奖励的逻辑
+                  controller.receiveReward();
+                } : null,
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 40,
+                  width: 170,
+                  margin: EdgeInsets.only(bottom: 5),
+                  decoration: BoxDecoration(
+                    gradient: hasReceived ? LinearGradient(
+                      colors: [Color(0xFF477DF2), Color(0xFF47B9F2)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ) : null,
+                    color: !hasReceived ? Color(0xFFE0E0E0) : null,
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(I18nKeys.claim.tr, style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),),
+                child: Text(
+                    I18nKeys.claim.tr ,
+                    style: TextStyle(
+                      color:  Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
               ),
-            ),
+            );
+            }),
           ),
 
         ],

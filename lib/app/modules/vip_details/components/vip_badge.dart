@@ -10,6 +10,7 @@ class VipBadge extends StatelessWidget {
   final Color badgeColor;
   final Color textColor;
   final Color backgroundColor;
+  final Color textBackgroundColor;
   final Color borderColor;
   final double fontSize;
   final double height;
@@ -23,6 +24,7 @@ class VipBadge extends StatelessWidget {
     this.badgeColor = AppTheme.vipOrange,
     this.textColor = Colors.white,
     this.backgroundColor = Colors.white,
+    this.textBackgroundColor = AppTheme.vipOrange,
     this.borderColor = Colors.white,
     this.fontSize = 12,
     this.height = 20,
@@ -39,7 +41,7 @@ class VipBadge extends StatelessWidget {
           height: height,
           padding: const EdgeInsets.only(left: 19, right: 9),
           decoration: BoxDecoration(
-            color: badgeColor,
+            color: textBackgroundColor,
             borderRadius: BorderRadius.circular(borderRadius),
           ),
           child: Center(

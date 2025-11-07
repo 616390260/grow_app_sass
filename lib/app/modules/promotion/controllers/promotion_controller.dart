@@ -8,7 +8,7 @@ class PromotionController extends BaseController {
   // 推广数据
   final promotionCount = 0.obs;
   final promotionEarnings = 0.0.obs;
-  
+
   // 新增的推广数据字段
   final activeSubordinates = 0.obs;
   final activeUsers = 0.obs;
@@ -18,8 +18,9 @@ class PromotionController extends BaseController {
   final twoStarRewardPoints = 0.obs;
   final todayNewSubordinates = 0.obs;
   final totalCommission = 0.0.obs;
-   final todayCommission = 0.0.obs;
+  final todayCommission = 0.0.obs;
   final yesterdayCommission = 0.0.obs;
+  final isReceived = false.obs;
 
   // API服务
   final _promotionApiService = PromotionApiService();
@@ -33,15 +34,15 @@ class PromotionController extends BaseController {
   void loadData() async {
     try {
       // 设置加载状态
-      
+
       // 调用API获取真实数据
       final PromotionData data = await _promotionApiService.getInviteHome();
-      
+
       // 更新推广数据
       // 保持原有的字段以确保UI兼容性
       promotionCount.value = data.activeSubordinates ?? 0;
       promotionEarnings.value = data.totalCommission ?? 0.0;
-      
+
       // 更新新字段
       activeSubordinates.value = data.activeSubordinates ?? 0;
       activeUsers.value = data.activeUsers ?? 0;
@@ -53,10 +54,10 @@ class PromotionController extends BaseController {
       totalCommission.value = data.totalCommission ?? 0.0;
       twoStarRewardPoints.value = data.twoStarRewardPoints ?? 0;
       yesterdayCommission.value = data.yesterdayCommission ?? 0.0;
-      
+      isReceived.value = data.isReceived ?? false;
+
       setSuccess();
     } catch (e) {
-      setError('加载推广数据失败: $e');
       showErrorMessage('加载推广数据失败: $e');
     } finally {
       setLoading(false);
@@ -76,5 +77,21 @@ class PromotionController extends BaseController {
   /// 分享到Facebook
   Future<void> shareToFacebook() async {
     await ShareUtils.shareToFacebook(inviteUrl.value);
+  }
+
+  /// 领取奖励
+  Future<void> receiveReward() async {
+    try {
+      await safeApiCall(() async {
+        // 调用API领取奖励
+        await _promotionApiService.receiveReward(
+          reachTwoStarUsers: reachTwoStarUsers.value,
+          twoStarRewardPoints: twoStarRewardPoints.value
+        );
+      }, 
+      (result) => isReceived.value = false);
+    } catch (e) {
+      showErrorMessage('领取奖励失败: $e');
+    }
   }
 }

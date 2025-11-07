@@ -56,7 +56,7 @@ class HomeView extends BaseView<HomeController> {
             // 使用Obx包装BannerCarouselWidget以响应数据变化
             Obx(() {
               return BannerCarouselWidget(
-                  bannerImages: controller.announcements
+                bannerImages: controller.announcements
                     .map((banner) => banner.image ?? '')
                     .where((image) => image.isNotEmpty)
                     .toList(),
@@ -94,32 +94,27 @@ class HomeView extends BaseView<HomeController> {
           GestureDetector(
             onTap: controller.onVipDetailsTap,
             child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                I18nKeys.appTitle.tr,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  I18nKeys.appTitle.tr,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              // const SizedBox(height: 2),
-              // Row(
-              //   children: [
-              //     Obx(() => VipBadge(text: controller.vipLevel.value.isEmpty ? 'Vip0' : controller.vipLevel.value)),
-              //     const SizedBox(width: 2),
-              //     Text(
-              //       'VIP详情 >',
-              //       style: const TextStyle(
-              //         color: Colors.white,
-              //         fontSize: 12,
-              //       ),
-              //     ),
-              //   ],
-              // ),
-            ],
-          ),
+                const SizedBox(height: 2),
+                Obx(
+                  () => VipBadge(
+                    text: controller.vipLevel.value.isEmpty
+                        ? 'VIP0'
+                        : controller.vipLevel.value,
+                        textBackgroundColor: const Color(0xFFA7C3FF),
+                  ),
+                ),
+              ],
+            ),
           ),
           const Spacer(),
           // 下载APP按钮

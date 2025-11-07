@@ -6,6 +6,7 @@ class PromotionApiService {
   final HttpService _httpService = HttpService.to;
 
   static const String _getInviteHomeEndpoint = 'app/user/getInviteHome';
+  static const String _receiveRewardEndpoint = 'app/user/receiveTwoStarReward';
 
   /// 获取推广首页信息
   Future<PromotionData> getInviteHome() async {
@@ -16,6 +17,22 @@ class PromotionApiService {
       
       // 转换数据模型，确保能处理null值
       return PromotionData.fromJson(responseData);
+    } catch (e) {
+      // 错误处理
+      rethrow;
+    }
+  }
+  
+  /// 领取奖励
+  Future<void> receiveReward({required int reachTwoStarUsers, required int twoStarRewardPoints}) async {
+    try {
+      await _httpService.get(
+        _receiveRewardEndpoint,
+        queryParameters: {
+          'reachTwoStarUsers': reachTwoStarUsers,
+          'twoStarRewardPoints': twoStarRewardPoints
+        }
+      );
     } catch (e) {
       // 错误处理
       rethrow;

@@ -10,6 +10,7 @@ class PromotionData {
   final double? totalCommission;
   final int? twoStarRewardPoints;
   final double? yesterdayCommission;
+  final bool? isReceived;
 
   const PromotionData({
     this.activeSubordinates,
@@ -22,6 +23,7 @@ class PromotionData {
     this.totalCommission,
     this.twoStarRewardPoints,
     this.yesterdayCommission,
+    this.isReceived,
   });
 
   /// 从JSON创建PromotionData实例
@@ -37,6 +39,7 @@ class PromotionData {
       totalCommission: (json['totalCommission'] as num?)?.toDouble(),
       twoStarRewardPoints: json['twoStarRewardPoints'] as int?,
       yesterdayCommission: (json['yesterdayCommission'] as num?)?.toDouble(),
+      isReceived: json['isReceived'] as bool?,
     );
   }
 
@@ -52,6 +55,7 @@ class PromotionData {
     double? totalCommission,
     int? twoStarRewardPoints,
     double? yesterdayCommission,
+    bool? isReceived,
   }) {
     return PromotionData(
       activeSubordinates: activeSubordinates ?? this.activeSubordinates,
@@ -64,11 +68,12 @@ class PromotionData {
       totalCommission: totalCommission ?? this.totalCommission,
       twoStarRewardPoints: twoStarRewardPoints ?? this.twoStarRewardPoints,
       yesterdayCommission: yesterdayCommission ?? this.yesterdayCommission,
+      isReceived: isReceived ?? this.isReceived,
     );
   }
 
   @override
   String toString() {
-    return 'PromotionData(activeSubordinates: $activeSubordinates, activeUsers: $activeUsers, inviteCode: $inviteCode, inviteUrl: $inviteUrl, reachTwoStarUsers: $reachTwoStarUsers, todayCommission: $todayCommission, todayNewSubordinates: $todayNewSubordinates, totalCommission: $totalCommission, twoStarRewardPoints: $twoStarRewardPoints, yesterdayCommission: $yesterdayCommission)';
+    return 'PromotionData(activeSubordinates: $activeSubordinates, activeUsers: $activeUsers, inviteCode: $inviteCode, inviteUrl: $inviteUrl, reachTwoStarUsers: $reachTwoStarUsers, todayCommission: $todayCommission, todayNewSubordinates: $todayNewSubordinates, totalCommission: $totalCommission, twoStarRewardPoints: $twoStarRewardPoints, yesterdayCommission: $yesterdayCommission, isReceived: $isReceived)';
   }
 }

@@ -104,9 +104,7 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
                 ),
               ),
               const SizedBox(width: 5),
-              Obx(
-                () => VipBadge(text: ' ${controller.currentVipLevel.value}'),
-              ),
+              Obx(() => VipBadge(text: ' ${controller.currentVipLevel.value}')),
             ],
           ),
           const SizedBox(height: 5),
@@ -168,9 +166,9 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
                 style: TextStyle(color: Colors.white, fontSize: 12),
               ),
               Text(
-                            controller.promotionIncome.value.toString(),
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
+                controller.promotionIncome.value.toString(),
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
             ],
           ),
 
@@ -271,7 +269,7 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
               ],
             ),
           ),
- const SizedBox(height: 17),
+          const SizedBox(height: 17),
           // 奖励列表
           Obx(
             () => ListView.builder(
@@ -286,19 +284,19 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
                       children: [
                         Expanded(
                           flex: 2,
-                          child: VipBadge(
-                            text: reward.vipLevel.toString(),
-                          ),
+                          child: VipBadge(text: reward.vipLevel.toString()),
                         ),
                         const SizedBox(width: 29),
-                        Expanded(flex: 3, child: Text(
-                          reward.promotionPoints.toString(),
-                          style: TextStyle(
-                            color: AppTheme.threeColor,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
+                        Expanded(
+                          flex: 3,
+                          child: Text(
+                            reward.promotionPoints.toString(),
+                            style: TextStyle(
+                              color: AppTheme.threeColor,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                          )
                         ),
                         Expanded(
                           flex: 2,
@@ -313,44 +311,50 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
                         ),
                         Expanded(
                           flex: 2,
-                          child:  Container(
+                          child: Container(
                             alignment: Alignment.center,
                             margin: const EdgeInsets.only(right: 4),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 9,
-                            vertical: 3,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 9,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppTheme.dddColor,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Text(
+                              I18nKeys.activated.tr,
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
-                          decoration: BoxDecoration(
-                            color: AppTheme.dddColor,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Text(
-                            I18nKeys.activated.tr,
-                            style: TextStyle(fontSize: 11, color: Colors.white),
-                          ),
-                        ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
                     Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 35,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppTheme.eeeColor,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Text(
-                            '${I18nKeys.firstActivation.tr} ${reward.firstRewardPoints} ${I18nKeys.points.tr}',
-                            style: TextStyle(fontSize: 11, color: AppTheme.nineColor),
+                      alignment: Alignment.center,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 35,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.eeeColor,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          '${I18nKeys.firstActivation.tr} ${reward.firstRewardPoints} ${I18nKeys.points.tr}',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: AppTheme.nineColor,
                           ),
                         ),
                       ),
-                       const SizedBox(height: 11),
+                    ),
+                    const SizedBox(height: 11),
                   ],
                 );
               },

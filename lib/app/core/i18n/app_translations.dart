@@ -198,6 +198,17 @@ class AppTranslations extends Translations {
       'india': '印度',
       'philippines': '菲律宾',
       'indonesia': '印尼',
+      
+      // VIP Details Popup
+      'vip_daily_reset_time': '每日奖励重置时间',
+      'vip_daily_reward_time': '每日奖励重置时间 UTC:',
+      'vip_growth_value': '成长值',
+      'vip_promotion_commission': '推广佣金',
+      'vip_reward': '奖励',
+      'vip_operation': '操作',
+      'vip_not_activated': '未激活',
+      'vip_reward_description': '每领取一次VIP任务奖励，增加对应任务的成长值',
+      'reward_claim_coming_soon': '奖励领取功能即将上线',
       'bangladesh': '孟加拉',
       'pakistan': '巴铁',
       'south_africa': '南非',

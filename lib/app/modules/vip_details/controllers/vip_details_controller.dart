@@ -1,8 +1,9 @@
-import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:get/get.dart';
+import 'dart:async';
 import '../../../core/base/base_controller.dart';
 import '../../../data/services/vip_api_service.dart';
 import '../../../data/models/vip_model.dart';
+import '../views/vip_reward_popup.dart';
 
 class VipDetailsController extends BaseController {
   // API服务
@@ -21,15 +22,70 @@ class VipDetailsController extends BaseController {
   final promotionIncome = 0.obs;
   
   // 每日奖励重置时间
-  final dailyResetTime = '00:00:00'.obs;
+  final dailyResetTime = ''.obs;
   
   // VIP奖励列表
   final vipRewards = <VipLevelItemModel>[].obs;
+  final vipTodayRewards = <VipLevelItemModel>[].obs;
+  
+  // 倒计时定时器
+  Timer? _countdownTimer;
 
   @override
   void initData() {
     // 初始化加载数据
     loadVipDetails();
+    
+    // 启动倒计时
+    startCountdown();
+  }
+  
+  @override
+  void onClose() {
+    super.onClose();
+    // 清理定时器
+    _stopCountdown();
+  }
+  
+  // 计算距离24点的剩余时间
+  Duration _calculateTimeUntilMidnight() {
+    final now = DateTime.now();
+    final tomorrow = DateTime(now.year, now.month, now.day + 1, 0, 0, 0);
+    return tomorrow.difference(now);
+  }
+  
+  // 更新倒计时显示
+  void _updateCountdown() {
+    final remainingTime = _calculateTimeUntilMidnight();
+    
+    final hours = remainingTime.inHours.toString().padLeft(2, '0');
+    final minutes = (remainingTime.inMinutes % 60).toString().padLeft(2, '0');
+    final seconds = (remainingTime.inSeconds % 60).toString().padLeft(2, '0');
+    
+    dailyResetTime.value = '$hours:$minutes:$seconds';
+  }
+  
+  // 启动倒计时
+  void startCountdown() {
+    // 立即更新一次
+    _updateCountdown();
+    
+    // 设置定时器每秒更新一次
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _updateCountdown();
+      
+      // 检查是否到达00:00:00
+      if (dailyResetTime.value == '00:00:00') {
+        // 重置数据或执行其他操作
+        loadVipDetails();
+      }
+    });
+  }
+  
+  // 停止倒计时
+  void _stopCountdown() {
+    _countdownTimer?.cancel();
+    _countdownTimer = null;
   }
 
   // 加载VIP详情数据
@@ -64,9 +120,14 @@ class VipDetailsController extends BaseController {
       
       vipRewards.assignAll(rewards);
       
+      // 转换今日VIP等级列表数据
+      final todayRewards = vipDetails.vipTodayLevelList.map((item) {
+        return VipLevelItemModel.fromJson(item.toJson());
+      }).toList();
+      vipTodayRewards.assignAll(todayRewards);
+      
       setSuccess();
     } catch (e) {
-      setError('加载VIP详情失败');
       showErrorMessage('加载VIP详情失败: $e');
     } finally {
       setLoading(false);
@@ -80,6 +141,18 @@ class VipDetailsController extends BaseController {
 
   // 领取奖励按钮点击
   void onClaimRewardTap() {
-    showInfoMessage(I18nKeys.rewardClaimComingSoon.tr);
+    // 显示VIP奖励弹窗
+    showVipRewardPopup();
+  }
+
+  // 显示VIP奖励弹窗
+  void showVipRewardPopup() {
+    // 使用GetBuilder来确保弹窗能够接收到响应式变量的更新
+    Get.dialog(
+      Obx(() => VipRewardPopup(
+        resetTime: dailyResetTime.value,
+        rewardLevels: vipTodayRewards.toList(),
+      )),
+    );
   }
 }

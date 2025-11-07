@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../routes/app_pages.dart';
 import '../../../data/services/home_api_service.dart';
 import '../../../data/models/home_info_model.dart';
 import '../../../core/i18n/i18n_keys.dart';
+import '../../../core/utils/message_utils.dart';
 
 class HomeController extends BaseController {
   // 统计数据
@@ -79,9 +81,42 @@ class HomeController extends BaseController {
   }
 
   // 下载APP按钮点击
-  void onDownloadAppTap() {
-   Get.toNamed(Routes.inviteFriend);
-    // 这里可以添加实际的下载逻辑，例如打开应用商店链接或显示下载二维码
+  void onDownloadAppTap() async {
+    try {
+      // 显示加载提示
+      
+      // 应用商店链接（根据平台选择）
+      String appStoreUrl;
+      if (GetPlatform.isAndroid) {
+        // Google Play商店链接，使用包名
+        appStoreUrl = 'market://details?id=com.example.app';
+      } else if (GetPlatform.isIOS) {
+        // App Store链接，使用应用ID
+        appStoreUrl = 'https://apps.apple.com/app/id123456789';
+      } else {
+        // 默认使用网页版应用商店
+        appStoreUrl = 'https://play.google.com/store/apps/details?id=com.example.app';
+      }
+      
+      final Uri url = Uri.parse(appStoreUrl);
+      
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        // 如果无法打开原生应用商店，尝试打开网页版
+        String webStoreUrl = GetPlatform.isIOS 
+            ? 'https://apps.apple.com/app/id123456789'
+            : 'https://play.google.com/store/apps/details?id=com.example.app';
+            
+        final Uri webUrl = Uri.parse(webStoreUrl);
+        if (await canLaunchUrl(webUrl)) {
+          await launchUrl(webUrl, mode: LaunchMode.externalApplication);
+        } else {
+        }
+      }
+    // ignore: empty_catches
+    } catch (e) {
+    }
   }
 
   // VIP详情点击

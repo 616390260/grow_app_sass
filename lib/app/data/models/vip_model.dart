@@ -26,6 +26,9 @@ class VipDetailsModel {
   @JsonKey(name: 'vipLevelList')
   final List<VipLevelItemModel> vipLevelList;
 
+  @JsonKey(name: 'vipTodayLevelList')
+  final List<VipLevelItemModel> vipTodayLevelList;
+
   @JsonKey(name: 'currentVipLevel')
   final String currentVipLevel;
 
@@ -40,6 +43,7 @@ class VipDetailsModel {
     required this.currentPullNum,
     required this.subordinatePullNum,
     required this.vipLevelList,
+    required this.vipTodayLevelList,
     required this.currentVipLevel,
     required this.totalPromotionPoints,
   });
@@ -54,30 +58,30 @@ class VipDetailsModel {
 @JsonSerializable()
 class VipLevelItemModel {
   @JsonKey(name: 'vipLevel')
-  final String vipLevel;
+  final String? vipLevel;
 
   @JsonKey(name: 'promotionPoints')
-  final int promotionPoints;
+  final int? promotionPoints;
 
   @JsonKey(name: 'firstRewardPoints')
-  final int firstRewardPoints;
+  final int? firstRewardPoints;
 
   @JsonKey(name: 'rewardPoints')
-  final int rewardPoints;
+  final int? rewardPoints;
 
   @JsonKey(name: 'isActivated')
-  final bool isActivated;
+  final bool? isActivated;
 
   @JsonKey(name: 'isReceived')
-  final bool isReceived;
+  final bool? isReceived;
 
   VipLevelItemModel({
-    required this.vipLevel,
-    required this.promotionPoints,
-    required this.firstRewardPoints,
-    required this.rewardPoints,
-    required this.isActivated,
-    required this.isReceived,
+    this.vipLevel,
+    this.promotionPoints,
+    this.firstRewardPoints,
+    this.rewardPoints,
+    this.isActivated,
+    this.isReceived,
   });
 
   factory VipLevelItemModel.fromJson(Map<String, dynamic> json) =>
