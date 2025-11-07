@@ -161,6 +161,20 @@ class I18nKeys {
   static const verificationCodeFailed = 'verificationCodeFailed';
   static const searchCountryNameCodeOrAreaCode = 'search_country_name_code_or_area_code';
   
+  // WhatsApp Task validation messages
+  static const enterValidPhoneNumber = 'enter_valid_phone_number';
+  static const selectValidCountryCode = 'select_valid_country_code';
+  static const verificationCodeCopied = 'verification_code_copied';
+  static const noVerificationCodeToCopy = 'no_verification_code_to_copy';
+  static const cannotOpenDownloadLink = 'cannot_open_download_link';
+  static const invalidDownloadLink = 'invalid_download_link';
+  static const failedToOpenDownloadLink = 'failed_to_open_download_link';
+  static const justNow = 'just_now';
+  static const daysAgo = 'days_ago';
+  static const hoursAgo = 'hours_ago';
+  static const minutesAgo = 'minutes_ago';
+  static const secondsAgo = 'seconds_ago';
+  
   // Withdrawal page
   static const paymentMethodTitle = 'payment_method_title';
   static const bankName = 'bank_name';

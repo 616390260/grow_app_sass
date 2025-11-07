@@ -162,6 +162,20 @@ class AppTranslations extends Translations {
       'phoneNumberTip': '输入手机号，获取验证码，在WhatsApp认证即可',
       'verification_code_sent': '验证码已发送',
       'verification_code_failed': '验证码发送失败，请重试',
+      
+      // WhatsApp Task validation messages
+      'enter_valid_phone_number': '请输入有效的手机号码（6-15位数字）',
+      'select_valid_country_code': '请选择有效的国家/地区区号',
+      'verification_code_copied': '验证码已复制到剪贴板',
+      'no_verification_code_to_copy': '没有可复制的验证码',
+      'cannot_open_download_link': '无法打开下载链接，请检查链接是否有效',
+      'invalid_download_link': '无效的下载链接',
+      'failed_to_open_download_link': '打开下载链接失败，请稍后重试',
+      'just_now': '刚刚',
+      'days_ago': '天',
+      'hours_ago': '小时',
+      'minutes_ago': '分钟',
+      'seconds_ago': '秒',
 
       // Withdrawal page
       'withdraw_to': '转出到',

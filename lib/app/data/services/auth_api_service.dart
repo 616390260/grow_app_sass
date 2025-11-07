@@ -24,7 +24,7 @@ class AuthApiService {
       'account': account,
       'password': password,
       if (confirmPassword != null) 'confirmPassword': confirmPassword,
-      if (inviteCode != null && inviteCode.isNotEmpty) 'inviteCode': inviteCode,
+      if (inviteCode != null && inviteCode.isNotEmpty) 'inputInviteCode': inviteCode,
     };
 
     // 使用 HttpService 的 postData 方法，直接返回泛型对象

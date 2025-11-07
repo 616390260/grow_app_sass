@@ -1,4 +1,5 @@
 import 'package:do_task_project/app/core/constants/image_assets.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -100,29 +101,32 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                       const SizedBox(height: 11),
                       _buildStatisticsSection(),
                       const SizedBox(height: 16),
-                      // 教程视频
-                      _buildVideoSection(),
-                      const SizedBox(height: 20),
-                      // 步骤说明容器
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 13,
-                          vertical: 16,
+                      
+                      // 教程视频和步骤说明 - 只在web端显示
+                      if (kIsWeb) ...[
+                        _buildVideoSection(),
+                        const SizedBox(height: 20),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 13,
+                            vertical: 16,
+                          ),
+                          margin: const EdgeInsets.symmetric(horizontal: 15),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // 步骤说明
+                              _buildStepsSection(),
+                            ],
+                          ),
                         ),
-                        margin: const EdgeInsets.symmetric(horizontal: 15),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // 步骤说明
-                            _buildStepsSection(),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 15),
+                        const SizedBox(height: 15),
+                      ],
+                      
                       // WhatsApp绑定
                       _buildBindingSection(context),
                       // 在线号码
@@ -381,20 +385,20 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
             child: Obx(() {
               if (Get.find<WhatsappTaskController>().isVideoInitialized.value) {
                 return AspectRatio(
-                  aspectRatio: Get.find<WhatsappTaskController>()
+                  aspectRatio: controller
                       .videoController
                       .value
                       .aspectRatio,
                   child: Stack(
                     children: [
                       VideoPlayer(
-                        Get.find<WhatsappTaskController>().videoController,
+                        controller.videoController,
                       ),
                       // 播放/暂停按钮覆盖层
                       Center(
                         child: AnimatedOpacity(
                           opacity:
-                              !Get.find<WhatsappTaskController>()
+                              controller
                                   .isPlaying
                                   .value
                               ? 1.0
@@ -402,8 +406,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                           duration: const Duration(milliseconds: 300),
                           child: InkWell(
                             onTap: () {
-                              Get.find<WhatsappTaskController>()
-                                  .togglePlayPause();
+                              controller.togglePlayPause();
                             },
                             child: Container(
                               width: 80,
@@ -425,8 +428,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                       Positioned.fill(
                         child: InkWell(
                           onTap: () {
-                            Get.find<WhatsappTaskController>()
-                                .togglePlayPause();
+                            controller.togglePlayPause();
                           },
                         ),
                       ),
@@ -479,7 +481,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
         ),
         const SizedBox(height: 16),
         GestureDetector(
-          onTap: () => Get.find<WhatsappTaskController>().downloadWhatsapp(),
+          onTap: () => controller.downloadWhatsapp(),
           child: Container(
             padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
@@ -798,15 +800,15 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
       
       // 计算时间差，精确到秒
       if (difference.inDays > 0) {
-        return '${difference.inDays}天${difference.inHours % 24}小时';
+        return '${difference.inDays}${I18nKeys.daysAgo.tr}${difference.inHours % 24}${I18nKeys.hoursAgo.tr}';
       } else if (difference.inHours > 0) {
-        return '${difference.inHours}小时${difference.inMinutes % 60}分钟';
+        return '${difference.inHours}${I18nKeys.hoursAgo.tr}${difference.inMinutes % 60}${I18nKeys.minutesAgo.tr}';
       } else if (difference.inMinutes > 0) {
-        return '${difference.inMinutes}分钟${difference.inSeconds % 60}秒';
+        return '${difference.inMinutes}${I18nKeys.minutesAgo.tr}${difference.inSeconds % 60}${I18nKeys.secondsAgo.tr}';
       } else if (difference.inSeconds > 0) {
-        return '${difference.inSeconds}秒';
+        return '${difference.inSeconds}${I18nKeys.secondsAgo.tr}';
       } else {
-        return '刚刚';
+        return I18nKeys.justNow.tr;
       }
     } catch (e) {
       return lastLoginTime; // 如果解析失败，返回原始时间

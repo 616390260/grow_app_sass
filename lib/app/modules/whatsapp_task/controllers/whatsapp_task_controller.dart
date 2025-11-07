@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../data/services/whatsapp_api_service.dart';
 import '../../../core/i18n/i18n_keys.dart';
@@ -86,7 +87,6 @@ class WhatsappTaskController extends BaseController {
           })
           ..setLooping(false);
       } catch (e) {
-        Get.log('Error initializing video controller: $e', isError: true);
       // 如果视频URL无效，使用默认视频
         _initDefaultVideoController();
       }
@@ -117,7 +117,6 @@ class WhatsappTaskController extends BaseController {
       // 安全释放视频资源
       videoController.dispose();
     } catch (e) {
-      Get.log('Error disposing video controller: $e', isError: true);
     }
     super.onClose();
   }
@@ -132,27 +131,26 @@ class WhatsappTaskController extends BaseController {
     // 手机号格式验证（只包含数字）
     final phonePattern = RegExp(r'^\d{6,15}$');
     if (!phonePattern.hasMatch(phoneNumber.value)) {
-      showErrorMessage('请输入有效的手机号码（6-15位数字）');
+      showErrorMessage(I18nKeys.enterValidPhoneNumber.tr);
       return;
     }
     
     // 区号安全验证
     if (selectedCountryCode.value.isEmpty || selectedCountryCode.value == '+00') {
-      showErrorMessage('请选择有效的国家/地区区号');
+      showErrorMessage(I18nKeys.selectValidCountryCode.tr);
       return;
     }
     
     // 验证区号格式（必须以+开头，后面是数字）
     final countryCodePattern = RegExp(r'^\+\d{1,3}$');
     if (!countryCodePattern.hasMatch(selectedCountryCode.value)) {
-      showErrorMessage('请选择有效的国家/地区区号');
+      showErrorMessage(I18nKeys.selectValidCountryCode.tr);
       return;
     }
     
     // 拼接区号和手机号（移除区号中的+号）
     final countryCodeWithoutPlus = selectedCountryCode.value.replaceAll('+', '');
     final fullPhoneNumber = '$countryCodeWithoutPlus${phoneNumber.value}';
-    Get.log('发送验证码到手机号: $fullPhoneNumber');
     
     await safeApiCall<String>(
       () => _whatsappApiService.getLoginCode(fullPhoneNumber),
@@ -167,9 +165,7 @@ class WhatsappTaskController extends BaseController {
       },
       showLoading: true,
       errorMessage: I18nKeys.verificationCodeFailed.tr,
-      onError: () {
-        setVerificationCode('12345678');
-      },
+      
     );
   }
   
@@ -195,19 +191,29 @@ class WhatsappTaskController extends BaseController {
   void copyVerificationCode() {
     if (verificationCode.value.isNotEmpty) {
       Clipboard.setData(ClipboardData(text: verificationCode.value));
-      showSuccessMessage('验证码已复制到剪贴板');
+      showSuccessMessage(I18nKeys.verificationCodeCopied.tr);
     } else {
-      showErrorMessage('没有可复制的验证码');
+      showErrorMessage(I18nKeys.noVerificationCodeToCopy.tr);
     }
   }
   
   // 下载WhatsApp
-  void downloadWhatsapp() {
+  void downloadWhatsapp() async {
     if (wsDownloadUrl.value.isNotEmpty) {
-      // 使用API返回的下载URL
-      showSuccessMessage(I18nKeys.redirectingToDownload.tr);
-      // 实际应用中可以使用url_launcher包跳转到下载链接
-      Get.log('Download URL: ${wsDownloadUrl.value}');
+      // 使用API返回的下载URL，打开新窗口跳转
+      try {
+        final Uri url = Uri.parse(wsDownloadUrl.value);
+        if (await canLaunchUrl(url)) {
+          await launchUrl(
+            url,
+            mode: LaunchMode.externalApplication, // 使用外部应用打开，会打开新窗口
+          );
+        } else {
+          showErrorMessage(I18nKeys.cannotOpenDownloadLink.tr);
+        }
+      } catch (e) {
+        showErrorMessage(I18nKeys.failedToOpenDownloadLink.tr);
+      }
     } else {
       showErrorMessage(I18nKeys.downloadLinkNotAvailable.tr);
     }
@@ -268,7 +274,6 @@ class WhatsappTaskController extends BaseController {
       filteredCountryCodes.assignAll(codes);
       
     } catch (e) {
-      Get.log('Error loading country codes: $e', isError: true);
       countryCodes.assignAll([]);
     }
   }
@@ -303,7 +308,6 @@ class WhatsappTaskController extends BaseController {
       filteredCountryCodes.assignAll(filtered);
     }
     
-    Get.log('搜索完成，关键词: "${searchKeyword.value}"，结果数量: ${filteredCountryCodes.length}');
   }
   
   // 切换视频播放/暂停状态
