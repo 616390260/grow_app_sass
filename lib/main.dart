@@ -7,6 +7,7 @@ import 'app/core/theme/app_theme.dart';
 import 'app/core/bindings/global_binding.dart';
 import 'app/core/i18n/app_translations.dart';
 import 'app/core/i18n/locale_config.dart';
+import 'app/core/services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,12 +27,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 根据认证状态确定初始路由
+    final authService = Get.find<AuthService>();
+    final initialRoute = authService.needLogin ? Routes.login : AppPages.initial;
+    
     return GetMaterialApp(
       title: 'app_title'.tr,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
-      initialRoute: AppPages.INITIAL,
+      initialRoute: initialRoute,
       getPages: AppPages.routes,
       translations: AppTranslations(),
       locale: LocaleConfig.getInitialLocale(),

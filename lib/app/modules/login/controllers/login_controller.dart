@@ -5,8 +5,8 @@ import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../../../routes/app_pages.dart';
 import '../../../data/services/auth_api_service.dart';
-import '../../../data/services/user_credentials_service.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/auth_service.dart';
 
 class LoginController extends BaseController {
   // 表单控制器
@@ -23,8 +23,8 @@ class LoginController extends BaseController {
   final accountError = ''.obs;
   final passwordError = ''.obs;
 
-  // 用户凭据服务
-  final _credentialsService = UserCredentialsService();
+  // 认证服务（包含用户凭据管理）
+  final _authService = AuthService.to;
 
   // 认证API服务
   final _authApiService = AuthApiService();
@@ -71,8 +71,8 @@ class LoginController extends BaseController {
 
   // 加载保存的凭据
   void _loadSavedCredentials() {
-    if (_credentialsService.hasCredentials()) {
-      final credentials = _credentialsService.getCredentials();
+    if (_authService.hasCredentials()) {
+      final credentials = _authService.getCredentials();
       accountController.text = credentials['account'] ?? '';
       passwordController.text = credentials['password'] ?? '';
       rememberPassword.value = credentials['rememberPassword'] ?? false;
@@ -86,8 +86,16 @@ class LoginController extends BaseController {
       accountError.value = I18nKeys.accountRequired.tr;
       return false;
     }
-    if (account.length < 3) {
+    if (account.length < 6) {
       accountError.value = I18nKeys.accountTooShort.tr;
+      return false;
+    }
+    if (account.length > 20) {
+      accountError.value = I18nKeys.accountTooLong.tr;
+      return false;
+    }
+    if (!_isValidAccount(account)) {
+      accountError.value = I18nKeys.accountInvalid.tr;
       return false;
     }
     accountError.value = '';
@@ -105,6 +113,14 @@ class LoginController extends BaseController {
       passwordError.value = I18nKeys.passwordTooShort.tr;
       return false;
     }
+    if (password.length > 20) {
+      passwordError.value = I18nKeys.passwordTooLong.tr;
+      return false;
+    }
+    if (!_isValidPassword(password)) {
+      passwordError.value = I18nKeys.passwordInvalid.tr;
+      return false;
+    }
     passwordError.value = '';
     return true;
   }
@@ -117,7 +133,7 @@ class LoginController extends BaseController {
   }
 
   // 登录
-  Future<void> login() async {
+  void login() {
     if (!validateForm()) {
       return;
     }
@@ -125,47 +141,60 @@ class LoginController extends BaseController {
     final account = accountController.text.trim();
     final password = passwordController.text;
 
-    try {
-      setLoading(true);
-      // 直接调用AuthApiService的login方法
-      final token = await _authApiService.login(
+    safeApiCall(
+      // API调用函数
+      () async => await _authApiService.login(
         account: account,
         password: password,
-      );
-
-      setSuccess();
-      showSuccessMessage(I18nKeys.loginSuccess.tr);
-      // 解析并保存token到本地（data字段为token字符串）
-      try {
-        print(token);
-        if (token.isNotEmpty) {
-          final storage = GetStorage();
-          await storage.write(AppConstants.storageKeyUserToken, token);
+      ),
+      // 成功回调
+      (token) async {
+        setSuccess();
+        showSuccessMessage(I18nKeys.loginSuccess.tr);
+        
+        // 使用认证服务保存token
+        try {
+          if (token.isNotEmpty) {
+            await _authService.saveToken(token);
+          }
+        } catch (_) {
+          // 忽略token解析异常，避免影响登录流程
         }
-      } catch (_) {
-        // 忽略token解析异常，避免影响登录流程
-      }
 
-      // 保存凭据（如果用户选择记住密码）
-      await _credentialsService.saveCredentials(
-        account: account,
-        password: password,
-        rememberPassword: rememberPassword.value,
-      );
+        // 保存凭据（如果用户选择记住密码）
+        await _authService.saveCredentials(
+          account: account,
+          password: password,
+          rememberPassword: rememberPassword.value,
+        );
 
-      // 登录成功后跳转到主页
-      Get.offAllNamed(Routes.MAIN);
-    } catch (e) {
-      setError('登录失败: $e');
-      showErrorMessage('登录失败: $e');
-    } finally {
-      setLoading(false);
-    }
+        // 登录成功后跳转到主页
+        Get.offAllNamed(Routes.main);
+      },
+      // 自定义错误消息
+      errorMessage: I18nKeys.loginFailed.tr,
+      // 显示加载状态
+      showLoading: true,
+    );
+  }
+
+  // 检查账号格式是否有效
+  bool _isValidAccount(String account) {
+    // 账号为6-20位数字
+    final accountRegex = RegExp(r'^\d{6,20}$');
+    return accountRegex.hasMatch(account);
+  }
+
+  // 检查密码格式是否有效
+  bool _isValidPassword(String password) {
+    // 密码必须为6-20位字母和数字
+    final passwordRegex = RegExp(r'^[a-zA-Z0-9]{6,20}$');
+    return passwordRegex.hasMatch(password);
   }
 
   // 跳转到注册页
   void goToRegister() {
-    Get.toNamed(Routes.REGISTER);
+    Get.toNamed(Routes.register);
   }
 
   // 忘记密码
@@ -175,10 +204,10 @@ class LoginController extends BaseController {
 
   // 清除记住的密码
   Future<void> clearRememberedPassword() async {
-    await _credentialsService.clearCredentials();
+    await _authService.clearCredentials();
     accountController.clear();
     passwordController.clear();
     rememberPassword.value = false;
-    showSuccessMessage('已清除记住的密码');
+    showSuccessMessage(I18nKeys.passwordClearedSuccess.tr);
   }
 }

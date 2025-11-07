@@ -1,5 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:do_task_project/app/core/constants/image_assets.dart';
 
@@ -39,11 +39,30 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.asset(
-                    imagePath,
+                  child: CachedNetworkImage(
+                    imageUrl: imagePath,
                     width: double.infinity,
                     height: 190,
                     fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      width: double.infinity,
+                      height: 190,
+                      color: Colors.grey[200],
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      width: double.infinity,
+                      height: 190,
+                      color: Colors.grey[200],
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        ImageAssets.homeBanner,
+                        width: double.infinity,
+                        height: 190,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                 ),
               );

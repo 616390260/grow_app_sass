@@ -1,4 +1,7 @@
-/// API调用结果封装类 - 格式：{"code": 200, "msg": "操作成功", "data": T}
+import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
+import 'package:get/get.dart';
+
+/// API调用结果封装类 - 格式：{"code": 200, "msg": "", "data": T}
 class ApiResult<T> {
   final int code;
   final String msg;
@@ -15,9 +18,12 @@ class ApiResult<T> {
   /// 成功结果
   factory ApiResult.success({
     T? data,
-    String msg = '操作成功',
+    String msg = '',
     int code = 200,
   }) {
+    if (msg.isEmpty) {
+      msg = I18nKeys.operationSuccess.tr;
+    }
     return ApiResult._(
       code: code,
       msg: msg,
@@ -38,8 +44,11 @@ class ApiResult<T> {
 
   /// 网络错误
   factory ApiResult.networkError({
-    String msg = '网络连接失败，请检查网络设置',
+    String msg = '',
   }) {
+    if (msg.isEmpty) {
+      msg = I18nKeys.errorNetwork.tr;
+    }
     return ApiResult._(
       code: -1,
       msg: msg,
@@ -48,9 +57,12 @@ class ApiResult<T> {
 
   /// 服务器错误
   factory ApiResult.serverError({
-    String msg = '服务器错误，请稍后重试',
+    String msg = '',
     int code = 500,
   }) {
+    if (msg.isEmpty) {
+      msg = I18nKeys.errorServerError.tr;
+    }
     return ApiResult._(
       code: code,
       msg: msg,
@@ -59,8 +71,11 @@ class ApiResult<T> {
 
   /// 未知错误
   factory ApiResult.unknownError({
-    String msg = '未知错误，请稍后重试',
+    String msg = '',
   }) {
+    if (msg.isEmpty) {
+      msg = I18nKeys.errorUnknown.tr;
+    }
     return ApiResult._(
       code: -999,
       msg: msg,
@@ -69,8 +84,11 @@ class ApiResult<T> {
 
   /// 数据为空错误
   factory ApiResult.emptyData({
-    String msg = '暂无数据',
+    String msg = '',
   }) {
+    if (msg.isEmpty) {
+      msg = I18nKeys.noData.tr;
+    }
     return ApiResult._(
       code: 404,
       msg: msg,
@@ -79,8 +97,11 @@ class ApiResult<T> {
 
   /// 权限错误
   factory ApiResult.unauthorized({
-    String msg = '权限不足，请重新登录',
+    String msg = '',
   }) {
+    if (msg.isEmpty) {
+      msg = I18nKeys.insufficientPermissionsPleaseLoginAgain.tr;
+    }
     return ApiResult._(
       code: 401,
       msg: msg,
@@ -89,8 +110,11 @@ class ApiResult<T> {
 
   /// 参数错误
   factory ApiResult.invalidParams({
-    String msg = '参数错误',
+    String msg = '',
   }) {
+    if (msg.isEmpty) {
+      msg = I18nKeys.errorInvalidParams.tr;
+    }
     return ApiResult._(
       code: 400,
       msg: msg,
@@ -98,17 +122,17 @@ class ApiResult<T> {
   }
 
   /// 转换数据类型
-  ApiResult<R> map<R>(R Function(T data) mapper) {
-    if (isSuccess && data != null) {
+  ApiResult<R> map<R>(R Function(T? data) mapper) {
+    if (isSuccess) {
       try {
-        final mappedData = mapper(data!);
+        final mappedData = mapper(data);
         return ApiResult.success(
           data: mappedData,
           msg: msg,
         );
       } catch (e) {
         return ApiResult.failure(
-          msg: '数据转换失败: ${e.toString()}',
+          msg: '${I18nKeys.errorUnknown.tr}: ${e.toString()}',
         );
       }
     } else {
@@ -120,13 +144,13 @@ class ApiResult<T> {
   }
 
   /// 链式调用处理
-  ApiResult<R> then<R>(ApiResult<R> Function(T data) next) {
-    if (isSuccess && data != null) {
+  ApiResult<R> then<R>(ApiResult<R> Function(T? data) next) {
+    if (isSuccess) {
       try {
-        return next(data!);
+        return next(data);
       } catch (e) {
         return ApiResult.failure(
-          msg: '处理失败: ${e.toString()}',
+          msg: '${I18nKeys.processingFailed.tr}: ${e.toString()}',
         );
       }
     } else {

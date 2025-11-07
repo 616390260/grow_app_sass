@@ -1,3 +1,4 @@
+import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../data/services/vip_api_service.dart';
@@ -79,6 +80,6 @@ class VipDetailsController extends BaseController {
 
   // 领取奖励按钮点击
   void onClaimRewardTap() {
-    showInfoMessage('领取奖励功能即将上线');
+    showInfoMessage(I18nKeys.rewardClaimComingSoon.tr);
   }
 }

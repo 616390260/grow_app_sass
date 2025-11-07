@@ -121,7 +121,7 @@ class ChangePasswordController extends BaseController {
         newPassword: newPasswordController.text,
       );
       
-      showSuccessMessage('密码修改成功');
+      showSuccessMessage(I18nKeys.passwordChangeSuccess.tr);
       
       // 关闭当前页面
       Navigator.pop(Get.context!);
@@ -129,7 +129,7 @@ class ChangePasswordController extends BaseController {
       setSuccess();
     } catch (e) {
       print('修改密码失败: $e');
-      showErrorMessage('修改密码失败，请稍后重试');
+      showErrorMessage(I18nKeys.errorChangePasswordFailed.tr);
     } finally {
       setLoading(false);
     }

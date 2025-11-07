@@ -165,21 +165,25 @@ class IncomeDetailsPage extends BaseView<IncomeDetailsController> {
                 ),
               ),
               const SizedBox(height: 16),
-              _buildFilterItem(
-                I18nKeys.allTypes.tr,
-                controller.selectedType.value,
-                (value) {
-                  controller.onTypeFilterChanged(value);
-                  Get.back();
-                },
-              ),
-              _buildFilterItem('agent rebate', controller.selectedType.value, (
-                value,
-              ) {
-                controller.onTypeFilterChanged(value);
-                Get.back();
+              Obx(() {
+                return Container(
+                  height: 300,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: controller.typeOptions.map((type) {
+                        return _buildFilterItem(
+                          type,
+                          controller.selectedType.value,
+                          (value) {
+                            controller.onTypeFilterChanged(value);
+                            Get.back();
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                );
               }),
-              // 可以添加更多类型选项
             ],
           ),
         );
@@ -206,39 +210,25 @@ class IncomeDetailsPage extends BaseView<IncomeDetailsController> {
                 ),
               ),
               const SizedBox(height: 16),
-              _buildFilterItem(
-                I18nKeys.allTime.tr,
-                controller.selectedTimeRange.value,
-                (value) {
-                  controller.onTimeFilterChanged(value);
-                  Get.back();
-                },
-              ),
-              _buildFilterItem(
-                I18nKeys.today.tr,
-                controller.selectedTimeRange.value,
-                (value) {
-                  controller.onTimeFilterChanged(value);
-                  Get.back();
-                },
-              ),
-              _buildFilterItem(
-                I18nKeys.thisWeek.tr,
-                controller.selectedTimeRange.value,
-                (value) {
-                  controller.onTimeFilterChanged(value);
-                  Get.back();
-                },
-              ),
-              _buildFilterItem(
-                I18nKeys.thisMonth.tr,
-                controller.selectedTimeRange.value,
-                (value) {
-                  controller.onTimeFilterChanged(value);
-                  Get.back();
-                },
-              ),
-              // 可以添加更多时间选项
+              Obx(() {
+                return Container(
+                  height: 300,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: controller.timeRangeOptions.map((timeRange) {
+                        return _buildFilterItem(
+                          timeRange,
+                          controller.selectedTimeRange.value,
+                          (value) {
+                            controller.onTimeFilterChanged(value);
+                            Get.back();
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                );
+              }),
             ],
           ),
         );

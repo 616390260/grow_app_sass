@@ -186,7 +186,7 @@ class AppUtils {
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
-            child: Text(cancelText ?? AppConstants.buttonCancel),
+            child: Text(cancelText ?? AppConstants.cancel), 
           ),
           TextButton(
             onPressed: () => Get.back(result: true),
@@ -231,7 +231,7 @@ class AppUtils {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text(cancelText ?? AppConstants.buttonCancel),
+            child: Text(cancelText ?? AppConstants.cancel), 
           ),
           TextButton(
             onPressed: () => Get.back(result: controller.text),
@@ -275,7 +275,7 @@ class AppUtils {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text(AppConstants.buttonCancel),
+            child: const Text(AppConstants.cancel),
           ),
         ],
       ),

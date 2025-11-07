@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:do_task_project/app/core/services/auth_service.dart';
+import 'package:do_task_project/app/data/services/auth_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart' as getx;
@@ -8,6 +10,7 @@ import 'package:get_storage/get_storage.dart';
 import '../config/environment_config.dart';
 import '../utils/json_convert.dart';
 import 'error_handler_center.dart';
+import 'package:do_task_project/app/core/exceptions/api_exception.dart';
 import '../constants/app_constants.dart';
 
 /// HTTP服务类 - 重构后的统一版本
@@ -80,13 +83,12 @@ class HttpService extends getx.GetxService {
 
         // 注入token到请求头
         try {
-          final storage = GetStorage();
-          final token = storage.read<String>(AppConstants.storageKeyUserToken);
+          final token = await AuthService.to.token;
           if (token != null && token.isNotEmpty) {
-            // 常见约定：Authorization Bearer；根据后端需求可调整
-            options.headers['Authorization'] = 'Bearer $token';
-            // 同时保留简洁的token键，兼容不同后端实现
             options.headers['APP-TOKEN'] = token;
+            print(
+              '添加Authorization头: $token',
+          );
           }
         } catch (_) {
           // 读取存储失败时忽略，不影响正常请求
@@ -156,10 +158,14 @@ class HttpService extends getx.GetxService {
       );
       return _handleResponseData<T>(response);
     } on DioException catch (e) {
-      throw _errorHandler.handleExceptionException(e);
-    } catch (e) {
-      throw _errorHandler.handleExceptionException(Exception(e.toString()));
-    }
+    _errorHandler.handleExceptionException(e);
+    // 如果是ApiException，直接重新抛出，保留错误码和消息
+    rethrow;
+  } catch (e) {
+    _errorHandler.handleExceptionException(Exception(e.toString()));
+    // 如果是ApiException，直接重新抛出
+    rethrow;
+  }
   }
 
 
@@ -179,10 +185,22 @@ class HttpService extends getx.GetxService {
       );
       return _handleResponseData<T>(response);
     } on DioException catch (e) {
-      throw _errorHandler.handleExceptionException(e);
-    } catch (e) {
-      throw _errorHandler.handleExceptionException(Exception(e.toString()));
+    final exception = _errorHandler.handleExceptionException(e);
+    // 如果是ApiException，直接重新抛出，保留错误码和消息
+    if (exception is ApiException) {
+      print(exception.message);
+      rethrow;
     }
+    throw exception;
+  } catch (e) {
+    final exception = _errorHandler.handleExceptionException(Exception(e.toString()));
+    // 如果是ApiException，直接重新抛出
+    if (exception is ApiException) {
+      print(exception.message);
+      rethrow;
+    }
+    throw exception;
+  }
   }
 
   /// PUT请求 - 直接返回泛型对象
@@ -263,8 +281,8 @@ class HttpService extends getx.GetxService {
         
         return _convertDataToType<T>(businessData ?? responseData); 
       } else {
-        // 业务逻辑失败，统一抛出异常，确保错误能够被上层捕获处理
-        throw _errorHandler.handleErrorCode<T>(code, message);
+        // 业务逻辑失败，统一抛出ApiException，确保错误能够被上层捕获处理
+        throw _errorHandler.handleErrorCodeException(code, message);
       }
     }
 

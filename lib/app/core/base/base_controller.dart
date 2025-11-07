@@ -1,5 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../i18n/i18n_keys.dart';
+import '../exceptions/api_exception.dart';
+import 'package:do_task_project/app/core/services/error_handler_center.dart';
 
 /// 页面状态枚举
 enum PageState {
@@ -114,6 +117,7 @@ abstract class BaseController extends GetxController {
 
   /// 根据错误码统一处理错误消息
   void handleErrorCode(int? errorCode, String? message) {
+    print('Error code: $errorCode, Message: $message');
     String errorMessage = message ?? I18nKeys.errorUnknown.tr;
     
     switch (errorCode) {
@@ -250,6 +254,50 @@ abstract class BaseController extends GetxController {
       default:
         showErrorMessage(errorMessage);
         break;
+    }
+  }
+
+  /// 直接处理ApiException异常
+  void handleApiException(ApiException exception) {
+    // 直接调用已有的handleErrorCode方法进行统一处理
+    handleErrorCode(exception.code, exception.message);
+  }
+
+  /// 通用API调用方法，统一处理异常
+  /// [apiCall] 需要执行的API调用函数
+  /// [onSuccess] 成功回调
+  /// [errorMessage] 自定义错误消息
+  /// [showLoading] 是否显示加载状态
+  /// [onError] 错误回调，用于在发生错误时执行特定操作
+  Future<void> safeApiCall<T>(
+    Future<T> Function() apiCall,
+    void Function(T result) onSuccess,
+    {String errorMessage = '', bool showLoading = false, void Function()? onError}
+  ) async {
+    if (showLoading) {
+      setLoading(true);
+    }
+
+    try {
+      final result = await apiCall();
+      onSuccess(result);
+    } catch (e) {
+      // 执行错误回调
+      if (onError != null) {
+        onError();
+      }
+      
+      if (e is ApiException) {
+        handleApiException(e);
+      } else {
+        final msg = errorMessage.isNotEmpty ? errorMessage : '${I18nKeys.errorUnknown.tr}: $e';
+        setError(msg);
+        showErrorMessage(msg);
+      }
+    } finally {
+      if (showLoading) {
+        setLoading(false);
+      }
     }
   }
 

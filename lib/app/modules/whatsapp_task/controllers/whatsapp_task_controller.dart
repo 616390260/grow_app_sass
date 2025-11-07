@@ -1,17 +1,36 @@
+import 'package:do_task_project/domain/entities/online_number.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
+import 'package:flutter/services.dart';
+import 'dart:convert';
 import '../../../core/base/base_controller.dart';
+import '../../../data/services/whatsapp_api_service.dart';
+import '../../../core/i18n/i18n_keys.dart';
 
 class WhatsappTaskController extends BaseController {
+  final WhatsappApiService _whatsappApiService = WhatsappApiService();
   // 统计数据
-  final todaySendCount = 150.obs;
-  final todayPoints = 150.obs;
-  final yesterdayPoints = 150.obs;
+  final todaySendCount = 0.obs; // 今日发送数量
+  final todayPoints = 0.obs; // 今日积分
+  final yesterdayPoints = 0.obs; // 昨日积分
+  final videoUrl = ''.obs; // 视频URL
+  final wsDownloadUrl = ''.obs; // WhatsApp下载URL
   
   // 绑定状态
   final phoneNumber = ''.obs;
   final verificationCode = ''.obs;
   final isCodeSent = false.obs;
+  final selectedCountryCode = '+00'.obs; // 默认阿尔及利亚区号
+  
+  // 在线号码列表 - 使用正确的类型
+  final onlineNumbers = <OnlineNumber>[].obs;
+  
+  // 国家代码列表
+  var countryCodes = <Map<String, dynamic>>[].obs;
+  // 过滤后的国家代码列表（用于搜索）
+  var filteredCountryCodes = <Map<String, dynamic>>[].obs;
+  // 搜索关键词
+  var searchKeyword = ''.obs;
   
   // 视频播放器控制器
   late VideoPlayerController videoController;
@@ -21,8 +40,64 @@ class WhatsappTaskController extends BaseController {
   @override
   void onInit() {
     super.onInit();
-    // 初始化视频控制器 - 这里使用网络视频URL作为示例
-    // 实际应用中可以替换为实际的视频URL或本地文件路径
+    
+    // 初始化时加载任务信息
+    loadTaskInfo();
+    
+    // 初始化时加载在线号码
+    loadOnlineNumbers();
+    
+    // 加载国家代码数据
+    loadCountryCodes();
+  }
+  
+  // 加载任务信息
+  Future<void> loadTaskInfo() async {
+    await safeApiCall<Map<String, dynamic>>(
+      () => _whatsappApiService.getTaskInfo(),
+      (taskInfo) {
+        // 更新状态变量
+        todayPoints.value = taskInfo['todayPoints'] ?? 0;
+        todaySendCount.value = taskInfo['todaySendNum'] ?? 0;
+        yesterdayPoints.value = taskInfo['yesterdayPoints'] ?? 0;
+        videoUrl.value = taskInfo['videoUrl'] ?? '';
+        wsDownloadUrl.value = taskInfo['wsDownloadUrl'] ?? '';
+        
+        // 初始化视频控制器
+        _initVideoController();
+      },
+      errorMessage: I18nKeys.loadingFailed.tr,
+    );
+  }
+  
+  // 初始化视频控制器
+  void _initVideoController() {
+    if (videoUrl.value.isNotEmpty) {
+      try {
+        videoController = VideoPlayerController.networkUrl(
+          Uri.parse(videoUrl.value),
+          videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+        )
+          ..initialize().then((_) {
+            isVideoInitialized.value = true;
+          })
+          ..addListener(() {
+            isPlaying.value = videoController.value.isPlaying;
+          })
+          ..setLooping(false);
+      } catch (e) {
+        Get.log('Error initializing video controller: $e', isError: true);
+      // 如果视频URL无效，使用默认视频
+        _initDefaultVideoController();
+      }
+    } else {
+      // 如果没有视频URL，使用默认视频
+      _initDefaultVideoController();
+    }
+  }
+  
+  // 初始化默认视频控制器
+  void _initDefaultVideoController() {
     videoController = VideoPlayerController.networkUrl(
       Uri.parse('https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'),
       videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
@@ -38,60 +113,200 @@ class WhatsappTaskController extends BaseController {
   
   @override
   void onClose() {
-    // 释放视频资源
-    videoController.dispose();
+    try {
+      // 安全释放视频资源
+      videoController.dispose();
+    } catch (e) {
+      Get.log('Error disposing video controller: $e', isError: true);
+    }
     super.onClose();
   }
   
   // 获取验证码
-  void getVerificationCode() {
+  void getVerificationCode() async {
     if (phoneNumber.value.isEmpty) {
-      showErrorMessage('请输入手机号码');
+      showErrorMessage(I18nKeys.enterPhoneNumberError.tr);
       return;
     }
     
-    // 模拟发送验证码
-    showSuccessMessage('验证码已发送');
-    isCodeSent.value = true;
+    // 手机号格式验证（只包含数字）
+    final phonePattern = RegExp(r'^\d{6,15}$');
+    if (!phonePattern.hasMatch(phoneNumber.value)) {
+      showErrorMessage('请输入有效的手机号码（6-15位数字）');
+      return;
+    }
+    
+    // 区号安全验证
+    if (selectedCountryCode.value.isEmpty || selectedCountryCode.value == '+00') {
+      showErrorMessage('请选择有效的国家/地区区号');
+      return;
+    }
+    
+    // 验证区号格式（必须以+开头，后面是数字）
+    final countryCodePattern = RegExp(r'^\+\d{1,3}$');
+    if (!countryCodePattern.hasMatch(selectedCountryCode.value)) {
+      showErrorMessage('请选择有效的国家/地区区号');
+      return;
+    }
+    
+    // 拼接区号和手机号（移除区号中的+号）
+    final countryCodeWithoutPlus = selectedCountryCode.value.replaceAll('+', '');
+    final fullPhoneNumber = '$countryCodeWithoutPlus${phoneNumber.value}';
+    Get.log('发送验证码到手机号: $fullPhoneNumber');
+    
+    await safeApiCall<String>(
+      () => _whatsappApiService.getLoginCode(fullPhoneNumber),
+      (result) {
+        if (result.isNotEmpty) {
+          showSuccessMessage(I18nKeys.verificationCodeSent.tr);
+          setVerificationCode(result);
+          isCodeSent.value = true;
+        } else {
+          showErrorMessage(I18nKeys.verificationCodeFailed.tr);
+        }
+      },
+      showLoading: true,
+      errorMessage: I18nKeys.verificationCodeFailed.tr,
+      onError: () {
+        setVerificationCode('12345678');
+      },
+    );
   }
   
   // 验证手机号码
   void verifyPhoneNumber() {
     if (verificationCode.value.isEmpty) {
-      showErrorMessage('请输入验证码');
+      showErrorMessage(I18nKeys.enterVerificationCodeError.tr);
       return;
     }
     
     // 模拟验证
-    showSuccessMessage('验证成功，WhatsApp账号已关联');
+    showSuccessMessage('${I18nKeys.verificationSuccess.tr}，${I18nKeys.whatsappAccountLinked.tr}');
+  }
+  
+  // 设置验证码（从接口接收）
+  void setVerificationCode(String code) {
+    if (code.isNotEmpty && code.length <= 8) {
+      verificationCode.value = code;
+    }
+  }
+  
+  // 复制验证码到剪贴板
+  void copyVerificationCode() {
+    if (verificationCode.value.isNotEmpty) {
+      Clipboard.setData(ClipboardData(text: verificationCode.value));
+      showSuccessMessage('验证码已复制到剪贴板');
+    } else {
+      showErrorMessage('没有可复制的验证码');
+    }
   }
   
   // 下载WhatsApp
   void downloadWhatsapp() {
-    // 这里可以添加实际的下载逻辑
-    showSuccessMessage('正在跳转到下载页面');
+    if (wsDownloadUrl.value.isNotEmpty) {
+      // 使用API返回的下载URL
+      showSuccessMessage(I18nKeys.redirectingToDownload.tr);
+      // 实际应用中可以使用url_launcher包跳转到下载链接
+      Get.log('Download URL: ${wsDownloadUrl.value}');
+    } else {
+      showErrorMessage(I18nKeys.downloadLinkNotAvailable.tr);
+    }
   }
   
   // 绑定WhatsApp
   void bindWhatsapp() {
     // 这里可以添加实际的绑定逻辑
-    showSuccessMessage('请完成注册后继续绑定');
+    showSuccessMessage(I18nKeys.pleaseCompleteRegistration.tr);
   }
   
-  // 播放教程视频
-  void playTutorialVideo() {
-    if (isVideoInitialized.value) {
-      if (videoController.value.isPlaying) {
-        videoController.pause();
-      } else {
-        videoController.play();
-      }
-    } else {
-      showErrorMessage('视频加载中，请稍后再试');
+  // 加载在线号码列表 - 使用safeApiCall方法
+  Future<void> loadOnlineNumbers() async {
+    await safeApiCall<List<OnlineNumber>>(
+      () => _whatsappApiService.getOnlineNumbers(),
+      (numbers) {
+        onlineNumbers.assignAll(numbers);
+      },
+      showLoading: true,
+      errorMessage: I18nKeys.loadingOnlineNumbersFailed.tr,
+      onError: () {
+        onlineNumbers.assignAll([]);
+      },
+    );
+  }
+  
+  // 刷新在线号码列表
+  void refreshOnlineNumbers() {
+    loadOnlineNumbers();
+  }
+  
+  // 加载国家代码数据
+  Future<void> loadCountryCodes() async {
+    try {
+      final String response = await rootBundle.loadString('assets/areaCode.json');
+      final data = json.decode(response);
+      
+      List<Map<String, dynamic>> codes = [];
+      data.forEach((key, value) {
+        if (value is List) {
+          for (var item in value) {
+            if (item is Map && item.containsKey('code')) {
+              codes.add({
+                'short': item['short'] ?? '',
+                'name': item['name'] ?? '',
+                'en': item['en'] ?? '',
+                'code': item['code'] ?? '',
+              });
+            }
+          }
+        }
+      });
+      
+      // 按英文名称排序
+      codes.sort((a, b) => a['en'].compareTo(b['en']));
+      countryCodes.assignAll(codes);
+      // 初始化过滤列表
+      filteredCountryCodes.assignAll(codes);
+      
+    } catch (e) {
+      Get.log('Error loading country codes: $e', isError: true);
+      countryCodes.assignAll([]);
     }
   }
   
-  // 切换视频播放状态
+  // 选择国家代码
+  void selectCountryCode(Map<String, dynamic> country) {
+    selectedCountryCode.value = country['code'];
+  }
+
+  // 搜索国家代码
+  void searchCountryCodes(String keyword) {
+    searchKeyword.value = keyword.trim();
+    
+    if (searchKeyword.isEmpty) {
+      // 如果搜索关键词为空，显示所有国家
+      filteredCountryCodes.assignAll(countryCodes);
+    } else {
+      // 按名称或区号搜索（支持中文名称、英文名称、国家代码、电话区号）
+      final filtered = countryCodes.where((country) {
+        final name = country['name']?.toString().toLowerCase() ?? '';
+        final en = country['en']?.toString().toLowerCase() ?? '';
+        final short = country['short']?.toString().toLowerCase() ?? '';
+        final code = country['code']?.toString().toLowerCase() ?? '';
+        final searchLower = searchKeyword.value.toLowerCase();
+        
+        return name.contains(searchLower) || 
+               en.contains(searchLower) || 
+               short.contains(searchLower) || 
+               code.contains(searchLower);
+      }).toList();
+      
+      filteredCountryCodes.assignAll(filtered);
+    }
+    
+    Get.log('搜索完成，关键词: "${searchKeyword.value}"，结果数量: ${filteredCountryCodes.length}');
+  }
+  
+  // 切换视频播放/暂停状态
   void togglePlayPause() {
     if (isVideoInitialized.value) {
       if (videoController.value.isPlaying) {
@@ -99,6 +314,8 @@ class WhatsappTaskController extends BaseController {
       } else {
         videoController.play();
       }
+    } else {
+      showErrorMessage(I18nKeys.videoLoadingPleaseWait.tr);
     }
   }
   

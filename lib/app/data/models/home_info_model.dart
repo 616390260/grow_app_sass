@@ -1,3 +1,4 @@
+import 'package:do_task_project/app/core/models/base_list_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'home_info_model.g.dart';
@@ -181,55 +182,74 @@ class RecommendTaskModel {
 }
 
 /// 任务列表响应模型
-@JsonSerializable()
-class TaskListResponse {
-  @JsonKey(name: 'records')
-  final List<RecommendTaskModel>? records;
-
-  @JsonKey(name: 'total')
-  final int? total;
-
-  @JsonKey(name: 'size')
-  final int? size;
-
-  @JsonKey(name: 'current')
-  final int? current;
-
-  @JsonKey(name: 'orders')
+class TaskListResponse extends BaseListEntity<RecommendTaskModel> {
   final List<dynamic>? orders;
-
-  @JsonKey(name: 'optimizeCountSql')
   final bool? optimizeCountSql;
-
-  @JsonKey(name: 'searchCount')
   final bool? searchCount;
-
-  @JsonKey(name: 'maxLimit')
   final int? maxLimit;
-
-  @JsonKey(name: 'countId')
   final String? countId;
 
-  @JsonKey(name: 'pages')
-  final int? pages;
-
   TaskListResponse({
-    this.records,
-    this.total,
-    this.size,
-    this.current,
+    required super.records,
+    required super.total,
+    required super.size,
+    required super.current,
+    required super.pages,
     this.orders,
     this.optimizeCountSql,
     this.searchCount,
     this.maxLimit,
     this.countId,
-    this.pages,
   });
 
-  factory TaskListResponse.fromJson(Map<String, dynamic> json) =>
-      _$TaskListResponseFromJson(json);
+  factory TaskListResponse.fromJson(Map<String, dynamic> json) {
+    // 根据API响应格式，可能需要从data字段中获取数据
+    final data = json.containsKey('data') && json['data'] is Map<String, dynamic>
+        ? json['data']
+        : json;
 
-  Map<String, dynamic> toJson() => _$TaskListResponseToJson(this);
+    return TaskListResponse(
+      records: (data['records'] as List<dynamic>?)?.map((record) => RecommendTaskModel.fromJson(record as Map<String, dynamic>)).toList() ?? [],
+      total: data['total'] as int? ?? 0,
+      size: data['size'] as int? ?? 20,
+      current: data['current'] as int? ?? 1,
+      pages: data['pages'] as int? ?? 0,
+      orders: data['orders'] as List<dynamic>?,
+      optimizeCountSql: data['optimizeCountSql'] as bool?,
+      searchCount: data['searchCount'] as bool?,
+      maxLimit: data['maxLimit'] as int?,
+      countId: data['countId'] as String?,
+    );
+  }
+
+
+
+  @override
+  TaskListResponse copyWith({
+    List<RecommendTaskModel>? records,
+    int? total,
+    int? size,
+    int? current,
+    int? pages,
+    List<dynamic>? orders,
+    bool? optimizeCountSql,
+    bool? searchCount,
+    int? maxLimit,
+    String? countId,
+  }) {
+    return TaskListResponse(
+      records: records ?? this.records,
+      total: total ?? this.total,
+      size: size ?? this.size,
+      current: current ?? this.current,
+      pages: pages ?? this.pages,
+      orders: orders ?? this.orders,
+      optimizeCountSql: optimizeCountSql ?? this.optimizeCountSql,
+      searchCount: searchCount ?? this.searchCount,
+      maxLimit: maxLimit ?? this.maxLimit,
+      countId: countId ?? this.countId,
+    );
+  }
 }
 
 /// 旧的推荐任务模型（不再使用）

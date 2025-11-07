@@ -55,7 +55,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                 Expanded(
                   child: Center(
                     child: Text(
-                      '签到',
+                      I18nKeys.signIn.tr,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 17,
@@ -103,9 +103,9 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                   // "已连续签到 7 天"
                   Row(
                     children: [
-                      const Text(
-                        '已连续签到',
-                        style: TextStyle(
+                      Text(
+                        I18nKeys.continuouslySignedInFor.tr,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -121,9 +121,9 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                         ),
                       ),
                       const SizedBox(width: 4),
-                      const Text(
-                        '天',
-                        style: TextStyle(
+                      Text(
+                        I18nKeys.days.tr,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -136,7 +136,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                   Row(
                     children: [
                       Text(
-                        '再连签 ',
+                        I18nKeys.signInAgainFor.tr,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 13,
@@ -152,7 +152,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                         ),
                       ),
                       Text(
-                        ' 天领 ',
+                        I18nKeys.daysToClaim.tr,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 13,
@@ -205,18 +205,18 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
         ),
         child: Column(
           children: [
             const SizedBox(height: 14),
             Text(
-              '签到日历 $year.${month.toString().padLeft(2, '0')}',
+              '${I18nKeys.signInCalendar.tr} $year.${month.toString().padLeft(2, '0')}',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
@@ -229,14 +229,14 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
               padding: const EdgeInsets.symmetric(horizontal: 28),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  _WeekLabel('日'),
-                  _WeekLabel('一'),
-                  _WeekLabel('二'),
-                  _WeekLabel('三'),
-                  _WeekLabel('四'),
-                  _WeekLabel('五'),
-                  _WeekLabel('六'),
+                children: [
+                  _WeekLabel(I18nKeys.weekDaySunday.tr),
+                  _WeekLabel(I18nKeys.weekDayMonday.tr),
+                  _WeekLabel(I18nKeys.weekDayTuesday.tr),
+                  _WeekLabel(I18nKeys.weekDayWednesday.tr),
+                  _WeekLabel(I18nKeys.weekDayThursday.tr),
+                  _WeekLabel(I18nKeys.weekDayFriday.tr),
+                  _WeekLabel(I18nKeys.weekDaySaturday.tr),
                 ],
               ),
             ),
@@ -312,7 +312,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
               boxShadow: !controller.isCheckedIn.value
                   ? [
                       BoxShadow(
-                        color: const Color(0xFF3D8BFF).withOpacity(0.4),
+                        color: const Color(0xFF3D8BFF).withValues(alpha: 0.4),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -321,14 +321,14 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
             ),
             alignment: Alignment.center,
             child: Text(
-              !controller.isCheckedIn.value ? '立即签到' : '今天已签到',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
+                !controller.isCheckedIn.value ? I18nKeys.signInNow.tr : I18nKeys.alreadySignedInToday.tr,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5
+                ),
               ),
-            ),
           ),
         ),
       );
@@ -412,13 +412,13 @@ class _DayCell extends StatelessWidget {
                 ? Padding(
                     padding: const EdgeInsets.only(top: 2),
                     child: Text(
-                      '今天',
-                      style: const TextStyle(
-                        fontSize: 8,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF3D8BFF),
+                        I18nKeys.today.tr,
+                        style: const TextStyle(
+                          fontSize: 8,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF3D8BFF),
+                        ),
                       ),
-                    ),
                   )
                 : const SizedBox.shrink(),
           ),

@@ -4,11 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:do_task_project/app/core/utils/message_utils.dart';
+import 'package:do_task_project/app/core/utils/share_utils.dart';
 import 'package:do_task_project/app/data/services/invite_friend_api_service.dart';
 
 class InviteFriendController extends BaseController {
   // 推荐链接
-  final referralLink = 'https://www.baidu.com'.obs;
+  final referralLink = ''.obs;
   
   // 复制状态
   final isCopied = false.obs;
@@ -86,5 +87,20 @@ class InviteFriendController extends BaseController {
       300,
       300,
     ];
+  }
+
+  /// 分享到Telegram
+  Future<void> shareToTelegram() async {
+    await ShareUtils.shareToTelegram(referralLink.value);
+  }
+
+  /// 分享到WhatsApp
+  Future<void> shareToWhatsApp() async {
+    await ShareUtils.shareToWhatsApp(referralLink.value);
+  }
+
+  /// 分享到Facebook
+  Future<void> shareToFacebook() async {
+    await ShareUtils.shareToFacebook(referralLink.value);
   }
 }

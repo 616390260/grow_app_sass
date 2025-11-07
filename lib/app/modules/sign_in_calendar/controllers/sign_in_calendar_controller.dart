@@ -14,7 +14,7 @@ class SignInCalendarController extends BaseController {
 
   final RxSet<int> checkedDays = <int>{}.obs;
   final streakDays = 0.obs;
-  final rewardPoints = 5000.0.obs;
+  final rewardPoints = 0.0.obs;
   final RxBool isLoadingRemoteData = false.obs;
   final RxBool isCheckedIn = false.obs;
 

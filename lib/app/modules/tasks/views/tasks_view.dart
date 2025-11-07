@@ -18,7 +18,7 @@ class TasksView extends BaseView<TasksController> {
       backgroundColor: const Color(0xFF477DF2),
       elevation: 0,
       title: Text(
-        '任务中心',
+        I18nKeys.taskCenter.tr,
         style: const TextStyle(
           color: Colors.white,
           fontSize: 17,
@@ -30,11 +30,6 @@ class TasksView extends BaseView<TasksController> {
 
   @override
   Widget buildContent(BuildContext context) {
-    // 加载任务数据
-    if (controller.tasks.isEmpty) {
-      controller.loadTasks();
-    }
-
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -74,7 +69,7 @@ class TasksView extends BaseView<TasksController> {
                         Padding(
                           padding: const EdgeInsets.only(top: 12, left: 17),
                           child: Text(
-                            'WhatsApp',
+                            I18nKeys.whatsapp.tr,
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w800,
@@ -97,8 +92,8 @@ class TasksView extends BaseView<TasksController> {
                             itemBuilder: (context, index) {
                               final task = controller.tasks[index];
                               return TaskCard(
-                                titleKey: task.title??'任务标题',
-                                descriptionKey: task.description??'任务描述',
+                                titleKey: task.title??I18nKeys.taskTitle,
+                                descriptionKey: task.description??I18nKeys.taskDescription,
                                 onStartTask: () => _startTask(task),
                               );
                             },
@@ -131,7 +126,7 @@ class TasksView extends BaseView<TasksController> {
 
   void _startTask(RecommendTaskModel task) {
     // 这里可以实现任务开始的逻辑
-    Get.toNamed(Routes.WHATSAPP_TASK, arguments: task.id);
+    Get.toNamed(Routes.whatsappTask, arguments: task.id);
   }
 }
 
@@ -222,7 +217,7 @@ class TaskCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: Text(
-                          '开始任务',
+                          I18nKeys.startTask.tr,
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.white,

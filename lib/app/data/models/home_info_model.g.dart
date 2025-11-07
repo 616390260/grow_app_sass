@@ -101,36 +101,6 @@ Map<String, dynamic> _$RecommendTaskModelToJson(RecommendTaskModel instance) =>
       'updateTime': instance.updateTime,
     };
 
-TaskListResponse _$TaskListResponseFromJson(Map<String, dynamic> json) =>
-    TaskListResponse(
-      records: (json['records'] as List<dynamic>?)
-          ?.map((e) => RecommendTaskModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      total: (json['total'] as num?)?.toInt(),
-      size: (json['size'] as num?)?.toInt(),
-      current: (json['current'] as num?)?.toInt(),
-      orders: json['orders'] as List<dynamic>?,
-      optimizeCountSql: json['optimizeCountSql'] as bool?,
-      searchCount: json['searchCount'] as bool?,
-      maxLimit: (json['maxLimit'] as num?)?.toInt(),
-      countId: json['countId'] as String?,
-      pages: (json['pages'] as num?)?.toInt(),
-    );
-
-Map<String, dynamic> _$TaskListResponseToJson(TaskListResponse instance) =>
-    <String, dynamic>{
-      'records': instance.records,
-      'total': instance.total,
-      'size': instance.size,
-      'current': instance.current,
-      'orders': instance.orders,
-      'optimizeCountSql': instance.optimizeCountSql,
-      'searchCount': instance.searchCount,
-      'maxLimit': instance.maxLimit,
-      'countId': instance.countId,
-      'pages': instance.pages,
-    };
-
 OldRecommendTaskModel _$OldRecommendTaskModelFromJson(
   Map<String, dynamic> json,
 ) => OldRecommendTaskModel(

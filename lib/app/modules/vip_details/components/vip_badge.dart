@@ -1,7 +1,8 @@
-import 'package:do_task_project/app/core/constants/image_assets.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../../core/constants/image_assets.dart';
 
 class VipBadge extends StatelessWidget {
   final String text;
@@ -18,7 +19,7 @@ class VipBadge extends StatelessWidget {
   const VipBadge({
     Key? key,
     required this.text,
-     this.imagePath=ImageAssets.vipCrown,
+    this.imagePath = ImageAssets.vipCrown,
     this.badgeColor = AppTheme.vipOrange,
     this.textColor = Colors.white,
     this.backgroundColor = Colors.white,
@@ -26,7 +27,7 @@ class VipBadge extends StatelessWidget {
     this.fontSize = 12,
     this.height = 20,
     this.borderRadius = 10,
-    this.iconSize = 12,
+    this.iconSize = 14,
   }) : super(key: key);
 
   @override
@@ -36,10 +37,7 @@ class VipBadge extends StatelessWidget {
         Container(
           margin: const EdgeInsets.only(left: 5, top: 1),
           height: height,
-          padding: const EdgeInsets.only(
-            left: 19,
-            right: 9,
-          ),
+          padding: const EdgeInsets.only(left: 19, right: 9),
           decoration: BoxDecoration(
             color: badgeColor,
             borderRadius: BorderRadius.circular(borderRadius),
@@ -63,16 +61,13 @@ class VipBadge extends StatelessWidget {
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
             color: badgeColor,
-            border: Border.all(
-              color: borderColor,
-              width: 1,
-            ),
+            border: Border.all(color: borderColor, width: 1),
             borderRadius: BorderRadius.circular(11),
           ),
-          child: SvgPicture.asset(
+          child: Image.asset(
             imagePath,
             width: iconSize,
-            height: iconSize - 1,
+            height: iconSize,
             color: backgroundColor,
           ),
         ),

@@ -89,6 +89,8 @@ class RegisterController extends BaseController {
       _accountError.value = I18nKeys.accountRequired.tr;
     } else if (account.length < 6) {
       _accountError.value = I18nKeys.accountTooShort.tr;
+    } else if (account.length > 20) {
+      _accountError.value = I18nKeys.accountTooLong.tr;
     } else if (!_isValidAccount(account)) {
       _accountError.value = I18nKeys.accountInvalid.tr;
     } else {
@@ -103,6 +105,8 @@ class RegisterController extends BaseController {
       _passwordError.value = I18nKeys.passwordRequired.tr;
     } else if (password.length < 6) {
       _passwordError.value = I18nKeys.passwordTooShort.tr;
+    } else if (password.length > 20) {
+      _passwordError.value = I18nKeys.passwordTooLong.tr;
     } else if (!_isValidPassword(password)) {
       _passwordError.value = I18nKeys.passwordInvalid.tr;
     } else {
@@ -139,18 +143,16 @@ class RegisterController extends BaseController {
 
   /// 检查账号格式是否有效
   bool _isValidAccount(String account) {
-    // 支持手机号或邮箱
-    final phoneRegex = RegExp(r'^1[3-9]\d{9}$');
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    return phoneRegex.hasMatch(account) || emailRegex.hasMatch(account);
+    // 账号为6-20位数字
+    final accountRegex = RegExp(r'^\d{6,20}$');
+    return accountRegex.hasMatch(account);
   }
 
   /// 检查密码格式是否有效
   bool _isValidPassword(String password) {
-    // 密码必须包含字母和数字
-    final hasLetter = RegExp(r'[a-zA-Z]').hasMatch(password);
-    final hasDigit = RegExp(r'\d').hasMatch(password);
-    return hasLetter && hasDigit;
+    // 密码必须为6-20位字母和数字
+    final passwordRegex = RegExp(r'^[a-zA-Z0-9]{6,20}$');
+    return passwordRegex.hasMatch(password);
   }
 
   /// 验证整个表单
@@ -167,7 +169,7 @@ class RegisterController extends BaseController {
   }
 
   /// 注册
-  Future<void> register() async {
+  void register() {
     // 统一的表单验证错误处理
     if (!_validateFormWithErrorHandling()) {
       return;
@@ -178,26 +180,26 @@ class RegisterController extends BaseController {
     final confirmPassword = confirmPasswordController.text;
     final inviteCode = inviteCodeController.text.trim();
 
-    try {
-      setLoading(true);
-      // 直接调用AuthApiService的register方法
-      await _authApiService.register(
+    safeApiCall(
+      // API调用函数
+      () async => await _authApiService.register(
         account: account,
         password: password,
         confirmPassword: confirmPassword,
         inviteCode: inviteCode.isNotEmpty ? inviteCode : null,
-      );
-      
-      setSuccess();
-      showSuccessMessage('注册成功');
-      // 注册成功后跳转到登录页面
-      Get.offNamed(Routes.LOGIN);
-    } catch (e) {
-      setError('注册失败: $e');
-      showErrorMessage('注册失败: $e');
-    } finally {
-      setLoading(false);
-    }
+      ),
+      // 成功回调
+      (result) {
+        setSuccess();
+        showSuccessMessage(I18nKeys.registerSuccess.tr);
+        // 注册成功后跳转到登录页面
+        Get.offNamed(Routes.login);
+      },
+      // 自定义错误消息
+      errorMessage: I18nKeys.registerFailed.tr,
+      // 显示加载状态
+      showLoading: true,
+    );
   }
 
   /// 统一的表单验证错误处理
@@ -235,6 +237,6 @@ class RegisterController extends BaseController {
 
   /// 跳转到登录页面
   void goToLogin() {
-    Get.toNamed(Routes.LOGIN);
+    Get.toNamed(Routes.login);
   }
 }

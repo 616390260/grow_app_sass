@@ -25,9 +25,10 @@ class EnvironmentConfig {
   String get baseUrl {
     switch (currentEnvironment) {
       case EnvironmentType.debug:
-        return 'http://192.168.3.46:8081/'; // 开发环境API地址
+        // return 'http://192.168.3.46:8081/'; // 开发环境API地址
+        return 'http://47.243.76.157:8083/'; // 测试环境API地址
       case EnvironmentType.release:
-        return 'https://api.example.com'; // 生产环境API地址
+        return 'http://47.243.76.157:8083/'; // 生产环境API地址
     }
   }
 

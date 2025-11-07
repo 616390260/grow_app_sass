@@ -35,7 +35,7 @@ class ImageAssets {
   static const String mineWithdraw = '$_basePath/mine_withdraw.svg';
   static const String minePsw = '$_basePath/mine_psw.svg';
   static const String mineLanguage = '$_basePath/mine_language.svg';
-  static const String vipCrown = '$_basePath/vip_crown.svg';
+  static const String vipCrown = '$_basePath/vip_crown.png';
   static const String signBg = '$_basePath/sign_bg.png';
   static const String inviteWhatsapp = '$_basePath/invite_whats.png';
   static const String inviteFacebook = '$_basePath/invite_fb.png';
@@ -48,6 +48,8 @@ class ImageAssets {
   static const String inviteBg = '$_basePath/invite_bg.webp';
   static const String serviceBg = '$_basePath/service_bg.png';
   static const String serviceGuide = '$_basePath/service_guide.png';
+  static const String onlinePhone = '$_basePath/online_phone.png';
+  static const String iconEmpty = '$_basePath/icon_empty.png';
 
   // 多语言横幅图片
   static const String welcomeBannerZhCn = '$_basePath/zh_CN/welcome_banner.svg';

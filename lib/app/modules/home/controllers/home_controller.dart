@@ -3,6 +3,7 @@ import '../../../core/base/base_controller.dart';
 import '../../../routes/app_pages.dart';
 import '../../../data/services/home_api_service.dart';
 import '../../../data/models/home_info_model.dart';
+import '../../../core/i18n/i18n_keys.dart';
 
 class HomeController extends BaseController {
   // 统计数据
@@ -26,33 +27,30 @@ class HomeController extends BaseController {
   }
 
   // 加载数据
-  void loadData() async {
-    try {
-      // 设置加载状态
-      setLoading(true);
-      
-      // 调用API获取首页数据
-      final homeInfo = await _homeApiService.getHomeInfo();
-      
-      // 更新统计数据 - 确保字段名与接口返回一致，并处理null值
-      accountPoints.value = homeInfo.accountPoints ?? 0.0;
-      dailyEarnings.value = homeInfo.todayIncome ?? 0.0;
-      promotionEarnings.value = homeInfo.todayPromotionIncome ?? 0.0;
-      vipLevel.value = homeInfo.vipLevel ?? '';
-      announcements.value = homeInfo.announcements ?? [];
-      recommendTasks.value = homeInfo.recommendTasks ?? [];
-      
-      // 保留现有的accountBalance字段，暂时使用accountPoints的值
-      accountBalance.value = (homeInfo.accountPoints ?? 0.0).toDouble();
-      
-      setSuccess();
-    } catch (e) {
-      // setError('加载数据失败: $e');
-      showErrorMessage('加载数据失败: $e');
-      // 移除错误提示框，避免顶部显示不消失的提示
-    } finally {
-      setLoading(false);
-    }
+  void loadData() {
+    safeApiCall(
+      // API调用函数
+      () async => await _homeApiService.getHomeInfo(),
+      // 成功回调
+      (homeInfo) {
+        // 更新统计数据 - 确保字段名与接口返回一致，并处理null值
+        accountPoints.value = homeInfo.accountPoints ?? 0.0;
+        dailyEarnings.value = homeInfo.todayIncome ?? 0.0;
+        promotionEarnings.value = homeInfo.todayPromotionIncome ?? 0.0;
+        vipLevel.value = homeInfo.vipLevel ?? '';
+        announcements.value = homeInfo.announcements ?? [];
+        recommendTasks.value = homeInfo.recommendTasks ?? [];
+        
+        // 保留现有的accountBalance字段，暂时使用accountPoints的值
+        accountBalance.value = (homeInfo.accountPoints ?? 0.0).toDouble();
+        
+        setSuccess();
+      },
+      // 自定义错误消息
+      errorMessage: I18nKeys.loadDataFailed.tr,
+      // 显示加载状态
+      showLoading: true,
+    );
   }
 
   // 刷新数据
@@ -67,28 +65,28 @@ class HomeController extends BaseController {
 
   // 幸运转盘点击
   void onLuckyWheelTap() {
-    Get.toNamed(Routes.LUCKY_WHEEL);
+    Get.toNamed(Routes.luckyWheel);
   }
 
   // 签到日历点击
   void onSignInCalendarTap() {
-    Get.toNamed(Routes.SIGN_IN_CALENDAR);
+    Get.toNamed(Routes.signInCalendar);
   }
 
   // 任务卡片点击
   void onTaskCardTap(String taskId) {
-    Get.toNamed(Routes.WHATSAPP_TASK, arguments: taskId);
+    Get.toNamed(Routes.whatsappTask, arguments: taskId);
   }
 
   // 下载APP按钮点击
   void onDownloadAppTap() {
-   Get.toNamed(Routes.INVITE_FRIEND);
+   Get.toNamed(Routes.inviteFriend);
     // 这里可以添加实际的下载逻辑，例如打开应用商店链接或显示下载二维码
   }
 
   // VIP详情点击
   void onVipDetailsTap() {
-    Get.toNamed(Routes.VIP_DETAILS);
+    Get.toNamed(Routes.vipDetails);
   }
 
   // Banner点击处理
@@ -109,7 +107,7 @@ class HomeController extends BaseController {
       final task = recommendTasks[index];
       // 根据task的icon字段显示信息
       // 这里可以添加实际的跳转逻辑，例如打开网页链接
-      Get.toNamed(Routes.WHATSAPP_TASK, arguments: task.id);
+      Get.toNamed(Routes.whatsappTask, arguments: task.id);
     }
   }
 }

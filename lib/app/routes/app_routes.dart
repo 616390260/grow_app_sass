@@ -3,47 +3,49 @@ part of 'app_pages.dart';
 /// 应用路由定义
 abstract class Routes {
   Routes._();
-  static const MAIN = _Paths.MAIN;
-  static const HOME = _Paths.HOME;
-  static const PROMOTION = _Paths.PROMOTION;
-  static const TASKS = _Paths.TASKS;
-  static const SMART = _Paths.SMART;
-  static const ACCOUNT = _Paths.ACCOUNT;
-  static const LANGUAGE_SETTINGS = _Paths.LANGUAGE_SETTINGS;
-  static const REGISTER = _Paths.REGISTER;
-  static const LOGIN = _Paths.LOGIN;
-  static const LUCKY_WHEEL = _Paths.LUCKY_WHEEL;
-  static const SIGN_IN_CALENDAR = _Paths.SIGN_IN_CALENDAR;
-  static const CHANGE_PASSWORD = _Paths.CHANGE_PASSWORD;
-  static const VIP_DETAILS = _Paths.VIP_DETAILS;
-  static const INVITE_FRIEND = _Paths.INVITE_FRIEND;
-  static const WHATSAPP_TASK = _Paths.WHATSAPP_TASK;
-  static const ACCOUNT_WITHDRAWAL = _Paths.ACCOUNT_WITHDRAWAL;
-  static const PAYMENT_METHOD = _Paths.PAYMENT_METHOD;
-  static const WITHDRAWAL_ORDERS = _Paths.WITHDRAWAL_ORDERS;
-  static const INCOME_DETAILS = _Paths.INCOME_DETAILS;
+  static const main = _Paths.main;
+  static const home = _Paths.home;
+  static const promotion = _Paths.promotion;
+  static const tasks = _Paths.tasks;
+  static const smart = _Paths.smart;
+  static const account = _Paths.account;
+  static const languageSettings = _Paths.languageSettings;
+  static const register = _Paths.register;
+  static const login = _Paths.login;
+  static const luckyWheel = _Paths.luckyWheel;
+  static const signInCalendar = _Paths.signInCalendar;
+  static const changePassword = _Paths.changePassword;
+  static const vipDetails = _Paths.vipDetails;
+  static const inviteFriend = _Paths.inviteFriend;
+  static const whatsappTask = _Paths.whatsappTask;
+  static const accountWithdrawal = _Paths.accountWithdrawal;
+  static const paymentMethod = _Paths.paymentMethod;
+  static const withdrawalOrders = _Paths.withdrawalOrders;
+  static const incomeDetails = _Paths.incomeDetails;
 }
 
 /// 路由路径定义
 abstract class _Paths {
   _Paths._();
-  static const MAIN = '/main';
-  static const HOME = '/home';
-  static const PROMOTION = '/promotion';
-  static const TASKS = '/tasks';
-  static const SMART = '/smart';
-  static const ACCOUNT = '/account';
-  static const LANGUAGE_SETTINGS = '/language-settings';
-  static const REGISTER = '/register';
-  static const LOGIN = '/login';
-  static const LUCKY_WHEEL = '/lucky-wheel';
-  static const SIGN_IN_CALENDAR = '/sign-in-calendar';
-  static const CHANGE_PASSWORD = '/change-password';
-  static const VIP_DETAILS = '/vip-details';
-  static const INVITE_FRIEND = '/invite_friend';
-  static const WHATSAPP_TASK = '/whatsapp_task';
-  static const ACCOUNT_WITHDRAWAL = '/account-withdrawal';
-  static const PAYMENT_METHOD = '/payment-method';
-  static const WITHDRAWAL_ORDERS = '/withdrawal-orders';
-  static const INCOME_DETAILS = '/income-details';
+  static const main = '/main';
+  static const home = '/home';
+  static const promotion = '/promotion';
+  static const tasks = '/tasks';
+  static const smart = '/smart';
+  static const account = '/account';
+  static const languageSettings = '/language-settings';
+  static const register = '/register';
+  static const login = '/login';
+  static const luckyWheel = '/lucky-wheel';
+  static const signInCalendar = '/sign-in-calendar';
+  static const changePassword = '/change-password';
+  static const vipDetails = '/vip-details';
+  static const inviteFriend = '/invite_friend';
+  static const whatsappTask = '/whatsapp_task';
+  static const accountWithdrawal = '/account-withdrawal';
+  static const paymentMethod = '/payment-method';
+  static const withdrawalOrders = '/withdrawal-orders';
+  static const incomeDetails = '/income-details';
+  // customerServiceList路径暂未使用，保留定义供后续使用
+  // static const customerServiceList = '/customer-service-list';
 }

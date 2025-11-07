@@ -5,9 +5,10 @@ import 'package:flutter/services.dart';
 import '../../../core/base/base_view.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../controllers/withdrawal_orders_controller.dart';
+import '../../../../domain/entities/withdrawal_record.dart';
 
 class WithdrawalOrdersView extends BaseView<WithdrawalOrdersController> {
-  const WithdrawalOrdersView({Key? key}) : super(key: key);
+  const WithdrawalOrdersView({super.key});
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
@@ -196,23 +197,22 @@ class WithdrawalOrdersView extends BaseView<WithdrawalOrdersController> {
                 ),
               ),
               const SizedBox(height: 16),
-              _buildFilterItem(
-                I18nKeys.allTypes.tr,
-                controller.selectedType.value,
-                    (value) {
-                  controller.selectType(value);
-                  Get.back();
-                },
-              ),
-              // 添加其他类型选项
-              _buildFilterItem(
-                '提现',
-                controller.selectedType.value,
-                    (value) {
-                  controller.selectType(value);
-                  Get.back();
-                },
-              ),
+              // 使用Obx响应式更新类型选项列表
+              Obx(() {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: controller.typeOptions.map((type) {
+                    return _buildFilterItem(
+                      type,
+                      controller.selectedType.value,
+                      (value) {
+                        controller.selectType(value);
+                        Get.back();
+                      },
+                    );
+                  }).toList(),
+                );
+              }),
             ],
           ),
         );
@@ -239,38 +239,22 @@ class WithdrawalOrdersView extends BaseView<WithdrawalOrdersController> {
                 ),
               ),
               const SizedBox(height: 16),
-              _buildFilterItem(
-                I18nKeys.allTime.tr,
-                controller.selectedTimeRange.value,
-                    (value) {
-                  controller.selectTimeRange(value);
-                  Get.back();
-                },
-              ),
-              _buildFilterItem(
-                I18nKeys.today.tr,
-                controller.selectedTimeRange.value,
-                    (value) {
-                  controller.selectTimeRange(value);
-                  Get.back();
-                },
-              ),
-              _buildFilterItem(
-                I18nKeys.thisWeek.tr,
-                controller.selectedTimeRange.value,
-                    (value) {
-                  controller.selectTimeRange(value);
-                  Get.back();
-                },
-              ),
-              _buildFilterItem(
-                I18nKeys.thisMonth.tr,
-                controller.selectedTimeRange.value,
-                    (value) {
-                  controller.selectTimeRange(value);
-                  Get.back();
-                },
-              ),
+              // 使用Obx响应式更新时间选项列表
+              Obx(() {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: controller.timeRangeOptions.map((time) {
+                    return _buildFilterItem(
+                      time,
+                      controller.selectedTimeRange.value,
+                      (value) {
+                        controller.selectTimeRange(value);
+                        Get.back();
+                      },
+                    );
+                  }).toList(),
+                );
+              }),
             ],
           ),
         );
@@ -307,7 +291,7 @@ class WithdrawalOrdersView extends BaseView<WithdrawalOrdersController> {
   }
 
   // 构建订单列表项
-  Widget _buildOrderItem(WithdrawalOrder order, int index) {
+  Widget _buildOrderItem(WithdrawalRecord order, int index) {
     return Container(
       color: Colors.white,
       child: Column(
@@ -320,7 +304,7 @@ class WithdrawalOrdersView extends BaseView<WithdrawalOrdersController> {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    '¥${order.amount.toStringAsFixed(2)}',
+                    '¥${order.amount?.toStringAsFixed(2) ?? '0.00'}',
                     style: TextStyle(
                       fontSize: 14,
                       color: AppTheme.primaryColor,
@@ -332,10 +316,10 @@ class WithdrawalOrdersView extends BaseView<WithdrawalOrdersController> {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    order.status,
+                    order.status ?? '',
                     style: TextStyle(
                       fontSize: 14,
-                      color: _getStatusColor(order.status),
+                      color: _getStatusColor(order.status ?? ''),
                       fontWeight: FontWeight.w500,
                     ),
                     textAlign: TextAlign.center,
@@ -345,7 +329,7 @@ class WithdrawalOrdersView extends BaseView<WithdrawalOrdersController> {
                 Expanded(
                   flex: 3,
                   child: Text(
-                    order.time,
+                    order.createTime ?? '',
                     style: TextStyle(
                       fontSize: 14,
                       color: AppTheme.sixColor,
@@ -368,17 +352,17 @@ class WithdrawalOrdersView extends BaseView<WithdrawalOrdersController> {
     );
   }
 
-  // 根据状态获取颜色
+  // 根据状态获取对应颜色
   Color _getStatusColor(String status) {
-    switch (status) {
-      case '成功':
-        return Colors.green;
-      case '处理中':
-        return Colors.orange;
-      case '失败':
-        return Colors.red;
-      default:
-        return Colors.grey;
+    // 适配不同的状态文本
+    if (status.contains(I18nKeys.statusSuccess.tr) || status.contains(I18nKeys.statusArrived.tr)) {
+      return AppTheme.primaryColor;
+    } else if (status.contains(I18nKeys.statusProcessing.tr) || status.contains(I18nKeys.statusPending.tr)) {
+      return AppTheme.vipOrange; // 使用现有的橙色
+    } else if (status.contains(I18nKeys.processingFailed.tr) || status.contains(I18nKeys.statusRejected.tr)) {
+      return AppTheme.ff6a6aColor; // 使用现有的红色
+    } else {
+      return AppTheme.sixColor;
     }
   }
 

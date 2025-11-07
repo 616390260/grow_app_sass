@@ -5,6 +5,9 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// 应用签名配置
+apply(from = "signingConfigs.gradle")
+
 android {
     namespace = "com.example.dotask.do_task_project"
     compileSdk = flutter.compileSdkVersion
@@ -32,9 +35,20 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // 使用发布签名配置
+            signingConfig = signingConfigs.getByName("release")
+            // 启用代码压缩
+            // isMinifyEnabled = true
+            // 启用资源压缩
+            // isShrinkResources = true
+            // 移除未使用的资源
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+             ndk {
+                 abiFilters.add("arm64-v8a")
+             }
         }
     }
 }

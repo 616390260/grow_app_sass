@@ -1,102 +1,25 @@
-import 'package:json_annotation/json_annotation.dart';
-
-part 'income_details_model.g.dart';
-
-/// 收益明细模型类
-@JsonSerializable()
-class IncomeDetailsModel {
-  @JsonKey(name: 'records')
-  final List<IncomeRecord> records;
-  
-  @JsonKey(name: 'total')
-  final int total;
-  
-  @JsonKey(name: 'size')
-  final int size;
-  
-  @JsonKey(name: 'current')
-  final int current;
-  
-  @JsonKey(name: 'pages')
-  final int pages;
-
-  IncomeDetailsModel({
-    required this.records,
-    required this.total,
-    required this.size,
-    required this.current,
-    required this.pages,
-  });
-
-  factory IncomeDetailsModel.fromJson(Map<String, dynamic> json) => _$IncomeDetailsModelFromJson(json);
-
-  Map<String, dynamic> toJson() => _$IncomeDetailsModelToJson(this);
-}
-
 /// 收益记录模型类
-@JsonSerializable()
 class IncomeRecord {
-  @JsonKey(name: 'createBy')
   final String? createBy;
-  
-  @JsonKey(name: 'createTime')
   final String createTime;
-  
-  @JsonKey(name: 'updateBy')
   final String? updateBy;
-  
-  @JsonKey(name: 'updateTime')
   final String updateTime;
-  
-  @JsonKey(name: 'remark')
   final String? remark;
-  
-  @JsonKey(name: 'id')
   final int id;
-  
-  @JsonKey(name: 'userId')
   final int userId;
-  
-  @JsonKey(name: 'inviteCode')
   final String inviteCode;
-  
-  @JsonKey(name: 'userName')
   final String userName;
-  
-  @JsonKey(name: 'type')
   final String type;
-  
-  @JsonKey(name: 'typeName')
   final String? typeName;
-  
-  @JsonKey(name: 'points')
   final num points;
-  
-  @JsonKey(name: 'changeType')
   final String changeType;
-  
-  @JsonKey(name: 'beforePoints')
   final num beforePoints;
-  
-  @JsonKey(name: 'afterPoints')
   final num afterPoints;
-  
-  @JsonKey(name: 'sourceId')
   final int? sourceId;
-  
-  @JsonKey(name: 'agentLevel')
   final String? agentLevel;
-  
-  @JsonKey(name: 'receiveStatus')
   final String receiveStatus;
-  
-  @JsonKey(name: 'receiveTime')
   final String? receiveTime;
-  
-  @JsonKey(name: 'boxId')
   final int? boxId;
-  
-  @JsonKey(name: 'wsNumber')
   final String? wsNumber;
 
   IncomeRecord({
@@ -123,7 +46,56 @@ class IncomeRecord {
     this.wsNumber,
   });
 
-  factory IncomeRecord.fromJson(Map<String, dynamic> json) => _$IncomeRecordFromJson(json);
+  factory IncomeRecord.fromJson(Map<String, dynamic> json) {
+    return IncomeRecord(
+      createBy: json['createBy']?.toString(),
+      createTime: json['createTime']?.toString() ?? '',
+      updateBy: json['updateBy']?.toString(),
+      updateTime: json['updateTime']?.toString() ?? '',
+      remark: json['remark']?.toString(),
+      id: json['id'] is num ? (json['id'] as num).toInt() : 0,
+      userId: json['userId'] is num ? (json['userId'] as num).toInt() : 0,
+      inviteCode: json['inviteCode']?.toString() ?? '',
+      userName: json['userName']?.toString() ?? '',
+      type: json['type']?.toString() ?? '',
+      typeName: json['typeName']?.toString(),
+      points: json['points'] is num ? (json['points'] as num) : 0,
+      changeType: json['changeType']?.toString() ?? '',
+      beforePoints: json['beforePoints'] is num ? (json['beforePoints'] as num) : 0,
+      afterPoints: json['afterPoints'] is num ? (json['afterPoints'] as num) : 0,
+      sourceId: json['sourceId'] is num ? (json['sourceId'] as num).toInt() : null,
+      agentLevel: json['agentLevel']?.toString(),
+      receiveStatus: json['receiveStatus']?.toString() ?? '',
+      receiveTime: json['receiveTime']?.toString(),
+      boxId: json['boxId'] is num ? (json['boxId'] as num).toInt() : null,
+      wsNumber: json['wsNumber']?.toString(),
+    );
+  }
 
-  Map<String, dynamic> toJson() => _$IncomeRecordToJson(this);
+  Map<String, dynamic> toJson() {
+    return {
+      'createBy': createBy,
+      'createTime': createTime,
+      'updateBy': updateBy,
+      'updateTime': updateTime,
+      'remark': remark,
+      'id': id,
+      'userId': userId,
+      'inviteCode': inviteCode,
+      'userName': userName,
+      'type': type,
+      'typeName': typeName,
+      'points': points,
+      'changeType': changeType,
+      'beforePoints': beforePoints,
+      'afterPoints': afterPoints,
+      'sourceId': sourceId,
+      'agentLevel': agentLevel,
+      'receiveStatus': receiveStatus,
+      'receiveTime': receiveTime,
+      'boxId': boxId,
+      'wsNumber': wsNumber,
+    };
+  }
+
 }

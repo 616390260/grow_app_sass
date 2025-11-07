@@ -51,6 +51,7 @@ class MainController extends BaseController {
       case 3:
         final smartController = Get.find<SmartController>();
         // smart controller 目前没有加载数据的方法
+        smartController.loadCustomerServices();
         break;
       case 4:
         final accountController = Get.find<AccountController>();

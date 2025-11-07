@@ -4,22 +4,21 @@ import '../../core/services/http_service.dart';
 class InviteFriendApiService {
   final HttpService _httpService = HttpService.to;
 
-  static const String _getReferralLinkEndpoint = 'app/user/getReferralLink';
+  static const String _getReferralLinkEndpoint = 'app/user/getInviteFriends';
 
   /// 获取推荐链接
   Future<String> getReferralLink() async {
     try {
-      final responseData = await _httpService.get<Map<String, dynamic>>(
+      final responseData = await _httpService.get<String>(
         _getReferralLinkEndpoint,
       );
       
       // 提取推荐链接
-      final link = responseData['link'] as String?;
-      if (link == null || link.isEmpty) {
+      if (responseData.isEmpty) {
         throw Exception('推荐链接为空');
       }
       
-      return link;
+      return responseData;
     } catch (e) {
       // 错误处理
       rethrow;

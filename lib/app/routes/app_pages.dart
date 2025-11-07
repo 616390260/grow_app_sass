@@ -44,112 +44,113 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.MAIN;
+  static const initial = Routes.main;
 
   static final routes = [
     GetPage(
-      name: _Paths.MAIN,
+      name: _Paths.main,
       page: () => const MainView(),
       binding: MainBinding(),
     ),
     GetPage(
-      name: _Paths.HOME,
+      name: _Paths.home,
       page: () => const HomeView(),
       binding: HomeBinding(),
     ),
     GetPage(
-      name: _Paths.PROMOTION,
+      name: _Paths.promotion,
       page: () => const PromotionView(),
       binding: PromotionBinding(),
     ),
     GetPage(
-      name: _Paths.TASKS,
+      name: _Paths.tasks,
       page: () => TasksView(),
       binding: TasksBinding(),
     ),
     GetPage(
-      name: _Paths.SMART,
+      name: _Paths.smart,
       page: () => const SmartView(),
       binding: SmartBinding(),
     ),
     GetPage(
-      name: _Paths.ACCOUNT,
+      name: _Paths.account,
       page: () => const AccountView(),
       binding: AccountBinding(),
     ),
     GetPage(
-      name: _Paths.LANGUAGE_SETTINGS,
+      name: _Paths.languageSettings,
       page: () => const LanguageSettingsView(),
       binding: LanguageSettingsBinding(),
     ),
     GetPage(
-      name: _Paths.REGISTER,
+      name: _Paths.register,
       page: () => const RegisterView(),
       binding: RegisterBinding(),
     ),
     GetPage(
-      name: _Paths.LOGIN,
+      name: _Paths.login,
       page: () => const LoginView(),
       binding: LoginBinding(),
     ),
     GetPage(
-      name: _Paths.LUCKY_WHEEL,
+      name: _Paths.luckyWheel,
       page: () => const LuckyWheelView(),
       binding: LuckyWheelBinding(),
     ),
     // 签到日历页
     GetPage(
-      name: _Paths.SIGN_IN_CALENDAR,
+      name: _Paths.signInCalendar,
       page: () => const SignInCalendarView(),
       binding: SignInCalendarBinding(),
     ),
     // 修改密码页
     GetPage(
-        name: Routes.CHANGE_PASSWORD,
+        name: Routes.changePassword,
         page: () => const ChangePasswordView(),
         binding: ChangePasswordBinding(),
       ),
     // VIP详情页
     GetPage(
-      name: Routes.VIP_DETAILS,
+      name: Routes.vipDetails,
       page: () => const VipDetailsView(),
       binding: VipDetailsBinding(),
     ),
     // invite friend
     GetPage(
-      name: Routes.INVITE_FRIEND,
+      name: Routes.inviteFriend,
       page: () => const InviteFriendView(),
       binding: InviteFriendBinding(),
     ),
     // whatsapp task
     GetPage(
-      name: Routes.WHATSAPP_TASK,
+      name: Routes.whatsappTask,
       page: () => const WhatsappTaskView(),
       binding: WhatsappTaskBinding(),
     ),
     // 账号提现页
     GetPage(
-      name: Routes.ACCOUNT_WITHDRAWAL,
+      name: Routes.accountWithdrawal,
       page: () => const AccountWithdrawalView(),
       binding: AccountWithdrawalBinding(),
     ),
     // 收款方式页
     GetPage(
-      name: Routes.PAYMENT_METHOD,
+      name: Routes.paymentMethod,
       page: () => const PaymentMethodView(),
       binding: PaymentMethodBinding(),
     ),
     // 提现订单页
     GetPage(
-      name: Routes.WITHDRAWAL_ORDERS,
+      name: Routes.withdrawalOrders,
       page: () => const WithdrawalOrdersView(),
       binding: WithdrawalOrdersBinding(),
     ),
     // 收益明细页
     GetPage(
-      name: Routes.INCOME_DETAILS,
+      name: Routes.incomeDetails,
       page: () => IncomeDetailsPage(),
       binding: IncomeDetailsBinding(),
     ),
+   
   ];
 }

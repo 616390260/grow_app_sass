@@ -1,10 +1,28 @@
 import 'package:get/get.dart';
 import '../../../core/base/base_controller.dart';
+import '../../../../domain/entities/promotion_data.dart';
+import '../../../data/services/promotion_api_service.dart';
+import '../../../core/utils/share_utils.dart';
 
 class PromotionController extends BaseController {
   // 推广数据
   final promotionCount = 0.obs;
   final promotionEarnings = 0.0.obs;
+  
+  // 新增的推广数据字段
+  final activeSubordinates = 0.obs;
+  final activeUsers = 0.obs;
+  final inviteCode = ''.obs;
+  final inviteUrl = ''.obs;
+  final reachTwoStarUsers = 0.obs;
+  final twoStarRewardPoints = 0.obs;
+  final todayNewSubordinates = 0.obs;
+  final totalCommission = 0.0.obs;
+   final todayCommission = 0.0.obs;
+  final yesterdayCommission = 0.0.obs;
+
+  // API服务
+  final _promotionApiService = PromotionApiService();
 
   @override
   void onInit() {
@@ -16,18 +34,25 @@ class PromotionController extends BaseController {
     try {
       // 设置加载状态
       
-      // 模拟网络请求
-      await Future.delayed(const Duration(seconds: 1));
-      
-      // 模拟返回推广数据
-      final data = {
-        'promotionCount': 15,
-        'promotionEarnings': 1250.0,
-      };
+      // 调用API获取真实数据
+      final PromotionData data = await _promotionApiService.getInviteHome();
       
       // 更新推广数据
-      promotionCount.value = data['promotionCount'] as int;
-      promotionEarnings.value = data['promotionEarnings'] as double;
+      // 保持原有的字段以确保UI兼容性
+      promotionCount.value = data.activeSubordinates ?? 0;
+      promotionEarnings.value = data.totalCommission ?? 0.0;
+      
+      // 更新新字段
+      activeSubordinates.value = data.activeSubordinates ?? 0;
+      activeUsers.value = data.activeUsers ?? 0;
+      inviteCode.value = data.inviteCode ?? '';
+      inviteUrl.value = data.inviteUrl ?? '';
+      reachTwoStarUsers.value = data.reachTwoStarUsers ?? 0;
+      todayCommission.value = data.todayCommission ?? 0.0;
+      todayNewSubordinates.value = data.todayNewSubordinates ?? 0;
+      totalCommission.value = data.totalCommission ?? 0.0;
+      twoStarRewardPoints.value = data.twoStarRewardPoints ?? 0;
+      yesterdayCommission.value = data.yesterdayCommission ?? 0.0;
       
       setSuccess();
     } catch (e) {
@@ -36,5 +61,20 @@ class PromotionController extends BaseController {
     } finally {
       setLoading(false);
     }
+  }
+
+  /// 分享到Telegram
+  Future<void> shareToTelegram() async {
+    await ShareUtils.shareToTelegram(inviteUrl.value);
+  }
+
+  /// 分享到WhatsApp
+  Future<void> shareToWhatsApp() async {
+    await ShareUtils.shareToWhatsApp(inviteUrl.value);
+  }
+
+  /// 分享到Facebook
+  Future<void> shareToFacebook() async {
+    await ShareUtils.shareToFacebook(inviteUrl.value);
   }
 }

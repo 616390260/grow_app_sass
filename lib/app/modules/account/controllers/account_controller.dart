@@ -6,9 +6,8 @@ import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../../../routes/app_pages.dart';
 import '../../../data/services/auth_api_service.dart';
-import '../../../data/services/user_credentials_service.dart';
-import '../../../core/constants/app_constants.dart';
 import '../../../data/models/user_model.dart';
+import '../../../core/services/auth_service.dart';
 
 class AccountController extends BaseController {
   // 用户信息
@@ -22,8 +21,8 @@ class AccountController extends BaseController {
   // 认证API服务
   final _authApiService = AuthApiService();
   
-  // 用户凭据服务
-  final _credentialsService = UserCredentialsService();
+  // 认证服务（包含用户凭据管理）
+  final _authService = AuthService.to;
 
   @override
   void onInit() {
@@ -63,41 +62,41 @@ class AccountController extends BaseController {
 
   // 交互入口
   void onWithdrawTap() {
-    Get.toNamed(Routes.ACCOUNT_WITHDRAWAL);
+    Get.toNamed(Routes.accountWithdrawal);
   }
 
   // 收益明细点击事件
   void onIncomeDetailsTap() {
-    Get.toNamed(Routes.INCOME_DETAILS);
+    Get.toNamed(Routes.incomeDetails);
   }
 
   void onWithdrawalOrdersTap() {
     // Navigate to withdrawal orders page
-    Get.toNamed(Routes.WITHDRAWAL_ORDERS);
+    Get.toNamed(Routes.withdrawalOrders);
   }
 
   void onChangePasswordTap() {
-    Get.toNamed(Routes.CHANGE_PASSWORD);
+    Get.toNamed(Routes.changePassword);
   }
 
   void onLanguageSettingsTap() {
-    Get.toNamed(Routes.LANGUAGE_SETTINGS);
+    Get.toNamed(Routes.languageSettings);
   }
 
   void onLogoutTap() async {
     // 显示确认对话框
     final confirmed = await Get.dialog<bool>(
       AlertDialog(
-        title: const Text('确认退出'),
-        content: const Text('您确定要退出登录吗？'),
+        title: Text(I18nKeys.confirmExit.tr),
+        content: Text(I18nKeys.confirmExitMessage.tr),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
-            child: const Text('取消'),
+            child: Text(I18nKeys.cancel.tr),
           ),
           TextButton(
             onPressed: () => Get.back(result: true),
-            child: const Text('确定'),
+            child: Text(I18nKeys.confirmExit.tr),
           ),
         ],
       ),
@@ -119,14 +118,14 @@ class AccountController extends BaseController {
       // 无论API调用成功与否，都执行本地清理操作
       await _clearLocalData();
       
-      showSuccessMessage('退出成功');
-      Get.offAllNamed(Routes.LOGIN);
+      showSuccessMessage(I18nKeys.logoutSuccess.tr);
+      Get.offAllNamed(Routes.login);
     } catch (e) {
       debugPrint('退出登录失败: $e');
       // 即使API调用失败，也执行本地清理操作
       await _clearLocalData();
-      showInfoMessage('已清除本地数据，请重新登录');
-      Get.offAllNamed(Routes.LOGIN);
+      showInfoMessage(I18nKeys.logoutFailedClearData.tr);
+      Get.offAllNamed(Routes.login);
     } finally {
       setLoading(false);
     }
@@ -136,9 +135,8 @@ class AccountController extends BaseController {
   Future<void> _clearLocalData() async {
     try {
       // 清除用户凭据
-      await _credentialsService.clearCredentials();
-      // 清除本地token
-      await GetStorage().remove(AppConstants.storageKeyUserToken);
+      await _authService.clearCredentials();
+      await _authService.clearToken();
       
       // 清除用户信息
       userName.value = '';

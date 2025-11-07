@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../i18n/i18n_keys.dart';
 
 /// Loading 样式统一配置类
 class LoadingStyle {
@@ -231,7 +232,7 @@ class LoadingStyle {
             SizedBox(height: defaultSpacing),
             ElevatedButton(
               onPressed: onRetry,
-              child: const Text('重试'),
+              child: Text(I18nKeys.retry.tr),
             ),
           ],
         ],
@@ -267,7 +268,7 @@ class LoadingStyle {
             SizedBox(height: largeSpacing),
             ElevatedButton(
               onPressed: onRefresh,
-              child: const Text('刷新'),
+              child: Text(I18nKeys.refresh.tr),
             ),
           ],
         ],

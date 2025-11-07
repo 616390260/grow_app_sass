@@ -15,8 +15,8 @@ class PromotionView extends BaseView<PromotionController> {
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return const LocalizedAppBar(
-      titleKey: '现金奖励',
+    return LocalizedAppBar(
+      titleKey: I18nKeys.cashReward,
       backgroundColor: Color(0xFF477DF2),
       foregroundColor: Colors.white,
     );
@@ -24,8 +24,6 @@ class PromotionView extends BaseView<PromotionController> {
 
   @override
   Widget buildContent(BuildContext context) {
-    // 加载推广数据
-    controller.loadData();
     return SingleChildScrollView(
       child: Container(
         decoration: const BoxDecoration(
@@ -72,18 +70,18 @@ const SizedBox(height: 15),
       padding: const EdgeInsets.only(top: 18),
       child: Column(
         children: [
-          const Text(
-            '每邀请一个新用户成功后，即可获得',
-            style: TextStyle(
+          Text(
+            I18nKeys.inviteNewUserGetReward.tr,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 5),
-          const Text(
-            '现金奖励',
-            style: TextStyle(
+          Text(
+            I18nKeys.cashRewardTitle.tr,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 30,
               fontWeight: FontWeight.w800,
@@ -120,9 +118,9 @@ const SizedBox(height: 15),
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 推荐链接
-          const Text(
-            '推荐链接',
-            style: TextStyle(
+          Text(
+            I18nKeys.referralLink.tr,
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: AppTheme.threeColor,
@@ -146,14 +144,16 @@ const SizedBox(height: 15),
                   child: Row(
                     children: [
                       Expanded(
-                        child: Text(
-                          'https://www.blank.com',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: AppTheme.threeColor,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                        child: Obx(
+                          () => Text(
+                            controller.inviteUrl.value,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: AppTheme.threeColor,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
@@ -161,13 +161,13 @@ const SizedBox(height: 15),
                       InkWell(
                         onTap: () async {
                           await Clipboard.setData(
-                            const ClipboardData(text: 'https://www.blank.com'),
+                            ClipboardData(text: controller.inviteUrl.value),
                           );
-                          Get.snackbar('提示', '链接已复制');
+                          Get.snackbar(I18nKeys.tip.tr, I18nKeys.copiedToClipboard.tr);
                         },
-                        child: const Text(
-                          '复制',
-                          style: TextStyle(
+                        child: Text(
+                          I18nKeys.copy.tr,
+                          style: const TextStyle(
                             color: AppTheme.primaryColor,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -183,9 +183,9 @@ const SizedBox(height: 15),
           const SizedBox(height: 20),
 
           // 推荐码
-          const Text(
-            '推荐码',
-            style: TextStyle(
+          Text(
+            I18nKeys.referralCode.tr,
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: AppTheme.threeColor,
@@ -209,14 +209,16 @@ const SizedBox(height: 15),
                   child: Row(
                     children: [
                       Expanded(
-                        child: Text(
-                          'NHA45TPH',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: AppTheme.threeColor,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                        child: Obx(
+                          () => Text(
+                            controller.inviteCode.value,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: AppTheme.threeColor,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
@@ -224,13 +226,13 @@ const SizedBox(height: 15),
                       InkWell(
                         onTap: () async {
                           await Clipboard.setData(
-                            const ClipboardData(text: 'https://www.blank.com'),
+                            ClipboardData(text: controller.inviteCode.value),
                           );
-                          Get.snackbar('提示', '链接已复制');
+                          Get.snackbar(I18nKeys.tip.tr, I18nKeys.copiedToClipboard.tr);
                         },
-                        child: const Text(
-                          '复制',
-                          style: TextStyle(
+                        child: Text(
+                          I18nKeys.copy.tr,
+                          style: const TextStyle(
                             color: AppTheme.primaryColor,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -253,7 +255,8 @@ const SizedBox(height: 15),
   Widget _buildStatisticItem(String title, Widget value) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(8),
+        height: 76,
+        padding: const EdgeInsets.all(7),
         decoration: BoxDecoration(
           border: Border.all(
             color: AppTheme.e3e3e3Color,
@@ -264,15 +267,16 @@ const SizedBox(height: 15),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF666666),
-                fontSize: 12,
-              ),
-            ),
-            const SizedBox(height: 20),
+               Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF666666),
+                    fontSize: 12,
+                  ),
+                ),
+                const Spacer(),
             value,
           ],
         ),
@@ -300,8 +304,8 @@ const SizedBox(height: 15),
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 4),
-          const DecoratedTitle(
-           title:  '邀请收益',
+          DecoratedTitle(
+           title:  I18nKeys.inviteEarnings.tr,
           ),
           const SizedBox(height: 22),
 
@@ -310,10 +314,10 @@ const SizedBox(height: 15),
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _buildStatisticItem(
-                '累计佣金',
+                I18nKeys.totalCommission.tr,
                 Obx(
                   () => Text(
-                    controller.promotionCount.toString(),
+                    controller.totalCommission.value.toStringAsFixed(0),
                     style: const TextStyle(
                       color: AppTheme.threeColor,
                       fontWeight: FontWeight.bold,
@@ -324,22 +328,24 @@ const SizedBox(height: 15),
               ),
               const SizedBox(width: 15),
               _buildStatisticItem(
-                '今日佣金',
-                const Text(
-                  '0',
-                  style: const TextStyle(
+                I18nKeys.todayCommission.tr,
+                Obx(
+                  () => Text(
+                    controller.todayCommission.value.toStringAsFixed(0),
+                    style: const TextStyle(
                       color: AppTheme.threeColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
+                  ),
                 ),
               ),
               const SizedBox(width: 15),
               _buildStatisticItem(
-                '当日收益',
+                I18nKeys.yesterdayCommission.tr,
                 Obx(
                   () => Text(
-                    '\$${controller.promotionEarnings.toStringAsFixed(2)}',
+                    controller.yesterdayCommission.value.toStringAsFixed(0),
                     style: const TextStyle(
                       color: AppTheme.threeColor,
                       fontWeight: FontWeight.bold,
@@ -357,37 +363,43 @@ const SizedBox(height: 15),
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _buildStatisticItem(
-                '活跃人数',
-                const Text(
-                  '0',
-                  style: const TextStyle(
-                    color: AppTheme.threeColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                I18nKeys.activeUsers.tr,
+                Obx(
+                  () => Text(
+                    controller.activeUsers.value.toString(),
+                    style: const TextStyle(
+                      color: AppTheme.threeColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ),
               const SizedBox(width: 15),
               _buildStatisticItem(
-                '今日新增',
-                const Text(
-                  '0',
-                  style: const TextStyle(
-                    color: AppTheme.threeColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                I18nKeys.todayNewSubordinates.tr,
+                Obx(
+                  () => Text(
+                    controller.todayNewSubordinates.value.toString(),
+                    style: const TextStyle(
+                      color: AppTheme.threeColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ),
               const SizedBox(width: 15),
               _buildStatisticItem(
-                '直接活跃人数',
-                const Text(
-                  '0',
-                  style: const TextStyle(
-                    color: AppTheme.threeColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                I18nKeys.directActiveUsers.tr,
+                Obx(
+                  () => Text(
+                    controller.activeSubordinates.value.toString(),
+                    style: const TextStyle(
+                      color: AppTheme.threeColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ),
@@ -429,9 +441,9 @@ const SizedBox(height: 15),
             ),
           ),
           const SizedBox(width: 4),
-          const Text(
-            '邀请直属下级达到2级用户，可奖励积分',
-            style: TextStyle(
+          Text(
+            I18nKeys.inviteSubordinatesReachLevel2Reward.tr,
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
               color: Color(0xFF333333),
@@ -440,16 +452,18 @@ const SizedBox(height: 15),
             ],
           ),  
           const SizedBox(height: 17),
-          const Text(
-            '当前已有0个下级达到2级，可奖励300-500积分',
-            style: TextStyle(fontSize: 12, color:AppTheme.threeColor),
+          Obx(
+            () => Text(
+              I18nKeys.currentReachLevel2RewardPoints.tr.replaceAll('{count}', controller.reachTwoStarUsers.value.toString()).replaceAll('{points}', controller.twoStarRewardPoints.value.toString()),
+              style: const TextStyle(fontSize: 12, color:AppTheme.threeColor),
+            ),
           ),
           const SizedBox(height: 17),
           Align(
             alignment: Alignment.center,
             child: GestureDetector(
               onTap: () {
-                Get.snackbar('提示', '暂无可领取的奖励');
+                Get.snackbar(I18nKeys.tip.tr, I18nKeys.noRewardAvailable.tr);
               },
               child: Container(
                 alignment: Alignment.center,
@@ -464,7 +478,7 @@ const SizedBox(height: 15),
                   ),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Text('领取', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),),
+                child: Text(I18nKeys.claim.tr, style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),),
               ),
             ),
           ),
@@ -494,7 +508,7 @@ const SizedBox(height: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          DecoratedTitle(title: '分享赚钱'),
+          DecoratedTitle(title: I18nKeys.shareToEarn.tr),
           const SizedBox(height: 25),
 
           // 社交分享按钮
@@ -513,7 +527,19 @@ const SizedBox(height: 15),
 
   // 社交分享按钮
   Widget _buildSocialButton(String imagePath) {
-    return Image.asset(imagePath, width: 30, height: 30,);
+    return GestureDetector(
+      onTap: () {
+        // 根据图片路径判断是哪个社交平台
+        if (imagePath == ImageAssets.inviteTelegram) {
+          controller.shareToTelegram();
+        } else if (imagePath == ImageAssets.inviteWhatsapp) {
+          controller.shareToWhatsApp();
+        } else if (imagePath == ImageAssets.inviteFacebook) {
+          controller.shareToFacebook();
+        }
+      },
+      child: Image.asset(imagePath, width: 30, height: 30,),
+    );
   }
 
   // 活动规则部分
@@ -538,24 +564,24 @@ const SizedBox(height: 15),
         children: [
           // 活动规则标题
           Center(
-            child: DecoratedTitle(title: '活动规则'),
+            child: DecoratedTitle(title: I18nKeys.activityRules.tr),
           ),
           const SizedBox(height: 20),
 
           // 邀请步骤
-          const HighlightText(text: '邀请步骤',),
+          HighlightText(text: I18nKeys.invitationSteps.tr,),
           const SizedBox(height: 17),
-          _buildRuleItem('1.点击"复制"按钮，复制推荐链接或复制分享方式。'),
-          _buildRuleItem('2.将复制好的链接发送，并邀请合作伙伴分享给你的链接。'),
-          _buildRuleItem('3.你的朋友通过完整任务获得额外奖励。'),
+          _buildRuleItem(I18nKeys.invitationStep1.tr),
+          _buildRuleItem(I18nKeys.invitationStep2.tr),
+          _buildRuleItem(I18nKeys.invitationStep3.tr),
 
           const SizedBox(height: 30),
 
           // 奖励计算方式
-          const HighlightText(text: '返佣计算方式',),
+          HighlightText(text: I18nKeys.commissionCalculationMethod.tr,),
           const SizedBox(height: 17),
-          _buildRuleItem('一、直接邀请：您的直接邀请码注册用户称为"直属下线"，完成指定任务后，您将获得100-300积分。'),
-          _buildRuleItem('二、二级邀请：您的直属下线邀请的用户称为"二级下线"，完成指定任务后，您将获得50-150积分。'),
+          _buildRuleItem(I18nKeys.directInvitationRule.tr),
+          _buildRuleItem(I18nKeys.secondaryInvitationRule.tr),
         ],
       ),
     );

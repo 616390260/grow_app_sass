@@ -68,23 +68,21 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
       child: Column(
         children: [
           // VIP等级和余额
-          Container(
-            child: Obx(
-              () => Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  VipBadge(text: ' ${controller.currentVipLevel.value}'),
-                  const SizedBox(width: 9),
-                  Text(
-                    '${I18nKeys.vipBalance.tr}: ${controller.vipBalance.value}',
-                    style: TextStyle(
-                      color: AppTheme.threeColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                    ),
+          Obx(
+            () => Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                VipBadge(text: ' ${controller.currentVipLevel.value}'),
+                const SizedBox(width: 9),
+                Text(
+                  '${I18nKeys.vipBalance.tr}: ${controller.vipBalance.value}',
+                  style: TextStyle(
+                    color: AppTheme.threeColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 24),
@@ -170,9 +168,9 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
                 style: TextStyle(color: Colors.white, fontSize: 12),
               ),
               Text(
-                '${controller.promotionIncome.value}',
-                style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
+                            controller.promotionIncome.value.toString(),
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
             ],
           ),
 
@@ -186,7 +184,7 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
                 style: TextStyle(color: Colors.white, fontSize: 12),
               ),
               Text(
-                '${controller.dailyResetTime.value}',
+                controller.dailyResetTime.value.toString(),
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             ],
@@ -289,12 +287,12 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
                         Expanded(
                           flex: 2,
                           child: VipBadge(
-                            text: '${reward.vipLevel}',
+                            text: reward.vipLevel.toString(),
                           ),
                         ),
                         const SizedBox(width: 29),
                         Expanded(flex: 3, child: Text(
-                          '${reward.promotionPoints}',
+                          reward.promotionPoints.toString(),
                           style: TextStyle(
                             color: AppTheme.threeColor,
                             fontSize: 15,
@@ -327,7 +325,7 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: Text(
-                            '${I18nKeys.activated.tr}',
+                            I18nKeys.activated.tr,
                             style: TextStyle(fontSize: 11, color: Colors.white),
                           ),
                         ),
@@ -347,7 +345,7 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Text(
-                            '${I18nKeys.firstActivation.tr} ${reward.firstRewardPoints}',
+                            '${I18nKeys.firstActivation.tr} ${reward.firstRewardPoints} ${I18nKeys.points.tr}',
                             style: TextStyle(fontSize: 11, color: AppTheme.nineColor),
                           ),
                         ),

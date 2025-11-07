@@ -3,7 +3,7 @@ class AppConstants {
   // 应用信息
   static const String appName = 'Do Task';
   static const String appVersion = '1.0.0';
-  static const String appDescription = '一个简单的任务管理应用';
+  static const String appDescription = 'I18nKeys.appDescription'; // 使用国际化键
 
   // 存储键名
   static const String storageKeyTheme = 'theme_mode';
@@ -13,7 +13,6 @@ class AppConstants {
   static const String storageKeyUserInfo = 'user_info';
 
   // 网络配置
-  static const String baseUrl = 'https://api.example.com';
   static const int connectTimeout = 15000;
   static const int receiveTimeout = 15000;
   static const int sendTimeout = 15000;
@@ -84,54 +83,54 @@ class AppConstants {
   static const String fullDateTimeFormat = 'yyyy-MM-dd HH:mm:ss';
 
   // 错误消息
-  static const String errorNetworkUnavailable = '网络连接不可用';
-  static const String errorTimeout = '请求超时';
-  static const String errorServerError = '服务器错误';
-  static const String errorUnknown = '未知错误';
-  static const String errorInvalidInput = '输入格式不正确';
-  static const String errorEmptyInput = '输入不能为空';
+  static const String errorNetworkUnavailable = 'I18nKeys.errorNetworkUnavailable';
+  static const String errorTimeout = 'I18nKeys.errorTimeout';
+  static const String errorServerError = 'I18nKeys.errorServerError';
+  static const String errorUnknown = 'I18nKeys.errorUnknown';
+  static const String errorInvalidInput = 'I18nKeys.errorInvalidInput';
+  static const String errorEmptyInput = 'I18nKeys.errorEmptyInput';
 
   // 成功消息
-  static const String successSaved = '保存成功';
-  static const String successDeleted = '删除成功';
-  static const String successUpdated = '更新成功';
-  static const String successCreated = '创建成功';
+  static const String successSaved = 'I18nKeys.successSaved';
+  static const String successDeleted = 'I18nKeys.successDeleted';
+  static const String successUpdated = 'I18nKeys.successUpdated';
+  static const String successCreated = 'I18nKeys.successCreated';
 
   // 确认消息
-  static const String confirmDelete = '确定要删除吗？';
-  static const String confirmExit = '确定要退出吗？';
-  static const String confirmSave = '确定要保存吗？';
+  static const String confirmDelete = 'I18nKeys.confirmDelete';
+  static const String confirmExit = 'I18nKeys.confirmExit';
+  static const String confirmSave = 'I18nKeys.confirmSave';
 
   // 按钮文本
-  static const String buttonConfirm = '确认';
-  static const String buttonCancel = '取消';
-  static const String buttonSave = '保存';
-  static const String buttonDelete = '删除';
-  static const String buttonEdit = '编辑';
-  static const String buttonAdd = '添加';
-  static const String buttonRetry = '重试';
-  static const String buttonRefresh = '刷新';
-  static const String buttonSubmit = '提交';
-  static const String buttonReset = '重置';
+  static const String buttonConfirm = 'I18nKeys.buttonConfirm';
+  static const String cancel = 'I18nKeys.cancel';
+  static const String buttonSave = 'I18nKeys.buttonSave';
+  static const String buttonDelete = 'I18nKeys.buttonDelete';
+  static const String buttonEdit = 'I18nKeys.buttonEdit';
+  static const String buttonAdd = 'I18nKeys.buttonAdd';
+  static const String buttonRetry = 'I18nKeys.buttonRetry';
+  static const String buttonRefresh = 'I18nKeys.buttonRefresh';
+  static const String buttonSubmit = 'I18nKeys.buttonSubmit';
+  static const String buttonReset = 'I18nKeys.buttonReset';
 
   // 状态文本
-  static const String statusLoading = '加载中...';
-  static const String statusEmpty = '暂无数据';
-  static const String statusError = '加载失败';
-  static const String statusSuccess = '加载成功';
-  static const String statusCompleted = '已完成';
-  static const String statusPending = '待处理';
-  static const String statusInProgress = '进行中';
+  static const String statusLoading = 'I18nKeys.statusLoading';
+  static const String statusEmpty = 'I18nKeys.statusEmpty';
+  static const String statusError = 'I18nKeys.statusError';
+  static const String statusSuccess = 'I18nKeys.statusSuccess';
+  static const String statusCompleted = 'I18nKeys.statusCompleted';
+  static const String statusPending = 'I18nKeys.statusPending';
+  static const String statusInProgress = 'I18nKeys.statusInProgress';
 
   // 任务优先级
-  static const String priorityHigh = '高';
-  static const String priorityMedium = '中';
-  static const String priorityLow = '低';
+  static const String priorityHigh = 'I18nKeys.priorityHigh';
+  static const String priorityMedium = 'I18nKeys.priorityMedium';
+  static const String priorityLow = 'I18nKeys.priorityLow';
 
   // 任务状态
-  static const String taskStatusTodo = '待办';
-  static const String taskStatusInProgress = '进行中';
-  static const String taskStatusCompleted = '已完成';
+  static const String taskStatusTodo = 'I18nKeys.taskStatusTodo';
+  static const String taskStatusInProgress = 'I18nKeys.taskStatusInProgress';
+  static const String taskStatusCompleted = 'I18nKeys.taskStatusCompleted';
 
   // 主题模式
   static const String themeModeSystem = 'system';

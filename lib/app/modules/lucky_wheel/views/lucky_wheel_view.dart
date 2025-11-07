@@ -1,7 +1,11 @@
 import 'dart:math';
+import 'dart:ui' as ui;
+import 'dart:async';
 import 'package:do_task_project/app/core/constants/image_assets.dart';
+import 'package:do_task_project/domain/entities/winning_record.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/base/base_view.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../controllers/lucky_wheel_controller.dart';
@@ -35,6 +39,7 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
                     _buildSpinButton(),
                     const SizedBox(height: 33),
                     _buildRules(),
+                     const SizedBox(height: 44),
                   ],
                 ),
               ),
@@ -116,13 +121,14 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
           ),
           const SizedBox(height: 12),
           Obx(() => Text(
-                '${I18nKeys.availablePoints.tr}${controller.userPoints} ${I18nKeys.points.tr}',
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFFC27210),
-                ),
-              )),
+                        '${I18nKeys.availablePoints.tr}${controller.userPoints} ${I18nKeys.points.tr} (${I18nKeys.spinCost.tr})',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFFC27210),
+                        ),
+                      )),
+             
         ],
       ),
     );
@@ -156,11 +162,17 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
             builder: (context, child) {
               // 优化旋转逻辑，确保停在分区中间
               double rotationValue = controller.rotationAnimation.value * 2 * pi;
+              final wheelPainter = WheelPainter(controller.prizes);
               return Transform.rotate(
                 angle: rotationValue,
-                child: CustomPaint(
-                  size: const Size(260, 260),
-                  painter: WheelPainter(controller.prizes),
+                child: AnimatedBuilder(
+                  animation: wheelPainter,
+                  builder: (context, child) {
+                    return CustomPaint(
+                      size: const Size(260, 260),
+                      painter: wheelPainter,
+                    );
+                  },
                 ),
               );
             },
@@ -185,7 +197,8 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
                   ),
                   // 中心圆圈按钮（去除白色加载指示器，使用自定义加载效果）
                   Obx(() => GestureDetector(
-                    onTap: controller.canSpin() ? controller.startSpin : null,
+                    // onTap: controller.canSpin() ? controller.startSpin : null,
+                    onTap: controller.startSpin ,
                     child: Container(
                       width: 80,
                       height: 80,
@@ -341,10 +354,52 @@ class TrianglePointerPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-class WheelPainter extends CustomPainter {
-  final List<Prize> prizes;
+class WheelPainter extends CustomPainter with ChangeNotifier {
+  final List<WinningRecord> prizes;
+  final Map<String, ui.Image> _imageCache = {};
 
   WheelPainter(this.prizes);
+
+  @override
+  void dispose() {
+    // 释放图片资源
+    _imageCache.values.forEach((image) => image.dispose());
+    _imageCache.clear();
+    super.dispose();
+  }
+
+  // 加载网络图片
+  Future<void> _loadImage(String url) async {
+    if (_imageCache.containsKey(url) || url.isEmpty) return;
+    
+    final Completer<ui.Image> completer = Completer();
+    
+    final ImageStream stream = CachedNetworkImageProvider(url).resolve(const ImageConfiguration());
+    stream.addListener(
+      ImageStreamListener(
+        (ImageInfo info, bool synchronousCall) {
+          if (!completer.isCompleted) {
+            _imageCache[url] = info.image;
+            completer.complete();
+          }
+        },
+        onError: (Object exception, StackTrace? stackTrace) {
+          if (!completer.isCompleted) {
+            completer.completeError(exception);
+          }
+        },
+      ),
+    );
+    
+    try {
+      await completer.future;
+      // 通知框架重新绘制
+      notifyListeners();
+    } catch (e) {
+      // 图片加载失败，可以在这里处理错误
+      print('Failed to load image: $e');
+    }
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -384,25 +439,55 @@ class WheelPainter extends CustomPainter {
         borderPaint,
       );
 
-      // 绘制奖品文字，使其根据分区角度旋转，统一对着圆心
+      // 绘制奖品图片和文字
       final textAngle = startAngle + sweepAngle / 2;
-      final textRadius = radius * 0.7;
-      final textX = center.dx + textRadius * cos(textAngle);
-      final textY = center.dy + textRadius * sin(textAngle);
+      final contentRadius = radius * 0.7;
+      final contentX = center.dx + contentRadius * cos(textAngle);
+      final contentY = center.dy + contentRadius * sin(textAngle);
 
-      // 计算文字的旋转角度，使其朝向圆心
-      // 将角度转换为度数并调整方向
-      double textRotation = textAngle + pi / 2; // 垂直于半径方向
-      // 确保文字始终正面朝向，调整角度使文字不会倒置
-      if (textRotation > pi / 2 && textRotation < 3 * pi / 2) {
-        textRotation += pi; // 翻转180度
+      // 计算内容的旋转角度，使其底部朝向圆心
+      double contentRotation = textAngle + pi / 2;
+
+      // 绘制奖品图片（如果存在）
+      if (prizes[i].imageUrl != null && prizes[i].imageUrl!.isNotEmpty) {
+        // 尝试加载图片
+        _loadImage(prizes[i].imageUrl!);
+        
+        // 如果图片已加载到缓存中，则绘制
+        if (_imageCache.containsKey(prizes[i].imageUrl)) {
+          // 保存当前画布状态
+          canvas.save();
+          // 将画布原点移动到内容位置
+          canvas.translate(contentX, contentY);
+          // 根据计算的角度旋转画布
+          canvas.rotate(contentRotation);
+          
+          // 绘制图片（在文字上方）
+          final image = _imageCache[prizes[i].imageUrl]!;
+          final srcRect = Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble());
+          final dstRect = Rect.fromLTWH(-20, -40, 40, 40);
+          canvas.drawImageRect(image, srcRect, dstRect, Paint());
+          
+          // 恢复画布状态
+          canvas.restore();
+        }
       }
+
+      // 绘制奖品文字
+      final colors = [
+        const Color(0xFFFFE4E1),
+        const Color(0xFFFFB6C1),
+        const Color(0xFFFFE4E1),
+        const Color(0xFFFFB6C1),
+        const Color(0xFFFFE4E1),
+        const Color(0xFFFFB6C1),
+      ];
 
       final textPainter = TextPainter(
         text: TextSpan(
-          text: prizes[i].value.toString(),
+          text: prizes[i].prizeValue.toString(),
           style: TextStyle(
-            color: prizes[i].color,
+            color: colors[i ~/ 6],
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -414,14 +499,14 @@ class WheelPainter extends CustomPainter {
       
       // 保存当前画布状态
       canvas.save();
-      // 将画布原点移动到文字位置
-      canvas.translate(textX, textY);
+      // 将画布原点移动到内容位置
+      canvas.translate(contentX, contentY);
       // 根据计算的角度旋转画布
-      canvas.rotate(textRotation);
-      // 绘制文字（相对于新的原点）
+      canvas.rotate(contentRotation);
+      // 绘制文字，调整位置使文字底部朝向圆心
       textPainter.paint(
         canvas,
-        Offset(-textPainter.width / 2, -textPainter.height / 2),
+        Offset(-textPainter.width / 2, prizes[i].imageUrl != null && prizes[i].imageUrl!.isNotEmpty ? 15 : 0),
       );
       // 恢复画布状态
       canvas.restore();
@@ -450,5 +535,5 @@ class WheelPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

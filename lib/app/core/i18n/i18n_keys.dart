@@ -20,10 +20,8 @@ class I18nKeys {
   static const autoPointsTaskNo1 = 'auto_points_task_no1';
   static const taskDesc1 = 'task_desc_1';
   static const startTask = 'start_task';
-  static const luckyWheel = 'lucky_wheel';
-  static const dailyFree = 'daily_free';
-  static const signInCalendar = 'sign_in_calendar';
-  static const continuousCheckIn = 'continuous_check_in';
+    static const luckyWheel = 'lucky_wheel';
+    static const dailyFree = 'daily_free';
 
   // Promotion banner
   static const breakthroughTogether = 'breakthrough_together';
@@ -36,8 +34,8 @@ class I18nKeys {
   static const promotionPage = 'promotion_page';
   static const tasks = 'tasks';
   static const tasksPage = 'tasks_page';
-  static const smart = 'customer_service';
-  static const smartPage = 'customer_service_page';
+  static const customerService = 'customer_service';
+  static const customerServicePage = 'customer_service_page';
   
   // Customer Service Page
   static const customerServiceTitle = 'customer_service_title';
@@ -52,6 +50,9 @@ class I18nKeys {
   static const accountPage = 'account_page';
   static const service = 'service';
   static const servicePage = 'service_page';
+  
+  // Customer Service List Page
+  static const customerServiceListTitle = 'customer_service_list_title';
 
   // Account page specifics
   static const referralCode = 'referral_code';
@@ -61,10 +62,12 @@ class I18nKeys {
   static const incomeType = 'income_type';
   static const incomeAmount = 'income_amount';
   static const incomeTime = 'income_time';
-  static const allTypes = 'all_types';
-  static const allTime = 'all_time';
+  static const allTypes = 'allTypes';
+  static const allTime = 'allTime';
   static const selectType = 'select_type';
   static const selectTime = 'select_time';
+  static const typeFilter = 'type_filter';
+  static const timeFilter = 'time_filter';
   static const today = 'today';
   static const thisWeek = 'this_week';
   static const thisMonth = 'this_month';
@@ -103,9 +106,11 @@ class I18nKeys {
   // Validation messages
   static const accountRequired = 'account_required';
   static const accountTooShort = 'account_too_short';
+  static const accountTooLong = 'account_too_long';
   static const accountInvalid = 'account_invalid';
   static const passwordRequired = 'password_required';
   static const passwordTooShort = 'password_too_short';
+  static const passwordTooLong = 'password_too_long';
   static const passwordInvalid = 'password_invalid';
   static const confirmPasswordRequired = 'confirm_password_required';
   static const passwordMismatch = 'password_mismatch';
@@ -150,14 +155,18 @@ class I18nKeys {
   static const doNotRefresh = 'doNotRefresh';
   static const verificationCodeTip = 'verification_code_tip';
   static const onlineNumbers = 'online_numbers';
-  static const noData = 'no_data';
+  static const noData = 'noData';
   static const phoneNumberTip = 'phoneNumberTip';
+  static const verificationCodeSent = 'verificationCodeSent';
+  static const verificationCodeFailed = 'verificationCodeFailed';
+  static const searchCountryNameCodeOrAreaCode = 'search_country_name_code_or_area_code';
   
   // Withdrawal page
   static const paymentMethodTitle = 'payment_method_title';
   static const bankName = 'bank_name';
   static const accountNumber = 'account_number';
   static const accountName = 'account_name';
+  static const selectBank = 'select_bank';
   static const loginPassword = 'login_password';
   static const withdrawTo = 'withdraw_to';
   static const address = 'address';
@@ -167,11 +176,7 @@ class I18nKeys {
   static const withdrawFee = 'withdraw_fee';
   static const maxWithdraw = 'max_withdraw';
   static const youWillWithdraw = 'you_will_withdraw';
-  static const withdrawConfirm = 'withdraw_confirm';
-  static const withdrawDescription = 'withdraw_description';
-  static const minWithdrawAmount = 'min_withdraw_amount';
-  static const dailyWithdrawLimit = 'daily_withdraw_limit';
-  static const withdrawTips = 'withdraw_tips';
+
   
   // Countries
   static const nigeria = 'nigeria';
@@ -189,13 +194,32 @@ class I18nKeys {
   static const dailySpinChance = 'daily_spin_chance';
   static const availablePoints = 'available_points';
   static const spinCost = 'spin_cost';
-  static const points = 'points';
   static const spinning = 'spinning';
   static const insufficientPoints = 'insufficient_points';
   static const congratulations = 'congratulations';
   static const youWon = 'you_won';
   static const rules = 'rules';
   static const ruleOperationPrinciple = 'rule_operation_principle';
+
+  // Promotion page
+  static const inviteNewUserGetReward = 'invite_new_user_get_reward';
+  static const cashRewardTitle = 'cash_reward_title';
+  static const totalCommission = 'total_commission';
+  static const todayCommission = 'today_commission';
+  static const yesterdayCommission = 'yesterday_commission';
+  static const activeUsers = 'active_users';
+  static const todayNewSubordinates = 'today_new_subordinates';
+  static const activeSubordinates = 'active_subordinates';
+  static const inviteSubordinateLevel2Reward = 'invite_subordinate_level2_reward';
+  static const currentLevel2UsersCount = 'current_level2_users_count';
+
+  static const step1CopyLink = 'step1_copy_link';
+  static const step2SendLink = 'step2_send_link';
+  static const step3FriendCompleteTask = 'step3_friend_complete_task';
+  static const directInvite = 'direct_invite';
+  static const directInviteDesc = 'direct_invite_desc';
+  static const secondaryInvite = 'secondary_invite';
+  static const secondaryInviteDesc = 'secondary_invite_desc';
   static const ruleSpinReward = 'rule_spin_reward';
   static const pointsCashable = 'points_cashable';
   static const yourDownlineMustMeet = 'your_downline_must_meet';
@@ -301,5 +325,204 @@ class I18nKeys {
   static const errorUnknown = 'error_unknown';
   static const errorNetwork = 'error_network';
   static const errorTimeout = 'error_timeout';
+  static const errorServerError = 'error_server_error';
+  static const errorInvalidInput = 'error_invalid_input';
+  static const errorEmptyInput = 'error_empty_input';
+  static const errorNetworkUnavailable = 'error_network_unavailable';
   static const errorServerUnavailable = 'error_server_unavailable';
+  static const errorCancel = 'error_cancel';
+  static const errorFormat = 'error_format';
+  static const loadDataFailed = 'load_data_failed';
+  static const loadAccountDataFailed = 'load_account_data_failed';
+  static const loadCountriesFailed = 'load_countries_failed';
+  static const withdrawFailed = 'withdraw_failed';
+  static const networkRequestFailed = 'network_request_failed';
+  static const loadVIPDetailsFailed = 'load_vip_details_failed';
+  static const loadingCustomerServiceFailed = 'loading_customer_service_failed';
+  static const loadingOnlineNumbersFailed = 'loading_online_numbers_failed';
+  
+  // Task related strings
+  static const taskCenter = 'task_center';
+  static const taskTitle = 'task_title';
+  static const taskDescription = 'task_description';
+  
+  // Button texts
+  static const buttonAdd = 'button_add';
+  static const buttonEdit = 'button_edit';
+  static const buttonDelete = 'button_delete';
+  static const buttonSave = 'button_save';
+  static const buttonCancel = 'button_cancel';
+
+  static const signInNow = 'sign_in_now';
+  
+  // Status texts
+  static const statusLoading = 'status_loading';
+  static const statusEmpty = 'status_empty';
+  static const statusError = 'status_error';
+  static const statusSuccess = 'status_success';
+  static const statusCompleted = 'status_completed';
+  static const statusPending = 'status_pending';
+  static const statusProcessing = 'status_processing';
+  static const statusRejected = 'status_rejected';
+  static const statusInProgress = 'status_in_progress';
+  static const statusArrived = 'status_arrived';
+  
+  // Task priority and status
+  static const priorityHigh = 'priority_high';
+  static const priorityMedium = 'priority_medium';
+  static const priorityLow = 'priority_low';
+  static const taskStatusTodo = 'task_status_todo';
+  static const taskStatusInProgress = 'task_status_in_progress';
+  static const taskStatusCompleted = 'task_status_completed';
+  
+  // Confirmation messages
+  static const confirmDelete = 'confirm_delete';
+  static const confirmExit = 'confirm_exit';
+  static const confirmExitMessage = 'confirm_exit_message';
+  static const confirmSave = 'confirm_save';
+  
+  // Error messages
+  static const enterPhoneNumberError = 'enter_phone_number_error_message';
+  static const enterVerificationCodeError = 'enter_verification_code_error_message';
+  static const errorChangePasswordFailed = 'error_change_password_failed';
+  
+  // Success messages
+  static const passwordClearedSuccess = 'password_cleared_success';
+  static const successSaved = 'success_saved';
+  static const successDeleted = 'success_deleted';
+  static const successUpdated = 'success_updated';
+  static const successCreated = 'success_created';
+  static const verificationSuccess = 'verification_success';
+  static const whatsappAccountLinked = 'whatsapp_account_linked';
+  static const logoutSuccess = 'logout_success';
+  static const passwordChangeSuccess = 'password_change_success';
+  
+  // App information
+
+  static const redirectingToDownload = 'redirecting_to_download';
+  static const downloadLinkNotAvailable = 'download_link_not_available';
+  static const pleaseCompleteRegistration = 'please_complete_registration';
+  static const rewardClaimComingSoon = 'reward_claim_coming_soon';
+
+  static const shareToEarn = 'share_to_earn';
+
+  
+  // Service related
+  static const connectingCustomerService = 'connecting_customer_service';
+  static const openingPlatformGuide = 'opening_platform_guide';
+  static const cannotOpenLink = 'cannot_open_link';
+  
+  // User interactions
+  static const copied = 'copied';
+  static const noticeItems = 'notice_items';
+  static const clearLocalDataMessage = 'clear_local_data_message';
+  static const retry = 'retry';
+  static const tapToReload = 'tap_to_reload';
+  static const refresh = 'refresh';
+  
+  // Specific features
+  static const luckyWheelCash = 'lucky_wheel_cash';
+  static const claim = 'claim';
+  static const withdrawConfirm = 'withdraw_confirm';
+  static const withdrawDescription = 'withdraw_description';
+  static const minWithdrawAmount = 'min_withdraw_amount';
+  static const dailyWithdrawLimit = 'daily_withdraw_limit';
+  static const withdrawTips = 'withdraw_tips';
+
+
+  static const vipDetailsMore = 'vip_details_more';
+  static const videoLoading = 'video_loading';
+  static const videoLoadingPleaseWait = 'video_loading_please_wait';
+  static const noOnlineNumbers = 'no_online_numbers';
+  
+  // Payment related
+  static const pleaseSelectBankPlaceholder = 'please_select_bank_placeholder';
+  static const pleaseEnterAccountNumberPlaceholder = 'please_enter_account_number_placeholder';
+  static const pleaseEnterAccountNamePlaceholder = 'please_enter_account_name_placeholder';
+  static const pleaseEnterLoginPasswordPlaceholder = 'please_enter_login_password_placeholder';
+  
+  // Sign-in related
+  static const signIn = 'sign_in';
+  static const consecutiveSignInDays = 'consecutive_sign_in_days';
+  static const days = 'days';
+  static const daysToNextReward = 'days_to_next_reward';
+  static const pointsReward = 'points_reward';
+
+  static const weekDaySunday = 'week_day_sunday';
+  static const weekDayMonday = 'week_day_monday';
+  static const weekDayTuesday = 'week_day_tuesday';
+  static const weekDayWednesday = 'week_day_wednesday';
+  static const weekDayThursday = 'week_day_thursday';
+  static const weekDayFriday = 'week_day_friday';
+  static const weekDaySaturday = 'week_day_saturday';
+  static const alreadySignedInToday = 'already_signed_in_today';
+  static const todayLabel = 'today_label';
+  
+  // Invitation related
+  static const todayActiveUsers = 'today_active_users';
+  static const directActiveUsers = 'direct_active_users';
+  static const rewardPointsTwoStar = 'reward_points_two_star';
+  static const currentTwoStarUsers = 'current_two_star_users';
+  static const rewardPointsAvailable = 'reward_points_available';
+  static const activityRules = 'activity_rules';
+  static const invitationSteps = 'invitation_steps';
+  static const stepOne = 'step_one';
+  static const stepTwo = 'step_two';
+  static const stepThree = 'step_three';
+  static const commissionCalculation = 'commission_calculation';
+  static const directInvitationRule = 'direct_invitation_rule';
+  static const secondLevelInvitationRule = 'second_level_invitation_rule';
+ static const String points = 'points';
+  static const String invitationStep1 = 'invitation_step_1';
+  static const String invitationStep2 = 'invitation_step_2';
+  static const String invitationStep3 = 'invitation_step_3';
+  static const String commissionCalculationMethod = 'commission_calculation_method';
+  static const String secondaryInvitationRule = 'secondary_invitation_rule';
+  static const String currentReachLevel2RewardPoints = 'current_reach_level2_reward_points';
+  static const String noRewardAvailable = 'no_reward_available';
+  static const String inviteSubordinatesReachLevel2Reward = 'invite_subordinates_reach_level2_reward';
+  static const String buttonRetry = 'button_retry';
+  static const buttonRefresh = 'button_refresh';
+  static const buttonSubmit = 'button_submit';
+  static const buttonReset = 'button_reset';
+
+  static const loading = 'loading';
+  static const loadingFailed = 'loading_failed';
+  static const noContent = 'no_content';
+  static const refreshNow = 'refresh_now';
+  static const allTypesOption = 'all_types_option';
+  static const allTimeOption = 'all_time_option';
+  static const noOrderRecords = 'no_order_records';
+  static const defaultCountry = 'default_country';
+  static const pleaseCompletePaymentInfo = 'please_complete_payment_info';
+  static const withdrawToAddress = 'withdraw_to_address';
+  static const pleaseAddNigeria = 'please_add_nigeria';
+  static const maximumWithdrawAmount = 'maximum_withdraw_amount';
+  static const youWillReceive = 'you_will_receive';
+  
+  // Logout messages
+  static const logoutFailedClearData = 'logout_failed_clear_data';
+  
+  // WhatsApp task related
+  static const selectCountryRegion = 'select_country_region';
+  static const searchCountryNameCode = 'search_country_name_code_or_area_code';
+  static const noMatchingCountryFound = 'no_matching_country_found';
+  static const verificationCode = 'verification_code';
+  static const copyNumber = 'copy_number';
+  static const phoneNumber = 'phone_number';
+  static const countryRegion = 'country_region';
+  static const operationSuccess = 'operation_success';
+  static const consecutiveSignIn7Days = 'consecutive_sign_in_7_days';
+  
+  // Additional keys for hardcoded strings
+  static const processingFailed = 'processing_failed';
+  static const continuouslySignedInFor = 'continuously_signed_in_for';
+  static const signInAgainFor = 'sign_in_again_for';
+  static const daysToClaim = 'days_to_claim';
+  static const signInCalendar = 'sign_in_calendar';
+  static const whatsapp = 'whatsapp';
+  static const insufficientPermissionsPleaseLoginAgain = 'insufficient_permissions_please_login_again';
+  static const errorInvalidParams = 'error_invalid_params';
+  
+  
 }

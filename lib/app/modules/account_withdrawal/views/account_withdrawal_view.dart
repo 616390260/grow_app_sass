@@ -89,10 +89,10 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
           runSpacing: 10,
           children: controller.countries.map((country) {
             bool isSelected =
-                controller.selectedCountry.value == country['key'];
+                controller.selectedCountry.value == country['label']!;
             return ElevatedButton(
               onPressed: () {
-                controller.selectCountry(country['key']!);
+                controller.selectCountry(country['label']!);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.bgColor,
@@ -146,13 +146,40 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '${I18nKeys.nigeria.tr} ${I18nKeys.addNigeria.tr}',
-                style: TextStyle(fontSize: 14, color: AppTheme.nineColor),
-              ),
+              Obx(() {
+                return Row(
+                  children: [
+                    Text(
+                      controller.selectedCountry.value,
+                      style: TextStyle(fontSize: 14, color: AppTheme.threeColor),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      controller.bankName.value,
+                      style: TextStyle(fontSize: 14, color: AppTheme.nineColor),
+                    ),
+                  ]
+                );
+              }),
               GestureDetector(
-                onTap: () {
-                  Get.toNamed(Routes.PAYMENT_METHOD);
+                onTap: () async {
+                  // 导航到支付方式页面并等待返回结果
+                  dynamic result = await Get.toNamed(Routes.paymentMethod, arguments: {
+                    'country': controller.selectedCountry.value,
+                  });
+                  
+                  // 处理返回的数据
+                  if (result != null) {
+                    print('收到支付方式页面返回数据: $result');
+                    // 这里可以处理返回的数据，例如保存到控制器中或更新UI
+                    // 示例：
+                    controller.bankName.value = result['bankName'] ?? '';
+                    controller.bankCode.value = result['bankCode'] ?? '';
+                    controller.accountNumber.value = result['accountNumber'] ?? '';
+                    controller.accountName.value = result['accountName'] ?? '';
+                    controller.loginPassword.value = result['loginPassword'] ?? '';
+                    
+                  }
                 },
                 child: Text(
                   I18nKeys.add.tr,
@@ -210,18 +237,16 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
             crossAxisAlignment: CrossAxisAlignment.baseline,
           textBaseline: TextBaseline.alphabetic,
             children: [
-              Text(
-                '${I18nKeys.maxWithdraw.tr} ',
-                style: TextStyle(fontSize: 14, color: AppTheme.nineColor),
-              ),
+              
               Expanded(
                 child: TextField(
                   controller: TextEditingController(),
                   onChanged: controller.setWithdrawAmount,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
+                    hintText: I18nKeys.maxWithdraw.tr,
                   ),
                   style: TextStyle(fontSize: 14, color: AppTheme.threeColor),
                 ),
@@ -277,7 +302,7 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
         ),
         const SizedBox(height: 7),
         Text(
-          '${I18nKeys.minWithdrawAmount.tr}\n${I18nKeys.dailyWithdrawLimit.tr}\n${I18nKeys.withdrawTips.tr}',
+          '${I18nKeys.minWithdrawAmount.tr}\n${I18nKeys.dailyWithdrawLimit.trArgs([controller.withdrawalSetting.value.oneDayNum?.toString() ?? '2'])}\n${I18nKeys.withdrawTips.tr}',
           style: TextStyle(fontSize: 13, color: AppTheme.sixColor,fontWeight: FontWeight.w500),
         ),
       ],

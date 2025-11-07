@@ -181,20 +181,29 @@ class InviteFriendView extends BaseView<InviteFriendController> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Image.asset(
-                          ImageAssets.inviteTelegram,
-                          width: 30,
-                          height: 30,
+                        GestureDetector(
+                          onTap: () => controller.shareToTelegram(),
+                          child: Image.asset(
+                            ImageAssets.inviteTelegram,
+                            width: 30,
+                            height: 30,
+                          ),
                         ),
-                        Image.asset(
-                          ImageAssets.inviteWhatsapp,
-                          width: 30,
-                          height: 30,
+                        GestureDetector(
+                          onTap: () => controller.shareToWhatsApp(),
+                          child: Image.asset(
+                            ImageAssets.inviteWhatsapp,
+                            width: 30,
+                            height: 30,
+                          ),
                         ),
-                        Image.asset(
-                          ImageAssets.inviteFacebook,
-                          width: 30,
-                          height: 30,
+                        GestureDetector(
+                          onTap: () => controller.shareToFacebook(),
+                          child: Image.asset(
+                            ImageAssets.inviteFacebook,
+                            width: 30,
+                            height: 30,
+                          ),
                         ),
                         // 可以添加更多分享按钮
                       ],

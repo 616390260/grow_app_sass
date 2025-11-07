@@ -3,8 +3,19 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
+import 'package:do_task_project/app/data/services/customer_service_api_service.dart';
+import 'package:do_task_project/domain/entities/customer_service.dart';
 
 class SmartController extends BaseController {
+  final CustomerServiceApiService _apiService = CustomerServiceApiService();
+  
+  // 客服列表数据
+  final RxList<CustomerService> customerServices = <CustomerService>[].obs;
+  
+  // 加载状态
+  final RxBool _isLoading = false.obs;
+  bool get isLoading => _isLoading.value;
+
   @override
   void onInit() {
     super.onInit();
@@ -20,12 +31,30 @@ class SmartController extends BaseController {
       colorText: Colors.black,
     );
   }
+  
+  /// 加载客服列表数据
+  Future<void> loadCustomerServices() async {
+    try {
+      _isLoading.value = true;
+      update(); // 更新UI状态
+
+      final result = await _apiService.getCustomerServiceList();
+      customerServices.assignAll(result);
+
+      update(); // 更新UI
+    } catch (e) {
+      showErrorMessage('加载客服列表失败: ${e.toString()}');
+    } finally {
+      _isLoading.value = false;
+      update(); // 更新UI状态
+    }
+  }
 
   // 加入Telegram群组按钮点击事件
-  void onJoinTelegram() {
+  void onJoinTelegram(String url) {
     // 跳转到Telegram群组链接
-    final Uri url = Uri.parse('https://t.me/+your_group_id');
-    _launchUrl(url);
+    final Uri telegramUrl = Uri.parse(url);
+    _launchUrl(telegramUrl);
   }
 
   // 平台指南按钮点击事件

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../i18n/i18n_keys.dart';
 import 'base_controller.dart';
 import '../theme/loading_style.dart';
 
@@ -126,7 +127,7 @@ abstract class BaseView<T extends BaseController> extends GetView<T> {
                 child: Text(
                   controller.errorMessage.isNotEmpty 
                       ? controller.errorMessage 
-                      : '网络请求失败',
+                      : I18nKeys.networkRequestFailed.tr,
                   style: TextStyle(
                     color: Colors.red.shade700,
                     fontSize: 14,
@@ -136,7 +137,7 @@ abstract class BaseView<T extends BaseController> extends GetView<T> {
               TextButton(
                 onPressed: () => controller.refreshData(),
                 child: Text(
-                  '重试',
+                  I18nKeys.retry.tr,
                   style: TextStyle(
                     color: Colors.red.shade600,
                     fontSize: 14,

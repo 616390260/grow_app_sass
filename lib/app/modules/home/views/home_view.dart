@@ -104,20 +104,20 @@ class HomeView extends BaseView<HomeController> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 2),
-              Row(
-                children: [
-                  Obx(() => VipBadge(text: controller.vipLevel.value.isEmpty ? 'Vip0' : controller.vipLevel.value)),
-                  const SizedBox(width: 2),
-                  Text(
-                    'VIP详情 >',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
+              // const SizedBox(height: 2),
+              // Row(
+              //   children: [
+              //     Obx(() => VipBadge(text: controller.vipLevel.value.isEmpty ? 'Vip0' : controller.vipLevel.value)),
+              //     const SizedBox(width: 2),
+              //     Text(
+              //       'VIP详情 >',
+              //       style: const TextStyle(
+              //         color: Colors.white,
+              //         fontSize: 12,
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ],
           ),
           ),
