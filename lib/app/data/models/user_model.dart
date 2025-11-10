@@ -13,8 +13,8 @@ class UserModel {
   final String? avatar;
   final String? inviteCode;
   
-  @JsonKey(fromJson: _doubleFromString)
-  final double? points;
+  @JsonKey(fromJson: _intFromString)
+  final int? points;
   
   @JsonKey(fromJson: _doubleFromString)
   final double? exchangeRate;
@@ -52,7 +52,7 @@ class UserModel {
     String? userName,
     String? avatar,
     String? inviteCode,
-    double? points,
+    int? points,
     double? exchangeRate,
     String? code,
   }) {

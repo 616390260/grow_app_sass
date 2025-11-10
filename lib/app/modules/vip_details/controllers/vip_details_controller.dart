@@ -1,3 +1,4 @@
+import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:get/get.dart';
 import 'dart:async';
 import '../../../core/base/base_controller.dart';
@@ -128,7 +129,7 @@ class VipDetailsController extends BaseController {
       
       setSuccess();
     } catch (e) {
-      showErrorMessage('加载VIP详情失败: $e');
+      showErrorMessage('${I18nKeys.loadVipDetailsFailed.tr}: $e');
     } finally {
       setLoading(false);
     }

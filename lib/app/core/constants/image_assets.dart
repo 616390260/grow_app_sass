@@ -1,3 +1,4 @@
+
 /// 图片资源常量管理
 /// 统一管理所有图片资源路径，避免硬编码
 class ImageAssets {
@@ -10,6 +11,7 @@ class ImageAssets {
   // 默认图片路径
   static const String _defaultPath = '$_basePath/default';
 
+  static const String logo = '$_basePath/invite_tele.png';
   static const String home = '$_basePath/home.svg';
   static const String promotion = '$_basePath/promotion.svg';
   static const String tasks = '$_basePath/task.svg';
@@ -23,6 +25,8 @@ class ImageAssets {
   static const String homeDownload = '$_basePath/home_download.png';
   static const String homeWheel = '$_basePath/home_wheel.png';
   static const String homeSign = '$_basePath/home_sign.png';
+  static const String homePhone = '$_basePath/home_phone.png';
+  static const String homeInvite = '$_basePath/home_invite.png';
   static const String homeBanner = '$_basePath/home_banner.webp';
   static const String homeTask = '$_basePath/home_task.png';
   static const String mineBg = '$_basePath/mine_bg.webp';

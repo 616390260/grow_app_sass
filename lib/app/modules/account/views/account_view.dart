@@ -67,8 +67,9 @@ class AccountView extends BaseView<AccountController> {
                                         width: 64,
                                         height: 64,
                                         fit: BoxFit.cover,
-                                        errorBuilder: (context, error, stackTrace) =>
-                                            const Icon(Icons.error),
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                const Icon(Icons.error),
                                       ),
                                     ),
                                   ),
@@ -128,7 +129,7 @@ class AccountView extends BaseView<AccountController> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       GestureDetector(
-                                        onTap: () {},
+                                        onTap: controller.switchToServiceTab,
                                         child: Container(
                                           padding: const EdgeInsets.all(6),
                                           child: SvgPicture.asset(
@@ -139,19 +140,19 @@ class AccountView extends BaseView<AccountController> {
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 7),
-                                      GestureDetector(
-                                        onTap: () {},
-                                        child: Container(
-                                          padding: const EdgeInsets.all(6),
-                                          child: SvgPicture.asset(
-                                            ImageAssets.mineMsg,
-                                            color: Colors.white,
-                                            width: 23,
-                                            height: 22,
-                                          ),
-                                        ),
-                                      ),
+                                      // const SizedBox(width: 7),
+                                      // GestureDetector(
+                                      //   onTap: () {},
+                                      //   child: Container(
+                                      //     padding: const EdgeInsets.all(6),
+                                      //     child: SvgPicture.asset(
+                                      //       ImageAssets.mineMsg,
+                                      //       color: Colors.white,
+                                      //       width: 23,
+                                      //       height: 22,
+                                      //     ),
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 ),
@@ -252,27 +253,27 @@ class AccountView extends BaseView<AccountController> {
         child: Stack(
           children: [
             // 右上角装饰标签
-            Positioned(
-              right: 0,
-              top: 0,
-              child: Container(
-                width: 78,
-                height: 28,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppTheme.loginColor.withOpacity(0.6),
-                  borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(10),
-                    bottomLeft: Radius.circular(40),
-                  ),
-                ),
-                child: SvgPicture.asset(
-                  ImageAssets.mineSwitch,
-                  width: 24,
-                  height: 24,
-                ),
-              ),
-            ),
+            // Positioned(
+            //   right: 0,
+            //   top: 0,
+            //   child: Container(
+            //     width: 78,
+            //     height: 28,
+            //     alignment: Alignment.center,
+            //     decoration: BoxDecoration(
+            //       color: AppTheme.loginColor.withOpacity(0.6),
+            //       borderRadius: const BorderRadius.only(
+            //         topRight: Radius.circular(10),
+            //         bottomLeft: Radius.circular(40),
+            //       ),
+            //     ),
+            //     child: SvgPicture.asset(
+            //       ImageAssets.mineSwitch,
+            //       width: 24,
+            //       height: 24,
+            //     ),
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.only(left: 22, top: 16),
               child: Column(

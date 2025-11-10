@@ -11,7 +11,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
   userName: json['userName'] as String?,
   avatar: json['avatar'] as String?,
   inviteCode: json['inviteCode'] as String?,
-  points: UserModel._doubleFromString(json['points']),
+  points: UserModel._intFromString(json['points']),
   exchangeRate: UserModel._doubleFromString(json['exchangeRate']),
   code: json['code'] as String?,
 );

@@ -1,3 +1,4 @@
+import 'package:do_task_project/app/modules/main/controllers/main_controller.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,13 +9,14 @@ import '../../../routes/app_pages.dart';
 import '../../../data/services/auth_api_service.dart';
 import '../../../data/models/user_model.dart';
 import '../../../core/services/auth_service.dart';
+import '../../main/controllers/main_controller.dart';
 
 class AccountController extends BaseController {
   // 用户信息
   final userName = 'Alen'.obs;
   final avatar = ''.obs;
   final referralCode = 'ILKBWU94'.obs;
-  final pointsBalance = 100.0.obs; // 积分
+  final pointsBalance = 100.obs; // 积分
   final trxBalance = 0.04.obs; // TRX 余额
   final showBalance = true.obs;
   
@@ -39,12 +41,11 @@ class AccountController extends BaseController {
       userName.value = user.userName ?? '';
       avatar.value = user.avatar ?? '';
       referralCode.value = user.inviteCode ?? '';
-      pointsBalance.value = user.points ?? 0.0;
-      trxBalance.value = user.exchangeRate?? 0.0;
-          // 注意：UserModel中没有trxBalance字段，暂时保留默认值
+      pointsBalance.value = user.points ?? 0;
+      trxBalance.value = user.exchangeRate ?? 0.0;
+      // 注意：UserModel中没有trxBalance字段，暂时保留默认值
       setSuccess();
     } catch (e) {
-      debugPrint('加载用户信息失败: $e');
       setSuccess(); // 确保即使出错也设置为成功状态
     }
   }
@@ -121,7 +122,6 @@ class AccountController extends BaseController {
       showSuccessMessage(I18nKeys.logoutSuccess.tr);
       Get.offAllNamed(Routes.login);
     } catch (e) {
-      debugPrint('退出登录失败: $e');
       // 即使API调用失败，也执行本地清理操作
       await _clearLocalData();
       showInfoMessage(I18nKeys.logoutFailedClearData.tr);
@@ -150,5 +150,12 @@ class AccountController extends BaseController {
     } catch (e) {
       print('清除本地数据时出错: $e');
     }
+  }
+
+  /// 切换到群客服tab
+  void switchToServiceTab() {
+    // 获取MainController并切换到群客服tab（索引3）
+    final mainController = Get.find<MainController>();
+    mainController.onTabChanged(3);
   }
 }

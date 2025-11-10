@@ -268,10 +268,18 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                       month == today.month &&
                       year == today.year;
                   final isChecked = checked.contains(day);
+                  // 计算是否为未选中状态：小于今天的日期且不在checked列表中
+                  final isBeforeToday = (
+                    year < today.year ||
+                    (year == today.year && month < today.month) ||
+                    (year == today.year && month == today.month && day < today.day)
+                  ) && !isChecked;
+                  
                   return _DayCell(
                     day: day,
                     isToday: isToday,
                     isChecked: isChecked,
+                    unChecked: isBeforeToday,
                   );
                 },
               ),
@@ -357,10 +365,12 @@ class _DayCell extends StatelessWidget {
   final int day;
   final bool isToday;
   final bool isChecked;
+  final bool unChecked;
   const _DayCell({
     required this.day,
     required this.isToday,
     required this.isChecked,
+    required this.unChecked,
   });
 
   @override
@@ -369,17 +379,17 @@ class _DayCell extends StatelessWidget {
     final Color borderColor;
     final Color textColor;
 
-    if (isToday) {
+    if (isToday||isChecked) {
       bgColor = const Color(0xFF3D8BFF);
       borderColor = const Color(0xFF3D8BFF);
       textColor = Colors.white;
-    } else if (isChecked) {
-      bgColor = const Color(0xFFEAF3FF);
-      borderColor = const Color(0xFF3D8BFF);
-      textColor = const Color(0xFF3D8BFF);
+    } else if (unChecked) {
+      bgColor = const Color(0xFF427AF2).withOpacity(0.1);
+      borderColor = Colors.transparent;
+      textColor = AppTheme.primaryColor;
     } else {
       bgColor = Colors.transparent;
-      borderColor = const Color(0xFFE0E0E0);
+      borderColor = Colors.transparent;
       textColor = const Color(0xFF2C3E50);
     }
 

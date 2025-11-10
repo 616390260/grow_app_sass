@@ -6,6 +6,8 @@ import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:do_task_project/app/core/utils/message_utils.dart';
 import 'package:do_task_project/app/core/utils/share_utils.dart';
 import 'package:do_task_project/app/data/services/invite_friend_api_service.dart';
+import 'package:do_task_project/app/routes/app_pages.dart';
+import 'package:do_task_project/app/modules/invite_friend/models/box_product_model.dart';
 
 class InviteFriendController extends BaseController {
   // 推荐链接
@@ -13,6 +15,9 @@ class InviteFriendController extends BaseController {
   
   // 复制状态
   final isCopied = false.obs;
+  
+  // 宝箱产品列表
+  final boxProducts = <BoxProductModel>[].obs;
   
   // 邀请好友API服务
   final InviteFriendApiService _inviteFriendApiService = InviteFriendApiService();
@@ -22,6 +27,8 @@ class InviteFriendController extends BaseController {
     super.onInit();
     // 初始化时从API获取真实的推荐链接
     fetchReferralLink();
+    // 初始化时获取宝箱产品列表
+    fetchBoxProductList();
   }
 
   /// 复制推荐链接到剪贴板
@@ -36,7 +43,7 @@ class InviteFriendController extends BaseController {
         isCopied.value = false;
       });
     } catch (e) {
-      MessageUtils.showError('Failed to copy link');
+      MessageUtils.showError(I18nKeys.failedToCopyLink.tr);
     }
   }
 
@@ -48,7 +55,7 @@ class InviteFriendController extends BaseController {
         subject: I18nKeys.inviteFriendTitle.tr,
       );
     } catch (e) {
-      MessageUtils.showError('Failed to share link');
+      MessageUtils.showError(I18nKeys.failedToShareLink.tr);
     }
   }
 
@@ -71,22 +78,27 @@ class InviteFriendController extends BaseController {
     }
   }
 
-  /// 获取奖励金额列表
-  List<int> getRewardList() {
-    // 根据UI设计，返回奖励金额的二维数组
-    return [
-      300,
-      300,
-      300,
-      300,
-      300,
-      300,
-      1000,
-      1000,
-      2000,
-      300,
-      300,
-    ];
+
+  /// 从API获取宝箱产品列表
+  Future<void> fetchBoxProductList() async {
+    try {
+      // 显示加载状态
+      setLoading(true);
+      
+      // 调用API获取宝箱产品列表
+      final List<BoxProductModel> products = await _inviteFriendApiService.getBoxProductList();
+      
+      // 更新宝箱产品列表
+      boxProducts.assignAll(products);
+      
+      // 设置成功状态
+      setSuccess();
+    } catch (e) {
+      // 使用BaseController的错误处理方法
+      handleErrorCode(-1, e.toString());
+      // 确保加载状态被正确关闭
+      setLoading(false);
+    }
   }
 
   /// 分享到Telegram
@@ -102,5 +114,58 @@ class InviteFriendController extends BaseController {
   /// 分享到Facebook
   Future<void> shareToFacebook() async {
     await ShareUtils.shareToFacebook(referralLink.value);
+  }
+
+  /// 跳转到有效用户页面
+
+  /// 跳转到有效用户页面
+  void goToValidUsersPage() {
+    Get.toNamed(Routes.validUsers);
+  }
+
+  void receiveBoxProduct(int index) async {
+    if (index < 0 || index >= boxProducts.length) {
+      showWarningMessage(I18nKeys.invalidBoxIndex.tr);
+      return;
+    }
+
+    final boxProduct = boxProducts[index];
+    if (boxProduct.boxId == null) {
+      showWarningMessage(I18nKeys.invalidBoxId.tr);
+      return;
+    }
+
+    if (boxProduct.isReceived == true) {
+      showWarningMessage(I18nKeys.boxAlreadyClaimed.tr);
+      return;
+    }
+
+    if (boxProduct.isCanReceived != true) {
+      showWarningMessage(I18nKeys.boxNotAvailable.tr);
+      return;
+    }
+
+    safeApiCall<Map<String, dynamic>>(
+      // API调用函数
+      () async => await _inviteFriendApiService.receiveBox(boxProduct.boxId!),
+      // 成功回调
+      (response) async {
+        // 更新宝箱状态
+        boxProducts[index] = boxProduct.copyWith(
+          isReceived: true,
+        );
+        
+        // 显示成功消息
+        final message = response['message'] ?? I18nKeys.boxClaimSuccess.tr;
+        showSuccessMessage(message);
+        
+        // 刷新宝箱列表
+        await fetchBoxProductList();
+      },
+      // 自定义错误消息
+      errorMessage: I18nKeys.boxClaimFailed.tr,
+      // 显示加载状态
+      showLoading: true,
+    );
   }
 }

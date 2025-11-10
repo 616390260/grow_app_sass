@@ -128,7 +128,6 @@ class ChangePasswordController extends BaseController {
       
       setSuccess();
     } catch (e) {
-      print('修改密码失败: $e');
       showErrorMessage(I18nKeys.errorChangePasswordFailed.tr);
     } finally {
       setLoading(false);

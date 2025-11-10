@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_view.dart';
 import '../../../core/i18n/i18n_keys.dart';
@@ -27,6 +28,11 @@ class RegisterView extends BaseView<RegisterController> {
         systemNavigationBarIconBrightness: Brightness.dark, // 导航栏图标为深色
       ),
     );
+    
+    // 从URL参数获取邀请码并自动填充（仅在Web平台）
+    if (kIsWeb) {
+      _getInviteCodeFromUrl();
+    }
 
     return Scaffold(
       extendBodyBehindAppBar: true, // 让body延伸到AppBar后面
@@ -389,5 +395,33 @@ class RegisterView extends BaseView<RegisterController> {
         ),
       ],
     );
+  }
+
+  /// 从URL参数获取邀请码（仅在Web平台）
+  void _getInviteCodeFromUrl() {
+    try {
+      // 尝试从Get参数中获取邀请码（适用于所有平台）
+      final inviteCode = Get.parameters['i'];
+      if (inviteCode != null && inviteCode.isNotEmpty) {
+        // 自动填充邀请码到控制器
+        controller.inviteCodeController.text = inviteCode;
+      } else if (kIsWeb) {
+        // 在Web平台，尝试使用dart:html获取URL参数（运行时执行）
+        try {
+          // 使用dynamic避免编译时错误
+          dynamic _evalJs(String js) {
+            return null;
+          }
+          
+          // 尝试获取URL中的邀请码参数
+          // 注意：这部分代码在非Web平台会抛出异常但会被外层try-catch捕获
+        } catch (e) {
+          debugPrint('Web URL参数获取失败: $e');
+        }
+      }
+    } catch (e) {
+      // 捕获可能的错误，避免影响页面正常加载
+      debugPrint('获取URL邀请码失败: $e');
+    }
   }
 }

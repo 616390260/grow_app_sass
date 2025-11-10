@@ -72,7 +72,7 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
             () => Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                VipBadge(text: ' ${controller.currentVipLevel.value}'),
+                VipBadge(text: controller.currentVipLevel.value.toString()),
                 const SizedBox(width: 9),
                 Text(
                   '${I18nKeys.vipBalance.tr}: ${controller.vipBalance.value}',
@@ -104,7 +104,7 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
                 ),
               ),
               const SizedBox(width: 5),
-              Obx(() => VipBadge(text: ' ${controller.currentVipLevel.value}')),
+              Obx(() => VipBadge(text: controller.currentVipLevel.value.toString())),
             ],
           ),
           const SizedBox(height: 5),

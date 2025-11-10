@@ -266,39 +266,49 @@ class IncomeDetailsPage extends BaseView<IncomeDetailsController> {
 
   // 构建收益列表
   Widget _buildIncomeList() {
-    return Obx(() {
-      final incomeList = controller.incomeList;
-      if (incomeList.isEmpty) {
-        return Center(
-          child: Text(
-            I18nKeys.noData.tr,
-            style: TextStyle(color: AppTheme.nineColor, fontSize: 14),
-          ),
-        );
-      }
-
-      return NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification scrollInfo) {
-          // 当用户滚动到列表底部时，加载更多数据
-          if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-            controller.loadMoreData();
-          }
-          return false;
-        },
-        child: ListView.builder(
-          itemCount: incomeList.length + 1, // 添加一个额外的item用于加载更多指示器
-          itemBuilder: (context, index) {
-            // 如果是最后一个item，显示加载更多指示器
-            if (index == incomeList.length) {
-              return _buildLoadMoreIndicator();
+    return Column(
+      children: [
+        // 列表内容 - 使用独立的Obx只监听incomeList变化
+        Expanded(
+          child: Obx(() {
+            final incomeList = controller.incomeList;
+            if (incomeList.isEmpty) {
+              return Center(
+                child: Text(
+                  I18nKeys.noData.tr,
+                  style: TextStyle(color: AppTheme.nineColor, fontSize: 14),
+                ),
+              );
             }
 
-            final item = incomeList[index];
-            return _buildIncomeItem(item, index);
-          },
+            return NotificationListener<ScrollNotification>(
+              onNotification: (ScrollNotification scrollInfo) {
+                // 当用户滚动到列表底部时，加载更多数据
+                if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                  controller.loadMoreData();
+                }
+                return false;
+              },
+              child: ListView.builder(
+                key: const ValueKey('income_list'), // 添加key来保持滚动位置
+                itemCount: incomeList.length, // 基础列表长度
+                itemBuilder: (context, index) {
+                  final item = incomeList[index];
+                  return _buildIncomeItem(item, index);
+                },
+              ),
+            );
+          }),
         ),
-      );
-    });
+        // 加载更多指示器 - 独立的Obx监听isLoadingMore
+        Obx(() {
+          if (controller.isLoadingMore.value) {
+            return _buildLoadMoreIndicator();
+          }
+          return const SizedBox.shrink();
+        }),
+      ],
+    );
   }
 
   // 构建加载更多指示器

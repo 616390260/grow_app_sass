@@ -65,32 +65,35 @@ class InviteFriendView extends BaseView<InviteFriendController> {
                   fit: BoxFit.cover,
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 18,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      I18nKeys.inviteValidUsers.tr,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppTheme.threeColor,
-                        fontWeight: FontWeight.w500,
+              GestureDetector(
+                onTap: controller.goToValidUsersPage,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 18,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        I18nKeys.inviteValidUsers.tr,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppTheme.threeColor,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    SvgPicture.asset(
-                      ImageAssets.rightGray,
-                      width: 15,
-                      height: 15,
-                    ),
-                  ],
+                      SvgPicture.asset(
+                        ImageAssets.rightGray,
+                        width: 15,
+                        height: 15,
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
@@ -149,7 +152,7 @@ class InviteFriendView extends BaseView<InviteFriendController> {
                               onPressed: controller.copyReferralLink,
                               child: Text(
                                 controller.isCopied.value
-                                    ? '已复制'
+                                    ? I18nKeys.copied.tr
                                     : I18nKeys.copy.tr,
                                 style: TextStyle(
                                   color: AppTheme.primaryColor,
@@ -281,19 +284,16 @@ class InviteFriendView extends BaseView<InviteFriendController> {
                     const SizedBox(height: 10),
                     Text(
                       I18nKeys.inviteFriendsAndSendMessage.tr,
-                       style: TextStyles.smallThreeColorW500,
+                      style: TextStyles.smallThreeColorW500,
                     ),
 
                     // 注意事项
                     const SizedBox(height: 20),
-                    Text(
-                        '注意事项',
-                      style: TextStyles.smallThreeColorW500,
-                    ),
+                    Text(I18nKeys.importantNotes.tr, style: TextStyles.smallThreeColorW500),
                     const SizedBox(height: 10),
                     Text(
                       I18nKeys.inviteFriendsAndSendMessage.tr,
-                       style: TextStyles.smallThreeColorW500,
+                      style: TextStyles.smallThreeColorW500,
                     ),
                   ],
                 ),
@@ -310,7 +310,7 @@ class InviteFriendView extends BaseView<InviteFriendController> {
 
   // 构建奖励网格视图
   Widget _buildRewardTable() {
-    final rewardList = controller.getRewardList();
+    final rewardList = controller.boxProducts();
 
     // 奖励网格
     return GridView.builder(
@@ -327,22 +327,32 @@ class InviteFriendView extends BaseView<InviteFriendController> {
       itemBuilder: (context, index) {
         return Column(
           children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFCEBC7),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              alignment: Alignment.center,
-              child: Image.asset(
-                ImageAssets.inviteBoxAble,
-                width: 44,
-                height: 31,
+            GestureDetector(
+              onTap: rewardList[index].isCanReceived == true
+                  ? () => controller.receiveBoxProduct(index)
+                  : null,
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: rewardList[index].isCanReceived == true
+                      ? const Color(0xFFFCEBC7)
+                      : const Color(0xFFE9F0FF),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                alignment: Alignment.center,
+                child: Image.asset(
+                  rewardList[index].isCanReceived == true
+                      ? ImageAssets.inviteBoxAble
+                      : ImageAssets.inviteBoxUnAble,
+                  width: 44,
+                  height: 31,
+                ),
               ),
             ),
+
             const SizedBox(height: 7),
             Text(
-              '${rewardList[index]}',
+              '${rewardList[index].points ?? 0}',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,

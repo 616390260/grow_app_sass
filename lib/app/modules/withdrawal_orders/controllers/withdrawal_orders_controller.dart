@@ -97,7 +97,7 @@ class WithdrawalOrdersController extends BaseController {
               // 获取订单类型失败，使用默认类型
             },
             showLoading: false,
-            errorMessage: '获取订单类型失败'
+            errorMessage: I18nKeys.getOrderTypesFailed.tr
           );
     } catch (e) {
       // 加载订单类型异常: $e
@@ -145,7 +145,7 @@ class WithdrawalOrdersController extends BaseController {
           // 获取时间类型失败，使用默认时间类型
         },
         showLoading: false,
-        errorMessage: '获取时间类型失败'
+        errorMessage: I18nKeys.getTimeTypesFailed.tr
       );
     } catch (e) {
       // 加载时间类型异常: $e
@@ -173,7 +173,7 @@ class WithdrawalOrdersController extends BaseController {
       }
       
       // 处理时间范围参数
-      if (selectedTimeRange.value.isNotEmpty && selectedTimeRange.value != '全部时间') {
+      if (selectedTimeRange.value.isNotEmpty && selectedTimeRange.value != I18nKeys.allTime.tr) {
         timeRangeParam = _timeRangeNameToValue[selectedTimeRange.value] ?? selectedTimeRange.value;
       }
 
@@ -213,18 +213,18 @@ class WithdrawalOrdersController extends BaseController {
               }
             },
             onError: () {
-              setError('加载订单失败');
+              setError(I18nKeys.loadOrdersFailed.tr);
               // 出错时仍然清空列表并设置为空状态
               if (_currentPage == 1) {
                 orders.clear();
               }
               setEmpty();
             },
-            errorMessage: '加载订单失败'
+            errorMessage: I18nKeys.loadOrdersFailed.tr
           );
     } catch (e) {
       // 加载订单异常: $e
-      setError('加载订单失败');
+      setError(I18nKeys.loadOrdersFailed.tr);
       if (_currentPage == 1) {
         orders.clear();
       }
@@ -253,7 +253,7 @@ class WithdrawalOrdersController extends BaseController {
   // 选择类型筛选
   void selectType(String type) {
     selectedType.value = type;
-    if (type == '全部类型') {
+    if (type == I18nKeys.allTypes.tr) {
       selectedTypeValue.value = '';
     } else {
       selectedTypeValue.value = _typeNameToValue[type] ?? '';

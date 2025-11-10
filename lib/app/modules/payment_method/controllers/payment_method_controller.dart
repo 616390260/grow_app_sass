@@ -28,7 +28,7 @@ class PaymentMethodController extends BaseController {
   RxString bankName = ''.obs;
   
   // 银行代码
-  RxString bankCode = ''.obs;
+  RxInt bankCode = 0.obs;
   
   // 收款账号
   RxString accountNumber = ''.obs;
@@ -56,14 +56,14 @@ class PaymentMethodController extends BaseController {
         print('成功加载银行列表，共${bankDataList.length}条数据');
       },
       // 自定义错误消息
-      errorMessage: '获取银行列表失败',
+      errorMessage: I18nKeys.getBankListFailed.tr,
       // 不显示加载状态
       showLoading: false,
     );
   }
   
   // 设置选中的银行
-  void setSelectedBank(String bankName, String bankCode) {
+  void setSelectedBank(String bankName, int bankCode) {
     this.bankName.value = bankName;
     this.bankCode.value = bankCode;
   }

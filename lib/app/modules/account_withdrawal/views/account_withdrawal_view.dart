@@ -92,6 +92,7 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
                 controller.selectedCountry.value == country['label']!;
             return ElevatedButton(
               onPressed: () {
+                controller.selectedCountryId.value = int.parse(country['key']!);
                 controller.selectCountry(country['label']!);
               },
               style: ElevatedButton.styleFrom(
@@ -174,7 +175,7 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
                     // 这里可以处理返回的数据，例如保存到控制器中或更新UI
                     // 示例：
                     controller.bankName.value = result['bankName'] ?? '';
-                    controller.bankCode.value = result['bankCode'] ?? '';
+                    controller.bankCode.value = result['bankCode'] ?? 0;
                     controller.accountNumber.value = result['accountNumber'] ?? '';
                     controller.accountName.value = result['accountName'] ?? '';
                     controller.loginPassword.value = result['loginPassword'] ?? '';

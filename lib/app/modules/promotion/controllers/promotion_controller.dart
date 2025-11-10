@@ -1,3 +1,4 @@
+import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../../domain/entities/promotion_data.dart';
@@ -58,7 +59,7 @@ class PromotionController extends BaseController {
 
       setSuccess();
     } catch (e) {
-      showErrorMessage('加载推广数据失败: $e');
+      showErrorMessage('${I18nKeys.loadPromotionDataFailed.tr}: $e');
     } finally {
       setLoading(false);
     }
@@ -91,7 +92,7 @@ class PromotionController extends BaseController {
       }, 
       (result) => isReceived.value = false);
     } catch (e) {
-      showErrorMessage('领取奖励失败: $e');
+      showErrorMessage('${I18nKeys.claimRewardFailed.tr}: $e');
     }
   }
 }

@@ -5,7 +5,7 @@ class AppTranslations extends Translations {
   Map<String, Map<String, String>> get keys => {
     // 中文简体 zh_CN
     'zh_CN': {
-      'app_title': '任务管理',
+      'app_title': 'app_',
       'download_app': '下载APP',
       'account_balance': '账户余额',
       'today_earnings': '今日收益',
@@ -17,6 +17,8 @@ class AppTranslations extends Translations {
       'claim': '领取',
       'lucky_wheel': '幸运转盘',
       'daily_free': '每日免费',
+      'invite_friend': '邀请好友',
+      'call_center': '拨打电话',
       'sign_in_calendar': '签到日历',
       'continuous_check_in': '连续签到',
       'breakthrough_together': '聚力突破',
@@ -162,7 +164,7 @@ class AppTranslations extends Translations {
       'phoneNumberTip': '输入手机号，获取验证码，在WhatsApp认证即可',
       'verification_code_sent': '验证码已发送',
       'verification_code_failed': '验证码发送失败，请重试',
-      
+
       // WhatsApp Task validation messages
       'enter_valid_phone_number': '请输入有效的手机号码（6-15位数字）',
       'select_valid_country_code': '请选择有效的国家/地区区号',
@@ -196,9 +198,17 @@ class AppTranslations extends Translations {
       'nigeria': '尼日利亚',
       'trx': 'trx',
       'india': '印度',
+
+      // Sign-in related error messages
+      'load_sign_in_info_failed': '加载签到信息失败',
+      'get_sign_in_status_failed': '获取签到状态失败',
+      'check_in_failed': '签到失败',
+
+      // User info related error messages
+      'load_user_info_failed': '加载用户信息失败',
       'philippines': '菲律宾',
       'indonesia': '印尼',
-      
+
       // VIP Details Popup
       'vip_daily_reset_time': '每日奖励重置时间',
       'vip_daily_reward_time': '每日奖励重置时间 UTC:',
@@ -422,11 +432,80 @@ class AppTranslations extends Translations {
       // Invite Friend Page
       'invite_friend_title': '邀请好友',
       'invite_valid_users': '邀请有效用户',
-      
+
       // WhatsApp task related
       'select_country_region': '选择国家/地区',
-      'search_country_name_code_or_area_code': '搜索国家名称、代码或区号',
+      'search_country_name_code_or_area_code': '搜索国家名称、区号或区号',
+      
+      // Lucky wheel
+      'cash': '现金',
+      'lucky_wheel': '大转盘',
+      'load_prize_list_failed': '加载奖品列表失败',
+      'invalid_prize_index': '无法解析为有效奖品索引',
+      'wheel_failed': '转盘失败',
+      
+      // Payment and withdrawal
+      'get_bank_list_failed': '获取银行列表失败',
+      'get_withdrawal_config_failed': '获取提现配置失败',
+      'complete_payment_info': '请完善支付信息',
+      'withdrawal_request_failed': '提现请求失败',
+      'default_country': '默认国家',
+      
+      // Valid users
+      'load_valid_users_failed': '加载有效用户失败',
+      
+      // Withdrawal orders
+      'get_order_types_failed': '获取订单类型失败',
+      'get_time_types_failed': '获取时间类型失败',
+      'load_orders_failed': '加载订单失败',
+      'all_time': '全部时间',
+      'all_types': '全部类型',
+      
+      // Income details
+      'get_reward_types_failed': '获取奖励类型失败',
+      'get_time_types_failed_2': '获取时间类型失败',
+      
+      // Smart controller
+      'cannot_open_link': '无法打开链接',
+      
+      // Invite friend view
+      'copied': '已复制',
+      'valid_users_title': '有效用户',
+      'valid_users_conditions': '有效用户条件',
+      'direct_users': '直属用户',
+      'valid_users': '有效的',
+      
+      // Error messages
+      'sign_in_failed': '签到失败',
+      'load_vip_details_failed': '加载VIP详情失败',
+      'load_promotion_data_failed': '加载推广数据失败',
+      'claim_reward_failed': '领取奖励失败',
+      'load_tasks_failed': '加载任务失败',
+      'load_customer_service_failed': '加载客服列表失败',
+      'check_in_failed_retry': '签到失败，请稍后重试',
+      'received_points': '获得积分',
+      
+      // Invite friend page
+      'important_notes': '注意事项',
+      
+      // Valid users page
+      'direct_users': '直属用户',
+      'valid_users': '有效的',
+      'messages_sent': '发送条数',
+      'unknown_user': '未知用户',
+      'register_days': '注册天数',
+      'send_count': '发送条数',
       'no_matching_country_found': '没有找到匹配的国家/地区',
+      
+      // Box/Treasure chest related
+      'invalid_box_index': '无效的宝箱索引',
+      'invalid_box_id': '宝箱ID无效',
+      'box_already_claimed': '该宝箱已领取',
+      'box_not_available': '该宝箱暂不可领取',
+      'failed_to_copy_link': '复制链接失败',
+      'failed_to_share_link': '分享链接失败',
+      'box_claim_failed': '宝箱领取失败',
+      'box_claim_success': '宝箱领取成功',
       'do_not_refresh': '请勿刷新',
       'verification_code': '验证码',
       'enter_verification_code': '请输入验证码',
@@ -453,7 +532,8 @@ class AppTranslations extends Translations {
       'invitation_step_2': '2.将复制好的链接发送，并邀请合作伙伴分享给你的链接。',
       'invitation_step_3': '3.你的朋友通过完整任务获得额外奖励。',
       'commission_calculation_method': '返佣计算方式',
-      'secondary_invitation_rule': '二、二级邀请：您的直属下线邀请的用户称为"二级下线"，完成指定任务后，您将获得50-150积分。',
+      'secondary_invitation_rule':
+          '二、二级邀请：您的直属下线邀请的用户称为"二级下线"，完成指定任务后，您将获得50-150积分。',
       'current_reach_level2_reward_points': '当前已有%s个下级达到2级，可奖励%s积分',
       'no_reward_available': '暂无可领取的奖励',
       'invite_subordinates_reach_level2_reward': '邀请直属下级达到2级用户，可奖励积分',
@@ -461,33 +541,33 @@ class AppTranslations extends Translations {
       'notice_content': '系统自动检测下级有效任务。积分发放可能存在10分钟延迟',
       'activity_period': '活动长期有效，鼓励持续推广',
       'period_content': '活动长期有效，鼓励持续推广',
-       // 中文翻译补充
-    'processing_failed': '处理失败',
-    'continuously_signed_in_for': '已连续签到',
-    'sign_in_again_for': '再连续',
-    'days_to_claim': '天可领取',
-    'whatsapp': 'WhatsApp',
-    'vip_balance': 'VIP余额',
-    'promotion_income': '推广收入',
-    'daily_reset_time': '每日重置时间',
-    'vip_rewards': 'VIP奖励',
-    'vip_level': 'VIP等级',
-    'growth_value': '成长值',
-    'promotion_commission': '推广佣金',
-    'reward': '奖励',
-    'operation': '操作',
-    'not_activated': '未激活',
-    'activated': '已激活',
-    'first_activation': '首次激活',
-    'status_success': '成功',
-    'status_arrived': '已到账',
-    'status_processing': '处理中',
-    'status_pending': '申请中',
-    'status_rejected': '已驳回',
-    'search_country_name_code_or_area_code': '搜索国家名称、区号或区号',
+      // 中文翻译补充
+      'processing_failed': '处理失败',
+      'continuously_signed_in_for': '已连续签到',
+      'sign_in_again_for': '再连续',
+      'days_to_claim': '天可领取',
+      'whatsapp': 'WhatsApp',
+      'vip_balance': 'VIP余额',
+      'promotion_income': '推广收入',
+      'daily_reset_time': '每日重置时间',
+      'vip_rewards': 'VIP奖励',
+      'vip_level': 'VIP等级',
+      'growth_value': '成长值',
+      'promotion_commission': '推广佣金',
+      'reward': '奖励',
+      'operation': '操作',
+      'not_activated': '未激活',
+      'activated': '已激活',
+      'first_activation': '首次激活',
+      'status_success': '成功',
+      'status_arrived': '已到账',
+      'status_processing': '处理中',
+      'status_pending': '申请中',
+      'status_rejected': '已驳回',
+      'search_country_name_code_or_area_code': '搜索国家名称、区号或区号',
     },
-
-  };}
+  };
+}
 
     // English en_US
     // 'en_US': {

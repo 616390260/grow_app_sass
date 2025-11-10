@@ -1,5 +1,5 @@
 class I18nKeys {
-  static const appTitle = 'app_title';
+  static const appTitle = 'gows';
 
   // Common
   static const home = 'home';
@@ -22,8 +22,10 @@ class I18nKeys {
   static const startTask = 'start_task';
     static const luckyWheel = 'lucky_wheel';
     static const dailyFree = 'daily_free';
+    static const inviteFriend = 'invite_friend';
+    static const callCenter = 'call_center';
 
-  // Promotion banner
+    // Promotion banner
   static const breakthroughTogether = 'breakthrough_together';
   static const futureLaunch = 'future_launch';
   static const summit2024 = 'summit_2024';
@@ -337,7 +339,6 @@ class I18nKeys {
   static const dailyResetTime = 'daily_reset_time';
   static const vipRewards = 'vip_rewards';
   static const vipLevel = 'vip_level';
-  static const growthValue = 'growth_value';
   static const promotionCommission = 'promotion_commission';
   static const reward = 'reward';
   static const operation = 'operation';
@@ -534,6 +535,9 @@ class I18nKeys {
   static const verificationCode = 'verification_code';
   static const copyNumber = 'copy_number';
   static const phoneNumber = 'phone_number';
+  static const growthValue = 'growth_value';
+  static const registerDays = 'register_days';
+  static const sendCount = 'send_count';
   static const countryRegion = 'country_region';
   static const operationSuccess = 'operation_success';
   static const consecutiveSignIn7Days = 'consecutive_sign_in_7_days';
@@ -547,6 +551,70 @@ class I18nKeys {
   static const whatsapp = 'whatsapp';
   static const insufficientPermissionsPleaseLoginAgain = 'insufficient_permissions_please_login_again';
   static const errorInvalidParams = 'error_invalid_params';
+  
+  // Box/Treasure chest related
+  static const invalidBoxIndex = 'invalid_box_index';
+  static const invalidBoxId = 'invalid_box_id';
+  static const boxAlreadyClaimed = 'box_already_claimed';
+  static const boxNotAvailable = 'box_not_available';
+  static const failedToCopyLink = 'failed_to_copy_link';
+  static const failedToShareLink = 'failed_to_share_link';
+  static const boxClaimFailed = 'box_claim_failed';
+  static const boxClaimSuccess = 'box_claim_success';
+  
+  // Invite friend page
+  static const importantNotes = 'important_notes';
+
+  // Error messages
+  static const signInFailed = 'sign_in_failed';
+  static const loadVipDetailsFailed = 'load_vip_details_failed';
+  static const loadPromotionDataFailed = 'load_promotion_data_failed';
+  static const claimRewardFailed = 'claim_reward_failed';
+  static const loadTasksFailed = 'load_tasks_failed';
+  static const loadCustomerServiceFailed = 'load_customer_service_failed';
+  static const checkInFailedRetry = 'check_in_failed_retry';
+  static const receivedPoints = 'received_points';
+
+  // Lucky wheel
+  static const cash = 'cash';
+  static const loadPrizeListFailed = 'load_prize_list_failed';
+  static const invalidPrizeIndex = 'invalid_prize_index';
+  static const wheelFailed = 'wheel_failed';
+
+  // Payment and withdrawal
+  static const getBankListFailed = 'get_bank_list_failed';
+  static const getWithdrawalConfigFailed = 'get_withdrawal_config_failed';
+  static const completePaymentInfo = 'complete_payment_info';
+  static const withdrawalRequestFailed = 'withdrawal_request_failed';
+
+  // Valid users
+  static const loadValidUsersFailed = 'load_valid_users_failed';
+
+  // Withdrawal orders
+  static const getOrderTypesFailed = 'get_order_types_failed';
+  static const getTimeTypesFailed = 'get_time_types_failed';
+  static const loadOrdersFailed = 'load_orders_failed';
+
+  // Income details
+  static const getRewardTypesFailed = 'get_reward_types_failed';
+  static const getTimeTypesFailed2 = 'get_time_types_failed_2';
+
+  // Sign-in related error messages
+  static const loadSignInInfoFailed = 'load_sign_in_info_failed';
+  static const getSignInStatusFailed = 'get_sign_in_status_failed';
+  static const checkInFailed = 'check_in_failed';
+
+  // User info related error messages
+  static const loadUserInfoFailed = 'load_user_info_failed';
+
+  // Smart controller
+
+  // Invite friend view
+  static const validUsersTitle = 'valid_users_title';
+  static const validUsersConditions = 'valid_users_conditions';
+  static const directUsers = 'direct_users';
+  static const messagesSent = 'messages_sent';
+  static const unknownUser = 'unknown_user';
   
   
 }

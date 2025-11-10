@@ -220,7 +220,7 @@ class PaymentMethodView extends BaseView<PaymentMethodController> {
                           bank.name,
                           controller.bankName.value,
                           () {
-                            controller.setSelectedBank(bank.name, bank.code);
+                            controller.setSelectedBank(bank.name, bank.id);
                             Get.back();
                           },
                         );

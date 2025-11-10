@@ -53,7 +53,7 @@ class LuckyWheelController extends BaseController with GetSingleTickerProviderSt
         _userPoints.value = wheelData.availablePoints;
         _spinCost.value = wheelData.points;
       },
-      errorMessage: '加载奖品列表失败',
+      errorMessage: I18nKeys.loadPrizeListFailed.tr,
     );
   }
 
@@ -107,7 +107,7 @@ class LuckyWheelController extends BaseController with GetSingleTickerProviderSt
             targetIndex = _findPrizeIndexByValue(prizeValue);
             print('解析到有效奖品索引: $targetIndex');
           } else {
-            throw FormatException('无法解析为有效奖品索引');
+            throw FormatException(I18nKeys.invalidPrizeIndex.tr);
           }
                   
           // 确保索引在有效范围内
@@ -157,7 +157,7 @@ class LuckyWheelController extends BaseController with GetSingleTickerProviderSt
           _isSpinning.value = false;
         });
       },
-      errorMessage: '转盘失败',
+      errorMessage: I18nKeys.wheelFailed.tr,
       showLoading: false, // 自定义加载状态，因为有特殊的UI处理
       onError: () {
         _isSpinning.value = false;

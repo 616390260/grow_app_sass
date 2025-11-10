@@ -37,6 +37,8 @@ import '../modules/sign_in_calendar/views/sign_in_calendar_view.dart';
 import '../modules/change_password/bindings/change_password_binding.dart';
 import '../modules/income_details/bindings/income_details_binding.dart';
 import '../modules/income_details/views/income_details_view.dart';
+import '../modules/invite_friend/views/valid_users_view.dart';
+import '../modules/invite_friend/controllers/valid_users_controller.dart';
 
 part 'app_routes.dart';
 
@@ -51,6 +53,14 @@ class AppPages {
       name: _Paths.main,
       page: () => const MainView(),
       binding: MainBinding(),
+    ),
+    // 有效用户页面
+    GetPage(
+      name: Routes.validUsers,
+      page: () => const ValidUsersView(),
+      binding: BindingsBuilder(() {
+        Get.put(ValidUsersController());
+      }),
     ),
     GetPage(
       name: _Paths.home,

@@ -8,20 +8,22 @@ part of 'home_info_model.dart';
 
 HomeInfoModel _$HomeInfoModelFromJson(Map<String, dynamic> json) =>
     HomeInfoModel(
-      accountPoints: (json['accountPoints'] as num?)?.toDouble(),
+      domainName: json['domainName'] as String?,
+      accountPoints: (json['accountPoints'] as num?)?.toInt(),
       announcements: (json['announcement'] as List<dynamic>?)
           ?.map((e) => BannerModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       recommendTasks: (json['recommendTask'] as List<dynamic>?)
           ?.map((e) => RecommendTaskModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      todayIncome: (json['todayIncome'] as num?)?.toDouble(),
-      todayPromotionIncome: (json['todayPromotionIncome'] as num?)?.toDouble(),
+      todayIncome: (json['todayIncome'] as num?)?.toInt(),
+      todayPromotionIncome: (json['todayPromotionIncome'] as num?)?.toInt(),
       vipLevel: json['vipLevel'] as String?,
     );
 
 Map<String, dynamic> _$HomeInfoModelToJson(HomeInfoModel instance) =>
     <String, dynamic>{
+      'domainName': instance.domainName,
       'accountPoints': instance.accountPoints,
       'announcement': instance.announcements,
       'recommendTask': instance.recommendTasks,

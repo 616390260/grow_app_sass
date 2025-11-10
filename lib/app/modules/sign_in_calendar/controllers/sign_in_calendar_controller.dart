@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../core/base/base_controller.dart';
@@ -14,7 +15,7 @@ class SignInCalendarController extends BaseController {
 
   final RxSet<int> checkedDays = <int>{}.obs;
   final streakDays = 0.obs;
-  final rewardPoints = 0.0.obs;
+  final rewardPoints = 0.obs;
   final RxBool isLoadingRemoteData = false.obs;
   final RxBool isCheckedIn = false.obs;
 
@@ -75,7 +76,6 @@ class SignInCalendarController extends BaseController {
       
       setSuccess();
     } catch (e) {
-      print('加载签到信息失败: $e');
       // 即使网络请求失败，也要确保UI正常显示本地数据
       setSuccess();
     } finally {
@@ -114,7 +114,6 @@ class SignInCalendarController extends BaseController {
       
       setSuccess();
     } catch (e) {
-      print('获取签到状态失败: $e');
       // 发生错误时，回退到本地判断
       setSuccess();
     }
@@ -145,15 +144,14 @@ class SignInCalendarController extends BaseController {
       await _signInApiService.checkIn();
       
       // 4. 显示成功消息
-      showSuccessMessage('获得 ${rewardPoints.value} 积分');
+      showSuccessMessage('${I18nKeys.receivedPoints.tr} ${rewardPoints.value} ${I18nKeys.points.tr}');
       
       // 5. 重新加载最新的签到信息
       await loadSignInInfo();
       
       setSuccess();
     } catch (e) {
-      print('签到失败: $e');
-      showErrorMessage('签到失败，请稍后重试');
+      showErrorMessage(I18nKeys.checkInFailedRetry.tr);
       // 回滚本地操作，确保状态一致性
       checkedDays.remove(today.day);
       streakDays.value = _calculateStreak();

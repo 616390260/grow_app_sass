@@ -64,8 +64,8 @@ class TasksController extends BaseController {
       
       setSuccess();
     } catch (e) {
-      setError('加载任务失败: $e');
-      showErrorMessage('加载任务失败: $e');
+      setError('${I18nKeys.loadTasksFailed.tr}: $e');
+      showErrorMessage('${I18nKeys.loadTasksFailed.tr}: $e');
     } finally {
       _isLoading = false;
       setLoading(false);

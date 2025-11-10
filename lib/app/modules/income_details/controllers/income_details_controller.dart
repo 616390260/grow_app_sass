@@ -46,6 +46,9 @@ class IncomeDetailsController extends BaseController {
   // 分页信息
   int _currentPage = 1;
   bool _hasMoreData = true;
+  
+  // 加载更多状态
+  final isLoadingMore = false.obs;
 
   @override
   void onInit() {
@@ -87,10 +90,10 @@ class IncomeDetailsController extends BaseController {
           }
         },
         onError: () {
-          print('获取奖励类型失败');
+          print(I18nKeys.getRewardTypesFailed.tr);
         },
         showLoading: false,
-        errorMessage: '获取奖励类型失败'
+        errorMessage: I18nKeys.getRewardTypesFailed.tr
       );
     } catch (e) {
       print('加载奖励类型异常: $e');
@@ -132,10 +135,10 @@ class IncomeDetailsController extends BaseController {
           }
         },
         onError: () {
-          print('获取时间类型失败');
+          print(I18nKeys.getTimeTypesFailed2.tr);
         },
         showLoading: false,
-        errorMessage: '获取时间类型失败'
+        errorMessage: I18nKeys.getTimeTypesFailed2.tr
       );
     } catch (e) {
       print('加载时间类型异常: $e');
@@ -191,9 +194,9 @@ class IncomeDetailsController extends BaseController {
 
   // 加载更多数据
   void loadMoreData() async {
-    if (!_hasMoreData || isLoading) return;
+    if (!_hasMoreData || isLoading || isLoadingMore.value) return;
     
-    setLoading(true);
+    isLoadingMore.value = true;
     _currentPage++;
     
     try {
@@ -225,13 +228,11 @@ class IncomeDetailsController extends BaseController {
       incomeList.addAll(convertedList);
       _hasMoreData = response.records.isNotEmpty && response.current < response.pages;
       
-      setSuccess();
     } catch (e) {
       _currentPage--; // 回退页码
-      setError(e.toString());
       showErrorMessage(e.toString());
     } finally {
-      setLoading(false);
+      isLoadingMore.value = false;
     }
   }
 

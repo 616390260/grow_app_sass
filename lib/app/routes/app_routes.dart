@@ -22,6 +22,7 @@ abstract class Routes {
   static const paymentMethod = _Paths.paymentMethod;
   static const withdrawalOrders = _Paths.withdrawalOrders;
   static const incomeDetails = _Paths.incomeDetails;
+  static const validUsers = _Paths.validUsers;
 }
 
 /// 路由路径定义
@@ -46,6 +47,7 @@ abstract class _Paths {
   static const paymentMethod = '/payment-method';
   static const withdrawalOrders = '/withdrawal-orders';
   static const incomeDetails = '/income-details';
+  static const validUsers = '/valid-users';
   // customerServiceList路径暂未使用，保留定义供后续使用
   // static const customerServiceList = '/customer-service-list';
 }

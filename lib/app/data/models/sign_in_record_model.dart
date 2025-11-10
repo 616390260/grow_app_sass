@@ -4,7 +4,7 @@ class SignInRecordModel {
   final int userId;
   final int checkInDays;
   final int continuousCheckInDays;
-  final double points;
+  final int points;
   final List<String> checkInDaysList;
 
   SignInRecordModel({
@@ -25,7 +25,7 @@ class SignInRecordModel {
       userId: json['userId'] ?? 0,
       checkInDays: json['checkInDays'] ?? 0,
       continuousCheckInDays: json['continuousCheckInDays'] ?? 0,
-      points: (json['points'] ?? 0).toDouble(),
+      points: json['points'] ?? 0,
       checkInDaysList: List<String>.from(json['checkInDaysList'] ?? []),
     );
   }

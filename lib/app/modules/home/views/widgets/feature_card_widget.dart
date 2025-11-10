@@ -1,26 +1,33 @@
-import 'package:do_task_project/app/core/constants/image_assets.dart';
-import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SignInCalendarWidget extends StatelessWidget {
+class FeatureCardWidget extends StatelessWidget {
+  final String title;
+  final String iconPath;
+  final Gradient gradient;
   final VoidCallback? onTap;
+  final double? width;
+  final double? height;
 
-  const SignInCalendarWidget({Key? key, this.onTap}) : super(key: key);
+  const FeatureCardWidget({
+    Key? key,
+    required this.title,
+    required this.iconPath,
+    required this.gradient,
+    this.onTap,
+    this.width,
+    this.height = 50,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        // 宽度由父布局均分控制
-        height: 50,
+        width: width,
+        height: height,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFFFFDFD5), Color(0xFFFFF6F3)],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
+          gradient: gradient,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
@@ -36,21 +43,20 @@ class SignInCalendarWidget extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(left: 15),
                 child: Text(
-                  'sign_in_calendar'.tr,
+                  title,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.threeColor,
+                    color: Color(0xFF333333),
                   ),
                 ),
               ),
             ),
             Container(
-              width: 42,
-              height: 36,
+              width: 30,
+              height: 30,
               margin: const EdgeInsets.only(right: 12),
-
-              child: Image.asset(ImageAssets.homeSign, fit: BoxFit.cover),
+              child: Image.asset(iconPath, fit: BoxFit.cover,width: 30,height: 30,),
             ),
           ],
         ),

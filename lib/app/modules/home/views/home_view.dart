@@ -4,10 +4,10 @@ import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:do_task_project/app/modules/home/controllers/home_controller.dart';
 import 'package:do_task_project/app/modules/home/views/widgets/banner_carousel_widget.dart';
-import 'package:do_task_project/app/modules/home/views/widgets/lucky_wheel_widget.dart';
-import 'package:do_task_project/app/modules/home/views/widgets/sign_in_calendar_widget.dart';
+import 'package:do_task_project/app/modules/home/views/widgets/feature_card_widget.dart';
 import 'package:do_task_project/app/modules/home/views/widgets/task_card_widget.dart';
 import 'package:do_task_project/app/modules/vip_details/components/vip_badge.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -87,7 +87,7 @@ class HomeView extends BaseView<HomeController> {
               color: Colors.black87,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.apps, color: Colors.white, size: 24),
+            child: Image.asset(ImageAssets.logo, width: 24, height: 24),
           ),
           const SizedBox(width: 14),
           // 应用名称
@@ -110,38 +110,41 @@ class HomeView extends BaseView<HomeController> {
                     text: controller.vipLevel.value.isEmpty
                         ? 'VIP0'
                         : controller.vipLevel.value,
-                        textBackgroundColor: const Color(0xFFA7C3FF),
+                    textBackgroundColor: const Color(0xFFA7C3FF),
                   ),
                 ),
               ],
             ),
           ),
           const Spacer(),
-          // 下载APP按钮
-          GestureDetector(
-            onTap: controller.onDownloadAppTap,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(ImageAssets.homeDownload, width: 14, height: 14),
-                  const SizedBox(width: 2),
-                  Text(
-                    I18nKeys.downloadApp.tr,
-                    style: const TextStyle(
-                      color: AppTheme.loginColor,
-                      fontSize: 12,
+          if (kIsWeb) ...[
+            // 下载APP按钮
+            GestureDetector(
+              onTap: controller.onDownloadAppTap,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(ImageAssets.homeDownload, width: 14, height: 14),
+                    const SizedBox(width: 2),
+                    Text(
+                      I18nKeys.downloadApp.tr,
+                      style: const TextStyle(
+                        color: AppTheme.loginColor,
+                        fontSize: 12,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
+          ],
+        
         ],
       ),
     );
@@ -246,16 +249,64 @@ class HomeView extends BaseView<HomeController> {
           Row(
             children: [
               Expanded(
-                child: LuckyWheelWidget(onTap: controller.onLuckyWheelTap),
+                child: FeatureCardWidget(
+                  title: 'lucky_wheel'.tr,
+                  iconPath: ImageAssets.homeWheel,
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFCEDEFF), Color(0xFFF0F5FF)],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  onTap: controller.onLuckyWheelTap,
+                ),
               ),
               const SizedBox(width: 18),
               Expanded(
-                child: SignInCalendarWidget(
+                child: FeatureCardWidget(
+                  title: 'sign_in_calendar'.tr,
+                  iconPath: ImageAssets.homeSign,
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFFDFD5), Color(0xFFFFF6F3)],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
                   onTap: controller.onSignInCalendarTap,
                 ),
               ),
             ],
           ),
+          if (!kIsWeb) ...[
+            const SizedBox(height: 15),
+            Row(
+              children: [
+                Expanded(
+                  child: FeatureCardWidget(
+                    title: I18nKeys.callCenter.tr,
+                    iconPath: ImageAssets.homePhone,
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFA6EFD1), Color(0xFFE2FAF1)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    onTap: controller.onCallCenterTap,
+                  ),
+                ),
+                const SizedBox(width: 18),
+                Expanded(
+                  child: FeatureCardWidget(
+                    title: I18nKeys.inviteFriend.tr,
+                    iconPath: ImageAssets.homeInvite,
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFFFE4C0), Color(0xFFFFF2E0)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    onTap: controller.onInviteFriendTap,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );

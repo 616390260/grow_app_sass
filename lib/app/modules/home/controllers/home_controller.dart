@@ -9,16 +9,17 @@ import '../../../core/utils/message_utils.dart';
 
 class HomeController extends BaseController {
   // 统计数据
-  final accountBalance = 0.0.obs;
-  final dailyEarnings = 0.0.obs;
-  final promotionEarnings = 0.0.obs;
+  final accountBalance = 0.obs;
+  final dailyEarnings = 0.obs;
+  final promotionEarnings = 0.obs;
   final vipLevel = ''.obs;
-  final accountPoints = 0.0.obs;
+  final accountPoints = 0.obs;
   final announcements = <BannerModel>[].obs;
   final recommendTasks = <RecommendTaskModel>[].obs;
-  
+  final domainName = ''.obs;
+
   final HomeApiService _homeApiService = HomeApiService();
-  
+
   // 底部导航当前索引
   final currentTabIndex = 0.obs;
 
@@ -36,16 +37,16 @@ class HomeController extends BaseController {
       // 成功回调
       (homeInfo) {
         // 更新统计数据 - 确保字段名与接口返回一致，并处理null值
-        accountPoints.value = homeInfo.accountPoints ?? 0.0;
-        dailyEarnings.value = homeInfo.todayIncome ?? 0.0;
-        promotionEarnings.value = homeInfo.todayPromotionIncome ?? 0.0;
+        accountPoints.value = homeInfo.accountPoints ?? 0;
+        dailyEarnings.value = homeInfo.todayIncome ?? 0;
+        promotionEarnings.value = homeInfo.todayPromotionIncome ?? 0;
         vipLevel.value = homeInfo.vipLevel ?? '';
         announcements.value = homeInfo.announcements ?? [];
         recommendTasks.value = homeInfo.recommendTasks ?? [];
-        
+
         // 保留现有的accountBalance字段，暂时使用accountPoints的值
-        accountBalance.value = (homeInfo.accountPoints ?? 0.0).toDouble();
-        
+        accountBalance.value = homeInfo.accountPoints ?? 0;
+
         setSuccess();
       },
       // 自定义错误消息
@@ -84,7 +85,7 @@ class HomeController extends BaseController {
   void onDownloadAppTap() async {
     try {
       // 显示加载提示
-      
+
       // 应用商店链接（根据平台选择）
       String appStoreUrl;
       if (GetPlatform.isAndroid) {
@@ -95,28 +96,27 @@ class HomeController extends BaseController {
         appStoreUrl = 'https://apps.apple.com/app/id123456789';
       } else {
         // 默认使用网页版应用商店
-        appStoreUrl = 'https://play.google.com/store/apps/details?id=com.example.app';
+        appStoreUrl =
+            'https://play.google.com/store/apps/details?id=com.example.app';
       }
-      
+
       final Uri url = Uri.parse(appStoreUrl);
-      
+
       if (await canLaunchUrl(url)) {
         await launchUrl(url, mode: LaunchMode.externalApplication);
       } else {
         // 如果无法打开原生应用商店，尝试打开网页版
-        String webStoreUrl = GetPlatform.isIOS 
+        String webStoreUrl = GetPlatform.isIOS
             ? 'https://apps.apple.com/app/id123456789'
             : 'https://play.google.com/store/apps/details?id=com.example.app';
-            
+
         final Uri webUrl = Uri.parse(webStoreUrl);
         if (await canLaunchUrl(webUrl)) {
           await launchUrl(webUrl, mode: LaunchMode.externalApplication);
-        } else {
-        }
+        } else {}
       }
-    // ignore: empty_catches
-    } catch (e) {
-    }
+      // ignore: empty_catches
+    } catch (e) {}
   }
 
   // VIP详情点击
@@ -125,13 +125,23 @@ class HomeController extends BaseController {
   }
 
   // Banner点击处理
-  void onBannerTap(int index) {
+  void onBannerTap(int index) async {
     // 确保索引在有效范围内
     if (index >= 0 && index < announcements.length) {
       final banner = announcements[index];
-      // 根据banner的hyperLink或iosHyperLink字段打开链接
-      // 这里可以添加实际的跳转逻辑，例如打开网页链接
-      showSuccessMessage('点击了Banner: ${banner.title}');
+      final url = GetPlatform.isIOS
+          ? (banner.iosHyperLink ?? banner.hyperLink)
+          : banner.hyperLink;
+
+      if (url != null && url.isNotEmpty) {
+        try {
+          final uri = Uri.parse(url);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri);
+          } else {}
+          // ignore: empty_catches
+        } catch (e) {}
+      }
     }
   }
 
@@ -143,6 +153,27 @@ class HomeController extends BaseController {
       // 根据task的icon字段显示信息
       // 这里可以添加实际的跳转逻辑，例如打开网页链接
       Get.toNamed(Routes.whatsappTask, arguments: task.id);
+    }
+  }
+
+  void onInviteFriendTap() {
+    Get.toNamed(Routes.inviteFriend);
+  }
+
+  void onCallCenterTap() async {
+    if (domainName.value.isNotEmpty) {
+      try {
+        final uri = Uri.parse(domainName.value);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } else {
+          print('无法打开拨打电话链接');
+        }
+      } catch (e) {
+        print('拨打电话链接打开失败: $e');
+      }
+    }else{
+       print('拨打电话链接链接为空');
     }
   }
 }

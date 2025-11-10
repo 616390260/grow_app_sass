@@ -43,7 +43,7 @@ class SmartController extends BaseController {
 
       update(); // 更新UI
     } catch (e) {
-      showErrorMessage('加载客服列表失败: ${e.toString()}');
+      showErrorMessage('${I18nKeys.loadCustomerServiceFailed.tr}: ${e.toString()}');
     } finally {
       _isLoading.value = false;
       update(); // 更新UI状态
@@ -75,7 +75,7 @@ class SmartController extends BaseController {
     } else {
       Get.snackbar(
         I18nKeys.error.tr,
-        '无法打开链接',
+        I18nKeys.cannotOpenLink.tr,
         backgroundColor: Colors.white,
         colorText: Colors.red,
       );

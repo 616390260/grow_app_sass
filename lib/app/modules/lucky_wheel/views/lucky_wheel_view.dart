@@ -74,7 +74,7 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
       child: Column(
         children: [
           Text(
-            '现金',
+            I18nKeys.cash.tr,
             style: const TextStyle(
               fontSize: 40,
               fontWeight: FontWeight.bold,
@@ -89,7 +89,7 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
             ),
           ),
           Text(
-            '大转盘',
+            I18nKeys.luckyWheel.tr,
             style: const TextStyle(
               fontSize: 40,
               fontWeight: FontWeight.bold,

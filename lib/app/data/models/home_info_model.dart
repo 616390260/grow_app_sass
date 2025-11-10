@@ -6,9 +6,12 @@ part 'home_info_model.g.dart';
 /// 首页信息模型
 @JsonSerializable()
 class HomeInfoModel {
+  /// 拨打电话
+  @JsonKey(name: 'domainName')
+  final String? domainName;
   /// 账户积分
   @JsonKey(name: 'accountPoints')
-  final double? accountPoints;
+  final int? accountPoints;
 
   /// 公告列表（Banner列表）
   @JsonKey(name: 'announcement')
@@ -20,17 +23,18 @@ class HomeInfoModel {
 
   /// 今日收入
   @JsonKey(name: 'todayIncome')
-  final double? todayIncome;
+  final int? todayIncome;
 
   /// 今日推广收入
   @JsonKey(name: 'todayPromotionIncome')
-  final double? todayPromotionIncome;
+  final int? todayPromotionIncome;
 
   /// VIP等级
   @JsonKey(name: 'vipLevel')
   final String? vipLevel;
 
   HomeInfoModel({
+    this.domainName,
     this.accountPoints,
     this.announcements,
     this.recommendTasks,
