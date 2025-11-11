@@ -160,10 +160,7 @@ const SizedBox(height: 15),
                       const SizedBox(width: 10),
                       InkWell(
                         onTap: () async {
-                          await Clipboard.setData(
-                            ClipboardData(text: controller.inviteUrl.value),
-                          );
-                          Get.snackbar(I18nKeys.tip.tr, I18nKeys.copiedToClipboard.tr);
+                          await controller.copyInviteLink();
                         },
                         child: Text(
                           I18nKeys.copy.tr,
@@ -225,10 +222,7 @@ const SizedBox(height: 15),
                       const SizedBox(width: 10),
                       InkWell(
                         onTap: () async {
-                          await Clipboard.setData(
-                            ClipboardData(text: controller.inviteCode.value),
-                          );
-                          Get.snackbar(I18nKeys.tip.tr, I18nKeys.copiedToClipboard.tr);
+                          await controller.copyInviteCode();
                         },
                         child: Text(
                           I18nKeys.copy.tr,

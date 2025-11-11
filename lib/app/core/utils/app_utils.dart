@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -134,15 +136,47 @@ class AppUtils {
     return AppConstants.audioExtensions.contains(extension);
   }
 
-  /// 复制文本到剪贴板
+  /// 复制文本到剪贴板（增强版，支持Web端）
   static Future<void> copyToClipboard(String text) async {
-    await Clipboard.setData(ClipboardData(text: text));
-    Get.snackbar(
-      '提示',
-      '已复制到剪贴板',
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 2),
-    );
+    try {
+      await Clipboard.setData(ClipboardData(text: text));
+      Get.snackbar(
+        I18nKeys.tip.tr,
+        I18nKeys.copiedToClipboard.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 2),
+      );
+    } catch (e) {
+      // Web端剪贴板操作可能需要用户交互，尝试备用方案
+      if (kIsWeb) {
+        // Web端使用备用方案：显示文本供用户手动复制
+        Get.snackbar(
+          I18nKeys.tip.tr,
+          '请手动复制：$text',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 5),
+          mainButton: TextButton(
+            onPressed: () {
+              Get.back(); // 关闭snackbar
+            },
+            child: Text(
+              '确定',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        );
+      } else {
+        // 非Web端直接显示错误
+        Get.snackbar(
+          I18nKeys.error.tr,
+          '${I18nKeys.copyFailed.tr}：$e',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 2),
+          backgroundColor: Colors.red.withOpacity(0.8),
+          colorText: Colors.white,
+        );
+      }
+    }
   }
 
   /// 从剪贴板获取文本

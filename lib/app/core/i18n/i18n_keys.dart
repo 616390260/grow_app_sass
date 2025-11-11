@@ -10,6 +10,7 @@ class I18nKeys {
   static const cancel = 'cancel';
   static const confirm = 'confirm';
   static const copiedToClipboard = 'copied_to_clipboard';
+  static const copyFailed = 'copy_failed';
 
   // Home
   static const downloadApp = 'download_app';

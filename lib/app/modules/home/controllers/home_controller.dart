@@ -41,6 +41,7 @@ class HomeController extends BaseController {
         dailyEarnings.value = homeInfo.todayIncome ?? 0;
         promotionEarnings.value = homeInfo.todayPromotionIncome ?? 0;
         vipLevel.value = homeInfo.vipLevel ?? '';
+        domainName.value = homeInfo.domainName ?? '';
         announcements.value = homeInfo.announcements ?? [];
         recommendTasks.value = homeInfo.recommendTasks ?? [];
 

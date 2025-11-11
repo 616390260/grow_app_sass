@@ -144,12 +144,13 @@ class InviteFriendView extends BaseView<InviteFriendController> {
                                 color: AppTheme.threeColor,
                                 fontWeight: FontWeight.w500,
                               ),
+                              maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           Obx(
-                            () => TextButton(
-                              onPressed: controller.copyReferralLink,
+                            () => InkWell(
+                              onTap: controller.copyReferralLink,
                               child: Text(
                                 controller.isCopied.value
                                     ? I18nKeys.copied.tr

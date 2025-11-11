@@ -53,6 +53,7 @@ class AppTranslations extends Translations {
       'cancel': '取消',
       'confirm': '确认',
       'copied_to_clipboard': '已复制到剪贴板',
+      'copy_failed': '复制失败',
       // Account page specifics
       'referral_code': '推荐码',
       'points': '积分',

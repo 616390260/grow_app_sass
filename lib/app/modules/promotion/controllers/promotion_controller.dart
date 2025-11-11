@@ -1,9 +1,12 @@
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:get/get.dart';
+import 'package:flutter/services.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../../domain/entities/promotion_data.dart';
 import '../../../data/services/promotion_api_service.dart';
 import '../../../core/utils/share_utils.dart';
+import '../../../core/utils/message_utils.dart';
+import '../../../core/utils/app_utils.dart';
 
 class PromotionController extends BaseController {
   // 推广数据
@@ -93,6 +96,22 @@ class PromotionController extends BaseController {
       (result) => isReceived.value = false);
     } catch (e) {
       showErrorMessage('${I18nKeys.claimRewardFailed.tr}: $e');
+    }
+  }
+
+  /// 复制邀请链接
+  Future<void> copyInviteLink() async {
+    try {
+      await AppUtils.copyToClipboard(inviteUrl.value);
+    } catch (e) {
+    }
+  }
+
+  /// 复制邀请码
+  Future<void> copyInviteCode() async {
+    try {
+      await AppUtils.copyToClipboard(inviteCode.value);
+    } catch (e) {
     }
   }
 }
