@@ -1,4 +1,3 @@
-import 'package:dio/io.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -134,9 +133,9 @@ class AccountView extends BaseView<AccountController> {
                                           padding: const EdgeInsets.all(6),
                                           child: SvgPicture.asset(
                                             ImageAssets.mineService,
-                                            color: Colors.white,
                                             width: 22,
                                             height: 22,
+                                            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                                           ),
                                         ),
                                       ),
@@ -385,7 +384,7 @@ class AccountView extends BaseView<AccountController> {
                 imagePath,
                 width: 17,
                 height: 17,
-                color: backgroundColor,
+                colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
               ),
             ),
             const SizedBox(width: 11),
@@ -402,7 +401,7 @@ class AccountView extends BaseView<AccountController> {
               ImageAssets.rightGray,
               width: 15,
               height: 15,
-              color: AppTheme.nineColor,
+              colorFilter: ColorFilter.mode(AppTheme.nineColor, BlendMode.srcIn),
             ),
           ],
         ),

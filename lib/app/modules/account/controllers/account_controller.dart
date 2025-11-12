@@ -2,14 +2,13 @@ import 'package:do_task_project/app/modules/main/controllers/main_controller.dar
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:flutter/foundation.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../../../routes/app_pages.dart';
 import '../../../data/services/auth_api_service.dart';
 import '../../../data/models/user_model.dart';
 import '../../../core/services/auth_service.dart';
-import '../../main/controllers/main_controller.dart';
 
 class AccountController extends BaseController {
   // 用户信息
@@ -33,21 +32,22 @@ class AccountController extends BaseController {
   }
 
   void loadUserInfo() async {
-    try {
-      setLoading(true);
-      // 直接使用AuthApiService返回的UserModel对象
-      final user = await _authApiService.getUserInfo<UserModel>();
-
-      userName.value = user.userName ?? '';
-      avatar.value = user.avatar ?? '';
-      referralCode.value = user.inviteCode ?? '';
-      pointsBalance.value = user.points ?? 0;
-      trxBalance.value = user.exchangeRate ?? 0.0;
-      // 注意：UserModel中没有trxBalance字段，暂时保留默认值
-      setSuccess();
-    } catch (e) {
-      setSuccess(); // 确保即使出错也设置为成功状态
-    }
+    await safeApiCall<UserModel>(
+      () => _authApiService.getUserInfo<UserModel>(),
+      (user) {
+        userName.value = user.userName ?? '';
+        avatar.value = user.avatar ?? '';
+        referralCode.value = user.inviteCode ?? '';
+        pointsBalance.value = user.points ?? 0;
+        trxBalance.value = user.exchangeRate ?? 0.0;
+        setSuccess();
+      },
+      errorMessage: I18nKeys.loadUserInfoFailed.tr,
+      showLoading: true,
+      onError: () {
+        setError(I18nKeys.loadUserInfoFailed.tr);
+      },
+    );
   }
 
   // 显隐余额
@@ -111,24 +111,21 @@ class AccountController extends BaseController {
 
   /// 执行退出登录操作
   Future<void> _performLogout() async {
-    try {
-      setLoading(true);
-      // 直接调用AuthApiService的logout方法
-      await _authApiService.logout();
-      
-      // 无论API调用成功与否，都执行本地清理操作
-      await _clearLocalData();
-      
-      showSuccessMessage(I18nKeys.logoutSuccess.tr);
-      Get.offAllNamed(Routes.login);
-    } catch (e) {
-      // 即使API调用失败，也执行本地清理操作
-      await _clearLocalData();
-      showInfoMessage(I18nKeys.logoutFailedClearData.tr);
-      Get.offAllNamed(Routes.login);
-    } finally {
-      setLoading(false);
-    }
+    await safeApiCall<Map<String, dynamic>>(
+      () => _authApiService.logout(),
+      (_) async {
+        await _clearLocalData();
+        showSuccessMessage(I18nKeys.logoutSuccess.tr);
+        Get.offAllNamed(Routes.login);
+      },
+      errorMessage: I18nKeys.logoutFailedClearData.tr,
+      showLoading: true,
+      onError: () async {
+        await _clearLocalData();
+        showInfoMessage(I18nKeys.logoutFailedClearData.tr);
+        Get.offAllNamed(Routes.login);
+      },
+    );
   }
 
   /// 清除本地数据
@@ -148,7 +145,7 @@ class AccountController extends BaseController {
       // 例如：清除缓存、清除其他存储的用户数据等
       
     } catch (e) {
-      print('清除本地数据时出错: $e');
+      debugPrint('清除本地数据时出错: $e');
     }
   }
 

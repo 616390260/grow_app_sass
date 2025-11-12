@@ -37,10 +37,10 @@ class PaymentMethodView extends BaseView<PaymentMethodController> {
   Widget buildContent(BuildContext context) {
     // 初始化时加载银行列表
     if (controller.bankList.isEmpty) {
-      print('银行列表为空，开始加载银行列表...');
+      debugPrint('银行列表为空，开始加载银行列表...');
       controller.loadBankList();
     } else {
-      print('银行列表已加载，共${controller.bankList.length}条数据');
+      debugPrint('银行列表已加载，共${controller.bankList.length}条数据');
     }
     
     return SingleChildScrollView(

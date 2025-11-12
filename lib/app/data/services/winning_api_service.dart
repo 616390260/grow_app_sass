@@ -1,8 +1,7 @@
 import 'package:do_task_project/app/core/exceptions/api_exception.dart';
 
 import '../../core/services/http_service.dart';
-import '../../../domain/entities/winning_record.dart';
-import '../../../domain/entities/wheel_data.dart';
+import 'package:do_task_project/app/domain/entities/wheel_data.dart';
 
 /// 中奖记录API服务
 class WinningApiService {

@@ -61,44 +61,35 @@ class InviteFriendController extends BaseController {
 
   /// 从API获取推荐链接
   Future<void> fetchReferralLink() async {
-    try {
-      // 显示加载状态
-      
-      // 调用API获取推荐链接
-      final link = await _inviteFriendApiService.getReferralLink();
-      referralLink.value = link;
-      
-      // 设置成功状态
-      setSuccess();
-    } catch (e) {
-      // 使用BaseController的错误处理方法
-      handleErrorCode(-1, e.toString());
-      // 确保加载状态被正确关闭
-      setLoading(false);
-    }
+    await safeApiCall<String>(
+      () => _inviteFriendApiService.getReferralLink(),
+      (link) {
+        referralLink.value = link;
+        setSuccess();
+      },
+      errorMessage: I18nKeys.processingFailed.tr,
+      showLoading: true,
+      onError: () {
+        setError(I18nKeys.processingFailed.tr);
+      },
+    );
   }
 
 
   /// 从API获取宝箱产品列表
   Future<void> fetchBoxProductList() async {
-    try {
-      // 显示加载状态
-      setLoading(true);
-      
-      // 调用API获取宝箱产品列表
-      final List<BoxProductModel> products = await _inviteFriendApiService.getBoxProductList();
-      
-      // 更新宝箱产品列表
-      boxProducts.assignAll(products);
-      
-      // 设置成功状态
-      setSuccess();
-    } catch (e) {
-      // 使用BaseController的错误处理方法
-      handleErrorCode(-1, e.toString());
-      // 确保加载状态被正确关闭
-      setLoading(false);
-    }
+    await safeApiCall<List<BoxProductModel>>(
+      () => _inviteFriendApiService.getBoxProductList(),
+      (products) {
+        boxProducts.assignAll(products);
+        setSuccess();
+      },
+      errorMessage: I18nKeys.processingFailed.tr,
+      showLoading: true,
+      onError: () {
+        setError(I18nKeys.processingFailed.tr);
+      },
+    );
   }
 
   /// 分享到Telegram

@@ -6,7 +6,7 @@ import '../../../core/base/base_view.dart';
 import 'package:do_task_project/app/core/widgets/localized_app_bar.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
-import 'package:do_task_project/domain/entities/customer_service.dart';
+import 'package:do_task_project/app/domain/entities/customer_service.dart';
 
 class SmartView extends BaseView<SmartController> {
   const SmartView({Key? key}) : super(key: key);
@@ -213,7 +213,7 @@ class SmartView extends BaseView<SmartController> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryColor.withOpacity(0.1),
+                  color: AppTheme.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(

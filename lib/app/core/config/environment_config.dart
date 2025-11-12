@@ -52,6 +52,15 @@ class EnvironmentConfig {
     }
   }
 
+  int get sendTimeout {
+    switch (currentEnvironment) {
+      case EnvironmentType.debug:
+        return 30000;
+      case EnvironmentType.release:
+        return 15000;
+    }
+  }
+
   /// 是否启用日志
   bool get enableLogging {
     switch (currentEnvironment) {

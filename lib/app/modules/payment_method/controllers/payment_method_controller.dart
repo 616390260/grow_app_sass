@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../../../data/services/bank_api_service.dart';
+import 'package:flutter/foundation.dart';
 
 // 银行模型类
 class BankModel {
@@ -53,7 +54,7 @@ class PaymentMethodController extends BaseController {
       // 成功回调
       (List<BankModel> bankDataList) {
         bankList.value = bankDataList;
-        print('成功加载银行列表，共${bankDataList.length}条数据');
+        debugPrint('成功加载银行列表，共${bankDataList.length}条数据');
       },
       // 自定义错误消息
       errorMessage: I18nKeys.getBankListFailed.tr,

@@ -4,7 +4,7 @@ import '../../../data/services/withdrawal_api_service.dart';
 import '../../../data/services/dict_api_service.dart';
 import '../../../core/models/base_list_entity.dart';
 import '../../../data/models/dict_model.dart';
-import '../../../../domain/entities/withdrawal_record.dart';
+import 'package:do_task_project/app/domain/entities/withdrawal_record.dart';
 import '../../../core/i18n/i18n_keys.dart';
 
 class WithdrawalOrdersController extends BaseController {

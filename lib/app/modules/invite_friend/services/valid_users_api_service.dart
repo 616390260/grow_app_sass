@@ -1,4 +1,4 @@
-
+import 'package:flutter/foundation.dart';
 import 'package:do_task_project/app/core/services/http_service.dart';
 import 'package:do_task_project/app/modules/invite_friend/models/invite_info_response_model.dart';
 
@@ -15,19 +15,19 @@ class ValidUsersApiService {
         'status': status,
       };
 
-      print('请求邀请信息API: $_getInviteInfoEndpoint, 参数: $queryParameters');
+      debugPrint('请求邀请信息API: $_getInviteInfoEndpoint, 参数: $queryParameters');
       
       final responseData = await _httpService.get<Map<String, dynamic>>(
         _getInviteInfoEndpoint,
         queryParameters: queryParameters,
       );
       
-      print('获取到邀请信息响应: $responseData');
+      debugPrint('获取到邀请信息响应: $responseData');
       
       // 转换数据模型
       return InviteInfoResponseModel.fromJson(responseData);
     } catch (e) {
-      print('获取邀请信息异常: $e');
+      debugPrint('获取邀请信息异常: $e');
       rethrow;
     }
   }

@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:get/get.dart';
@@ -45,42 +44,38 @@ class SignInCalendarController extends BaseController {
 
   /// 从服务器加载签到信息
   Future<void> loadSignInInfo() async {
-    try {
-      isLoadingRemoteData.value = true;
-      final record = await _signInApiService.getSignInInfo();
-      
-      // 更新UI状态
-      streakDays.value = record.continuousCheckInDays;
-      rewardPoints.value = record.points;
-      
-      // 处理checkInDaysList，提取当月已签到的天数
-      checkedDays.clear();
-      if (record.checkInDaysList.isNotEmpty) {
-        final currentYearMonth = '${currentMonth.year}-${currentMonth.month.toString().padLeft(2, '0')}';
-        for (final dateStr in record.checkInDaysList) {
-          if (dateStr.startsWith(currentYearMonth)) {
-            // 提取日期部分（假设格式为YYYY-MM-DD）
-            final parts = dateStr.split('-');
-            if (parts.length == 3) {
-              final day = int.tryParse(parts[2]);
-              if (day != null) {
-                checkedDays.add(day);
+    isLoadingRemoteData.value = true;
+    await safeApiCall(
+      () async => await _signInApiService.getSignInInfo(),
+      (record) {
+        streakDays.value = record.continuousCheckInDays;
+        rewardPoints.value = record.points;
+        checkedDays.clear();
+        if (record.checkInDaysList.isNotEmpty) {
+          final currentYearMonth = '${currentMonth.year}-${currentMonth.month.toString().padLeft(2, '0')}';
+          for (final dateStr in record.checkInDaysList) {
+            if (dateStr.startsWith(currentYearMonth)) {
+              final parts = dateStr.split('-');
+              if (parts.length == 3) {
+                final day = int.tryParse(parts[2]);
+                if (day != null) {
+                  checkedDays.add(day);
+                }
               }
             }
           }
         }
-      }
-      
-      // 保存到本地存储，确保保存为列表类型
-      box.write('checkedDays_${currentMonth.year}_${currentMonth.month}', checkedDays.toList().cast<int>());
-      
-      setSuccess();
-    } catch (e) {
-      // 即使网络请求失败，也要确保UI正常显示本地数据
-      setSuccess();
-    } finally {
-      isLoadingRemoteData.value = false;
-    }
+        box.write('checkedDays_${currentMonth.year}_${currentMonth.month}', checkedDays.toList().cast<int>());
+        setSuccess();
+        isLoadingRemoteData.value = false;
+      },
+      errorMessage: I18nKeys.loadSignInInfoFailed.tr,
+      showLoading: false,
+      onError: () {
+        setSuccess();
+        isLoadingRemoteData.value = false;
+      },
+    );
   }
 
   int get daysInMonth {
@@ -98,25 +93,24 @@ class SignInCalendarController extends BaseController {
   
   /// 从服务器检查今日是否已签到并同步到本地状态
   void isCheckedInToday() async {
-    try {
-        isCheckedIn.value = await _signInApiService.isCheckIn();
-        print('isCheckedIn.value: ${isCheckedIn.value}');
-        // 如果服务器返回已签到，但本地状态未更新，则更新本地状态
-      if (isCheckedIn.value && !checkedToday) {
-        checkedDays.add(today.day);
-        // 保存到本地存储
-        box.write('checkedDays_${currentMonth.year}_${currentMonth.month}', checkedDays.toList());
-        // 重新计算连续签到天数
-        streakDays.value = _calculateStreak();
-        // 更新UI
-        update();
-      }
-      
-      setSuccess();
-    } catch (e) {
-      // 发生错误时，回退到本地判断
-      setSuccess();
-    }
+    await safeApiCall<bool>(
+      () async => await _signInApiService.isCheckIn(),
+      (checked) {
+        isCheckedIn.value = checked;
+        if (isCheckedIn.value && !checkedToday) {
+          checkedDays.add(today.day);
+          box.write('checkedDays_${currentMonth.year}_${currentMonth.month}', checkedDays.toList());
+          streakDays.value = _calculateStreak();
+          update();
+        }
+        setSuccess();
+      },
+      errorMessage: I18nKeys.getSignInStatusFailed.tr,
+      showLoading: false,
+      onError: () {
+        setSuccess();
+      },
+    );
   }
 
   int get daysRemainingToReward {
@@ -128,43 +122,28 @@ class SignInCalendarController extends BaseController {
   Future<void> checkInToday() async {
     // 先检查服务器是否已签到，避免重复签到
     if (isCheckedIn.value || checkedToday) return;
-    
-    try {
-      setLoading(true);
-      
-      // 1. 先执行本地签到逻辑
-      checkedDays.add(today.day);
-      // 安全地保存为列表类型
-      box.write('checkedDays_${currentMonth.year}_${currentMonth.month}', checkedDays.toList());
-      
-      // 2. 计算新的连续签到天数
-      streakDays.value = _calculateStreak();
-      
-      // 3. 调用服务器签到API
-      await _signInApiService.checkIn();
-      
-      // 4. 显示成功消息
-      showSuccessMessage('${I18nKeys.receivedPoints.tr} ${rewardPoints.value} ${I18nKeys.points.tr}');
-      
-      // 5. 重新加载最新的签到信息
-      await loadSignInInfo();
-      
-      setSuccess();
-    } catch (e) {
-      showErrorMessage(I18nKeys.checkInFailedRetry.tr);
-      // 回滚本地操作，确保状态一致性
-      checkedDays.remove(today.day);
-      streakDays.value = _calculateStreak();
-      // 重新保存正确的状态
-      box.write('checkedDays_${currentMonth.year}_${currentMonth.month}', checkedDays.toList());
-    } finally {
-      // 无论成功还是失败，确保加载状态被重置
-      setLoading(false);
-      // 同时更新页面状态为成功，确保加载指示器消失
-      setSuccess();
-      // 确保UI状态更新
-      update();
-    }
+    checkedDays.add(today.day);
+    box.write('checkedDays_${currentMonth.year}_${currentMonth.month}', checkedDays.toList());
+    streakDays.value = _calculateStreak();
+    await safeApiCall<void>(
+      () async => await _signInApiService.checkIn(),
+      (_) async {
+        showSuccessMessage('${I18nKeys.receivedPoints.tr} ${rewardPoints.value} ${I18nKeys.points.tr}');
+        await loadSignInInfo();
+        setSuccess();
+        update();
+      },
+      errorMessage: I18nKeys.checkInFailed.tr,
+      showLoading: true,
+      onError: () {
+        showErrorMessage(I18nKeys.checkInFailedRetry.tr);
+        checkedDays.remove(today.day);
+        streakDays.value = _calculateStreak();
+        box.write('checkedDays_${currentMonth.year}_${currentMonth.month}', checkedDays.toList());
+        setSuccess();
+        update();
+      },
+    );
   }
 
   int _calculateStreak() {

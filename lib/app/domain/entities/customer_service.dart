@@ -26,7 +26,6 @@ class CustomerService {
     this.updateTime,
   });
 
-  /// 从JSON创建CustomerService实例
   factory CustomerService.fromJson(Map<String, dynamic> json) {
     return CustomerService(
       createTime: json['createTime'] as String?,
@@ -43,7 +42,6 @@ class CustomerService {
     );
   }
 
-  /// 转换为JSON
   Map<String, dynamic> toJson() {
     return {
       'createTime': createTime,
@@ -60,7 +58,6 @@ class CustomerService {
     };
   }
 
-  /// 复制对象并修改指定字段
   CustomerService copyWith({
     String? createTime,
     String? delFlag,
@@ -92,15 +89,9 @@ class CustomerService {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is CustomerService &&
-        other.id == id;
+    return other is CustomerService && other.id == id;
   }
 
   @override
   int get hashCode => id.hashCode;
-
-  @override
-  String toString() {
-    return 'CustomerService(createTime: $createTime, delFlag: $delFlag, description: $description, icon: $icon, id: $id, keyType: $keyType, link: $link, name: $name, title: $title, type: $type, updateTime: $updateTime)';
-  }
 }

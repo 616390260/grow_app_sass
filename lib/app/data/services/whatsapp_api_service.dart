@@ -1,5 +1,6 @@
 import '../../core/services/http_service.dart';
-import '../../../domain/entities/online_number.dart';
+import 'package:flutter/foundation.dart';
+import 'package:do_task_project/app/domain/entities/online_number.dart';
 
 /// WhatsApp API服务类
 class WhatsappApiService {
@@ -45,46 +46,46 @@ class WhatsappApiService {
           if (response['data'] != null && response['data'] is List) {
             dataList = response['data'] as List;
           } else {
-            print('No data field found in Map response');
+            debugPrint('No data field found in Map response');
             return [];
           }
         } else if (response is List) {
           // 如果响应本身就是列表
           dataList = response;
         } else {
-          print('Unexpected response format: ${response.runtimeType}');
+          debugPrint('Unexpected response format: ${response.runtimeType}');
           return [];
         }
         
-        print('Data list length: ${dataList.length}');
+        debugPrint('Data list length: ${dataList.length}');
         
         if (dataList.isNotEmpty) {
-          print('First item sample: ${dataList[0]}');
-          print('First item type: ${dataList[0].runtimeType}');
+          debugPrint('First item sample: ${dataList[0]}');
+          debugPrint('First item type: ${dataList[0].runtimeType}');
         }
         
         try {
           final result = dataList
               .map((item) {
-                print('Processing item: $item');
+                debugPrint('Processing item: $item');
                 return OnlineNumber.fromJson(item as Map<String, dynamic>);
               })
               .toList();
-          print('Parsed ${result.length} OnlineNumber objects');
+          debugPrint('Parsed ${result.length} OnlineNumber objects');
           return result;
         } catch (e, stackTrace) {
-          print('Error parsing OnlineNumber objects: $e');
-          print('Stack trace: $stackTrace');
+          debugPrint('Error parsing OnlineNumber objects: $e');
+          debugPrint('Stack trace: $stackTrace');
           return [];
         }
       }
       
-      print('Response is null');
+      debugPrint('Response is null');
       return [];
     } catch (e, stackTrace) {
       // 发生异常时返回空列表
-      print('Error fetching online numbers: $e');
-      print('Stack trace: $stackTrace');
+      debugPrint('Error fetching online numbers: $e');
+      debugPrint('Stack trace: $stackTrace');
       return [];
     }
   }
@@ -98,7 +99,7 @@ class WhatsappApiService {
       
       return data;
     } catch (e) {
-      print('Error fetching task info: $e');
+      debugPrint('Error fetching task info: $e');
       // 发生异常时返回默认值
       return {
         'todayPoints': 0,

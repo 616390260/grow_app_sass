@@ -5,7 +5,6 @@ import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:do_task_project/app/data/services/income_details_api_service.dart';
 import 'package:do_task_project/app/data/services/dict_api_service.dart';
 import 'package:do_task_project/app/data/models/dict_model.dart';
-import 'package:do_task_project/app/modules/income_details/models/income_details_model.dart';
 
 /// 收益明细控制器
 class IncomeDetailsController extends BaseController {
@@ -86,17 +85,17 @@ class IncomeDetailsController extends BaseController {
                 _typeNameToValue[dict.dictLabel!] = dict.dictValue ?? '';
               }
             }
-            print('获取到奖励类型数量: ${dictList.length}');
+            debugPrint('获取到奖励类型数量: ${dictList.length}');
           }
         },
         onError: () {
-          print(I18nKeys.getRewardTypesFailed.tr);
+          debugPrint(I18nKeys.getRewardTypesFailed.tr);
         },
         showLoading: false,
         errorMessage: I18nKeys.getRewardTypesFailed.tr
       );
     } catch (e) {
-      print('加载奖励类型异常: $e');
+      debugPrint('加载奖励类型异常: $e');
     } finally {
       _isLoadingTypes = false;
     }
@@ -131,17 +130,17 @@ class IncomeDetailsController extends BaseController {
                 _timeRangeNameToValue[dict.dictLabel!] = dict.dictValue ?? '';
               }
             }
-            print('获取到时间类型数量: ${dictList.length}');
+            debugPrint('获取到时间类型数量: ${dictList.length}');
           }
         },
         onError: () {
-          print(I18nKeys.getTimeTypesFailed2.tr);
+          debugPrint(I18nKeys.getTimeTypesFailed2.tr);
         },
         showLoading: false,
         errorMessage: I18nKeys.getTimeTypesFailed2.tr
       );
     } catch (e) {
-      print('加载时间类型异常: $e');
+      debugPrint('加载时间类型异常: $e');
     } finally {
       _isLoadingTimeTypes = false;
     }
@@ -149,91 +148,83 @@ class IncomeDetailsController extends BaseController {
 
   // 加载收益数据
   void loadIncomeData() async {
-    setLoading(true);
     _currentPage = 1;
-    
-    try {
-      // 构建查询参数
-      String? typeParam;
-      String? timeRangeParam;
-      
-      // 如果选择了特定类型并且不是全部类型
-      if (selectedTypeValue.value.isNotEmpty && selectedTypeValue.value != 'all') {
-        typeParam = selectedTypeValue.value;
-      }
-      
-      // 处理时间范围参数
-      if (selectedTimeRange.value.isNotEmpty && selectedTimeRange.value != I18nKeys.allTime.tr) {
-        timeRangeParam = _timeRangeNameToValue[selectedTimeRange.value] ?? selectedTimeRange.value;
-      }
-
-      print('加载收益数据参数 - 类型: $typeParam, 时间范围: $timeRangeParam');
-      
-      final response = await _apiService.getIncomeDetailsList(
-        page: _currentPage,
-        type: typeParam,
-        timeRange: timeRangeParam
-      );
-      final convertedList = response.records.map((record) => IncomeItem(
-        type: record.typeName ?? record.type,
-        amount: record.points,
-        time: record.createTime,
-      )).toList();
-      
-      incomeList.assignAll(convertedList);
-      _hasMoreData = response.records.isNotEmpty && response.current < response.pages;
-      
-      setSuccess();
-    } catch (e) {
-      setError(e.toString());
-      showErrorMessage(e.toString());
-    } finally {
-      setLoading(false);
-    }
+    await safeApiCall(
+      () async {
+        String? typeParam;
+        String? timeRangeParam;
+        if (selectedTypeValue.value.isNotEmpty && selectedTypeValue.value != 'all') {
+          typeParam = selectedTypeValue.value;
+        }
+        if (selectedTimeRange.value.isNotEmpty && selectedTimeRange.value != I18nKeys.allTime.tr) {
+          timeRangeParam = _timeRangeNameToValue[selectedTimeRange.value] ?? selectedTimeRange.value;
+        }
+        debugPrint('加载收益数据参数 - 类型: $typeParam, 时间范围: $timeRangeParam');
+        final response = await _apiService.getIncomeDetailsList(
+          page: _currentPage,
+          type: typeParam,
+          timeRange: timeRangeParam,
+        );
+        return response;
+      },
+      (response) {
+        final convertedList = response.records.map((record) => IncomeItem(
+          type: record.typeName ?? record.type,
+          amount: record.points,
+          time: record.createTime,
+        )).toList();
+        incomeList.assignAll(convertedList);
+        _hasMoreData = response.records.isNotEmpty && response.current < response.pages;
+        setSuccess();
+      },
+      errorMessage: I18nKeys.loadDataFailed.tr,
+      showLoading: true,
+      onError: () {
+        setError(I18nKeys.loadDataFailed.tr);
+      },
+    );
   }
 
   // 加载更多数据
   void loadMoreData() async {
     if (!_hasMoreData || isLoading || isLoadingMore.value) return;
-    
     isLoadingMore.value = true;
     _currentPage++;
-    
-    try {
-      // 构建查询参数
-      String? typeParam;
-      String? timeRangeParam;
-      
-      // 如果选择了特定类型并且不是全部类型
-      if (selectedTypeValue.value.isNotEmpty && selectedTypeValue.value != 'all') {
-        typeParam = selectedTypeValue.value;
-      }
-      
-      // 处理时间范围参数
-      if (selectedTimeRange.value.isNotEmpty && selectedTimeRange.value != I18nKeys.allTime.tr) {
-        timeRangeParam = _timeRangeNameToValue[selectedTimeRange.value] ?? selectedTimeRange.value;
-      }
-      
-      final response = await _apiService.getIncomeDetailsList(
-        page: _currentPage,
-        type: typeParam,
-        timeRange: timeRangeParam
-      );
-      final convertedList = response.records.map((record) => IncomeItem(
-        type: record.typeName ?? record.type,
-        amount: record.points,
-        time: record.createTime,
-      )).toList();
-      
-      incomeList.addAll(convertedList);
-      _hasMoreData = response.records.isNotEmpty && response.current < response.pages;
-      
-    } catch (e) {
-      _currentPage--; // 回退页码
-      showErrorMessage(e.toString());
-    } finally {
-      isLoadingMore.value = false;
-    }
+    await safeApiCall(
+      () async {
+        String? typeParam;
+        String? timeRangeParam;
+        if (selectedTypeValue.value.isNotEmpty && selectedTypeValue.value != 'all') {
+          typeParam = selectedTypeValue.value;
+        }
+        if (selectedTimeRange.value.isNotEmpty && selectedTimeRange.value != I18nKeys.allTime.tr) {
+          timeRangeParam = _timeRangeNameToValue[selectedTimeRange.value] ?? selectedTimeRange.value;
+        }
+        final response = await _apiService.getIncomeDetailsList(
+          page: _currentPage,
+          type: typeParam,
+          timeRange: timeRangeParam,
+        );
+        return response;
+      },
+      (response) {
+        final convertedList = response.records.map((record) => IncomeItem(
+          type: record.typeName ?? record.type,
+          amount: record.points,
+          time: record.createTime,
+        )).toList();
+        incomeList.addAll(convertedList);
+        _hasMoreData = response.records.isNotEmpty && response.current < response.pages;
+        isLoadingMore.value = false;
+      },
+      errorMessage: I18nKeys.loadDataFailed.tr,
+      showLoading: false,
+      onError: () {
+        _currentPage--;
+        showErrorMessage(I18nKeys.loadDataFailed.tr);
+        isLoadingMore.value = false;
+      },
+    );
   }
 
   // 切换类型筛选

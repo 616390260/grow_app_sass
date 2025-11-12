@@ -1,12 +1,9 @@
-import 'dart:convert';
 import 'dart:math';
-import 'package:do_task_project/domain/entities/winning_record.dart';
+import 'package:do_task_project/app/domain/entities/winning_record.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_controller.dart';
-import '../../../core/exceptions/api_exception.dart';
 import '../../../core/i18n/i18n_keys.dart';
-import '../../../routes/app_pages.dart';
 import '../../../data/services/winning_api_service.dart';
 
 
@@ -49,7 +46,7 @@ class LuckyWheelController extends BaseController with GetSingleTickerProviderSt
     safeApiCall(
       () => _winningApiService.getWinningList(),
       (wheelData) {
-        prizes.assignAll(wheelData.winningSettings);
+        prizes.assignAll(wheelData.winningSettings as Iterable<WinningRecord>);
         _userPoints.value = wheelData.availablePoints;
         _spinCost.value = wheelData.points;
       },

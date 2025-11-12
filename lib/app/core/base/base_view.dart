@@ -75,8 +75,8 @@ abstract class BaseView<T extends BaseController> extends GetView<T> {
             Center(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5), // 设置为半透明黑色背景
-                  borderRadius: BorderRadius.circular(12.0), // 添加圆角使对话框更美观
+                  color: Colors.black.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(12.0),
                 ),
                 padding: EdgeInsets.all(20.0), // 添加内边距
                 child: _buildLoadingWidget(),

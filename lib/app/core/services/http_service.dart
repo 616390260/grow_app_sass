@@ -3,21 +3,19 @@ import 'package:dio/dio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:do_task_project/app/core/services/auth_service.dart';
 import 'package:do_task_project/app/data/services/auth_api_service.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart' as getx;
-import 'package:get_storage/get_storage.dart';
 import '../config/environment_config.dart';
 import '../utils/json_convert.dart';
 import 'error_handler_center.dart';
-import 'package:do_task_project/app/core/exceptions/api_exception.dart';
-import '../constants/app_constants.dart';
 
 /// HTTP服务类 - 重构后的统一版本
 class HttpService extends getx.GetxService {
   static HttpService get to => getx.Get.find();
 
   late Dio _dio;
+  bool _isRefreshing = false;
+  final List<RequestOptions> _pending401Queue = [];
   final Connectivity _connectivity = Connectivity();
   final EnvironmentConfig _envConfig = EnvironmentConfig.instance;
   final ErrorHandlerCenter _errorHandler = ErrorHandlerCenter();
@@ -30,6 +28,8 @@ class HttpService extends getx.GetxService {
 
   /// 接收超时时间（毫秒）
   int get receiveTimeout => _envConfig.receiveTimeout;
+
+  int get sendTimeout => _envConfig.sendTimeout;
 
   /// 是否启用日志
   bool get enableLogging => _envConfig.enableNetworkLogging;
@@ -48,6 +48,7 @@ class HttpService extends getx.GetxService {
         baseUrl: baseUrl,
         connectTimeout: Duration(milliseconds: connectTimeout),
         receiveTimeout: Duration(milliseconds: receiveTimeout),
+        sendTimeout: Duration(milliseconds: sendTimeout),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -83,12 +84,12 @@ class HttpService extends getx.GetxService {
 
         // 注入token到请求头
         try {
-          final token = await AuthService.to.token;
+          final token = AuthService.to.token;
           if (token != null && token.isNotEmpty) {
             options.headers['APP-TOKEN'] = token;
-            print(
-              '添加Authorization头: $token',
-          );
+            if (enableLogging) {
+              print('添加Authorization头: ${_maskSensitiveData(token)}');
+            }
           }
         } catch (_) {
           // 读取存储失败时忽略，不影响正常请求
@@ -101,8 +102,16 @@ class HttpService extends getx.GetxService {
         _logResponse(response);
         handler.next(response);
       },
-      onError: (error, handler) {
+      onError: (error, handler) async {
         _logError(error);
+        final status = error.response?.statusCode;
+        if (status == 401) {
+          final handled = await _handleUnauthorized(error);
+          if (handled != null) {
+            handler.resolve(handled);
+            return;
+          }
+        }
         handler.next(error);
       },
     );
@@ -112,13 +121,22 @@ class HttpService extends getx.GetxService {
   Interceptor _createRetryInterceptor() {
     return InterceptorsWrapper(
       onError: (error, handler) async {
-        if (_shouldRetry(error)) {
-          try {
-            final response = await _dio.fetch(error.requestOptions);
-            handler.resolve(response);
-            return;
-          } catch (e) {
-            // 重试失败，继续抛出原错误
+        final req = error.requestOptions;
+        if (_shouldRetry(error) && req.method.toUpperCase() == 'GET') {
+          final attempt = (req.extra['retry_attempt'] as int?) ?? 0;
+          final nextAttempt = attempt + 1;
+          final max = _envConfig.maxRetryCount;
+          if (nextAttempt <= max) {
+            final delayMs = 300 * (1 << attempt);
+            await Future.delayed(Duration(milliseconds: delayMs));
+            req.extra['retry_attempt'] = nextAttempt;
+            try {
+              final response = await _dio.fetch(req);
+              handler.resolve(response);
+              return;
+            } catch (e) {
+              // fallthrough
+            }
           }
         }
         handler.next(error);
@@ -149,23 +167,21 @@ class HttpService extends getx.GetxService {
     String path, {
     Map<String, dynamic>? queryParameters,
     Options? options,
+    CancelToken? cancelToken,
   }) async {
     try {
       final response = await _dio.get(
         path,
         queryParameters: queryParameters,
         options: options,
+        cancelToken: cancelToken,
       );
       return _handleResponseData<T>(response);
     } on DioException catch (e) {
-    _errorHandler.handleExceptionException(e);
-    // 如果是ApiException，直接重新抛出，保留错误码和消息
-    rethrow;
-  } catch (e) {
-    _errorHandler.handleExceptionException(Exception(e.toString()));
-    // 如果是ApiException，直接重新抛出
-    rethrow;
-  }
+      throw _errorHandler.handleExceptionException(e);
+    } catch (e) {
+      throw _errorHandler.handleExceptionException(Exception(e.toString()));
+    }
   }
 
 
@@ -175,6 +191,7 @@ class HttpService extends getx.GetxService {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    CancelToken? cancelToken,
   }) async {
     try {
       final response = await _dio.post(
@@ -182,25 +199,22 @@ class HttpService extends getx.GetxService {
         data: data,
         queryParameters: queryParameters,
         options: options,
+        cancelToken: cancelToken,
       );
       return _handleResponseData<T>(response);
     } on DioException catch (e) {
-    final exception = _errorHandler.handleExceptionException(e);
-    // 如果是ApiException，直接重新抛出，保留错误码和消息
-    if (exception is ApiException) {
-      print(exception.message);
-      rethrow;
+      final exception = _errorHandler.handleExceptionException(e);
+      if (enableLogging) {
+        print(exception.message);
+      }
+      throw exception;
+    } catch (e) {
+      final exception = _errorHandler.handleExceptionException(Exception(e.toString()));
+      if (enableLogging) {
+        print(exception.message);
+      }
+      throw exception;
     }
-    throw exception;
-  } catch (e) {
-    final exception = _errorHandler.handleExceptionException(Exception(e.toString()));
-    // 如果是ApiException，直接重新抛出
-    if (exception is ApiException) {
-      print(exception.message);
-      rethrow;
-    }
-    throw exception;
-  }
   }
 
   /// PUT请求 - 直接返回泛型对象
@@ -209,6 +223,7 @@ class HttpService extends getx.GetxService {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    CancelToken? cancelToken,
   }) async {
     try {
       final response = await _dio.put(
@@ -216,6 +231,7 @@ class HttpService extends getx.GetxService {
         data: data,
         queryParameters: queryParameters,
         options: options,
+        cancelToken: cancelToken,
       );
       return _handleResponseData<T>(response);
     } on DioException catch (e) {
@@ -232,6 +248,7 @@ class HttpService extends getx.GetxService {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    CancelToken? cancelToken,
   }) async {
     try {
       final response = await _dio.delete(
@@ -239,6 +256,7 @@ class HttpService extends getx.GetxService {
         data: data,
         queryParameters: queryParameters,
         options: options,
+        cancelToken: cancelToken,
       );
       return _handleResponseData<T>(response);
     } on DioException catch (e) {
@@ -296,7 +314,9 @@ class HttpService extends getx.GetxService {
     try {
       // 1. 优先尝试使用JsonConvert进行转换
       final result = JsonConvert.fromJsonAsT<T>(data);
-      print(result);
+      if (enableLogging) {
+        print(result);
+      }
       if (result != null) {
         return result;
       }
@@ -319,7 +339,9 @@ class HttpService extends getx.GetxService {
       } else if (T == double && data is num) {
         return data.toDouble() as T;
       } else if (T == bool) {
-        print('处理bool类型: $data, 类型: ${data.runtimeType}');
+        if (enableLogging) {
+          print('处理bool类型: $data, 类型: ${data.runtimeType}');
+        }
         if (data is bool) {
           // 直接返回bool类型数据
           return data as T;
@@ -400,7 +422,7 @@ class HttpService extends getx.GetxService {
       }
     }
 
-    print('⏱️  Timeout: Connect(${options.connectTimeout?.inMilliseconds}ms) | Receive(${options.receiveTimeout?.inMilliseconds}ms)');
+    print('⏱️  Timeout: Connect(${options.connectTimeout?.inMilliseconds}ms) | Receive(${options.receiveTimeout?.inMilliseconds}ms) | Send(${options.sendTimeout?.inMilliseconds}ms)');
     print('=' * 80 + '\n');
   }
 
@@ -495,6 +517,51 @@ class HttpService extends getx.GetxService {
 
 
 
+
+  Future<Response?> _handleUnauthorized(DioException error) async {
+    final request = error.requestOptions;
+    final rememberEnabled = AuthService.to.isRememberPasswordEnabled();
+    if (!rememberEnabled) {
+      return null;
+    }
+
+    _pending401Queue.add(request);
+
+    if (_isRefreshing) {
+      return null;
+    }
+
+    _isRefreshing = true;
+    try {
+      final account = AuthService.to.getSavedAccount();
+      final password = AuthService.to.getSavedPassword();
+      if (account == null || password == null || account.isEmpty || password.isEmpty) {
+        return null;
+      }
+
+      final newToken = await AuthApiService().login(account: account, password: password);
+      if (newToken.isNotEmpty) {
+        await AuthService.to.saveToken(newToken);
+
+        Response? lastResponse;
+        for (final pending in List<RequestOptions>.from(_pending401Queue)) {
+          pending.headers['APP-TOKEN'] = newToken;
+          try {
+            final resp = await _dio.fetch(pending);
+            lastResponse = resp;
+          } catch (_) {}
+          _pending401Queue.remove(pending);
+        }
+        return lastResponse;
+      }
+    } catch (_) {
+      // ignore
+    } finally {
+      _isRefreshing = false;
+      _pending401Queue.clear();
+    }
+    return null;
+  }
 
   /// 隐藏敏感数据
   String _maskSensitiveData(String data) {

@@ -1,8 +1,6 @@
-import 'package:do_task_project/app/core/constants/image_assets.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:do_task_project/app/modules/vip_details/components/vip_badge.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_view.dart';
 import '../../../core/i18n/i18n_keys.dart';

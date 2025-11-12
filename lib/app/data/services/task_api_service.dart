@@ -1,4 +1,4 @@
-import '../../../domain/entities/task.dart';
+import 'package:do_task_project/app/domain/entities/task.dart';
 import '../models/task_model.dart';
 import '../../core/services/http_service.dart';
 

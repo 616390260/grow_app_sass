@@ -5,7 +5,6 @@ import '../../../routes/app_pages.dart';
 import '../../../data/services/home_api_service.dart';
 import '../../../data/models/home_info_model.dart';
 import '../../../core/i18n/i18n_keys.dart';
-import '../../../core/utils/message_utils.dart';
 
 class HomeController extends BaseController {
   // 统计数据

@@ -384,7 +384,7 @@ class _DayCell extends StatelessWidget {
       borderColor = const Color(0xFF3D8BFF);
       textColor = Colors.white;
     } else if (unChecked) {
-      bgColor = const Color(0xFF427AF2).withOpacity(0.1);
+      bgColor = const Color(0xFF427AF2).withValues(alpha: 0.1);
       borderColor = Colors.transparent;
       textColor = AppTheme.primaryColor;
     } else {

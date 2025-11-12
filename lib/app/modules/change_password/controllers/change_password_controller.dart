@@ -111,26 +111,21 @@ class ChangePasswordController extends BaseController {
     if (!_validateForm()) {
       return;
     }
-
-    try {
-      setLoading(true);
-      
-      // 调用修改密码的API
-      await _authApiService.updatePassword(
+    await safeApiCall<Map<String, dynamic>>(
+      () => _authApiService.updatePassword(
         oldPassword: oldPasswordController.text,
         newPassword: newPasswordController.text,
-      );
-      
-      showSuccessMessage(I18nKeys.passwordChangeSuccess.tr);
-      
-      // 关闭当前页面
-      Navigator.pop(Get.context!);
-      
-      setSuccess();
-    } catch (e) {
-      showErrorMessage(I18nKeys.errorChangePasswordFailed.tr);
-    } finally {
-      setLoading(false);
-    }
+      ),
+      (_) {
+        showSuccessMessage(I18nKeys.passwordChangeSuccess.tr);
+        Navigator.pop(Get.context!);
+        setSuccess();
+      },
+      errorMessage: I18nKeys.errorChangePasswordFailed.tr,
+      showLoading: true,
+      onError: () {
+        setError(I18nKeys.errorChangePasswordFailed.tr);
+      },
+    );
   }
 }

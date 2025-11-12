@@ -1,4 +1,4 @@
-import 'package:do_task_project/domain/entities/online_number.dart';
+import 'package:do_task_project/app/domain/entities/online_number.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/services.dart';

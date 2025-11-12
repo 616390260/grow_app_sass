@@ -5,7 +5,7 @@ import '../../../core/models/base_list_entity.dart';
 import '../../../data/services/country_api_service.dart';
 import '../../../data/models/country_model.dart';
 import '../../../data/services/withdrawal_api_service.dart';
-import '../../../../domain/entities/withdrawal_setting.dart';
+import 'package:do_task_project/app/domain/entities/withdrawal_setting.dart';
 
 class AccountWithdrawalController extends BaseController {
   // 选中的国家

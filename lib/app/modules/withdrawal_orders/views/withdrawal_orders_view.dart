@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import '../../../core/base/base_view.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../controllers/withdrawal_orders_controller.dart';
-import '../../../../domain/entities/withdrawal_record.dart';
+import 'package:do_task_project/app/domain/entities/withdrawal_record.dart';
 
 class WithdrawalOrdersView extends BaseView<WithdrawalOrdersController> {
   const WithdrawalOrdersView({super.key});

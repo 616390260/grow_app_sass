@@ -11,7 +11,7 @@ class MessageUtils {
       I18nKeys.success.tr,
       message,
       snackPosition: SnackPosition.TOP,
-      backgroundColor: Get.theme.colorScheme.primary.withOpacity(0.1),
+      backgroundColor: Get.theme.colorScheme.primary.withValues(alpha: 0.1),
       colorText: Get.theme.colorScheme.primary,
       icon: Icon(
         Icons.check_circle,
@@ -27,7 +27,7 @@ class MessageUtils {
       I18nKeys.error.tr,
       message,
       snackPosition: SnackPosition.TOP,
-      backgroundColor: Get.theme.colorScheme.error.withOpacity(0.1),
+      backgroundColor: Get.theme.colorScheme.error.withValues(alpha: 0.1),
       colorText: Get.theme.colorScheme.error,
       icon: Icon(
         Icons.error,
@@ -43,7 +43,7 @@ class MessageUtils {
       I18nKeys.warning.tr,
       message,
       snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.orange.withOpacity(0.1),
+      backgroundColor: Colors.orange.withValues(alpha: 0.1),
       colorText: Colors.orange,
       icon: const Icon(
         Icons.warning,

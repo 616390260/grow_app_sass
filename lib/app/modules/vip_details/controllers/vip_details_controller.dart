@@ -91,48 +91,35 @@ class VipDetailsController extends BaseController {
 
   // 加载VIP详情数据
   void loadVipDetails() async {
-    try {
-      setLoading(true);
-      
-      // 调用API获取VIP详情
-      final vipDetails = await _vipApiService.getVipInfo();
-      
-      // 更新VIP等级信息
-      currentVipLevel.value = vipDetails.currentVipLevel;
-      nextVipLevel.value = vipDetails.nextVipLevel;
-      vipBalance.value = vipDetails.points;
-      
-      // 更新推广数据
-      promotionIncome.value = vipDetails.promotionPoints;
-      promotionProgress.value = '${vipDetails.promotionPoints}/${vipDetails.totalPromotionPoints}';
-      
-      // 计算进度条值 (根据实际需求调整计算逻辑)
-      if (vipDetails.totalPromotionPoints > 0) {
-        progressValue.value = vipDetails.promotionPoints / vipDetails.totalPromotionPoints;
-        // 确保进度值在0-1范围内
-        if (progressValue.value > 1.0) progressValue.value = 1.0;
-        if (progressValue.value < 0.0) progressValue.value = 0.0;
-      }
-      
-      // 转换VIP等级列表数据
-      final rewards = vipDetails.vipLevelList.map((item) {
-        return VipLevelItemModel.fromJson(item.toJson());
-      }).toList();
-      
-      vipRewards.assignAll(rewards);
-      
-      // 转换今日VIP等级列表数据
-      final todayRewards = vipDetails.vipTodayLevelList.map((item) {
-        return VipLevelItemModel.fromJson(item.toJson());
-      }).toList();
-      vipTodayRewards.assignAll(todayRewards);
-      
-      setSuccess();
-    } catch (e) {
-      showErrorMessage('${I18nKeys.loadVipDetailsFailed.tr}: $e');
-    } finally {
-      setLoading(false);
-    }
+    await safeApiCall<VipDetailsModel>(
+      () => _vipApiService.getVipInfo(),
+      (vipDetails) {
+        currentVipLevel.value = vipDetails.currentVipLevel;
+        nextVipLevel.value = vipDetails.nextVipLevel;
+        vipBalance.value = vipDetails.points;
+        promotionIncome.value = vipDetails.promotionPoints;
+        promotionProgress.value = '${vipDetails.promotionPoints}/${vipDetails.totalPromotionPoints}';
+        if (vipDetails.totalPromotionPoints > 0) {
+          progressValue.value = vipDetails.promotionPoints / vipDetails.totalPromotionPoints;
+          if (progressValue.value > 1.0) progressValue.value = 1.0;
+          if (progressValue.value < 0.0) progressValue.value = 0.0;
+        }
+        final rewards = vipDetails.vipLevelList.map((item) {
+          return VipLevelItemModel.fromJson(item.toJson());
+        }).toList();
+        vipRewards.assignAll(rewards);
+        final todayRewards = vipDetails.vipTodayLevelList.map((item) {
+          return VipLevelItemModel.fromJson(item.toJson());
+        }).toList();
+        vipTodayRewards.assignAll(todayRewards);
+        setSuccess();
+      },
+      errorMessage: I18nKeys.loadVipDetailsFailed.tr,
+      showLoading: true,
+      onError: () {
+        setError(I18nKeys.loadVipDetailsFailed.tr);
+      },
+    );
   }
 
   // 返回上一页

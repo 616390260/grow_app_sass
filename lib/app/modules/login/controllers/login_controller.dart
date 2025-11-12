@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../../../routes/app_pages.dart';
 import '../../../data/services/auth_api_service.dart';
-import '../../../core/constants/app_constants.dart';
 import '../../../core/services/auth_service.dart';
 
 class LoginController extends BaseController {

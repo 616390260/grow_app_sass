@@ -1,4 +1,3 @@
-/// 提现记录实体类
 class WithdrawalRecord {
   final double? amount;
   final String? bankName;
@@ -42,7 +41,6 @@ class WithdrawalRecord {
     this.userName,
   });
 
-  /// 从JSON创建WithdrawalRecord实例
   factory WithdrawalRecord.fromJson(Map<String, dynamic> json) {
     return WithdrawalRecord(
       amount: json['amount'] as double?,
@@ -67,7 +65,6 @@ class WithdrawalRecord {
     );
   }
 
-  /// 转换为JSON
   Map<String, dynamic> toJson() {
     return {
       'amount': amount,
@@ -90,65 +87,5 @@ class WithdrawalRecord {
       'userId': userId,
       'userName': userName,
     };
-  }
-
-  /// 复制对象并修改指定字段
-  WithdrawalRecord copyWith({
-    double? amount,
-    String? bankName,
-    String? cardName,
-    String? createTime,
-    double? fee,
-    String? finishTime,
-    int? goldenFlowInfoId,
-    int? id,
-    String? orderNo,
-    String? payCard,
-    String? payChannel,
-    String? payName,
-    double? points,
-    String? remark,
-    String? status,
-    String? thirdOrderNo,
-    String? updateTime,
-    int? userId,
-    String? userName,
-  }) {
-    return WithdrawalRecord(
-      amount: amount ?? this.amount,
-      bankName: bankName ?? this.bankName,
-      cardName: cardName ?? this.cardName,
-      createTime: createTime ?? this.createTime,
-      fee: fee ?? this.fee,
-      finishTime: finishTime ?? this.finishTime,
-      goldenFlowInfoId: goldenFlowInfoId ?? this.goldenFlowInfoId,
-      id: id ?? this.id,
-      orderNo: orderNo ?? this.orderNo,
-      payCard: payCard ?? this.payCard,
-      payChannel: payChannel ?? this.payChannel,
-      payName: payName ?? this.payName,
-      points: points ?? this.points,
-      remark: remark ?? this.remark,
-      status: status ?? this.status,
-      thirdOrderNo: thirdOrderNo ?? this.thirdOrderNo,
-      updateTime: updateTime ?? this.updateTime,
-      userId: userId ?? this.userId,
-      userName: userName ?? this.userName,
-    );
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is WithdrawalRecord &&
-        other.id == id;
-  }
-
-  @override
-  int get hashCode => id.hashCode;
-
-  @override
-  String toString() {
-    return 'WithdrawalRecord(amount: $amount, bankName: $bankName, cardName: $cardName, createTime: $createTime, fee: $fee, finishTime: $finishTime, goldenFlowInfoId: $goldenFlowInfoId, id: $id, orderNo: $orderNo, payCard: $payCard, payChannel: $payChannel, payName: $payName, points: $points, remark: $remark, status: $status, thirdOrderNo: $thirdOrderNo, updateTime: $updateTime, userId: $userId, userName: $userName)';
   }
 }

@@ -4,7 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import 'package:do_task_project/app/data/services/customer_service_api_service.dart';
-import 'package:do_task_project/domain/entities/customer_service.dart';
+import 'package:do_task_project/app/domain/entities/customer_service.dart';
 
 class SmartController extends BaseController {
   final CustomerServiceApiService _apiService = CustomerServiceApiService();
@@ -23,10 +23,9 @@ class SmartController extends BaseController {
 
   // 立即咨询按钮点击事件
   void onConsultNow() {
-    // 这里可以实现立即咨询的逻辑
     Get.snackbar(
       I18nKeys.consultNow.tr,
-      '正在连接客服...',
+      I18nKeys.connectingCustomerService.tr,
       backgroundColor: Colors.white,
       colorText: Colors.black,
     );
@@ -34,20 +33,17 @@ class SmartController extends BaseController {
   
   /// 加载客服列表数据
   Future<void> loadCustomerServices() async {
-    try {
-      _isLoading.value = true;
-      update(); // 更新UI状态
-
-      final result = await _apiService.getCustomerServiceList();
-      customerServices.assignAll(result);
-
-      update(); // 更新UI
-    } catch (e) {
-      showErrorMessage('${I18nKeys.loadCustomerServiceFailed.tr}: ${e.toString()}');
-    } finally {
-      _isLoading.value = false;
-      update(); // 更新UI状态
-    }
+    await safeApiCall<List<CustomerService>>(
+      () => _apiService.getCustomerServiceList(),
+      (result) {
+        customerServices.assignAll(result);
+        update();
+      },
+      errorMessage: I18nKeys.loadingCustomerServiceFailed.tr,
+      onError: () {
+        update();
+      },
+    );
   }
 
   // 加入Telegram群组按钮点击事件

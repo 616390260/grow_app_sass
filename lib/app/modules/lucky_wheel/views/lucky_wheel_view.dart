@@ -2,7 +2,7 @@ import 'dart:math';
 import 'dart:ui' as ui;
 import 'dart:async';
 import 'package:do_task_project/app/core/constants/image_assets.dart';
-import 'package:do_task_project/domain/entities/winning_record.dart';
+import 'package:do_task_project/app/domain/entities/winning_record.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -149,7 +149,7 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -258,7 +258,7 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),

@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:do_task_project/domain/entities/country.dart';
+import 'package:do_task_project/app/domain/entities/country.dart';
 
 part 'country_model.g.dart';
 

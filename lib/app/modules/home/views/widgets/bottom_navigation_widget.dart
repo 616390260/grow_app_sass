@@ -22,7 +22,7 @@ class BottomNavigationWidget extends StatelessWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -58,9 +58,10 @@ class BottomNavigationWidget extends StatelessWidget {
                 imagePath,
                 width: 20,
                 height: 20,
-                color: isSelected
-                    ? const Color(0xFF427AF2)
-                    : const Color(0xFFDDDDDD),
+                colorFilter: ColorFilter.mode(
+                  isSelected ? const Color(0xFF427AF2) : const Color(0xFFDDDDDD),
+                  BlendMode.srcIn,
+                ),
               ),
               const SizedBox(height: 4),
               Text(

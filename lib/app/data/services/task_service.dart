@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import '../../../domain/entities/task.dart';
+import 'package:do_task_project/app/domain/entities/task.dart';
+import 'package:flutter/foundation.dart';
 import '../models/task_model.dart';
 
 /// 任务服务类 - 数据访问层
@@ -23,7 +24,7 @@ class TaskService extends GetxService {
           .map((taskData) => TaskModel.fromJson(Map<String, dynamic>.from(taskData)).toEntity())
           .toList();
     } catch (e) {
-      print('获取任务失败: $e');
+      debugPrint('获取任务失败: $e');
       return [];
     }
   }
@@ -34,7 +35,7 @@ class TaskService extends GetxService {
       final tasks = await getAllTasks();
       return tasks.firstWhereOrNull((task) => task.id == id);
     } catch (e) {
-      print('获取任务失败: $e');
+      debugPrint('获取任务失败: $e');
       return null;
     }
   }
@@ -89,7 +90,7 @@ class TaskService extends GetxService {
           task.tags.any((tag) => tag.toLowerCase().contains(query.toLowerCase()))
       ).toList();
     } catch (e) {
-      print('搜索任务失败: $e');
+      debugPrint('搜索任务失败: $e');
       return [];
     }
   }
@@ -100,7 +101,7 @@ class TaskService extends GetxService {
       final tasks = await getAllTasks();
       return tasks.where((task) => task.status == status).toList();
     } catch (e) {
-      print('获取任务失败: $e');
+      debugPrint('获取任务失败: $e');
       return [];
     }
   }
@@ -118,7 +119,7 @@ class TaskService extends GetxService {
         'overdue': tasks.where((t) => t.isOverdue).length,
       };
     } catch (e) {
-      print('获取统计信息失败: $e');
+      debugPrint('获取统计信息失败: $e');
       return {};
     }
   }

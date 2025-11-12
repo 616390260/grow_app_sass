@@ -72,10 +72,14 @@ class AppUtils {
 
   /// 生成随机字符串
   static String generateRandomString(int length) {
-    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const chars =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     final random = Random();
     return String.fromCharCodes(
-      Iterable.generate(length, (_) => chars.codeUnitAt(random.nextInt(chars.length))),
+      Iterable.generate(
+        length,
+        (_) => chars.codeUnitAt(random.nextInt(chars.length)),
+      ),
     );
   }
 
@@ -83,11 +87,11 @@ class AppUtils {
   static String generateUUID() {
     final random = Random();
     final bytes = List<int>.generate(16, (_) => random.nextInt(256));
-    
+
     // 设置版本号和变体
     bytes[6] = (bytes[6] & 0x0f) | 0x40; // 版本4
     bytes[8] = (bytes[8] & 0x3f) | 0x80; // 变体10
-    
+
     final hex = bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
     return '${hex.substring(0, 8)}-${hex.substring(8, 12)}-${hex.substring(12, 16)}-${hex.substring(16, 20)}-${hex.substring(20, 32)}';
   }
@@ -143,7 +147,7 @@ class AppUtils {
       Get.snackbar(
         I18nKeys.tip.tr,
         I18nKeys.copiedToClipboard.tr,
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         duration: const Duration(seconds: 2),
       );
     } catch (e) {
@@ -153,16 +157,13 @@ class AppUtils {
         Get.snackbar(
           I18nKeys.tip.tr,
           '请手动复制：$text',
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
           duration: const Duration(seconds: 5),
           mainButton: TextButton(
             onPressed: () {
               Get.back(); // 关闭snackbar
             },
-            child: Text(
-              '确定',
-              style: TextStyle(color: Colors.white),
-            ),
+            child: Text('确定', style: TextStyle(color: Colors.white)),
           ),
         );
       } else {
@@ -170,7 +171,7 @@ class AppUtils {
         Get.snackbar(
           I18nKeys.error.tr,
           '${I18nKeys.copyFailed.tr}：$e',
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
           duration: const Duration(seconds: 2),
           backgroundColor: Colors.red.withOpacity(0.8),
           colorText: Colors.white,
@@ -220,7 +221,7 @@ class AppUtils {
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
-            child: Text(cancelText ?? AppConstants.cancel), 
+            child: Text(cancelText ?? AppConstants.cancel),
           ),
           TextButton(
             onPressed: () => Get.back(result: true),
@@ -247,7 +248,7 @@ class AppUtils {
     bool obscureText = false,
   }) async {
     final controller = TextEditingController(text: initialValue);
-    
+
     final result = await Get.dialog<String>(
       AlertDialog(
         title: Text(title),
@@ -265,7 +266,7 @@ class AppUtils {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text(cancelText ?? AppConstants.cancel), 
+            child: Text(cancelText ?? AppConstants.cancel),
           ),
           TextButton(
             onPressed: () => Get.back(result: controller.text),
@@ -274,7 +275,7 @@ class AppUtils {
         ],
       ),
     );
-    
+
     controller.dispose();
     return result;
   }
@@ -297,7 +298,7 @@ class AppUtils {
             itemBuilder: (context, index) {
               final item = items[index];
               final isSelected = item == selectedItem;
-              
+
               return ListTile(
                 title: Text(itemBuilder(item)),
                 trailing: isSelected ? const Icon(Icons.check) : null,
@@ -336,19 +337,13 @@ class AppUtils {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(
-                    color: Get.theme.dividerColor,
-                    width: 1,
-                  ),
+                  bottom: BorderSide(color: Get.theme.dividerColor, width: 1),
                 ),
               ),
               child: Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      title,
-                      style: Get.textTheme.titleMedium,
-                    ),
+                    child: Text(title, style: Get.textTheme.titleMedium),
                   ),
                   IconButton(
                     onPressed: () => Get.back(),
@@ -364,7 +359,7 @@ class AppUtils {
                 itemBuilder: (context, index) {
                   final item = items[index];
                   final isSelected = item == selectedItem;
-                  
+
                   return ListTile(
                     title: Text(itemBuilder(item)),
                     trailing: isSelected ? const Icon(Icons.check) : null,

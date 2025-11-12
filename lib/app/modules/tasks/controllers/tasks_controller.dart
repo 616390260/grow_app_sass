@@ -22,54 +22,37 @@ class TasksController extends BaseController {
   /// 加载任务列表（支持分页）
   Future<void> loadTasks({bool isRefresh = false}) async {
     if (_isLoading) return;
-    
-    try {
-      _isLoading = true;
-      
-      // 如果是刷新操作，重置分页参数
-      if (isRefresh) {
-        _page = 1;
-        _hasMore = true;
-      }
-      
-      // 如果没有更多数据，直接返回
-      if (!_hasMore && !isRefresh) {
-        return;
-      }
-      
-      setLoading(true);
-      
-      // 调用API获取任务列表
-      final TaskListResponse response = await _taskApiService.getTaskList(
-        page: _page,
-        limit: _limit,
-      );
-      print('加载任务列表：$response');
-      // 提取任务数据
-      final List<RecommendTaskModel> newTasks = response.records ?? [];
-      print('新任务列表：$newTasks');
-      // 更新任务列表
-      if (isRefresh) {
-        tasks.value = newTasks;
-      } else {
-        tasks.addAll(newTasks);
-      }
-      print('更新后的任务列表：$tasks.length');
-      // 更新分页状态
-      if (newTasks.length < _limit) {
-        _hasMore = false; // 没有更多数据
-      } else {
-        _page++; // 准备下一页
-      }
-      
-      setSuccess();
-    } catch (e) {
-      setError('${I18nKeys.loadTasksFailed.tr}: $e');
-      showErrorMessage('${I18nKeys.loadTasksFailed.tr}: $e');
-    } finally {
-      _isLoading = false;
-      setLoading(false);
+    if (isRefresh) {
+      _page = 1;
+      _hasMore = true;
     }
+    if (!_hasMore && !isRefresh) {
+      return;
+    }
+    _isLoading = true;
+    await safeApiCall<TaskListResponse>(
+      () => _taskApiService.getTaskList(page: _page, limit: _limit),
+      (response) {
+        final List<RecommendTaskModel> newTasks = response.records ?? [];
+        if (isRefresh) {
+          tasks.value = newTasks;
+        } else {
+          tasks.addAll(newTasks);
+        }
+        if (newTasks.length < _limit) {
+          _hasMore = false;
+        } else {
+          _page++;
+        }
+        setSuccess();
+      },
+      errorMessage: I18nKeys.loadTasksFailed.tr,
+      onError: () {
+        setError(I18nKeys.loadTasksFailed.tr);
+      },
+      showLoading: true,
+    );
+    _isLoading = false;
   }
   
   /// 下拉刷新

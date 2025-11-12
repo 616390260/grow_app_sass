@@ -1,4 +1,4 @@
-import 'package:do_task_project/domain/entities/promotion_data.dart';
+import 'package:do_task_project/app/domain/entities/promotion_data.dart';
 import '../../core/services/http_service.dart';
 
 /// 推广数据相关 API 服务

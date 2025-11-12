@@ -1,11 +1,9 @@
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:get/get.dart';
-import 'package:flutter/services.dart';
 import '../../../core/base/base_controller.dart';
-import '../../../../domain/entities/promotion_data.dart';
+import 'package:do_task_project/app/domain/entities/promotion_data.dart';
 import '../../../data/services/promotion_api_service.dart';
 import '../../../core/utils/share_utils.dart';
-import '../../../core/utils/message_utils.dart';
 import '../../../core/utils/app_utils.dart';
 
 class PromotionController extends BaseController {
@@ -36,36 +34,28 @@ class PromotionController extends BaseController {
   }
 
   void loadData() async {
-    try {
-      // 设置加载状态
-
-      // 调用API获取真实数据
-      final PromotionData data = await _promotionApiService.getInviteHome();
-
-      // 更新推广数据
-      // 保持原有的字段以确保UI兼容性
-      promotionCount.value = data.activeSubordinates ?? 0;
-      promotionEarnings.value = data.totalCommission ?? 0.0;
-
-      // 更新新字段
-      activeSubordinates.value = data.activeSubordinates ?? 0;
-      activeUsers.value = data.activeUsers ?? 0;
-      inviteCode.value = data.inviteCode ?? '';
-      inviteUrl.value = data.inviteUrl ?? '';
-      reachTwoStarUsers.value = data.reachTwoStarUsers ?? 0;
-      todayCommission.value = data.todayCommission ?? 0.0;
-      todayNewSubordinates.value = data.todayNewSubordinates ?? 0;
-      totalCommission.value = data.totalCommission ?? 0.0;
-      twoStarRewardPoints.value = data.twoStarRewardPoints ?? 0;
-      yesterdayCommission.value = data.yesterdayCommission ?? 0.0;
-      isReceived.value = data.isReceived ?? false;
-
-      setSuccess();
-    } catch (e) {
-      showErrorMessage('${I18nKeys.loadPromotionDataFailed.tr}: $e');
-    } finally {
-      setLoading(false);
-    }
+    await safeApiCall<PromotionData>(
+      () => _promotionApiService.getInviteHome(),
+      (data) {
+        promotionCount.value = data.activeSubordinates ?? 0;
+        promotionEarnings.value = data.totalCommission ?? 0.0;
+        activeSubordinates.value = data.activeSubordinates ?? 0;
+        activeUsers.value = data.activeUsers ?? 0;
+        inviteCode.value = data.inviteCode ?? '';
+        inviteUrl.value = data.inviteUrl ?? '';
+        reachTwoStarUsers.value = data.reachTwoStarUsers ?? 0;
+        todayCommission.value = data.todayCommission ?? 0.0;
+        todayNewSubordinates.value = data.todayNewSubordinates ?? 0;
+        totalCommission.value = data.totalCommission ?? 0.0;
+        twoStarRewardPoints.value = data.twoStarRewardPoints ?? 0;
+        yesterdayCommission.value = data.yesterdayCommission ?? 0.0;
+        isReceived.value = data.isReceived ?? false;
+        setSuccess();
+      },
+      errorMessage: I18nKeys.loadPromotionDataFailed.tr,
+      onError: () {},
+      showLoading: true,
+    );
   }
 
   /// 分享到Telegram

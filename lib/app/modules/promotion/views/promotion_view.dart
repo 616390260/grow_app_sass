@@ -8,7 +8,6 @@ import '../controllers/promotion_controller.dart';
 import '../../../core/base/base_view.dart';
 import 'package:do_task_project/app/core/widgets/localized_app_bar.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
-import 'package:flutter/services.dart';
 
 class PromotionView extends BaseView<PromotionController> {
   const PromotionView({Key? key}) : super(key: key);
@@ -107,7 +106,7 @@ const SizedBox(height: 15),
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 2,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -287,7 +286,7 @@ const SizedBox(height: 15),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 2,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -414,7 +413,7 @@ const SizedBox(height: 15),
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 2,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -505,7 +504,7 @@ const SizedBox(height: 15),
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 2,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -559,7 +558,7 @@ const SizedBox(height: 15),
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 2,
             blurRadius: 5,
             offset: const Offset(0, 2),

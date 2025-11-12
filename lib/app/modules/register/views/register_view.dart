@@ -125,7 +125,7 @@ class RegisterView extends BaseView<RegisterController> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.black.withOpacity(0.1), Colors.transparent],
+                  colors: [Colors.black.withValues(alpha: 0.1), Colors.transparent],
                 ),
               ),
             ),
@@ -341,7 +341,7 @@ class RegisterView extends BaseView<RegisterController> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
-            disabledBackgroundColor: const Color(0xFF0B65FF).withOpacity(0.6),
+            disabledBackgroundColor: const Color(0xFF0B65FF).withValues(alpha: 0.6),
           ),
           child: isLoading
               ? const SizedBox(

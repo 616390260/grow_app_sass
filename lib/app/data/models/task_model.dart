@@ -1,5 +1,5 @@
+import 'package:do_task_project/app/domain/entities/task.dart';
 import 'package:json_annotation/json_annotation.dart';
-import '../../../domain/entities/task.dart';
 
 part 'task_model.g.dart';
 

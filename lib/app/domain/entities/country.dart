@@ -1,4 +1,3 @@
-/// 国家实体类
 class Country {
   final String id;
   final String name;

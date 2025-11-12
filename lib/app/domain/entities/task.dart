@@ -1,20 +1,7 @@
-/// 任务优先级枚举
-enum TaskPriority {
-  low,
-  medium,
-  high,
-  urgent,
-}
+enum TaskPriority { low, medium, high, urgent }
 
-/// 任务状态枚举
-enum TaskStatus {
-  pending,
-  inProgress,
-  completed,
-  cancelled,
-}
+enum TaskStatus { pending, inProgress, completed, cancelled }
 
-/// 任务实体类
 class Task {
   final String id;
   final String title;
@@ -38,7 +25,6 @@ class Task {
     this.tags = const [],
   });
 
-  /// 复制任务并修改指定字段
   Task copyWith({
     String? id,
     String? title,
@@ -63,44 +49,8 @@ class Task {
     );
   }
 
-  /// 标记任务为已完成
-  Task markAsCompleted() {
-    return copyWith(
-      status: TaskStatus.completed,
-      completedAt: DateTime.now(),
-    );
-  }
-
-  /// 标记任务为进行中
-  Task markAsInProgress() {
-    return copyWith(
-      status: TaskStatus.inProgress,
-      completedAt: null,
-    );
-  }
-
-  /// 检查任务是否过期
-  bool get isOverdue {
-    if (dueDate == null || status == TaskStatus.completed) {
-      return false;
-    }
-    return DateTime.now().isAfter(dueDate!);
-  }
-
-  /// 检查任务是否已完成
+  Task markAsCompleted() => copyWith(status: TaskStatus.completed, completedAt: DateTime.now());
+  Task markAsInProgress() => copyWith(status: TaskStatus.inProgress, completedAt: null);
+  bool get isOverdue => !(dueDate == null || status == TaskStatus.completed) && DateTime.now().isAfter(dueDate!);
   bool get isCompleted => status == TaskStatus.completed;
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is Task && other.id == id;
-  }
-
-  @override
-  int get hashCode => id.hashCode;
-
-  @override
-  String toString() {
-    return 'Task(id: $id, title: $title, status: $status, priority: $priority)';
-  }
 }

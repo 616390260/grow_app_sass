@@ -1,10 +1,8 @@
 import 'package:do_task_project/app/core/base/base_view.dart';
-import 'package:do_task_project/app/core/constants/image_assets.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../controllers/valid_users_controller.dart';
 
@@ -126,7 +124,7 @@ class ValidUsersView extends BaseView<ValidUsersController> {
                               () => Switch(
                                 value: controller.isFiltered.value,
                                 onChanged: (value) => controller.toggleFilter(),
-                                activeColor: Colors.white,
+                                activeThumbColor: Colors.white,
                                 activeTrackColor: AppTheme.primaryColor,
                                 inactiveThumbColor: const Color(0xFFD9D9D9),
                                 inactiveTrackColor: const Color(0xFFF5F5F5),

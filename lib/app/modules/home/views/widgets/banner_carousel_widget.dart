@@ -100,7 +100,7 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
           //             borderRadius: BorderRadius.circular(3.0),
           //             color: currentPosition == index 
           //                 ? Colors.blueAccent 
-          //                 : Colors.grey.withOpacity(0.5),
+          //                 : Colors.grey.withValues(alpha: 0.5),
           //           ),
           //         );
           //       }).toList(),

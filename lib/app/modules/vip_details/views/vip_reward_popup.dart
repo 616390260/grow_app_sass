@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class VipRewardPopup extends StatelessWidget {
   final String resetTime;
