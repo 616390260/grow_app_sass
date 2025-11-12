@@ -5,7 +5,7 @@ class AppTranslations extends Translations {
   Map<String, Map<String, String>> get keys => {
     // 中文简体 zh_CN
     'zh_CN': {
-      'app_title': 'app_',
+      'app_title': 'gows',
       'download_app': '下载APP',
       'account_balance': '账户余额',
       'today_earnings': '今日收益',

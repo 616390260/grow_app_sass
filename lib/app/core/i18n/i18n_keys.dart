@@ -1,5 +1,5 @@
 class I18nKeys {
-  static const appTitle = 'gows';
+  static const appTitle = 'app_title';
 
   // Common
   static const home = 'home';

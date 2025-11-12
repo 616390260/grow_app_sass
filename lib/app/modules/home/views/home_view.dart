@@ -84,7 +84,7 @@ class HomeView extends BaseView<HomeController> {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: Colors.black87,
+              color: Colors.transparent,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Image.asset(ImageAssets.logo, width: 24, height: 24),
