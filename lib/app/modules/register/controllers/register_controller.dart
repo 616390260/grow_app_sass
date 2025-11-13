@@ -1,9 +1,13 @@
 import 'package:do_task_project/app/routes/app_pages.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../../../data/services/auth_api_service.dart';
+
+// Conditional import for web platform
+import 'dart:html' if (dart.library.html) 'dart:html' as html;
 
 class RegisterController extends BaseController {
   // 表单控制器
@@ -238,5 +242,35 @@ class RegisterController extends BaseController {
   /// 跳转到登录页面
   void goToLogin() {
     Get.toNamed(Routes.login);
+  }
+
+  /// 从URL参数获取邀请码（仅在Web平台）
+  void getInviteCodeFromUrl() {
+    try {
+      // 尝试从Get参数中获取邀请码（适用于所有平台）
+      final inviteCode = Get.parameters['i'];
+      if (inviteCode != null && inviteCode.isNotEmpty) {
+        // 自动填充邀请码到控制器
+        inviteCodeController.text = inviteCode;
+      } else if (kIsWeb) {
+        // 在Web平台，尝试使用dart:html获取URL参数（运行时执行）
+        try {
+          // 使用运行时类型检查避免编译时错误
+          if (html.window != null) {
+            final uri = Uri.parse(html.window.location.href);
+            final webInviteCode = uri.queryParameters['i'];
+            
+            if (webInviteCode != null && webInviteCode.isNotEmpty) {
+              inviteCodeController.text = webInviteCode;
+            }
+          }
+        } catch (e) {
+          debugPrint('Web URL参数获取失败: $e');
+        }
+      }
+    } catch (e) {
+      // 捕获可能的错误，避免影响页面正常加载
+      debugPrint('获取URL邀请码失败: $e');
+    }
   }
 }

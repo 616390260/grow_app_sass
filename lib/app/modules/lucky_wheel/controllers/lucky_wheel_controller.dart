@@ -122,20 +122,50 @@ class LuckyWheelController extends BaseController with GetSingleTickerProviderSt
 
         // 计算旋转角度 - 精确停在分区中间位置
         final baseRotations = 5; // 基础旋转圈数
+        
         // 计算每个分区的角度（弧度）
-        final sectorAngle = 2 * pi / prizes.length;
+        // 确保索引在有效范围内
+        final int sectorCount = prizes.length;
+        print('扇形数量: $sectorCount');
         
-        // 由于WheelPainter已经在绘制时将起始角度偏移了-pi/2（从顶部开始）
-        // 指针也位于顶部，所以直接计算目标分区的中心角度即可
-        // 目标角度 = 目标索引 * 扇区角度 + 扇区角度/2（中心点）
-        double targetAngle = targetIndex * sectorAngle + sectorAngle / 2;
+        // 角度计算逻辑：
+// 关键点：
+// 1. 绘制代码中扇形的起始角度 = i * sectorAngle - pi/2
+// 2. 绘制代码中扇形的中心角度 = i * sectorAngle
+// 3. 指针固定在顶部位置（-pi/2）
+
+// 在绘制代码中，第i个扇形的起始角度是 i * sectorAngle - pi/2
+// 但它的中心角应该是起始角 + sectorAngle/2 = i * sectorAngle - pi/2 + sectorAngle/2 = i * sectorAngle - pi/4
+
+// 我们的目标：让选中的扇形中心旋转到指针位置（-pi/2）
+// 也就是说，我们希望目标扇形的中心角经过旋转后变成 -pi/2
+
+// 计算目标旋转角度（总旋转圈数）
+// 首先计算从当前角度到目标角度需要旋转的圈数
+// 当前第targetIndex个扇形的中心角度 = targetIndex * sectorAngle - pi/4
+// 我们希望它旋转到 -pi/2 的位置
+// 所以需要的总旋转角度 = -pi/2 - (targetIndex * sectorAngle - pi/4) + baseRotations * 2 * pi
         
-        // 规范化角度到[0, 2π)范围
-        while (targetAngle < 0) targetAngle += 2 * pi;
-        while (targetAngle >= 2 * pi) targetAngle -= 2 * pi;
+        // 计算每个分区的角度（弧度）
+        final double sectorAngle = 2 * pi / sectorCount;
+        
+        // 确保索引在有效范围内
+        if (targetIndex < 0) {
+          targetIndex = 0;
+        } else if (targetIndex >= sectorCount) {
+          targetIndex = sectorCount - 1;
+        }
+        
+        // 计算目标角度
+        double targetAngle = -pi/2 - (targetIndex * sectorAngle - pi/4) + baseRotations * 2 * pi+sectorAngle/2;
+        
+        // 确保目标角度为正数（顺时针旋转）
+        if (targetAngle < 0) {
+          targetAngle += 2 * pi;
+        }
         
         // 转换为总旋转圈数（包括基础圈数）
-        final totalRotations = baseRotations + targetAngle / (2 * pi);
+        final totalRotations = baseRotations + (targetAngle / (2 * pi));
 
         // 更新动画 - 每次都从0开始计算新的旋转，避免偏移量累积
         rotationAnimation = Tween<double>(

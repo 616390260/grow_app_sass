@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -5,8 +7,12 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// 应用签名配置
-apply(from = "signingConfigs.gradle")
+// 从环境变量或安全配置文件读取签名信息
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("android/keystore.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(keystorePropertiesFile.inputStream())
+}
 
 android {
     namespace = "com.example.dotask.do_task_project"
@@ -31,6 +37,16 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+    }
+
+    // 临时测试签名
+    signingConfigs {
+        create("release") {
+            keyAlias = "key"
+            keyPassword = "android123"
+            storeFile = file("key.jks")
+            storePassword = "android123"
+        }
     }
 
     buildTypes {

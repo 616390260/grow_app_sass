@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../../../routes/app_pages.dart';
 import '../../../data/services/auth_api_service.dart';
 import '../../../core/services/auth_service.dart';
+
+// Conditional import for web platform
+import 'dart:html' if (dart.library.html) 'dart:html' as html;
 
 class LoginController extends BaseController {
   // 表单控制器
@@ -192,7 +196,45 @@ class LoginController extends BaseController {
 
   // 跳转到注册页
   void goToRegister() {
-    Get.toNamed(Routes.register);
+    // 从URL参数获取邀请码
+    final inviteCode = _getInviteCodeFromUrl();
+    
+    // 如果有邀请码，传递给注册页面
+    if (inviteCode != null && inviteCode.isNotEmpty) {
+      Get.toNamed('${Routes.register}?i=$inviteCode');
+    } else {
+      Get.toNamed(Routes.register);
+    }
+  }
+
+  /// 从URL参数获取邀请码（仅在Web平台）
+  String? _getInviteCodeFromUrl() {
+    try {
+      // 尝试从Get参数中获取邀请码（适用于所有平台）
+      final inviteCode = Get.parameters['i'];
+      if (inviteCode != null && inviteCode.isNotEmpty) {
+        return inviteCode;
+      } else if (kIsWeb) {
+        // 在Web平台，尝试使用dart:html获取URL参数（运行时执行）
+        try {
+          // 使用运行时类型检查避免编译时错误
+          if (html.window != null) {
+            final uri = Uri.parse(html.window.location.href);
+            final webInviteCode = uri.queryParameters['i'];
+            
+            if (webInviteCode != null && webInviteCode.isNotEmpty) {
+              return webInviteCode;
+            }
+          }
+        } catch (e) {
+          debugPrint('Web URL参数获取失败: $e');
+        }
+      }
+    } catch (e) {
+      // 捕获可能的错误，避免影响页面正常加载
+      debugPrint('获取URL邀请码失败: $e');
+    }
+    return null;
   }
 
   // 忘记密码
