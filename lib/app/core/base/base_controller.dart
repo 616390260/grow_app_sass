@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../i18n/i18n_keys.dart';
-import '../exceptions/api_exception.dart';
-import 'package:do_task_project/app/core/services/error_handler_center.dart';
 
 /// 页面状态枚举
 enum PageState {
@@ -115,200 +112,6 @@ abstract class BaseController extends GetxController {
     );
   }
 
-  /// 根据错误码统一处理错误消息
-  void handleErrorCode(int? errorCode, String? message) {
-    print('Error code: $errorCode, Message: $message');
-    String errorMessage = message ?? I18nKeys.errorUnknown.tr;
-    
-    switch (errorCode) {
-      // 客户端错误 4xx
-      case 400:
-        errorMessage = message ?? I18nKeys.error400.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 401:
-        errorMessage = message ?? I18nKeys.error401.tr;
-        showErrorMessage(errorMessage);
-        // 可以在这里添加跳转到登录页面的逻辑
-        _handleUnauthorized();
-        break;
-      
-      case 403:
-        errorMessage = message ?? I18nKeys.error403.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 404:
-        errorMessage = message ?? I18nKeys.error404.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 405:
-        errorMessage = message ?? I18nKeys.error405.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 408:
-        errorMessage = message ?? I18nKeys.error408.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 409:
-        errorMessage = message ?? I18nKeys.error409.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 422:
-        errorMessage = message ?? I18nKeys.error422.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 429:
-        errorMessage = message ?? I18nKeys.error429.tr;
-        showWarningMessage(errorMessage);
-        break;
-      
-      // 服务器错误 5xx
-      case 500:
-        errorMessage = message ?? I18nKeys.error500.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 502:
-        errorMessage = message ?? I18nKeys.error502.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 503:
-        errorMessage = message ?? I18nKeys.error503.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 504:
-        errorMessage = message ?? I18nKeys.error504.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      // 业务自定义错误码
-      case 1001:
-        errorMessage = message ?? I18nKeys.error1001.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 1002:
-        errorMessage = message ?? I18nKeys.error1002.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 1003:
-        errorMessage = message ?? I18nKeys.error1003.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 1004:
-        errorMessage = message ?? I18nKeys.error1004.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 1005:
-        errorMessage = message ?? I18nKeys.error1005.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 1006:
-        errorMessage = message ?? I18nKeys.error1006.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 2001:
-        errorMessage = message ?? I18nKeys.error2001.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 2002:
-        errorMessage = message ?? I18nKeys.error2002.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 2003:
-        errorMessage = message ?? I18nKeys.error2003.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 3001:
-        errorMessage = message ?? I18nKeys.error3001.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 3002:
-        errorMessage = message ?? I18nKeys.error3002.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      case 3003:
-        errorMessage = message ?? I18nKeys.error3003.tr;
-        showErrorMessage(errorMessage);
-        break;
-      
-      default:
-        showErrorMessage(errorMessage);
-        break;
-    }
-  }
-
-  /// 直接处理ApiException异常
-  void handleApiException(ApiException exception) {
-    // 直接调用已有的handleErrorCode方法进行统一处理
-    handleErrorCode(exception.code, exception.message);
-  }
-
-  /// 通用API调用方法，统一处理异常
-  /// [apiCall] 需要执行的API调用函数
-  /// [onSuccess] 成功回调
-  /// [errorMessage] 自定义错误消息
-  /// [showLoading] 是否显示加载状态
-  /// [onError] 错误回调，用于在发生错误时执行特定操作
-  Future<void> safeApiCall<T>(
-    Future<T> Function() apiCall,
-    void Function(T result) onSuccess,
-    {String errorMessage = '', bool showLoading = false, void Function()? onError}
-  ) async {
-    if (showLoading) {
-      setLoading(true);
-    }
-
-    try {
-      final result = await apiCall();
-      onSuccess(result);
-    } catch (e) {
-      // 执行错误回调
-      if (onError != null) {
-        onError();
-      }
-      
-      if (e is ApiException) {
-        handleApiException(e);
-      } else {
-        final msg = errorMessage.isNotEmpty ? errorMessage : '${I18nKeys.errorUnknown.tr}: $e';
-        setError(msg);
-        showErrorMessage(msg);
-      }
-    } finally {
-      if (showLoading) {
-        setLoading(false);
-      }
-    }
-  }
-
-  /// 处理未授权错误
-  void _handleUnauthorized() {
-    // 可以在这里添加清除用户信息、跳转到登录页面等逻辑
-    // 例如：Get.offAllNamed('/login');
-  }
-
-
-
   /// 页面初始化方法，子类可重写
   void onInit() {
     super.onInit();
@@ -324,6 +127,48 @@ abstract class BaseController extends GetxController {
   /// 加载更多数据，子类实现
   void loadMoreData() {}
 
+  /// 简化的API调用方法 - 支持向后兼容
+  Future<T?> safeApiCall<T>(
+    Future<T> Function() apiCall,
+    Function(T)? onSuccess, {
+    Function? onError,
+    String? errorMessage,
+    bool showLoading = false,
+  }) async {
+    try {
+      // 如果需要显示加载状态
+      if (showLoading) {
+        setLoading(true);
+      }
 
+      final result = await apiCall();
+      
+      // 执行成功回调
+      if (onSuccess != null) {
+        final callbackResult = onSuccess(result);
+        // 如果是Future，等待完成
+        if (callbackResult is Future) {
+          await callbackResult;
+        }
+      }
+      
+      return result;
+    } catch (e) {
+      // 不处理错误显示，只捕获异常
+      // 错误处理由 HttpService 和 ErrorHandlerCenter 统一处理
+      
+      // 执行错误回调 - 保持向后兼容
+      if (onError != null) {
+        onError();
+      }
+      
+      return null;
+    } finally {
+      // 取消加载状态
+      if (showLoading) {
+        setLoading(false);
+      }
+    }
+  }
 
 }

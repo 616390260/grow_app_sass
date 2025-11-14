@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
@@ -7,46 +7,49 @@ import '../../../routes/app_pages.dart';
 import '../../../data/services/auth_api_service.dart';
 import '../../../core/services/auth_service.dart';
 
-// Conditional import for web platform
-import 'dart:html' if (dart.library.html) 'dart:html' as html;
-
 class LoginController extends BaseController {
   // 表单控制器
-  final accountController = TextEditingController();
-  final passwordController = TextEditingController();
+  late final TextEditingController accountController;
+  late final TextEditingController passwordController;
 
-  // 焦点控制器
-  final accountFocusNode = FocusNode();
-  final passwordFocusNode = FocusNode();
+  // 不再在此处定义FocusNode，改为在View中管理
 
   // 响应式变量
   final isPasswordVisible = false.obs;
   final rememberPassword = false.obs;
   final accountError = ''.obs;
   final passwordError = ''.obs;
+  bool _isDisposed = false; // 标记控制器是否已被dispose
 
-  // 认证服务（包含用户凭据管理）
+  // 认证服务（包含用户凭据管理和邀请码管理）
   final _authService = AuthService.to;
 
   // 认证API服务
   final _authApiService = AuthApiService();
 
+  /// 暴露认证服务给View使用（用于获取邀请码）
+  AuthService get authService => _authService;
+
   @override
   void onInit() {
     super.onInit();
-
+    // 初始化TextEditingController
+    accountController = TextEditingController();
+    passwordController = TextEditingController();
+    _isDisposed = false;
+    
     // 加载保存的凭据
     _loadSavedCredentials();
 
     // 监听输入变化，清除错误信息
     accountController.addListener(() {
-      if (accountError.value.isNotEmpty) {
+      if (!_isDisposed && accountError.value.isNotEmpty) {
         accountError.value = '';
       }
     });
 
     passwordController.addListener(() {
-      if (passwordError.value.isNotEmpty) {
+      if (!_isDisposed && passwordError.value.isNotEmpty) {
         passwordError.value = '';
       }
     });
@@ -54,10 +57,11 @@ class LoginController extends BaseController {
 
   @override
   void onClose() {
+    // 标记控制器已被dispose
+    _isDisposed = true;
+    // 只清理TextEditingController，FocusNode已在View中管理
     accountController.dispose();
     passwordController.dispose();
-    accountFocusNode.dispose();
-    passwordFocusNode.dispose();
     super.onClose();
   }
 
@@ -151,30 +155,47 @@ class LoginController extends BaseController {
       ),
       // 成功回调
       (token) async {
-        setSuccess();
-        showSuccessMessage(I18nKeys.loginSuccess.tr);
+        // 检查控制器是否已被dispose
+        if (_isDisposed) {
+          return;
+        }
         
-        // 使用认证服务保存token
+        // 1. 先保存token和凭据，确保所有依赖TextEditingController的操作在控制器dispose前完成
         try {
+          // 使用认证服务保存token
           if (token.isNotEmpty) {
             await _authService.saveToken(token);
           }
+
+          // 保存凭据（如果用户选择记住密码）
+          await _authService.saveCredentials(
+            account: account,
+            password: password,
+            rememberPassword: rememberPassword.value,
+          );
         } catch (_) {
-          // 忽略token解析异常，避免影响登录流程
+          // 忽略异常，避免影响登录流程
         }
+        
+        // 再次检查控制器是否已被dispose
+        if (_isDisposed) {
+          return;
+        }
+        
+        // 2. 设置成功状态和显示成功消息
+        setSuccess();
+        showSuccessMessage(I18nKeys.loginSuccess.tr);
 
-        // 保存凭据（如果用户选择记住密码）
-        await _authService.saveCredentials(
-          account: account,
-          password: password,
-          rememberPassword: rememberPassword.value,
-        );
-
-        // 登录成功后跳转到主页
-        Get.offAllNamed(Routes.main);
+        // 3. 最后执行页面跳转 - 这会导致控制器被dispose
+        // 使用WidgetsBinding来确保在UI帧结束后执行跳转
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!_isDisposed) {
+            Get.offAllNamed(Routes.root);
+          }
+        });
       },
       // 自定义错误消息
-      errorMessage: I18nKeys.loginFailed.tr,
+      // errorMessage: I18nKeys.loginFailed.tr,
       // 显示加载状态
       showLoading: true,
     );
@@ -196,7 +217,7 @@ class LoginController extends BaseController {
 
   // 跳转到注册页
   void goToRegister() {
-    // 从URL参数获取邀请码
+    // 直接从URL参数获取邀请码，更简单可靠
     final inviteCode = _getInviteCodeFromUrl();
     
     // 如果有邀请码，传递给注册页面
@@ -207,28 +228,13 @@ class LoginController extends BaseController {
     }
   }
 
-  /// 从URL参数获取邀请码（仅在Web平台）
+  /// 从URL参数获取邀请码（跨平台）- 主方法
   String? _getInviteCodeFromUrl() {
     try {
-      // 尝试从Get参数中获取邀请码（适用于所有平台）
+      // 从Get参数中获取邀请码（适用于所有平台）
       final inviteCode = Get.parameters['i'];
       if (inviteCode != null && inviteCode.isNotEmpty) {
         return inviteCode;
-      } else if (kIsWeb) {
-        // 在Web平台，尝试使用dart:html获取URL参数（运行时执行）
-        try {
-          // 使用运行时类型检查避免编译时错误
-          if (html.window != null) {
-            final uri = Uri.parse(html.window.location.href);
-            final webInviteCode = uri.queryParameters['i'];
-            
-            if (webInviteCode != null && webInviteCode.isNotEmpty) {
-              return webInviteCode;
-            }
-          }
-        } catch (e) {
-          debugPrint('Web URL参数获取失败: $e');
-        }
       }
     } catch (e) {
       // 捕获可能的错误，避免影响页面正常加载

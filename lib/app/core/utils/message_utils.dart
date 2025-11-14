@@ -204,7 +204,7 @@ class MessageUtils {
     Get.rawSnackbar(
       message: message,
       duration: const Duration(seconds: 2),
-      snackPosition: SnackPosition.BOTTOM,
+      snackPosition: SnackPosition.TOP,
       backgroundColor: Colors.black87,
       borderRadius: 8,
       margin: const EdgeInsets.all(16),

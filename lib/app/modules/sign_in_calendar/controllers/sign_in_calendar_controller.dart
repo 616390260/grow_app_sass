@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -125,10 +127,10 @@ class SignInCalendarController extends BaseController {
     checkedDays.add(today.day);
     box.write('checkedDays_${currentMonth.year}_${currentMonth.month}', checkedDays.toList());
     streakDays.value = _calculateStreak();
-    await safeApiCall<void>(
+    await safeApiCall<int>(
       () async => await _signInApiService.checkIn(),
-      (_) async {
-        showSuccessMessage('${I18nKeys.receivedPoints.tr} ${rewardPoints.value} ${I18nKeys.points.tr}');
+      (point) async {
+        showSuccessMessage('${I18nKeys.receivedPoints.tr} $point ${I18nKeys.points.tr}');
         await loadSignInInfo();
         setSuccess();
         update();

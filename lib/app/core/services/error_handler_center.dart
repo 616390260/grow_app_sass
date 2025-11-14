@@ -1,10 +1,13 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:do_task_project/app/core/services/auth_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart';
 import '../utils/api_result.dart';
 import '../i18n/i18n_keys.dart';
 import '../exceptions/api_exception.dart';
+import '../utils/message_utils.dart'; // 添加MessageUtils导入
 
 /// 统一的错误处理中心
 /// 整合所有错误处理逻辑，避免重复代码
@@ -38,13 +41,19 @@ class ErrorHandlerCenter {
     int? errorCode,
     String? message, {
     bool skipSpecialHandling = false,
+    bool showNotification = true,
   }) {
-    final errorMessage = _getErrorMessage(errorCode, message);
+    // 直接使用传入的message
+    final errorMessage = message ?? I18nKeys.errorUnknown.tr;
     final code = errorCode ?? 500;
-
-    // 特殊错误码处理（可选择跳过）
-    if (!skipSpecialHandling) {
-      _handleSpecialErrorCode(errorCode);
+    debugPrint('错误码: $code, 错误信息: $errorMessage');
+    // 特殊错误码处理（可选择跳过）- 目前只有401需要特殊处理
+    if (!skipSpecialHandling && code == 401) {
+      _handleSpecialErrorCode(code);
+    } else if (showNotification) {
+      // 除401外的其他错误直接显示提示
+      debugPrint('showError: 错误信息: $errorMessage');
+      MessageUtils.showError(errorMessage);
     }
 
     return ApiException(code: code, message: errorMessage);
@@ -58,9 +67,9 @@ class ErrorHandlerCenter {
     if (exception is DioException) {
       return _handleDioException<T>(exception);
     } else if (exception is SocketException) {
-      return _handleSocketException<T>(exception);
+      return ApiResult.failure(msg: I18nKeys.errorNetwork.tr, code: -1);
     } else if (exception is FormatException) {
-      return _handleFormatException<T>(exception);
+      return ApiResult.failure(msg: '数据格式错误', code: -5);
     } else {
       return ApiResult.failure(
         msg: customMessage ?? I18nKeys.errorUnknown.tr,
@@ -73,18 +82,24 @@ class ErrorHandlerCenter {
   ApiException handleExceptionException(
     Exception exception, {
     String? customMessage,
+    bool showNotification = true,  // 添加控制是否显示通知的参数
   }) {
     if (exception is DioException) {
-      return _handleDioExceptionException(exception);
+      return _handleDioExceptionException(exception, showNotification: showNotification);
     } else if (exception is SocketException) {
-      return _handleSocketExceptionException(exception);
+      return _handleSocketExceptionException(exception, showNotification: showNotification);
     } else if (exception is FormatException) {
-      return _handleFormatExceptionException(exception);
+      return _handleFormatExceptionException(exception, showNotification: showNotification);
     } else {
-      return ApiException(
-        code: 500,
-        message: customMessage ?? I18nKeys.errorUnknown.tr,
-      );
+      print('handleExceptionException未知异常: $customMessage');
+      final errorMessage = customMessage ?? I18nKeys.errorUnknown.tr;
+      final result = ApiException(code: 500, message: errorMessage);
+      
+      if (showNotification) {
+        MessageUtils.showError(errorMessage); // 改为直接使用MessageUtils.showError显示toast
+      }
+      
+      return result;
     }
   }
 
@@ -120,131 +135,109 @@ class ErrorHandlerCenter {
   }
 
   /// 处理Dio异常 - 直接抛出异常
-  ApiException _handleDioExceptionException(DioException e) {
+  ApiException _handleDioExceptionException(
+    DioException e, {
+    bool showNotification = true,
+  }) {
     switch (e.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return ApiException(code: 408, message: I18nKeys.errorTimeout.tr);
+        final message = I18nKeys.errorTimeout.tr;
+        if (showNotification) {
+          MessageUtils.showError(message);
+        }
+        return ApiException(code: 408, message: message);
 
       case DioExceptionType.badResponse:
-        final statusCode = e.response?.statusCode;
-        final message = e.response?.data?['message'] ?? e.message;
-        return handleErrorCodeException(statusCode, message);
+        final responseData = e.response?.data;
+        
+        // 直接从业务响应中获取错误信息
+        String message;
+        int? businessCode;
+        
+        if (responseData is Map<String, dynamic>) {
+          // 优先从msg字段获取错误信息（标准API响应格式）
+          message = responseData['msg'] as String? ?? 
+                   responseData['message'] as String? ?? 
+                   e.message ??
+                   I18nKeys.errorUnknown.tr;
+          // 获取业务错误码
+          businessCode = responseData['code'] as int?;
+        } else {
+          message = e.message ?? I18nKeys.errorUnknown.tr;
+        }
+        
+        final finalErrorCode = businessCode ?? e.response?.statusCode ?? 500;
+        
+        // 401特殊处理
+        if (finalErrorCode == 401) {
+          _handleSpecialErrorCode(finalErrorCode);
+        } else if (showNotification) {
+          MessageUtils.showError(message);
+        }
+        
+        return ApiException(code: finalErrorCode, message: message);
 
       case DioExceptionType.cancel:
-        return ApiException(code: 499, message: I18nKeys.errorCancel.tr);
+        final message = I18nKeys.errorCancel.tr;
+        if (showNotification) {
+          MessageUtils.showError(message);
+        }
+        return ApiException(code: 499, message: message);
 
       case DioExceptionType.connectionError:
       case DioExceptionType.unknown:
       default:
-        return ApiException(code: -1, message: I18nKeys.errorNetwork.tr);
+        final message = I18nKeys.errorNetwork.tr;
+        if (showNotification) {
+          MessageUtils.showError(message);
+        }
+        return ApiException(code: -1, message: message);
     }
-  }
-
-  /// 处理Socket异常
-  ApiResult<T> _handleSocketException<T>(SocketException e) {
-    return ApiResult.failure(msg: I18nKeys.errorNetwork.tr, code: -4);
   }
 
   /// 处理Socket异常 - 直接抛出异常
-  ApiException _handleSocketExceptionException(SocketException e) {
-    return ApiException(code: -1, message: I18nKeys.errorNetwork.tr);
-  }
-
-  /// 处理格式异常
-  ApiResult<T> _handleFormatException<T>(FormatException e) {
-    return ApiResult.failure(msg: '数据格式错误', code: -5);
+  ApiException _handleSocketExceptionException(
+    SocketException e, {
+    bool showNotification = true,
+  }) {
+    final message = I18nKeys.errorNetwork.tr;
+    if (showNotification) {
+      MessageUtils.showError(message);
+    }
+    return ApiException(code: -1, message: message);
   }
 
   /// 处理格式异常 - 直接抛出异常
-  ApiException _handleFormatExceptionException(FormatException e) {
-    return ApiException(code: 400, message: I18nKeys.error400.tr);
-  }
-
-  /// 获取错误消息
-  String _getErrorMessage(int? errorCode, String? message) {
-    // 如果有自定义消息且不为空，优先使用
-    if (message?.isNotEmpty == true) return message!;
-
-    // 根据错误码返回国际化消息
-    switch (errorCode) {
-      // HTTP状态码
-      case 400:
-        return I18nKeys.error400.tr;
-      case 401:
-        return I18nKeys.error401.tr;
-      case 403:
-        return I18nKeys.error403.tr;
-      case 404:
-        return I18nKeys.error404.tr;
-      case 405:
-        return I18nKeys.error405.tr;
-      case 408:
-        return I18nKeys.error408.tr;
-      case 409:
-        return I18nKeys.error409.tr;
-      case 422:
-        return I18nKeys.error422.tr;
-      case 429:
-        return I18nKeys.error429.tr;
-      case 500:
-        return I18nKeys.error500.tr;
-      case 502:
-        return I18nKeys.error502.tr;
-      case 503:
-        return I18nKeys.error503.tr;
-      case 504:
-        return I18nKeys.error504.tr;
-
-      // 业务错误码 1xxx 系列 - 用户相关
-      case 1001:
-        return I18nKeys.error1001.tr;
-      case 1002:
-        return I18nKeys.error1002.tr;
-      case 1003:
-        return I18nKeys.error1003.tr;
-      case 1004:
-        return I18nKeys.error1004.tr;
-      case 1005:
-        return I18nKeys.error1005.tr;
-      case 1006:
-        return I18nKeys.error1006.tr;
-
-      // 业务错误码 2xxx 系列 - 权限相关
-      case 2001:
-        return I18nKeys.error2001.tr;
-      case 2002:
-        return I18nKeys.error2002.tr;
-      case 2003:
-        return I18nKeys.error2003.tr;
-
-      // 业务错误码 3xxx 系列 - 数据相关
-      case 3001:
-        return I18nKeys.error3001.tr;
-      case 3002:
-        return I18nKeys.error3002.tr;
-      case 3003:
-        return I18nKeys.error3003.tr;
-
-      default:
-        return I18nKeys.errorUnknown.tr;
+  ApiException _handleFormatExceptionException(
+    FormatException e, {
+    bool showNotification = true,
+  }) {
+    final message = '数据格式错误';
+    if (showNotification) {
+      MessageUtils.showError(message);
     }
+    return ApiException(code: 400, message: message);
   }
+
+
 
   /// 处理特殊错误码
   void _handleSpecialErrorCode(int? errorCode) {
-    switch (errorCode) {
-      case 401:
-        _handleUnauthorized();
-        break;
-      default:
-        break;
+    if (errorCode == 401) {
+      _handleUnauthorized();
     }
   }
 
   /// 处理未授权错误
   Future<void> _handleUnauthorized() async {
+    // 检查当前URL中是否有邀请码，如果有则保存
+    final currentInviteCode = _getCurrentInviteCodeFromUrl();
+    if (currentInviteCode != null) {
+      await _authService.saveInviteCode(currentInviteCode);
+    }
+    
     // 清除用户信息
     // UserService.instance.clearUserInfo();
     await _authService.clearToken();
@@ -252,6 +245,13 @@ class ErrorHandlerCenter {
     await _authService.clearCredentials();
     // 跳转到登录页
     Get.offAllNamed('/login');
+  }
+  
+  /// 从当前URL参数中获取邀请码
+  String? _getCurrentInviteCodeFromUrl() {
+    // 从Get.parameters中获取邀请码（URL参数中的i参数）
+    final inviteCode = Get.parameters['i'] ?? Get.parameters['invite_code'] ?? Get.parameters['referral'];
+    return inviteCode?.isNotEmpty == true ? inviteCode : null;
   }
 
   // 处理禁止访问错误相关逻辑已移除，由上层统一处理

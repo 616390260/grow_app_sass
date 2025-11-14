@@ -32,10 +32,10 @@ class SignInApiService {
   }
 
   /// 执行签到
-  Future<Map<String, dynamic>> checkIn() async {
+  Future<int> checkIn() async {
     try {
       // 发送GET请求到签到接口
-      final responseData = await _httpService.get<Map<String, dynamic>>(
+      final responseData = await _httpService.get<int>(
         _checkInEndpoint,
         // 签到接口通常不需要额外参数
       );

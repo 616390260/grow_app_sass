@@ -7,6 +7,7 @@ class WithdrawalRecord {
   final String? finishTime;
   final int? goldenFlowInfoId;
   final int? id;
+  final int? minAmount;
   final String? orderNo;
   final String? payCard;
   final String? payChannel;
@@ -25,6 +26,7 @@ class WithdrawalRecord {
     this.cardName,
     this.createTime,
     this.fee,
+    this.minAmount,
     this.finishTime,
     this.goldenFlowInfoId,
     this.id,
@@ -48,6 +50,7 @@ class WithdrawalRecord {
       cardName: json['cardName'] as String?,
       createTime: json['createTime'] as String?,
       fee: json['fee'] as double?,
+      minAmount: json['minAmount'] as int?,
       finishTime: json['finishTime'] as String?,
       goldenFlowInfoId: json['goldenFlowInfoId'] as int?,
       id: json['id'] as int?,
@@ -72,6 +75,7 @@ class WithdrawalRecord {
       'cardName': cardName,
       'createTime': createTime,
       'fee': fee,
+      'minAmount': minAmount,
       'finishTime': finishTime,
       'goldenFlowInfoId': goldenFlowInfoId,
       'id': id,

@@ -54,6 +54,10 @@ class AppTranslations extends Translations {
       'confirm': '确认',
       'copied_to_clipboard': '已复制到剪贴板',
       'copy_failed': '复制失败',
+      'download_failed': '下载失败',
+      'unable_to_open_url': '无法打开链接',
+      'download_link_empty': '下载链接为空',
+      'unable_to_open_store': '无法打开应用商店',
       // Account page specifics
       'referral_code': '推荐码',
       'points': '积分',
@@ -121,7 +125,7 @@ class AppTranslations extends Translations {
       'confirm_password_required': '请确认密码',
       'password_mismatch': '两次输入的密码不一致',
       'invite_code_invalid': '邀请码格式不正确',
-      'please_fix_errors': '请修正表单错误',
+      'please_fix_errors': '输入金额有误',
       'register_success': '注册成功',
       'register_failed': '注册失败，请重试',
 
@@ -191,7 +195,7 @@ class AppTranslations extends Translations {
       'you_will_withdraw': '您将提现',
       'withdraw_confirm': '确定',
       'withdraw_description': '提现说明：',
-      'min_withdraw_amount': '最低提现金额为 1000.00',
+      'min_withdraw_amount': '最低提现金额为 %s',
       'daily_withdraw_limit': '每天只能提现%s次，请仔细核对信息是否输入正确',
       'withdraw_tips': '提现未到账，请联系客服',
 

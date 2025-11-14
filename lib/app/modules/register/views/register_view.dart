@@ -29,10 +29,8 @@ class RegisterView extends BaseView<RegisterController> {
       ),
     );
     
-    // 从URL参数获取邀请码并自动填充（仅在Web平台）
-    if (kIsWeb) {
-      controller.getInviteCodeFromUrl();
-    }
+    // 从URL参数获取邀请码并自动填充（适用于所有平台）
+    controller.getInviteCodeFromUrl();
 
     return Scaffold(
       extendBodyBehindAppBar: true, // 让body延伸到AppBar后面

@@ -104,14 +104,38 @@ class HttpService extends getx.GetxService {
       },
       onError: (error, handler) async {
         _logError(error);
+        print('=== HttpService拦截器.onError 开始 ===');
+        print('Dio错误: $error');
+        print('状态码: ${error.response?.statusCode}');
+        print('响应数据: ${error.response?.data}');
+        
         final status = error.response?.statusCode;
         if (status == 401) {
           final handled = await _handleUnauthorized(error);
           if (handled != null) {
+            print('处理401错误成功');
             handler.resolve(handled);
             return;
           }
         }
+                // 处理其他错误，提取业务错误码
+        if (error.response != null) {
+          final response = error.response;
+          final data = response?.data;
+          print('开始处理业务错误');
+          if (data is Map<String, dynamic>) {
+            final businessCode = data['code'] as int?;
+            final message = data['msg'] as String? ??
+                          data['message'] as String? ??
+                          '请求失败';
+            print('业务码: $businessCode, 消息: $message');
+            if (businessCode != null && businessCode != 200) {
+              print('抛出业务错误异常');
+              throw _errorHandler.handleErrorCodeException(businessCode, message, showNotification: false);
+            }
+          }
+        }
+        print('=== HttpService拦截器.onError 结束 ===');
         handler.next(error);
       },
     );
@@ -178,9 +202,9 @@ class HttpService extends getx.GetxService {
       );
       return _handleResponseData<T>(response);
     } on DioException catch (e) {
-      throw _errorHandler.handleExceptionException(e);
+      throw _errorHandler.handleExceptionException(e, showNotification: false);
     } catch (e) {
-      throw _errorHandler.handleExceptionException(Exception(e.toString()));
+      throw _errorHandler.handleExceptionException(Exception(e.toString()), showNotification: false);
     }
   }
 
@@ -203,13 +227,13 @@ class HttpService extends getx.GetxService {
       );
       return _handleResponseData<T>(response);
     } on DioException catch (e) {
-      final exception = _errorHandler.handleExceptionException(e);
+      final exception = _errorHandler.handleExceptionException(e, showNotification: false);
       if (enableLogging) {
         print(exception.message);
       }
       throw exception;
     } catch (e) {
-      final exception = _errorHandler.handleExceptionException(Exception(e.toString()));
+      final exception = _errorHandler.handleExceptionException(Exception(e.toString()), showNotification: false);
       if (enableLogging) {
         print(exception.message);
       }
@@ -235,9 +259,9 @@ class HttpService extends getx.GetxService {
       );
       return _handleResponseData<T>(response);
     } on DioException catch (e) {
-      throw _errorHandler.handleExceptionException(e);
+      throw _errorHandler.handleExceptionException(e, showNotification: false);
     } catch (e) {
-      throw _errorHandler.handleExceptionException(Exception(e.toString()));
+      throw _errorHandler.handleExceptionException(Exception(e.toString()), showNotification: false);
     }
   }
 
@@ -260,9 +284,9 @@ class HttpService extends getx.GetxService {
       );
       return _handleResponseData<T>(response);
     } on DioException catch (e) {
-      throw _errorHandler.handleExceptionException(e);
+      throw _errorHandler.handleExceptionException(e, showNotification: true);
     } catch (e) {
-      throw _errorHandler.handleExceptionException(Exception(e.toString()));
+      throw _errorHandler.handleExceptionException(Exception(e.toString()), showNotification: true);
     }
   }
 
@@ -274,11 +298,10 @@ class HttpService extends getx.GetxService {
   T _handleResponseData<T>(
     Response response,
   ) {
-    // 检查HTTP状态码
-    if (response.statusCode != 200 && response.statusCode != 201) {
-      throw _errorHandler.handleErrorCode<T>(response.statusCode, 'HTTP请求失败');
-    }
-
+    print('=== HttpService._handleResponseData 开始 ===');
+    print('HTTP状态码: ${response.statusCode}');
+    print('响应数据: ${response.data}');
+    
     final responseData = response.data;
     
     // 检查响应体中的业务code（处理标准API响应格式）
@@ -300,8 +323,15 @@ class HttpService extends getx.GetxService {
         return _convertDataToType<T>(businessData ?? responseData); 
       } else {
         // 业务逻辑失败，统一抛出ApiException，确保错误能够被上层捕获处理
-        throw _errorHandler.handleErrorCodeException(code, message);
+        print('业务逻辑失败，抛出异常: code=$code, message=$message');
+        throw _errorHandler.handleErrorCodeException(code, message, showNotification: true);
       }
+    }
+
+    // 检查HTTP状态码（非标准响应格式时）
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      print('HTTP状态码异常，抛出HTTP请求失败异常');
+      throw _errorHandler.handleErrorCode<T>(response.statusCode, 'HTTP请求失败');
     }
 
     // 非标准API响应格式（非Map），直接进行类型转换

@@ -86,37 +86,35 @@ class HomeController extends BaseController {
     try {
       // 显示加载提示
 
-      // 应用商店链接（根据平台选择）
-      String appStoreUrl;
-      if (GetPlatform.isAndroid) {
-        // Google Play商店链接，使用包名
-        appStoreUrl = 'market://details?id=com.example.app';
-      } else if (GetPlatform.isIOS) {
-        // App Store链接，使用应用ID
-        appStoreUrl = 'https://apps.apple.com/app/id123456789';
-      } else {
-        // 默认使用网页版应用商店
-        appStoreUrl =
-            'https://play.google.com/store/apps/details?id=com.example.app';
-      }
+      // Web平台下调用API获取下载链接
+      if (GetPlatform.isWeb) {
+        final downloadUrl = await safeApiCall(
+          () => _homeApiService.getApkDownloadUrl(),
+          null,
+        );
 
-      final Uri url = Uri.parse(appStoreUrl);
-
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-      } else {
-        // 如果无法打开原生应用商店，尝试打开网页版
-        String webStoreUrl = GetPlatform.isIOS
-            ? 'https://apps.apple.com/app/id123456789'
-            : 'https://play.google.com/store/apps/details?id=com.example.app';
-
-        final Uri webUrl = Uri.parse(webStoreUrl);
-        if (await canLaunchUrl(webUrl)) {
-          await launchUrl(webUrl, mode: LaunchMode.externalApplication);
-        } else {}
-      }
-      // ignore: empty_catches
-    } catch (e) {}
+        if (downloadUrl != null) {
+          // 假设API返回格式为 {"url": "下载链接"}
+          if (downloadUrl.isNotEmpty) {
+            final Uri url = Uri.parse(downloadUrl);
+            if (await canLaunchUrl(url)) {
+              await launchUrl(url, mode: LaunchMode.externalApplication);
+            } else {
+              // 下载链接无法打开时的提示
+              Get.snackbar(I18nKeys.downloadFailed.tr, I18nKeys.unableToOpenUrl.tr);
+            }
+          } else {
+            // 下载链接为空时的提示
+            Get.snackbar(I18nKeys.downloadFailed.tr, I18nKeys.downloadLinkEmpty.tr);
+          }
+        }
+      } 
+    } catch (e) {
+      // 错误处理
+      Get.snackbar(I18nKeys.downloadFailed.tr, e.toString());
+    } finally {
+      // 隐藏加载提示
+    }
   }
 
   // VIP详情点击

@@ -11,6 +11,10 @@ class I18nKeys {
   static const confirm = 'confirm';
   static const copiedToClipboard = 'copied_to_clipboard';
   static const copyFailed = 'copy_failed';
+  static const downloadFailed = 'download_failed';
+  static const unableToOpenUrl = 'unable_to_open_url';
+  static const downloadLinkEmpty = 'download_link_empty';
+  static const unableToOpenStore = 'unable_to_open_store';
 
   // Home
   static const downloadApp = 'download_app';

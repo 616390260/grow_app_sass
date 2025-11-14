@@ -5,13 +5,11 @@ import '../../../core/models/base_list_entity.dart';
 import '../../../data/services/country_api_service.dart';
 import '../../../data/models/country_model.dart';
 import '../../../data/services/withdrawal_api_service.dart';
+import '../../../data/services/home_api_service.dart';
+import '../../../data/models/home_info_model.dart';
 import 'package:do_task_project/app/domain/entities/withdrawal_setting.dart';
 
 class AccountWithdrawalController extends BaseController {
-  // 选中的国家
-  RxString selectedCountry = ''.obs;
-  RxInt selectedCountryId = 0.obs;
-
   // 提现金额
   RxString withdrawAmount = ''.obs;
   RxString bankName = ''.obs;
@@ -19,54 +17,62 @@ class AccountWithdrawalController extends BaseController {
   RxString accountName = ''.obs;
   RxInt bankCode = 0.obs;
   RxString loginPassword = ''.obs;
-  // 可用余额（模拟数据）
-  final double availableBalance = 10000.0;
+  
+  // 可用余额（从用户信息获取，响应式变量）
+  RxInt availableBalance = 0.obs;
+  RxInt maxAmount = 0.obs;
 
   // 提现手续费
-  final double withdrawalFee = 200.0;
+  final int withdrawalFee = 200;
 
   // 最低提现金额
-  final double minWithdrawalAmount = 1000.0;
+  final int minWithdrawalAmount = 1000;
 
   // 提现配置（响应式）
   Rx<WithdrawalSetting> withdrawalSetting = WithdrawalSetting().obs;
 
   // 国家列表（响应式）
-  RxList<Map<String, String>> countries = <Map<String, String>>[].obs;
+  RxList<CountryModel> countries = <CountryModel>[].obs;
+  Rx<CountryModel> selectedCountry = CountryModel(id: 0, payName: '', status: '', merchantNo: '', delFlag: '', recommend: '').obs;
 
   // API服务实例
   final CountryApiService _countryApiService = CountryApiService();
   final WithdrawalApiService _withdrawalApiService = WithdrawalApiService();
+  final HomeApiService _homeApiService = HomeApiService();
 
   @override
   void onInit() {
     super.onInit();
-    // 初始化数据加载
-    loadAccountData();
+    // 加载用户余额信息
+    loadUserBalance();
     // 加载国家列表
     loadCountries();
     // 加载提现配置
     loadWithdrawalSetting();
   }
 
-  // 加载账户数据
-  void loadAccountData() {
+  // 加载用户余额信息
+  void loadUserBalance() {
     safeApiCall(
-      // API调用函数（模拟）
-      () async {
-        // 模拟从API获取数据
-        // 实际项目中应该调用真实的API
-        await Future.delayed(const Duration(seconds: 1));
-        return true; // 返回一个简单的成功标志
-      },
+      // API调用函数
+      () async => await _homeApiService.getHomeInfo(),
       // 成功回调
-      (result) {
+      (HomeInfoModel homeInfo) {
+        // 从HomeInfoModel中获取账户积分作为可用余额
+        availableBalance.value = (homeInfo.accountPoints?.toInt() ?? 0);
+        maxAmount.value = availableBalance.value - (selectedCountry.value.fee?.toInt()??0);
+        print('获取用户余额成功: ${availableBalance.value}');
         setSuccess();
       },
       // 自定义错误消息
-      errorMessage: I18nKeys.loadAccountDataFailed.tr,
-      // 显示加载状态
-      showLoading: true,
+      errorMessage: '获取用户余额失败',
+      // 不显示加载状态，避免影响用户体验
+      showLoading: false,
+      // 错误回调（静默处理，不影响其他功能）
+      onError: () {
+        print('获取用户余额失败，设置默认值为0');
+        availableBalance.value = 0;
+      },
     );
   }
 
@@ -80,31 +86,21 @@ class AccountWithdrawalController extends BaseController {
         try {
           print('获取到国家列表数量: ${response.records.length}');
 
-          // 将CountryModel转换为Map<String, String>格式
-          final List<Map<String, String>> countryList = response.records
-              .where((model) => model.id != null && model.payName != null)
-              .map(
-                (model) => {'key': model.id.toString(), 'label': model.payName},
-              )
-              .toList();
+          final List<CountryModel> countryList = response.records;
 
           // 更新国家列表
           if (countryList.isNotEmpty) {
             countries.assignAll(countryList);
 
             // 安全地初始化选中的国家
-            if (countryList.isNotEmpty &&
-                countryList.first.containsKey('key') &&
-                countryList.first['key'] != null &&
-                countryList.first['key']!.isNotEmpty) {
+            if (countryList.isNotEmpty) {
               // 如果当前选中的国家不在新列表中，重置为第一个国家
               final bool isSelectedCountryExists = countryList.any(
-                (country) => country['label'] == selectedCountry.value,
+                (country) => country.payName == selectedCountry.value.payName,
               );
 
               if (!isSelectedCountryExists) {
-                selectedCountry.value = countryList.first['label']!;
-                selectedCountryId.value = int.parse(countryList.first['key']!);
+                selectedCountry.value = countryList.first;
                 print('重置选中的国家: ${selectedCountry.value}');
               }
             }
@@ -114,9 +110,9 @@ class AccountWithdrawalController extends BaseController {
           // 发生异常时确保有默认国家
           if (countries.isEmpty) {
             countries.assignAll([
-              {'key': 'default', 'label': I18nKeys.defaultCountry.tr},
+              CountryModel(id: 0, payName: I18nKeys.defaultCountry.tr, status: '', merchantNo: '', delFlag: '', recommend: ''),
             ]);
-            selectedCountry.value = 'default';
+            selectedCountry.value = countries.first;
           }
         }
       },
@@ -130,16 +126,16 @@ class AccountWithdrawalController extends BaseController {
         // 确保有默认数据
         if (countries.isEmpty) {
           countries.assignAll([
-            {'key': 'default', 'label': I18nKeys.defaultCountry.tr},
+            CountryModel(id: 0, payName: I18nKeys.defaultCountry.tr, status: '', merchantNo: '', delFlag: '', recommend: ''),
           ]);
-          selectedCountry.value = 'default';
+          selectedCountry.value = countries.first;
         }
       },
     );
   }
 
   // 选择国家
-  void selectCountry(String country) {
+  void selectCountry(CountryModel country) {
     selectedCountry.value = country;
   }
 
@@ -180,10 +176,9 @@ class AccountWithdrawalController extends BaseController {
   bool validateWithdrawAmount() {
     try {
       double amount = double.parse(withdrawAmount.value);
-      // 使用配置中的最大提现金额（如果有），否则使用默认值
-      double maxAmount =
-          withdrawalSetting.value.maxPoints?.toDouble() ?? availableBalance;
-      return amount >= minWithdrawalAmount && amount <= maxAmount;
+      // 使用配置中的最大提现金额（如果有），否则使用实际可用余额
+      
+      return amount >= minWithdrawalAmount && amount <= maxAmount.value;
     } catch (e) {
       return false;
     }
@@ -196,7 +191,7 @@ class AccountWithdrawalController extends BaseController {
       Get.snackbar(
         I18nKeys.error.tr,
         I18nKeys.pleaseFixErrors.tr,
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
       );
       return;
     }
@@ -209,7 +204,7 @@ class AccountWithdrawalController extends BaseController {
       Get.snackbar(
         I18nKeys.error.tr,
         I18nKeys.completePaymentInfo.tr,
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
       );
       return;
     }
@@ -218,7 +213,7 @@ class AccountWithdrawalController extends BaseController {
     final requestData = {
       "account": accountNumber.value,
       "bankId": bankCode.value,
-      "goldenFlowId": selectedCountryId.value,
+      "goldenFlowId": selectedCountry.value.id,
       "loginPassword": loginPassword.value,
       "name": accountName.value,
       "points": int.tryParse(withdrawAmount.value) ?? 0,
@@ -243,7 +238,7 @@ class AccountWithdrawalController extends BaseController {
         Get.snackbar(
           I18nKeys.success.tr,
           I18nKeys.withdrawConfirm.tr,
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
         );
 
         // 返回上一页
@@ -261,13 +256,5 @@ class AccountWithdrawalController extends BaseController {
     );
   }
 
-  // 添加地址
-  void addAddress() {
-    // 这里可以实现添加地址的逻辑
-    Get.snackbar(
-      I18nKeys.tip.tr,
-      I18nKeys.add.tr,
-      snackPosition: SnackPosition.BOTTOM,
-    );
-  }
+  
 }

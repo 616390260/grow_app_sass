@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -27,6 +28,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 从URL参数获取并保存邀请码（在决定路由之前）
+    _saveInviteCodeFromUrl();
+    
     // 根据认证状态确定初始路由
     final authService = Get.find<AuthService>();
     final initialRoute = authService.needLogin ? Routes.login : AppPages.initial;
@@ -49,5 +53,22 @@ class MyApp extends StatelessWidget {
       ],
       debugShowCheckedModeBanner: false,
     );
+  }
+  
+  /// 从URL参数获取邀请码并保存
+  void _saveInviteCodeFromUrl() {
+    try {
+      // 从Get参数中获取邀请码（适用于所有平台）
+      final inviteCode = Get.parameters['i'] ?? Get.parameters['invite_code'] ?? Get.parameters['referral'];
+      if (inviteCode != null && inviteCode.isNotEmpty) {
+        // 直接使用GetStorage保存邀请码，避免GetX依赖注入的时序问题
+        final storage = GetStorage();
+        storage.write('pending_invite_code', inviteCode);
+        debugPrint('成功保存URL邀请码: $inviteCode');
+      }
+    } catch (e) {
+      // 捕获可能的错误，避免影响应用启动
+      debugPrint('保存URL邀请码失败: $e');
+    }
   }
 }

@@ -3,8 +3,9 @@ part of 'app_pages.dart';
 /// 应用路由定义
 abstract class Routes {
   Routes._();
-  static const main = _Paths.main;
+  static const root = _Paths.root;
   static const home = _Paths.home;
+  // static const main = _Paths.main;
   static const promotion = _Paths.promotion;
   static const tasks = _Paths.tasks;
   static const smart = _Paths.smart;
@@ -28,7 +29,9 @@ abstract class Routes {
 /// 路由路径定义
 abstract class _Paths {
   _Paths._();
-  static const main = '/main';
+  // 根路径默认跳转到main页面
+  static const root = '/';
+  // static const main = '/main';
   static const home = '/home';
   static const promotion = '/promotion';
   static const tasks = '/tasks';

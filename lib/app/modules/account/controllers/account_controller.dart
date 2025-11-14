@@ -111,6 +111,9 @@ class AccountController extends BaseController {
 
   /// 执行退出登录操作
   Future<void> _performLogout() async {
+    // 在退出登录前保存邀请码（如果有）
+    await _saveCurrentInviteCode();
+    
     await safeApiCall<Map<String, dynamic>>(
       () => _authApiService.logout(),
       (_) async {
@@ -126,6 +129,19 @@ class AccountController extends BaseController {
         Get.offAllNamed(Routes.login);
       },
     );
+  }
+
+  /// 保存当前URL中的邀请码
+  Future<void> _saveCurrentInviteCode() async {
+    try {
+      // 从URL参数中获取邀请码
+      final inviteCode = Get.parameters['i'] ?? Get.parameters['invite_code'] ?? Get.parameters['referral'];
+      if (inviteCode?.isNotEmpty == true) {
+        await _authService.saveInviteCode(inviteCode!);
+      }
+    } catch (e) {
+      debugPrint('保存邀请码时出错: $e');
+    }
   }
 
   /// 清除本地数据

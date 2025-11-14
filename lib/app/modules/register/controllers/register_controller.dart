@@ -1,3 +1,4 @@
+import 'package:do_task_project/app/core/services/auth_service.dart';
 import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -5,9 +6,6 @@ import 'package:get/get.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../../../data/services/auth_api_service.dart';
-
-// Conditional import for web platform
-import 'dart:html' if (dart.library.html) 'dart:html' as html;
 
 class RegisterController extends BaseController {
   // 表单控制器
@@ -48,6 +46,7 @@ class RegisterController extends BaseController {
 
   // 认证API服务
   final _authApiService = AuthApiService();
+  final _authService = AuthService.to;
 
   @override
   void onInit() {
@@ -244,33 +243,35 @@ class RegisterController extends BaseController {
     Get.toNamed(Routes.login);
   }
 
-  /// 从URL参数获取邀请码（仅在Web平台）
+  /// 从URL参数或AuthService获取邀请码（跨平台）
+  /// 
+  /// 优先级：URL参数 > AuthService待处理邀请码
+  /// 如果找到邀请码，自动填充到邀请码输入框
   void getInviteCodeFromUrl() {
     try {
-      // 尝试从Get参数中获取邀请码（适用于所有平台）
-      final inviteCode = Get.parameters['i'];
-      if (inviteCode != null && inviteCode.isNotEmpty) {
-        // 自动填充邀请码到控制器
-        inviteCodeController.text = inviteCode;
-      } else if (kIsWeb) {
-        // 在Web平台，尝试使用dart:html获取URL参数（运行时执行）
-        try {
-          // 使用运行时类型检查避免编译时错误
-          if (html.window != null) {
-            final uri = Uri.parse(html.window.location.href);
-            final webInviteCode = uri.queryParameters['i'];
-            
-            if (webInviteCode != null && webInviteCode.isNotEmpty) {
-              inviteCodeController.text = webInviteCode;
-            }
-          }
-        } catch (e) {
-          debugPrint('Web URL参数获取失败: $e');
+      String? inviteCode;
+      
+      // 1. 尝试从Get参数中获取邀请码（适用于所有平台）
+      final urlInviteCode = Get.parameters['i'];
+      if (urlInviteCode != null && urlInviteCode.isNotEmpty) {
+        inviteCode = urlInviteCode;
+      }
+      
+      // 2. 如果URL没有邀请码，检查AuthService中的待处理邀请码
+      if (inviteCode == null || inviteCode.isEmpty) {
+        final pendingCode = _authService.getPendingInviteCode();
+        if (pendingCode != null && pendingCode.isNotEmpty) {
+          inviteCode = pendingCode;
         }
+      }
+      
+      // 3. 如果找到邀请码，自动填充到控制器
+      if (inviteCode != null && inviteCode.isNotEmpty) {
+        inviteCodeController.text = inviteCode;
       }
     } catch (e) {
       // 捕获可能的错误，避免影响页面正常加载
-      debugPrint('获取URL邀请码失败: $e');
+      debugPrint('获取邀请码失败: $e');
     }
   }
 }

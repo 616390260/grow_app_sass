@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 import '../../../core/base/base_controller.dart';
 import '../../home/controllers/home_controller.dart';
 import '../../promotion/controllers/promotion_controller.dart';
@@ -8,6 +9,7 @@ import '../../account/controllers/account_controller.dart';
 
 class MainController extends BaseController {
   final currentTabIndex = 0.obs;
+  final inviteCode = ''.obs; // 存储邀请码
   
   // 标记是否已经加载过各个tab的数据
   final _hasLoaded = <int, bool>{
@@ -22,6 +24,10 @@ class MainController extends BaseController {
   void onInit() {
     super.onInit();
     setSuccess();
+    
+    // 从URL参数获取邀请码（跨平台）
+    _getInviteCodeFromUrl();
+    
     // 首页默认加载
     _loadTabData(0);
   }
@@ -68,5 +74,30 @@ class MainController extends BaseController {
     // 刷新当前tab的数据
     _hasLoaded[currentTabIndex.value] = false;
     _loadTabData(currentTabIndex.value);
+  }
+
+  /// 从URL参数获取邀请码（跨平台）
+  void _getInviteCodeFromUrl() {
+    try {
+      // 从Get参数中获取邀请码（适用于所有平台）
+      final code = Get.parameters['i'];
+      if (code != null && code.isNotEmpty) {
+        inviteCode.value = code;
+        debugPrint('MainController获取到邀请码: $code');
+      }
+    } catch (e) {
+      // 捕获可能的错误，避免影响页面正常加载
+      debugPrint('获取URL邀请码失败: $e');
+    }
+  }
+
+  /// 获取邀请码提供给其他页面使用
+  String? getInviteCode() {
+    return inviteCode.value.isNotEmpty ? inviteCode.value : null;
+  }
+
+  /// 清除邀请码
+  void clearInviteCode() {
+    inviteCode.value = '';
   }
 }

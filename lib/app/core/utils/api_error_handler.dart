@@ -169,31 +169,7 @@ class ApiErrorHandler {
     }
   }
 
-  /// 安全执行API调用
-  static Future<ApiResult<T>> safeApiCall<T>(
-    Future<T> Function() apiCall, {
-    String? errorMessage,
-  }) async {
-    try {
-      final result = await apiCall();
-      return ApiResult.success(data: result, msg: I18nKeys.operationSuccess);
-    } catch (e) {
-      if (e is Exception) {
-        final errorResult = await handleError<T>(e);
-        if (errorMessage != null) {
-          return ApiResult.failure(
-            msg: errorMessage,
-            code: errorResult.code,
-          );
-        }
-        return errorResult;
-      } else {
-        return ApiResult.unknownError(
-          msg: errorMessage ?? I18nKeys.errorUnknown,
-        );
-      }
-    }
-  }
+
 
   /// 重试机制
   static Future<ApiResult<T>> retryApiCall<T>(

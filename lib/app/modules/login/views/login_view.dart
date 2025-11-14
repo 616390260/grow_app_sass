@@ -8,7 +8,11 @@ import '../../../core/base/base_view.dart';
 import '../../../core/i18n/i18n_keys.dart';
 
 class LoginView extends BaseView<LoginController> {
+  // 不再使用FocusNode，改为通过FocusScope管理焦点
+
   const LoginView({Key? key}) : super(key: key);
+
+
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
@@ -27,6 +31,16 @@ class LoginView extends BaseView<LoginController> {
         systemNavigationBarIconBrightness: Brightness.dark, // 导航栏图标为深色
       ),
     );
+
+    // 不再使用FocusNode，改为通过FocusScope管理焦点
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   if (accountFocusNode.hasFocus) {
+    //     accountFocusNode.unfocus();
+    //   }
+    //   if (passwordFocusNode.hasFocus) {
+    //     passwordFocusNode.unfocus();
+    //   }
+    // });
 
     return Scaffold(
       extendBodyBehindAppBar: true, // 让body延伸到AppBar后面
@@ -160,14 +174,14 @@ class LoginView extends BaseView<LoginController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        
         // 账号输入框
         _buildInputField(
           label: I18nKeys.accountField.tr,
           placeholder: I18nKeys.accountPlaceholder.tr,
           controller: controller.accountController,
-          focusNode: controller.accountFocusNode,
           errorText: controller.accountError,
-          onSubmitted: (_) => controller.passwordFocusNode.requestFocus(),
+          onSubmitted: (_) => FocusScope.of(Get.context!).nextFocus(),
         ),
         Container(
           height: 1,
@@ -185,11 +199,11 @@ class LoginView extends BaseView<LoginController> {
     );
   }
 
+
   Widget _buildInputField({
     required String label,
     required String placeholder,
     required TextEditingController controller,
-    required FocusNode focusNode,
     required RxString errorText,
     bool obscureText = false,
     Widget? suffixIcon,
@@ -211,26 +225,25 @@ class LoginView extends BaseView<LoginController> {
           () => Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(
-                child: TextField(
-                  controller: controller,
-                  focusNode: focusNode,
-                  obscureText: obscureText,
-                  onSubmitted: onSubmitted,
-                  decoration: InputDecoration(
-                    hintText: placeholder,
-                    hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    focusedErrorBorder: InputBorder.none,
-                    filled: false,
-                    contentPadding: EdgeInsets.zero,
-                    // 移除suffixIcon，改为在右侧显示
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    obscureText: obscureText,
+                    onSubmitted: onSubmitted,
+                    decoration: InputDecoration(
+                      hintText: placeholder,
+                      hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      focusedErrorBorder: InputBorder.none,
+                      filled: false,
+                      contentPadding: EdgeInsets.zero,
+                      // 移除suffixIcon，改为在右侧显示
+                    ),
                   ),
                 ),
-              ),
               // 错误信息显示在右侧，与输入框对齐
               if (errorText.value.isNotEmpty) ...[
                 const SizedBox(width: 8),
@@ -259,7 +272,6 @@ class LoginView extends BaseView<LoginController> {
         label: I18nKeys.password.tr,
         placeholder: I18nKeys.passwordPlaceholder.tr,
         controller: controller.passwordController,
-        focusNode: controller.passwordFocusNode,
         errorText: controller.passwordError,
         obscureText: !controller.isPasswordVisible.value,
         suffixIcon: IconButton(

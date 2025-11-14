@@ -32,6 +32,31 @@ class AuthService extends GetxService {
     await _storage.remove(AppConstants.storageKeyUserToken);
   }
   
+  // ===== 邀请码管理 =====
+  
+  static const String _inviteCodeKey = 'pending_invite_code';
+  
+  /// 保存邀请码
+  Future<void> saveInviteCode(String inviteCode) async {
+    await _storage.write(_inviteCodeKey, inviteCode);
+  }
+  
+  /// 获取待处理的邀请码
+  String? getPendingInviteCode() {
+    return _storage.read<String>(_inviteCodeKey);
+  }
+  
+  /// 清除待处理的邀请码
+  Future<void> clearPendingInviteCode() async {
+    await _storage.remove(_inviteCodeKey);
+  }
+  
+  /// 检查是否有待处理的邀请码
+  bool hasPendingInviteCode() {
+    final code = getPendingInviteCode();
+    return code != null && code.isNotEmpty;
+  }
+  
   /// 验证token是否有效
   bool isTokenValid(String? token) {
     if (token == null || token.isEmpty) {

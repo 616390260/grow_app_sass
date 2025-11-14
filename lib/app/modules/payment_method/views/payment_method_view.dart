@@ -330,12 +330,12 @@ class PaymentMethodView extends BaseView<PaymentMethodController> {
         ),
         const SizedBox(height: 7),
         Text(
-          I18nKeys.minWithdrawAmount.tr,
+          I18nKeys.minWithdrawAmount.trArgs([Get.arguments?['minAmount'] ?? '0']),
           style: TextStyle(fontSize: 13, color: AppTheme.sixColor),
         ),
         const SizedBox(height: 4),
         Text(
-          I18nKeys.dailyWithdrawLimit.trArgs(['2']),
+          I18nKeys.dailyWithdrawLimit.trArgs([Get.arguments?['dailyLimit'] ?? '2']),
           style: TextStyle(fontSize: 13, color: AppTheme.sixColor),
         ),
         const SizedBox(height: 4),

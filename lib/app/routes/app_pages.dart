@@ -46,14 +46,20 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const initial = Routes.main;
+  static const initial = Routes.root;
 
   static final routes = [
+    // 根路径重定向到main页面
     GetPage(
-      name: _Paths.main,
+      name: _Paths.root,
       page: () => const MainView(),
       binding: MainBinding(),
     ),
+    // GetPage(
+    //   name: _Paths.main,
+    //   page: () => const MainView(),
+    //   binding: MainBinding(),
+    // ),
     // 有效用户页面
     GetPage(
       name: Routes.validUsers,
