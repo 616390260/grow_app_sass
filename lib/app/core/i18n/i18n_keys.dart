@@ -197,6 +197,7 @@ class I18nKeys {
   static const withdrawFee = 'withdraw_fee';
   static const maxWithdraw = 'max_withdraw';
   static const youWillWithdraw = 'you_will_withdraw';
+  static const withdrawSuccess = 'withdraw_success';
 
   
   // Countries
@@ -367,10 +368,26 @@ class I18nKeys {
   static const loadCountriesFailed = 'load_countries_failed';
   static const withdrawFailed = 'withdraw_failed';
   static const networkRequestFailed = 'network_request_failed';
+  static const requestFailed = 'request_failed';
+  static const unknownTypeConversionException = 'unknown_type_conversion_exception';
   static const loadVIPDetailsFailed = 'load_vip_details_failed';
   static const loadingCustomerServiceFailed = 'loading_customer_service_failed';
   static const loadingOnlineNumbersFailed = 'loading_online_numbers_failed';
   
+  // Loading states and messages
+  static const loadingFailed = 'loading_failed';
+  static const loadingPleaseWait = 'loading_please_wait';
+  
+  // UI Messages
+  static const tapToRefresh = 'tap_to_refresh';
+  static const reload = 'reload';
+  static const sure = 'sure';
+  static const prize = 'prize';
+
+ // Status Messages
+
+  // Language Options
+
   // Task related strings
   static const taskCenter = 'task_center';
   static const taskTitle = 'task_title';
@@ -517,7 +534,6 @@ class I18nKeys {
   static const buttonReset = 'button_reset';
 
   static const loading = 'loading';
-  static const loadingFailed = 'loading_failed';
   static const noContent = 'no_content';
   static const refreshNow = 'refresh_now';
   static const allTypesOption = 'all_types_option';

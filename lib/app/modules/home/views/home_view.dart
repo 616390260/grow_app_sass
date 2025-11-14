@@ -186,6 +186,7 @@ class HomeView extends BaseView<HomeController> {
                       const SizedBox(height: 5),
                       Text(
                         I18nKeys.accountBalance.tr,
+                        maxLines: 1,
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppTheme.nineColor,
@@ -209,6 +210,7 @@ class HomeView extends BaseView<HomeController> {
                       const SizedBox(height: 6),
                       Text(
                         I18nKeys.todayEarnings.tr,
+                        maxLines: 1,
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppTheme.nineColor,
@@ -232,6 +234,7 @@ class HomeView extends BaseView<HomeController> {
                       const SizedBox(height: 6),
                       Text(
                         I18nKeys.todayPromotionEarnings.tr,
+                        maxLines: 1,
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppTheme.nineColor,

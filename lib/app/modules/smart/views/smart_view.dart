@@ -40,79 +40,82 @@ class SmartView extends BaseView<SmartController> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Image.asset(ImageAssets.serviceBg, width: 200, height: 162),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 18),
-                    Text(
-                      I18nKeys.onlineServiceGreeting.tr,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 11),
-                    Text(
-                      I18nKeys.contactCustomerService.tr,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    ElevatedButton(
-                      onPressed: controller.onConsultNow,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: AppTheme.primaryColor,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 17,
-                          vertical: 6,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        I18nKeys.consultNow.tr,
+                Image.asset(ImageAssets.serviceBg, width: 180, height: 152),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 18),
+                      Text(
+                        I18nKeys.onlineServiceGreeting.tr,
+                        maxLines: 2,
                         style: const TextStyle(
-                          fontSize: 12,
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 11),
+                      Text(
+                        I18nKeys.contactCustomerService.tr,
+                        maxLines: 2,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 15),
+                      ElevatedButton(
+                        onPressed: controller.onConsultNow,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppTheme.primaryColor,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 17,
+                            vertical: 6,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          I18nKeys.consultNow.tr,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
             Expanded(
               child: Container(
-                    padding: const EdgeInsets.only(left: 17, right: 13, top: 11),
-                    child: ListView.builder(
-                      itemCount: controller.customerServices.length,
-                      itemBuilder: (context, index) {
-                        final service = controller.customerServices[index];
-                        return _buildServiceButton(
-                          imagePath: service.icon ?? '',
-                          title: service.name ?? '',
-                          onPressed: () {
-                            // 这里可以添加点击客服项的处理逻辑
-                            // 例如打开链接或显示详细信息
-                            if (service.link != null &&
-                                service.link!.isNotEmpty) {
-                              // 可以使用url_launcher打开链接
-                              // launchUrl(Uri.parse(service.link!));
-                              controller.onJoinTelegram(service.link??'');
-                            }
-                          },
-                        );
+                padding: const EdgeInsets.only(left: 17, right: 13, top: 11),
+                child: ListView.builder(
+                  itemCount: controller.customerServices.length,
+                  itemBuilder: (context, index) {
+                    final service = controller.customerServices[index];
+                    return _buildServiceButton(
+                      imagePath: service.icon ?? '',
+                      title: service.name ?? '',
+                      onPressed: () {
+                        // 这里可以添加点击客服项的处理逻辑
+                        // 例如打开链接或显示详细信息
+                        if (service.link != null && service.link!.isNotEmpty) {
+                          // 可以使用url_launcher打开链接
+                          // launchUrl(Uri.parse(service.link!));
+                          controller.onJoinTelegram(service.link ?? '');
+                        }
                       },
-                    ),
-                  )
+                    );
+                  },
+                ),
+              ),
             ),
             // 底部功能区
             // Expanded(
@@ -254,7 +257,16 @@ class SmartView extends BaseView<SmartController> {
           children: [
             Row(
               children: [
-                Image.network(imagePath, width: 30, height: 30,errorBuilder: (context, error, stackTrace) => Image.asset(ImageAssets.inviteTelegram, width: 30, height: 30),),
+                Image.network(
+                  imagePath,
+                  width: 30,
+                  height: 30,
+                  errorBuilder: (context, error, stackTrace) => Image.asset(
+                    ImageAssets.inviteTelegram,
+                    width: 30,
+                    height: 30,
+                  ),
+                ),
                 const SizedBox(width: 10),
                 Text(
                   title,

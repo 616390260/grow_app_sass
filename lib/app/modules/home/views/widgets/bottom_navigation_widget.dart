@@ -66,8 +66,10 @@ class BottomNavigationWidget extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 label,
+                maxLines: 1,
                 style: TextStyle(
                   fontSize: 10,
+                  overflow: TextOverflow.ellipsis,
                   color: isSelected
                       ? const Color(0xFF427AF2)
                       : const Color(0xFF999999),

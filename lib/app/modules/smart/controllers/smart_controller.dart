@@ -58,7 +58,7 @@ class SmartController extends BaseController {
     // 跳转到平台指南页面或打开相关链接
     Get.snackbar(
       I18nKeys.platformGuide.tr,
-      '正在打开平台指南...',
+      I18nKeys.openingPlatformGuide.tr,
       backgroundColor: Colors.white,
       colorText: Colors.black,
     );

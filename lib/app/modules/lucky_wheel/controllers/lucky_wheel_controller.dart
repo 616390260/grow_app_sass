@@ -200,12 +200,12 @@ class LuckyWheelController extends BaseController with GetSingleTickerProviderSt
       final prize = prizes[selectedPrizeIndex];
       _userPoints.value += prize.prizeValue;
       
-      showSuccessMessage('${I18nKeys.congratulations.tr}！${I18nKeys.youWon.tr} ${prize.prizeValue} ${I18nKeys.points.tr}');
+      showSuccessMessage('${I18nKeys.congratulations.tr}! ${I18nKeys.youWon.tr} ${prize.prizeValue} ${I18nKeys.points.tr}');
     } else {
       // 如果索引无效，给出默认奖励并记录错误
       showErrorMessage('Invalid prize index: $selectedPrizeIndex');
       _userPoints.value += 10; // 默认奖励
-      showSuccessMessage('${I18nKeys.congratulations.tr}！${I18nKeys.youWon.tr} 10 ${I18nKeys.points.tr}');
+      showSuccessMessage('${I18nKeys.congratulations.tr}! ${I18nKeys.youWon.tr} 10 ${I18nKeys.points.tr}');
     }
   }
 

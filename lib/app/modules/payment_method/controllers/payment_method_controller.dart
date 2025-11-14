@@ -40,6 +40,9 @@ class PaymentMethodController extends BaseController {
   // 登录密码
   RxString loginPassword = ''.obs;
   
+  // 手机号
+  RxString phone = ''.obs;
+  
   // 国家/地区（从上个页面传递）
   String country = Get.arguments?['country'] ?? 'nigeria';
   
@@ -109,6 +112,11 @@ class PaymentMethodController extends BaseController {
     loginPassword.value = password;
   }
   
+  // 设置手机号
+  void setPhone(String number) {
+    phone.value = number;
+  }
+  
   // 验证表单
   bool validateForm() {
     if (bankName.value.isEmpty) {
@@ -139,6 +147,7 @@ class PaymentMethodController extends BaseController {
     Get.back(result: {
       'bankName': bankName.value,
       'bankCode': bankCode.value,
+      'phone': phone.value,
       'accountNumber': accountNumber.value,
       'accountName': accountName.value,
       'loginPassword': loginPassword.value,

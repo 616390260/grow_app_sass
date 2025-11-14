@@ -158,7 +158,7 @@ abstract class BaseView<T extends BaseController> extends GetView<T> {
   /// 构建空状态组件
   Widget _buildEmptyWidget() {
     return LoadingStyle.buildEmptyWidget(
-      message: '点击刷新重新加载',
+      message: I18nKeys.tapToRefresh.tr,
       onRefresh: () => controller.refreshData(),
     );
   }

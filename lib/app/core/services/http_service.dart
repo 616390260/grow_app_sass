@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart' as getx;
 import '../config/environment_config.dart';
 import '../utils/json_convert.dart';
+import '../i18n/i18n_keys.dart';
 import 'error_handler_center.dart';
 
 /// HTTP服务类 - 重构后的统一版本
@@ -71,7 +72,7 @@ class HttpService extends getx.GetxService {
           handler.reject(
             DioException(
               requestOptions: options,
-              error: '网络连接不可用',
+              error: I18nKeys.errorNetworkUnavailable.tr,
               type: DioExceptionType.connectionError,
             ),
           );
@@ -93,6 +94,12 @@ class HttpService extends getx.GetxService {
           }
         } catch (_) {
           // 读取存储失败时忽略，不影响正常请求
+        }
+
+        // 添加语言信息到请求头
+        final currentLocale = getx.Get.locale;
+        if (currentLocale != null) {
+          options.headers['accept-language'] = '${currentLocale.languageCode}_${currentLocale.countryCode ?? ''}';
         }
 
         _logRequest(options);
@@ -127,7 +134,7 @@ class HttpService extends getx.GetxService {
             final businessCode = data['code'] as int?;
             final message = data['msg'] as String? ??
                           data['message'] as String? ??
-                          '请求失败';
+                          I18nKeys.networkRequestFailed.tr;
             print('业务码: $businessCode, 消息: $message');
             if (businessCode != null && businessCode != 200) {
               print('抛出业务错误异常');
@@ -331,7 +338,7 @@ class HttpService extends getx.GetxService {
     // 检查HTTP状态码（非标准响应格式时）
     if (response.statusCode != 200 && response.statusCode != 201) {
       print('HTTP状态码异常，抛出HTTP请求失败异常');
-      throw _errorHandler.handleErrorCode<T>(response.statusCode, 'HTTP请求失败');
+      throw _errorHandler.handleErrorCode<T>(response.statusCode, I18nKeys.networkRequestFailed.tr);
     }
 
     // 非标准API响应格式（非Map），直接进行类型转换
@@ -399,7 +406,7 @@ class HttpService extends getx.GetxService {
         throw Exception('类型转换失败: 无法将响应数据转换为类型 $T: $e');
       }
     } catch (e) {
-        final errorMsg = e is Exception ? e.toString() : '未知类型转换异常';
+        final errorMsg = e is Exception ? e.toString() : I18nKeys.unknownTypeConversionException.tr;
         throw Exception('类型转换异常: $errorMsg');
     }
   }

@@ -37,7 +37,7 @@ class VipRewardPopup extends StatelessWidget {
                 Text(
                   '${I18nKeys.vipDailyRewardTime.tr}$resetTime',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: AppTheme.threeColor,
                   ),

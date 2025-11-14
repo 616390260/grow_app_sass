@@ -50,7 +50,7 @@ class PromotionView extends BaseView<PromotionController> {
 
             // 分享链接部分
             _buildShareLinks(),
-const SizedBox(height: 15),
+            const SizedBox(height: 15),
             // 活动规则部分
             _buildActivityRules(),
 
@@ -69,12 +69,16 @@ const SizedBox(height: 15),
       padding: const EdgeInsets.only(top: 18),
       child: Column(
         children: [
-          Text(
-            I18nKeys.inviteNewUserGetReward.tr,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w800,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              textAlign: TextAlign.center,
+              I18nKeys.inviteNewUserGetReward.tr,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
           const SizedBox(height: 5),
@@ -251,25 +255,24 @@ const SizedBox(height: 15),
         height: 76,
         padding: const EdgeInsets.all(7),
         decoration: BoxDecoration(
-          border: Border.all(
-            color: AppTheme.e3e3e3Color,
-            width: 0.5,
-          ),
+          border: Border.all(color: AppTheme.e3e3e3Color, width: 0.5),
           borderRadius: BorderRadius.circular(5),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-               Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF666666),
-                    fontSize: 12,
-                  ),
-                ),
-                const Spacer(),
+            Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF666666),
+                fontSize: 12,
+              ),
+            ),
+            const Spacer(),
             value,
           ],
         ),
@@ -297,9 +300,7 @@ const SizedBox(height: 15),
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 4),
-          DecoratedTitle(
-           title:  I18nKeys.inviteEarnings.tr,
-          ),
+          DecoratedTitle(title: I18nKeys.inviteEarnings.tr),
           const SizedBox(height: 22),
 
           // 收益统计 - 三个一列
@@ -426,29 +427,41 @@ const SizedBox(height: 15),
           Row(
             children: [
               Container(
-            width: 3,
-            height: 13,
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor,
-              borderRadius: BorderRadius.circular(3),
-            ),
-          ),
-          const SizedBox(width: 4),
-          Text(
-            I18nKeys.inviteSubordinatesReachLevel2Reward.tr,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF333333),
-            ),
-          ),
+                width: 3,
+                height: 13,
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  I18nKeys.inviteSubordinatesReachLevel2Reward.tr,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF333333),
+                  ),
+                ),
+              ),
             ],
-          ),  
+          ),
           const SizedBox(height: 17),
           Obx(
             () => Text(
-              I18nKeys.currentReachLevel2RewardPoints.tr.replaceFirst('%s', controller.reachTwoStarUsers.value.toString()).replaceFirst('%s', controller.twoStarRewardPoints.value.toString()),
-              style: const TextStyle(fontSize: 12, color:AppTheme.threeColor),
+              I18nKeys.currentReachLevel2RewardPoints.tr
+                  .replaceFirst(
+                    '%s',
+                    controller.reachTwoStarUsers.value.toString(),
+                  )
+                  .replaceFirst(
+                    '%s',
+                    controller.twoStarRewardPoints.value.toString(),
+                  ),
+              style: const TextStyle(fontSize: 12, color: AppTheme.threeColor),
             ),
           ),
           const SizedBox(height: 17),
@@ -456,39 +469,42 @@ const SizedBox(height: 15),
             alignment: Alignment.center,
             child: Obx(() {
               bool hasReceived = controller.isReceived.value;
-              
+
               return GestureDetector(
-                onTap: hasReceived ? () {
-                  // TODO: 实现领取奖励的逻辑
-                  controller.receiveReward();
-                } : null,
+                onTap: hasReceived
+                    ? () {
+                        // TODO: 实现领取奖励的逻辑
+                        controller.receiveReward();
+                      }
+                    : null,
                 child: Container(
                   alignment: Alignment.center,
                   height: 40,
                   width: 170,
                   margin: EdgeInsets.only(bottom: 5),
                   decoration: BoxDecoration(
-                    gradient: hasReceived ? LinearGradient(
-                      colors: [Color(0xFF477DF2), Color(0xFF47B9F2)],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ) : null,
+                    gradient: hasReceived
+                        ? LinearGradient(
+                            colors: [Color(0xFF477DF2), Color(0xFF47B9F2)],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          )
+                        : null,
                     color: !hasReceived ? Color(0xFFE0E0E0) : null,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                child: Text(
-                    I18nKeys.claim.tr ,
+                  child: Text(
+                    I18nKeys.claim.tr,
                     style: TextStyle(
-                      color:  Colors.white,
+                      color: Colors.white,
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-              ),
-            );
+                ),
+              );
             }),
           ),
-
         ],
       ),
     );
@@ -544,7 +560,7 @@ const SizedBox(height: 15),
           controller.shareToFacebook();
         }
       },
-      child: Image.asset(imagePath, width: 30, height: 30,),
+      child: Image.asset(imagePath, width: 30, height: 30),
     );
   }
 
@@ -569,13 +585,11 @@ const SizedBox(height: 15),
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 活动规则标题
-          Center(
-            child: DecoratedTitle(title: I18nKeys.activityRules.tr),
-          ),
+          Center(child: DecoratedTitle(title: I18nKeys.activityRules.tr)),
           const SizedBox(height: 20),
 
           // 邀请步骤
-          HighlightText(text: I18nKeys.invitationSteps.tr,),
+          HighlightText(text: I18nKeys.invitationSteps.tr),
           const SizedBox(height: 17),
           _buildRuleItem(I18nKeys.invitationStep1.tr),
           _buildRuleItem(I18nKeys.invitationStep2.tr),
@@ -584,7 +598,7 @@ const SizedBox(height: 15),
           const SizedBox(height: 30),
 
           // 奖励计算方式
-          HighlightText(text: I18nKeys.commissionCalculationMethod.tr,),
+          HighlightText(text: I18nKeys.commissionCalculationMethod.tr),
           const SizedBox(height: 17),
           _buildRuleItem(I18nKeys.directInvitationRule.tr),
           _buildRuleItem(I18nKeys.secondaryInvitationRule.tr),

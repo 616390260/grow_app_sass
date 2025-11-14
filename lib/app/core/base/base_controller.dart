@@ -1,3 +1,4 @@
+import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -70,7 +71,7 @@ abstract class BaseController extends GetxController {
   /// 显示成功消息
   void showSuccessMessage(String message) {
     Get.snackbar(
-      '成功',
+      I18nKeys.success.tr,
       message,
       snackPosition: SnackPosition.TOP,
       backgroundColor: Get.theme.colorScheme.primary,
@@ -81,7 +82,7 @@ abstract class BaseController extends GetxController {
   /// 显示错误消息
   void showErrorMessage(String message) {
     Get.snackbar(
-      '错误',
+      I18nKeys.error.tr,
       message,
       snackPosition: SnackPosition.TOP,
       backgroundColor: Get.theme.colorScheme.error,
@@ -93,7 +94,7 @@ abstract class BaseController extends GetxController {
   /// 显示警告消息
   void showWarningMessage(String message) {
     Get.snackbar(
-      '警告',
+      I18nKeys.warning.tr,
       message,
       snackPosition: SnackPosition.TOP,
       backgroundColor: Get.theme.colorScheme.secondary,
@@ -105,7 +106,7 @@ abstract class BaseController extends GetxController {
   /// 显示信息消息
   void showInfoMessage(String message) {
     Get.snackbar(
-      '提示',
+      I18nKeys.tip.tr,
       message,
       snackPosition: SnackPosition.TOP,
       duration: const Duration(seconds: 2),

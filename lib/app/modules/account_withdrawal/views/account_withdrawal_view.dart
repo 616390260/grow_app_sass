@@ -92,7 +92,7 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
                 controller.selectedCountry.value == country;
             return ElevatedButton(
               onPressed: () {
-                controller.selectedCountry.value = country;
+                controller.selectCountry(country);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.bgColor,
@@ -176,6 +176,7 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
                     // 这里可以处理返回的数据，例如保存到控制器中或更新UI
                     // 示例：
                     controller.bankName.value = result['bankName'] ?? '';
+                    controller.phone.value = result['phone'] ?? '';
                     controller.bankCode.value = result['bankCode'] ?? 0;
                     controller.accountNumber.value = result['accountNumber'] ?? '';
                     controller.accountName.value = result['accountName'] ?? '';
@@ -241,7 +242,7 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
             children: [
               
               Expanded(
-                child: TextField(
+                child: Obx(() => TextField(
                   controller: TextEditingController(),
                   onChanged: controller.setWithdrawAmount,
                   keyboardType: TextInputType.number,
@@ -252,7 +253,7 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
                     hintStyle: TextStyle(fontSize: 14, color: AppTheme.nineColor),
                   ),
                   style: TextStyle(fontSize: 14, color: AppTheme.threeColor),
-                ),
+                )),
               ),
             ],
           ),

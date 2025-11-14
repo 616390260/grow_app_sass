@@ -49,7 +49,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
             child: Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () => Get.back(),
                 ),
                 Expanded(
@@ -102,6 +102,8 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                 children: [
                   // "已连续签到 7 天"
                   Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         I18nKeys.continuouslySignedInFor.tr,
@@ -115,7 +117,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                       Text(
                         '$streak',
                         style: const TextStyle(
-                            color: AppTheme.signYellowColor,
+                          color: AppTheme.signYellowColor,
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
@@ -134,6 +136,8 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                   const SizedBox(height: 12),
                   // "再连续 7 天领 5000 积分" 胶囊
                   Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         I18nKeys.signInAgainFor.tr,
@@ -146,7 +150,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                       Text(
                         '$remaining',
                         style: const TextStyle(
-                            color: AppTheme.signYellowColor,
+                          color: AppTheme.signYellowColor,
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                         ),

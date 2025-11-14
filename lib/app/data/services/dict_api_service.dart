@@ -70,27 +70,4 @@ class DictApiService {
     }
   }
   
-  /// 获取默认订单类型列表（当API调用失败时使用）
-  List<DictModel> _getDefaultOrderTypes() {
-    return [
-      DictModel(
-        dictLabel: '申请中',
-        dictValue: '0',
-        dictType: 'app_order_type',
-        remark: '申请中',
-      ),
-      DictModel(
-        dictLabel: '已到账',
-        dictValue: '1',
-        dictType: 'app_order_type',
-        remark: '已到账',
-      ),
-      DictModel(
-        dictLabel: '已驳回',
-        dictValue: '2',
-        dictType: 'app_order_type',
-        remark: '已驳回',
-      ),
-    ];
-  }
 }

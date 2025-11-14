@@ -1,3 +1,5 @@
+import 'package:do_task_project/app/domain/entities/withdrawal_setting.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
@@ -7,7 +9,8 @@ import '../../../data/models/country_model.dart';
 import '../../../data/services/withdrawal_api_service.dart';
 import '../../../data/services/home_api_service.dart';
 import '../../../data/models/home_info_model.dart';
-import 'package:do_task_project/app/domain/entities/withdrawal_setting.dart';
+
+// 确保GetX依赖正确导入
 
 class AccountWithdrawalController extends BaseController {
   // 提现金额
@@ -15,6 +18,7 @@ class AccountWithdrawalController extends BaseController {
   RxString bankName = ''.obs;
   RxString accountNumber = ''.obs;
   RxString accountName = ''.obs;
+  RxString phone = ''.obs;
   RxInt bankCode = 0.obs;
   RxString loginPassword = ''.obs;
   
@@ -65,7 +69,7 @@ class AccountWithdrawalController extends BaseController {
         setSuccess();
       },
       // 自定义错误消息
-      errorMessage: '获取用户余额失败',
+      errorMessage: I18nKeys.loadUserInfoFailed.tr,
       // 不显示加载状态，避免影响用户体验
       showLoading: false,
       // 错误回调（静默处理，不影响其他功能）
@@ -119,7 +123,7 @@ class AccountWithdrawalController extends BaseController {
       // 自定义错误消息
       errorMessage: I18nKeys.loadCountriesFailed.tr,
       // 不显示全局加载状态，避免与其他操作冲突
-      showLoading: false,
+      showLoading: true,
       // 错误回调（保持静默失败）
       onError: () {
         print(I18nKeys.loadCountriesFailed.tr);
@@ -137,6 +141,8 @@ class AccountWithdrawalController extends BaseController {
   // 选择国家
   void selectCountry(CountryModel country) {
     selectedCountry.value = country;
+    // 选择国家变化时更新最大提现金额
+    maxAmount.value = availableBalance.value - (selectedCountry.value.fee?.toInt()??0);
   }
 
   // 设置提现金额
@@ -213,6 +219,7 @@ class AccountWithdrawalController extends BaseController {
     final requestData = {
       "account": accountNumber.value,
       "bankId": bankCode.value,
+      "phone": phone.value,
       "goldenFlowId": selectedCountry.value.id,
       "loginPassword": loginPassword.value,
       "name": accountName.value,
@@ -234,15 +241,20 @@ class AccountWithdrawalController extends BaseController {
         setSuccess();
         print('提现请求成功响应: $response');
 
-        // 显示成功提示
-        Get.snackbar(
-          I18nKeys.success.tr,
-          I18nKeys.withdrawConfirm.tr,
-          snackPosition: SnackPosition.TOP,
-        );
-
-        // 返回上一页
-        Get.back();
+        // 确保在UI线程上执行UI操作
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // 显示成功提示
+          Get.snackbar(
+            I18nKeys.success.tr,
+            I18nKeys.withdrawSuccess.tr,
+            snackPosition: SnackPosition.TOP,
+          );
+          
+          // 短暂延迟后返回上一页，确保用户能看到成功提示
+          Future.delayed(const Duration(seconds: 1), () {
+            Navigator.pop(Get.context!);
+          });
+        });
       },
       // 自定义错误消息
       errorMessage: I18nKeys.withdrawFailed.tr,

@@ -116,6 +116,17 @@ class PaymentMethodView extends BaseView<PaymentMethodController> {
                   onChanged: controller.setLoginPassword,
                   isPassword: true,
                 ),
+                Container(
+                  height: 0.5,
+                  color: AppTheme.lineColor,
+                  margin: const EdgeInsets.symmetric(horizontal: 14),
+                ),
+                _buildFormField(
+                  label: I18nKeys.phoneNumber.tr,
+                  placeholder: I18nKeys.phoneNumberTip.tr,
+                  value: controller.phone,
+                  onChanged: controller.setPhone,
+                ),
               ],
             ),
           ),

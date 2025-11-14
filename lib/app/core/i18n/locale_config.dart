@@ -14,7 +14,7 @@ class LocaleConfig {
   ];
 
   static const Locale fallbackLocale = Locale('en', 'US');
-  static const Locale defaultLocale = Locale('zh', 'CN');
+  static const Locale defaultLocale = Locale('en', 'US');
 
   static const String _storageKey = 'app_locale';
   static final GetStorage _box = GetStorage();
@@ -28,8 +28,9 @@ class LocaleConfig {
       final locale = Locale(languageCode, countryCode);
       if (isSupported(locale)) return locale;
     }
-    final device = Get.deviceLocale;
-    return device != null && isSupported(device) ? device : defaultLocale;
+    return defaultLocale;
+    // final device = Get.deviceLocale;
+    // return device != null && isSupported(device) ? device : defaultLocale;
   }
 
   static Future<void> updateLocale(Locale locale) async {

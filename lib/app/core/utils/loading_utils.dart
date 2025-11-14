@@ -1,3 +1,4 @@
+import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../theme/loading_style.dart';
@@ -278,7 +279,7 @@ class LoadingStateBuilder extends StatelessWidget {
                 Text(
                   controller.loadingMessage.isNotEmpty 
                       ? controller.loadingMessage 
-                      : '加载失败',
+                      : I18nKeys.loadingFailed.tr,
                   style: Get.textTheme.bodyMedium,
                 ),
               ],

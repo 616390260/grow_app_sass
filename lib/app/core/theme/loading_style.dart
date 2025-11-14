@@ -109,7 +109,7 @@ class LoadingStyle {
           if (showMessage) ...[
             SizedBox(height: defaultSpacing),
             Text(
-              message ?? '加载中...',
+              message ?? I18nKeys.loadingPleaseWait.tr,
               style: Get.textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
@@ -224,7 +224,7 @@ class LoadingStyle {
           ),
           SizedBox(height: defaultSpacing),
           Text(
-            message?.isNotEmpty == true ? message! : '加载失败',
+            message?.isNotEmpty == true ? message! : I18nKeys.loadingFailed.tr,
             style: Get.textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),
@@ -256,12 +256,12 @@ class LoadingStyle {
           ),
           SizedBox(height: defaultSpacing),
           Text(
-            '暂无数据',
+            message ?? I18nKeys.noContent.tr,
             style: Get.textTheme.headlineSmall,
           ),
           const SizedBox(height: 8),
           Text(
-            message ?? '当前没有任何内容',
+            message ?? I18nKeys.statusEmpty.tr,
             style: Get.textTheme.bodyMedium,
           ),
           if (onRefresh != null) ...[

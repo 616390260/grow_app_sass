@@ -163,7 +163,7 @@ class AppUtils {
             onPressed: () {
               Get.back(); // 关闭snackbar
             },
-            child: Text('确定', style: TextStyle(color: Colors.white)),
+            child: Text(I18nKeys.sure.tr, style: TextStyle(color: Colors.white)),
           ),
         );
       } else {

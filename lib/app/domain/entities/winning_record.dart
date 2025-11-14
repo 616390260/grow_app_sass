@@ -1,3 +1,6 @@
+import 'package:get/get.dart';
+import '../../core/i18n/i18n_keys.dart';
+
 class WinningRecord {
   final String id;
   final String prizeName;
@@ -46,7 +49,7 @@ class WinningRecord {
 
     return WinningRecord(
       id: json['id']?.toString() ?? '',
-      prizeName: json['prizeName']?.toString() ?? '奖品',
+      prizeName: json['prizeName']?.toString() ?? I18nKeys.prize.tr,
       prizeValue: (json['points'] is int)
           ? json['points']
           : (json['points'] is double)
