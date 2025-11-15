@@ -10,6 +10,7 @@ class WhatsappApiService {
   static const String _getLoginCodeEndpoint = 'app/wsNumber/getLoginCode';
   static const String _getOnlineNumbersEndpoint = 'app/wsNumber/online';
   static const String _getTaskInfoEndpoint = 'app/wsNumber/getTaskInfo';
+  static const String _sendMsgEndpoint = 'app/wsNumber/sendMsg';
 
   /// 获取登录验证码
   Future<String> getLoginCode(String phoneNumber) async {
@@ -108,6 +109,23 @@ class WhatsappApiService {
         'wsDownloadUrl': '',
         'yesterdayPoints': 0
       };
+    }
+  }
+
+  /// 发送WhatsApp消息
+  Future<Map<String, dynamic>> sendMessage(String id) async {
+    try {
+      final data = await _httpService.get<Map<String, dynamic>>(
+        _sendMsgEndpoint,
+        queryParameters: {
+          'id': id,
+        },
+      );
+      
+      return data;
+    } catch (e) {
+      debugPrint('Error sending WhatsApp message: $e');
+      rethrow;
     }
   }
 }

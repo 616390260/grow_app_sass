@@ -80,14 +80,9 @@ class HomeView extends BaseView<HomeController> {
       child: Row(
         children: [
           // 应用图标
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Image.asset(ImageAssets.logo, width: 24, height: 24),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.asset(ImageAssets.logo, width: 50, height: 50, fit: BoxFit.cover),
           ),
           const SizedBox(width: 14),
           // 应用名称

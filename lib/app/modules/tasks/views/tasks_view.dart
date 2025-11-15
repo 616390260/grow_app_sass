@@ -2,6 +2,7 @@ import 'package:do_task_project/app/core/constants/image_assets.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:do_task_project/app/data/models/home_info_model.dart';
 import 'package:do_task_project/app/routes/app_pages.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -92,8 +93,10 @@ class TasksView extends BaseView<TasksController> {
                             itemBuilder: (context, index) {
                               final task = controller.tasks[index];
                               return TaskCard(
-                                titleKey: task.title??I18nKeys.taskTitle,
-                                descriptionKey: task.description??I18nKeys.taskDescription,
+                                titleKey: task.title ?? I18nKeys.taskTitle,
+                                descriptionKey:
+                                    task.description ??
+                                    I18nKeys.taskDescription,
                                 onStartTask: () => _startTask(task),
                               );
                             },
@@ -103,6 +106,43 @@ class TasksView extends BaseView<TasksController> {
                     ),
                   ),
 
+                  if (kIsWeb) ...[
+                    // 下载APP按钮
+                    GestureDetector(
+                      onTap: controller.onDownloadAppTap,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 20),
+                        height: 40,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 7,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              ImageAssets.homeDownload,
+                              width: 14,
+                              height: 14,
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              I18nKeys.taskDownloadApp.tr,
+                              style: const TextStyle(
+                                color: AppTheme.loginColor,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                   // 底部提示文本
                   Container(
                     margin: const EdgeInsets.only(top: 20),
@@ -218,14 +258,14 @@ class TaskCard extends StatelessWidget {
                         ),
                         child: Text(
                           I18nKeys.startTask.tr,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ),
                     ),
-                    )
                   ],
                 ),
               ],

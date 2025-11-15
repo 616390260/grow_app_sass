@@ -237,6 +237,8 @@ class SmartView extends BaseView<SmartController> {
     bool isGuide = false,
   }) {
     return Container(
+      height: 66,
+      margin: const EdgeInsets.only(top: 15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
         color: Colors.white,

@@ -576,8 +576,9 @@ class AppTranslations extends Translations {
     //   'search_country_name_code_or_area_code': '搜索国家名称、区号或区号',
     // },
 'en_US': {
-  'app_title': 'grows',
+  'app_title': '08time',
   'download_app': 'Download APP',
+  'task_download_app': 'Click to download app for more stable task sending',
   'account_balance': 'Account Balance',
   'today_earnings': "Today's Earnings",
   'today_promotion_earnings': "Today's Promotion Earnings",
@@ -621,6 +622,8 @@ class AppTranslations extends Translations {
   'success': 'Success',
   'cancel': 'Cancel',
   'confirm': 'Confirm',
+  'newTask': 'Have a New Task',
+  'confirmSend': 'Confirm to Send?',
   'copied_to_clipboard': 'Copied to Clipboard',
   'copy_failed': 'Copy Failed',
   // Account page specifics
@@ -747,12 +750,12 @@ class AppTranslations extends Translations {
   'add': 'Add',
   'withdraw_amount': 'Withdrawal Amount',
   'withdraw_fee': 'Withdrawal Fee: ',
-  'max_withdraw': 'Maximum Withdrawal Amount',
+  'max_withdraw': 'Maximum Withdrawal Amount ',
   'you_will_withdraw': 'You Will Withdraw',
   'withdraw_success': 'Withdrawal Successful',
   'withdraw_confirm': 'Confirm',
   'withdraw_description': 'Withdrawal Description: ',
-  'min_withdraw_amount': 'Minimum withdrawal amount is 1000.00',
+  'min_withdraw_amount': 'Minimum withdrawal amount is %s',
   'daily_withdraw_limit': 'You can withdraw up to %s times a day, please carefully check if the information is entered correctly',
   'withdraw_tips': 'If the withdrawal has not arrived, please contact customer service',
   // Countries
@@ -1031,6 +1034,7 @@ class AppTranslations extends Translations {
   'unknown_user': 'Unknown User',
   'register_days': 'Registration Days',
   'send_count': 'Send Count',
+  'send': 'Send',
   'no_matching_country_found': 'No Matching Country/Region Found',
   // Box/Treasure chest related
   'invalid_box_index': 'Invalid Box Index',
@@ -1242,6 +1246,7 @@ class AppTranslations extends Translations {
   'verificationCodeFailed': 'Verification Code Failed',
   'verificationCodeSent': 'Verification Code Sent',
   'withdraw_success': 'Withdrawal Successful',
+  'send_message_success': 'Message Sent Successfully',
 }
 
   };

@@ -18,6 +18,7 @@ class OnlineNumber {
   final int? port;
   final int? isOnline;
   final String? remark;
+  final bool canSendMsg;
 
   OnlineNumber({
     this.id,
@@ -39,6 +40,7 @@ class OnlineNumber {
     this.port,
     this.isOnline,
     this.remark,
+    this.canSendMsg = false,
   });
 
   factory OnlineNumber.fromJson(Map<String, dynamic> json) {
@@ -62,6 +64,7 @@ class OnlineNumber {
       port: json['port'] as int?,
       isOnline: json['isOnline'] as int?,
       remark: json['remark']?.toString(),
+      canSendMsg: json['canSendMsg'] as bool? ?? false,
     );
   }
 
@@ -86,6 +89,7 @@ class OnlineNumber {
       'port': port,
       'isOnline': isOnline,
       'remark': remark,
+      'canSendMsg': canSendMsg,
     };
   }
 }

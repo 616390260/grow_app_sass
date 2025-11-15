@@ -316,7 +316,7 @@ class WithdrawalOrdersView extends BaseView<WithdrawalOrdersController> {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    order.status ?? '',
+                    _getStatusText(order.status ?? ''),
                     style: TextStyle(
                       fontSize: 14,
                       color: _getStatusColor(order.status ?? ''),
@@ -355,14 +355,30 @@ class WithdrawalOrdersView extends BaseView<WithdrawalOrdersController> {
   // 根据状态获取对应颜色
   Color _getStatusColor(String status) {
     // 适配不同的状态文本
-    if (status.contains(I18nKeys.statusSuccess.tr) || status.contains(I18nKeys.statusArrived.tr)) {
+    if (status.contains(I18nKeys.statusSuccess.tr) || status.contains(I18nKeys.statusArrived.tr) || status == '2' || status == '成功') {
       return AppTheme.primaryColor;
-    } else if (status.contains(I18nKeys.statusProcessing.tr) || status.contains(I18nKeys.statusPending.tr)) {
+    } else if (status.contains(I18nKeys.statusProcessing.tr) || status.contains(I18nKeys.statusPending.tr) || status == '0' || status == '1' || status == '待处理' || status == '出款中') {
       return AppTheme.vipOrange; // 使用现有的橙色
-    } else if (status.contains(I18nKeys.processingFailed.tr) || status.contains(I18nKeys.statusRejected.tr)) {
+    } else if (status.contains(I18nKeys.processingFailed.tr) || status.contains(I18nKeys.statusRejected.tr) || status == '3' || status == '失败') {
       return AppTheme.ff6a6aColor; // 使用现有的红色
     } else {
       return AppTheme.sixColor;
+    }
+  }
+  
+  // 根据数字状态获取中文描述
+  String _getStatusText(String status) {
+    switch (status) {
+      case '0':
+        return I18nKeys.statusPending.tr;
+      case '1':
+        return I18nKeys.statusProcessing.tr;
+      case '2':
+        return I18nKeys.statusArrived.tr;
+      case '3':
+        return I18nKeys.statusRejected.tr;
+      default:
+        return status; // 如果不是数字状态，返回原始值
     }
   }
 

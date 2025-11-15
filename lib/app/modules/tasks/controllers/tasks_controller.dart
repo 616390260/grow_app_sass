@@ -1,4 +1,6 @@
+import 'package:do_task_project/app/data/services/home_api_service.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../../../data/services/task_center_api_service.dart';
@@ -6,7 +8,7 @@ import '../../../data/models/home_info_model.dart';
 class TasksController extends BaseController {
   final tasks = <RecommendTaskModel>[].obs;
   final TaskCenterApiService _taskApiService = TaskCenterApiService();
-  
+    final HomeApiService _homeApiService = HomeApiService();
   // 分页相关
   final int _limit = 20;
   int _page = 1;
@@ -69,4 +71,40 @@ class TasksController extends BaseController {
   
   /// 是否还有更多数据
   bool get hasMore => _hasMore;
+
+  // 下载APP按钮点击
+  void onDownloadAppTap() async {
+    try {
+      // 显示加载提示
+
+      // Web平台下调用API获取下载链接
+      if (GetPlatform.isWeb) {
+        final downloadUrl = await safeApiCall(
+          () => _homeApiService.getApkDownloadUrl(),
+          null,
+        );
+
+        if (downloadUrl != null) {
+          // 假设API返回格式为 {"url": "下载链接"}
+          if (downloadUrl.isNotEmpty) {
+            final Uri url = Uri.parse(downloadUrl);
+            if (await canLaunchUrl(url)) {
+              await launchUrl(url, mode: LaunchMode.externalApplication);
+            } else {
+              // 下载链接无法打开时的提示
+              Get.snackbar(I18nKeys.downloadFailed.tr, I18nKeys.unableToOpenUrl.tr);
+            }
+          } else {
+            // 下载链接为空时的提示
+            Get.snackbar(I18nKeys.downloadFailed.tr, I18nKeys.downloadLinkEmpty.tr);
+          }
+        }
+      } 
+    } catch (e) {
+      // 错误处理
+      Get.snackbar(I18nKeys.downloadFailed.tr, e.toString());
+    } finally {
+      // 隐藏加载提示
+    }
+  }
 }

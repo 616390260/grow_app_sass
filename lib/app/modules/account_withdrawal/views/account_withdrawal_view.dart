@@ -218,14 +218,14 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
               ),
             ),
             const SizedBox(width: 10),
-            Text(
+            Obx(() => Text(
               '${I18nKeys.withdrawFee.tr}${controller.selectedCountry.value.fee?.toStringAsFixed(0)}${I18nKeys.points.tr}',
               style: TextStyle(
                 fontSize: 14,
                 color: AppTheme.ff6a6aColor,
                 fontWeight: FontWeight.w500,
               ),
-            ),
+            )),
           ],
         ),
         const SizedBox(height: 12),

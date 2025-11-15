@@ -51,7 +51,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
                     onPressed: () => Get.back(),
                   ),
                   Expanded(
@@ -101,7 +101,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                       const SizedBox(height: 11),
                       _buildStatisticsSection(),
                       const SizedBox(height: 16),
-                      
+
                       // 教程视频和步骤说明 - 只在web端显示
                       if (kIsWeb) ...[
                         _buildVideoSection(),
@@ -126,7 +126,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                         ),
                         const SizedBox(height: 15),
                       ],
-                      
+
                       // WhatsApp绑定
                       _buildBindingSection(context),
                       // 在线号码
@@ -251,7 +251,9 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                 }
 
                 if (controller.filteredCountryCodes.isEmpty) {
-                  return Center(child: Text(I18nKeys.noMatchingCountryFound.tr));
+                  return Center(
+                    child: Text(I18nKeys.noMatchingCountryFound.tr),
+                  );
                 }
 
                 return ListView.builder(
@@ -267,7 +269,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                         ),
                       ),
                       title: Text(
-                        '${country['name']} (${country['en']})',
+                        '${country['en']}',
                         style: const TextStyle(
                           fontSize: 14,
                           color: AppTheme.threeColor,
@@ -385,24 +387,14 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
             child: Obx(() {
               if (Get.find<WhatsappTaskController>().isVideoInitialized.value) {
                 return AspectRatio(
-                  aspectRatio: controller
-                      .videoController
-                      .value
-                      .aspectRatio,
+                  aspectRatio: controller.videoController.value.aspectRatio,
                   child: Stack(
                     children: [
-                      VideoPlayer(
-                        controller.videoController,
-                      ),
+                      VideoPlayer(controller.videoController),
                       // 播放/暂停按钮覆盖层
                       Center(
                         child: AnimatedOpacity(
-                          opacity:
-                              controller
-                                  .isPlaying
-                                  .value
-                              ? 1.0
-                              : 0.0,
+                          opacity: controller.isPlaying.value ? 1.0 : 0.0,
                           duration: const Duration(milliseconds: 300),
                           child: InkWell(
                             onTap: () {
@@ -521,16 +513,12 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
               color: AppTheme.f9f9f9Color,
               borderRadius: BorderRadius.circular(5),
             ),
-            child: Row(
-              children: [
-                Text(
-                  I18nKeys.continueBindingSteps.tr,
-                  style: const TextStyle(
-                    color: AppTheme.primaryColor,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
+            child: Text(
+              I18nKeys.continueBindingSteps.tr,
+              style: const TextStyle(
+                color: AppTheme.primaryColor,
+                fontSize: 12,
+              ),
             ),
           ),
         ),
@@ -560,18 +548,18 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                   color: AppTheme.threeColor,
                 ),
               ),
-              GestureDetector(
-                onTap: () {
-                  // 收起逻辑
-                },
-                child: Text(
-                  I18nKeys.collapse.tr,
-                  style: const TextStyle(
-                    color: AppTheme.nineColor,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
+              // GestureDetector(
+              //   onTap: () {
+              //     // 收起逻辑
+              //   },
+              //   child: Text(
+              //     I18nKeys.collapse.tr,
+              //     style: const TextStyle(
+              //       color: AppTheme.nineColor,
+              //       fontSize: 12,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
           const SizedBox(height: 28),
@@ -712,14 +700,8 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                   ),
                 ),
               ),
+
               // 复制按钮
-              Positioned(
-                right: 0,  
-                child: GestureDetector(
-                onTap: controller.copyVerificationCode,
-                child:  Icon(Icons.copy, size: 20, color: AppTheme.nineColor),
-              ),
-              )
             ],
           ),
           const SizedBox(height: 15),
@@ -749,6 +731,11 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
       children: [
         // 验证码输入区域
         _buildVerificationCodeInput(),
+        const SizedBox(width: 8),
+        GestureDetector(
+          onTap: controller.copyVerificationCode,
+          child: Icon(Icons.copy, size: 20, color: AppTheme.nineColor),
+        ),
       ],
     );
   }
@@ -766,8 +753,8 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
     return Obx(() {
       final code = controller.verificationCode.value;
       return Container(
-        width: 35,
-        height: 35,
+        width: 30,
+        height: 30,
         margin: const EdgeInsets.only(left: 2),
         decoration: BoxDecoration(
           border: Border.all(color: AppTheme.dddColor, width: 1),
@@ -786,25 +773,26 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
       );
     });
   }
+
   /// 计算相对时间（当前时间减去最后登录时间，精确到秒）
   String _formatRelativeTime(String? lastLoginTime) {
     if (lastLoginTime == null || lastLoginTime.isEmpty) {
       return '';
     }
-    
+
     try {
       // 解析最后登录时间
       final loginTime = DateTime.parse(lastLoginTime);
       final now = DateTime.now();
       final difference = now.difference(loginTime);
-      
+
       // 计算时间差，精确到秒
       if (difference.inDays > 0) {
-        return '${difference.inDays}${I18nKeys.daysAgo.tr}${difference.inHours % 24}${I18nKeys.hoursAgo.tr}';
+        return '${difference.inDays}${I18nKeys.daysAgo.tr}';
       } else if (difference.inHours > 0) {
-        return '${difference.inHours}${I18nKeys.hoursAgo.tr}${difference.inMinutes % 60}${I18nKeys.minutesAgo.tr}';
+        return '${difference.inHours}${I18nKeys.hoursAgo.tr}';
       } else if (difference.inMinutes > 0) {
-        return '${difference.inMinutes}${I18nKeys.minutesAgo.tr}${difference.inSeconds % 60}${I18nKeys.secondsAgo.tr}';
+        return '${difference.inMinutes}${I18nKeys.minutesAgo.tr}';
       } else if (difference.inSeconds > 0) {
         return '${difference.inSeconds}${I18nKeys.secondsAgo.tr}';
       } else {
@@ -921,17 +909,78 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                               ),
                             ],
                           ),
-                          Row(
-                            children: List.generate(3, (i) {
-                              return Icon(
-                                Icons.star,
-                                size: 14,
-                                color: i < (onlineNumber.rating ?? 0)
-                                    ? Colors.orange
-                                    : Colors.grey.shade300,
-                              );
-                            }),
-                          ),
+                          GetPlatform.isWeb
+                              ? Row(
+                                  children: List.generate(3, (i) {
+                                    return Icon(
+                                      Icons.star,
+                                      size: 14,
+                                      color: i < (onlineNumber.rating ?? 0)
+                                          ? Colors.orange
+                                          : Colors.grey.shade300,
+                                    );
+                                  }),
+                                )
+                              : GestureDetector(
+                                  onTap: () {
+                                    if (onlineNumber.canSendMsg == false) {
+                                      return;
+                                    }
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text(I18nKeys.newTask.tr),
+                                          content: Text(
+                                            I18nKeys.confirmSend.tr,
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text(I18nKeys.cancel.tr),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                controller.sendWhatsAppMessage(onlineNumber.id ?? '');
+                                                Navigator.of(context).pop();
+                                                // 这里可以添加发送消息的逻辑
+                                              },
+                                              child: Text(I18nKeys.confirm.tr),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 9,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: onlineNumber.canSendMsg == false ? Colors.grey.shade300 : null,
+                                      gradient: onlineNumber.canSendMsg == false ? null : const LinearGradient(
+                                        colors: [
+                                          Color(0xFF47B9F2),
+                                          Color(0xFF477DF2),
+                                        ],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                      ),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Text(
+                                      I18nKeys.send.tr,
+                                      style: TextStyle(
+                                        color:  Colors.white,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                         ],
                       ),
                     ),
@@ -949,7 +998,9 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                     if (index != onlineNumbers.length - 1)
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 15),
-                        height: 0.5, color: AppTheme.lineColor),
+                        height: 0.5,
+                        color: AppTheme.lineColor,
+                      ),
                   ],
                 );
               },
@@ -959,4 +1010,5 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
       ),
     );
   }
+  
 }

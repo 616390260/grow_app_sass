@@ -9,6 +9,8 @@ class I18nKeys {
   static const success = 'success';
   static const cancel = 'cancel';
   static const confirm = 'confirm';
+  static const newTask = 'newTask';
+  static const confirmSend = 'confirmSend';
   static const copiedToClipboard = 'copied_to_clipboard';
   static const copyFailed = 'copy_failed';
   static const downloadFailed = 'download_failed';
@@ -18,6 +20,7 @@ class I18nKeys {
 
   // Home
   static const downloadApp = 'download_app';
+  static const taskDownloadApp = 'task_download_app';
   static const accountBalance = 'account_balance';
   static const todayEarnings = 'today_earnings';
   static const todayPromotionEarnings = 'today_promotion_earnings';
@@ -395,6 +398,11 @@ class I18nKeys {
   
   // Button texts
   static const buttonAdd = 'button_add';
+  
+  // WhatsApp Message
+  static const invalidIdError = 'invalid_id_error';
+  static const sendMessageSuccess = 'send_message_success';
+  static const sendMessageFailed = 'send_message_failed';
   static const buttonEdit = 'button_edit';
   static const buttonDelete = 'button_delete';
   static const buttonSave = 'button_save';
@@ -559,6 +567,7 @@ class I18nKeys {
   static const growthValue = 'growth_value';
   static const registerDays = 'register_days';
   static const sendCount = 'send_count';
+  static const send = 'send';
   static const countryRegion = 'country_region';
   static const operationSuccess = 'operation_success';
   static const consecutiveSignIn7Days = 'consecutive_sign_in_7_days';

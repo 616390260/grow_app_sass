@@ -30,7 +30,7 @@ class AccountWithdrawalController extends BaseController {
   final int withdrawalFee = 200;
 
   // 最低提现金额
-  final int minWithdrawalAmount = 1000;
+  RxInt minWithdrawalAmount = 1000.obs;
 
   // 提现配置（响应式）
   Rx<WithdrawalSetting> withdrawalSetting = WithdrawalSetting().obs;
@@ -143,6 +143,8 @@ class AccountWithdrawalController extends BaseController {
     selectedCountry.value = country;
     // 选择国家变化时更新最大提现金额
     maxAmount.value = availableBalance.value - (selectedCountry.value.fee?.toInt()??0);
+    minWithdrawalAmount.value = selectedCountry.value.minAmount?.toInt()??0;
+    debugPrint('选择国家: ${selectedCountry.value.payName}, 最大提现金额: $maxAmount , min: ${minWithdrawalAmount.value}, fee: ${selectedCountry.value.fee?.toInt()??0}');
   }
 
   // 设置提现金额
@@ -184,7 +186,7 @@ class AccountWithdrawalController extends BaseController {
       double amount = double.parse(withdrawAmount.value);
       // 使用配置中的最大提现金额（如果有），否则使用实际可用余额
       
-      return amount >= minWithdrawalAmount && amount <= maxAmount.value;
+      return amount >= minWithdrawalAmount.value && amount <= maxAmount.value;
     } catch (e) {
       return false;
     }

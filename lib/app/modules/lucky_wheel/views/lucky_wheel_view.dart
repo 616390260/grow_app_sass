@@ -58,7 +58,7 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
           GestureDetector(
             onTap: () => Get.back(),
             child: const Icon(
-              Icons.arrow_back_ios,
+              Icons.arrow_back,
               color: Colors.white,
               size: 24,
             ),

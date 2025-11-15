@@ -101,9 +101,8 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // "已连续签到 7 天"
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Text(
                         I18nKeys.continuouslySignedInFor.tr,
@@ -118,7 +117,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                         '$streak',
                         style: const TextStyle(
                           color: AppTheme.signYellowColor,
-                          fontSize: 22,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -133,11 +132,10 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   // "再连续 7 天领 5000 积分" 胶囊
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Text(
                         I18nKeys.signInAgainFor.tr,
@@ -147,6 +145,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
+                      const SizedBox(width: 4),
                       Text(
                         '$remaining',
                         style: const TextStyle(
@@ -155,6 +154,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
+                      const SizedBox(width: 4),
                       Text(
                         I18nKeys.daysToClaim.tr,
                         style: const TextStyle(
@@ -163,6 +163,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
+                      const SizedBox(width: 4),
                       Text(
                         '${rewardPoints} ',
                         style: const TextStyle(
@@ -185,7 +186,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
               ),
             ),
             // 右侧图片
-            Image.asset(ImageAssets.signBg, width: 145, height: 110),
+            Image.asset(ImageAssets.signBg, width: 125, height: 100),
           ],
         ),
       );
