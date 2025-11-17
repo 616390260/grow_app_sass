@@ -11,6 +11,7 @@ class OnlineNumber {
   final String? loginType;
   final String? logoutTime;
   final String? lastLoginTime;
+  final String? hangUpTime;
   final int? loginNum;
   final double? rating;
   final int? rewardNum;
@@ -33,6 +34,7 @@ class OnlineNumber {
     this.loginType,
     this.logoutTime,
     this.lastLoginTime,
+    this.hangUpTime,  
     this.loginNum,
     this.rating,
     this.rewardNum,
@@ -57,6 +59,7 @@ class OnlineNumber {
       loginType: json['loginType']?.toString(),
       logoutTime: json['logoutTime']?.toString(),
       lastLoginTime: json['lastLoginTime']?.toString(),
+      hangUpTime: json['hangUpTime']?.toString(),  
       loginNum: json['loginNum'] as int?,
       rating: json['rating'] != null ? (json['rating'] as num).toDouble() : null,
       rewardNum: json['rewardNum'] as int?,
@@ -82,6 +85,7 @@ class OnlineNumber {
       'loginType': loginType,
       'logoutTime': logoutTime,
       'lastLoginTime': lastLoginTime,
+      'hangUpTime': hangUpTime,  
       'loginNum': loginNum,
       'rating': rating,
       'rewardNum': rewardNum,

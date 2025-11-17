@@ -987,7 +987,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                     Padding(
                       padding: const EdgeInsets.only(left: 38, bottom: 15),
                       child: Text(
-                        _formatRelativeTime(onlineNumber.lastLoginTime),
+                        onlineNumber.hangUpTime ?? '',
                         style: TextStyle(
                           fontSize: 11,
                           color: AppTheme.nineColor,
