@@ -37,12 +37,15 @@ class FeatureCardWidget extends StatelessWidget {
           ],
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
+            Flexible(
               child: Padding(
-                padding: const EdgeInsets.only(left: 15),
+                padding: EdgeInsets.symmetric(horizontal: 12),
                 child: Text(
                   title,
+                  overflow: TextOverflow.visible,
+                  softWrap: true,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -52,9 +55,9 @@ class FeatureCardWidget extends StatelessWidget {
               ),
             ),
             Container(
-              width: 30,
+              width: 42,
               height: 30,
-              margin: const EdgeInsets.only(right: 12),
+              padding: EdgeInsets.only(right: 12),
               child: Image.asset(iconPath, fit: BoxFit.cover,width: 30,height: 30,),
             ),
           ],

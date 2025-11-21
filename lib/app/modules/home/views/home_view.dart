@@ -7,10 +7,12 @@ import 'package:do_task_project/app/modules/home/views/widgets/banner_carousel_w
 import 'package:do_task_project/app/modules/home/views/widgets/feature_card_widget.dart';
 import 'package:do_task_project/app/modules/home/views/widgets/task_card_widget.dart';
 import 'package:do_task_project/app/modules/vip_details/components/vip_badge.dart';
+import 'package:do_task_project/app/data/models/home_info_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart';
 
 class HomeView extends BaseView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
@@ -49,6 +51,16 @@ class HomeView extends BaseView<HomeController> {
         physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
           children: [
+            Obx(() {
+              final pa = controller.popupAnnouncement.value;
+              if (pa != null && !controller.hasPopupShown) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _showPopup(context, pa);
+                  controller.markPopupShown();
+                });
+              }
+              return const SizedBox.shrink();
+            }),
             // 添加状态栏高度的间距
             SizedBox(height: MediaQuery.of(context).padding.top),
             _buildHeader(),
@@ -82,7 +94,12 @@ class HomeView extends BaseView<HomeController> {
           // 应用图标
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.asset(ImageAssets.logo, width: 50, height: 50, fit: BoxFit.cover),
+            child: Image.asset(
+              ImageAssets.logo,
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+            ),
           ),
           const SizedBox(width: 14),
           // 应用名称
@@ -117,7 +134,10 @@ class HomeView extends BaseView<HomeController> {
             GestureDetector(
               onTap: controller.onDownloadAppTap,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 7,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25),
@@ -125,7 +145,11 @@ class HomeView extends BaseView<HomeController> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(ImageAssets.homeDownload, width: 14, height: 14),
+                    Image.asset(
+                      ImageAssets.homeDownload,
+                      width: 14,
+                      height: 14,
+                    ),
                     const SizedBox(width: 2),
                     Text(
                       I18nKeys.downloadApp.tr,
@@ -139,7 +163,6 @@ class HomeView extends BaseView<HomeController> {
               ),
             ),
           ],
-        
         ],
       ),
     );
@@ -273,10 +296,11 @@ class HomeView extends BaseView<HomeController> {
               ),
             ],
           ),
-          if (!kIsWeb) ...[
-            const SizedBox(height: 15),
-            Row(
-              children: [
+
+          const SizedBox(height: 15),
+          Row(
+            children: [
+              if (!kIsWeb) ...[
                 Expanded(
                   child: FeatureCardWidget(
                     title: I18nKeys.callCenter.tr,
@@ -290,21 +314,21 @@ class HomeView extends BaseView<HomeController> {
                   ),
                 ),
                 const SizedBox(width: 18),
-                Expanded(
-                  child: FeatureCardWidget(
-                    title: I18nKeys.inviteFriend.tr,
-                    iconPath: ImageAssets.homeInvite,
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFFE4C0), Color(0xFFFFF2E0)],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ),
-                    onTap: controller.onInviteFriendTap,
-                  ),
-                ),
               ],
-            ),
-          ],
+              Expanded(
+                child: FeatureCardWidget(
+                  title: I18nKeys.inviteFriend.tr,
+                  iconPath: ImageAssets.homeInvite,
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFFE4C0), Color(0xFFFFF2E0)],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  onTap: controller.onInviteFriendTap,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -353,4 +377,83 @@ class HomeView extends BaseView<HomeController> {
       ),
     );
   }
+}
+
+
+void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
+  Get.dialog(
+    Center(
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.82,
+        margin: const EdgeInsets.symmetric(horizontal: 30),
+        padding: const EdgeInsets.only(
+          left: 19,
+          top: 11,
+          right: 19,
+          bottom: 30,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 关闭按钮 - 靠右对齐
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onTap: () => Get.back(),
+                  child: const Icon(
+                    Icons.close,
+                    size: 20,
+                    color: AppTheme.nineColor,
+                  ),
+                ),
+              ],
+            ),
+           
+            // 标题 - 左对齐
+            Center(
+              child: Text(
+                pa.title ?? '',
+                maxLines: 2,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.threeColor,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // 内容 - 左对齐
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.6,
+              ),
+              child: SingleChildScrollView(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    pa.content ?? '',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      height: 1.5,
+                      fontWeight: FontWeight.w500,
+                      color: AppTheme.sixColor,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }

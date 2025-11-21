@@ -15,19 +15,19 @@ class ValidUsersApiService {
         'status': status,
       };
 
-      debugPrint('请求邀请信息API: $_getInviteInfoEndpoint, 参数: $queryParameters');
+      // 请求邀请信息API: $_getInviteInfoEndpoint, 参数: $queryParameters
       
       final responseData = await _httpService.get<Map<String, dynamic>>(
         _getInviteInfoEndpoint,
         queryParameters: queryParameters,
       );
       
-      debugPrint('获取到邀请信息响应: $responseData');
+      // 获取到邀请信息响应: $responseData
       
       // 转换数据模型
       return InviteInfoResponseModel.fromJson(responseData);
     } catch (e) {
-      debugPrint('获取邀请信息异常: $e');
+      // 获取邀请信息异常: $e
       rethrow;
     }
   }

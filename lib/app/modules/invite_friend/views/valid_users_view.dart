@@ -33,9 +33,10 @@ class ValidUsersView extends BaseView<ValidUsersController> {
           statusBarBrightness: Brightness.dark,
         ),
       ),
-      body: Expanded(
+      body: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
         child: Column(
-          children: [
+          children:[
             // 蓝色渐变背景头部
             Container(
               decoration: BoxDecoration(
@@ -210,7 +211,7 @@ class ValidUsersView extends BaseView<ValidUsersController> {
                                 decoration: BoxDecoration(
                                   border: Border(
                                     bottom:
-                                        index < controller.validUsers.length 
+                                        index < controller.validUsers.length - 1 
                                         ? BorderSide(
                                             color: const Color(0xFFF0F0F0),
                                             width: 0.5,
@@ -234,7 +235,7 @@ class ValidUsersView extends BaseView<ValidUsersController> {
                                     Expanded(
                                       flex: 2,
                                       child: Text(
-                                        user.sendCount.toString(),
+                                        (user.sendCount ?? 0).toString(),
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: AppTheme.primaryColor,

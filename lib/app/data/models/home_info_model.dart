@@ -33,6 +33,10 @@ class HomeInfoModel {
   @JsonKey(name: 'vipLevel')
   final String? vipLevel;
 
+  /// 弹窗公告
+  @JsonKey(name: 'popupAnnouncement')
+  final PopupAnnouncementModel? popupAnnouncement;
+
   HomeInfoModel({
     this.domainName,
     this.accountPoints,
@@ -41,6 +45,7 @@ class HomeInfoModel {
     this.todayIncome,
     this.todayPromotionIncome,
     this.vipLevel,
+    this.popupAnnouncement,
   });
 
   factory HomeInfoModel.fromJson(Map<String, dynamic> json) =>
@@ -322,4 +327,76 @@ class OldRecommendTaskModel {
       _$OldRecommendTaskModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$OldRecommendTaskModelToJson(this);
+}
+
+/// 弹窗公告模型
+@JsonSerializable()
+class PopupAnnouncementModel {
+  @JsonKey(name: 'createBy')
+  final String? createBy;
+
+  @JsonKey(name: 'createTime')
+  final String? createTime;
+
+  @JsonKey(name: 'updateBy')
+  final String? updateBy;
+
+  @JsonKey(name: 'updateTime')
+  final String? updateTime;
+
+  @JsonKey(name: 'remark')
+  final String? remark;
+
+  @JsonKey(name: 'id')
+  final int? id;
+
+  @JsonKey(name: 'title')
+  final String? title;
+
+  @JsonKey(name: 'content')
+  final String? content;
+
+  @JsonKey(name: 'sort')
+  final int? sort;
+
+  @JsonKey(name: 'status')
+  final String? status;
+
+  @JsonKey(name: 'delFlag')
+  final String? delFlag;
+
+  @JsonKey(name: 'type')
+  final String? type;
+
+  @JsonKey(name: 'hyperLink')
+  final String? hyperLink;
+
+  @JsonKey(name: 'iosHyperLink')
+  final String? iosHyperLink;
+
+  @JsonKey(name: 'image')
+  final String? image;
+
+  PopupAnnouncementModel({
+    this.createBy,
+    this.createTime,
+    this.updateBy,
+    this.updateTime,
+    this.remark,
+    this.id,
+    this.title,
+    this.content,
+    this.sort,
+    this.status,
+    this.delFlag,
+    this.type,
+    this.hyperLink,
+    this.iosHyperLink,
+    this.image,
+  });
+
+  factory PopupAnnouncementModel.fromJson(Map<String, dynamic> json) =>
+      _$PopupAnnouncementModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PopupAnnouncementModelToJson(this);
 }

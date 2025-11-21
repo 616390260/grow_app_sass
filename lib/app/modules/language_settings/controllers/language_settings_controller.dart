@@ -15,11 +15,11 @@ class LanguageSettingsController extends BaseController {
   final List<LanguageOption> options = const [
     LanguageOption(label: '简体中文', locale: Locale('zh', 'CN')),
     LanguageOption(label: 'English', locale: Locale('en', 'US')),
-    LanguageOption(label: 'Indonesia/ID', locale: Locale('id', 'ID')),
+    LanguageOption(label: 'Indonesia', locale: Locale('id', 'ID')),
     LanguageOption(label: 'Bangladesh', locale: Locale('bn', 'BD')),
-    LanguageOption(label: 'Brazil/pt-BR', locale: Locale('pt', 'BR')),
-    LanguageOption(label: 'India/hi-IN', locale: Locale('hi', 'IN')),
-    LanguageOption(label: 'Mexico/es-ES', locale: Locale('es', 'MX')),
+    LanguageOption(label: 'Brazil', locale: Locale('pt', 'BR')),
+    LanguageOption(label: 'India', locale: Locale('hi', 'IN')),
+    LanguageOption(label: 'Mexico', locale: Locale('es', 'MX')),
   ];
 
   bool isSelected(Locale locale) {

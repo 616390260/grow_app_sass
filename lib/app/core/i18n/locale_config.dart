@@ -28,9 +28,9 @@ class LocaleConfig {
       final locale = Locale(languageCode, countryCode);
       if (isSupported(locale)) return locale;
     }
-    return defaultLocale;
-    // final device = Get.deviceLocale;
-    // return device != null && isSupported(device) ? device : defaultLocale;
+    // return defaultLocale;
+    final device = Get.deviceLocale;
+    return device != null && isSupported(device) ? device : defaultLocale;
   }
 
   static Future<void> updateLocale(Locale locale) async {

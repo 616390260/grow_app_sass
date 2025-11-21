@@ -49,7 +49,7 @@ class ValidUsersController extends BaseController {
               account: inviteUser.account,
               points: inviteUser.points,
               createTime: inviteUser.createTime,
-              sendCount: 0, // API返回的数据中没有sendCount字段，使用默认值
+              sendCount: inviteUser.points ?? 0, // 使用points作为sendCount的值
             );
           }).toList();
           

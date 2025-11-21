@@ -204,46 +204,128 @@ class PaymentMethodView extends BaseView<PaymentMethodController> {
   // 显示银行选择对话框
   void _showBankSelectDialog() {
     print('打开银行选择弹窗，当前银行列表数量: ${controller.bankList.length}');
-    showModalBottomSheet(
-      context: Get.context!,
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                I18nKeys.selectBank.tr,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.threeColor,
+    
+    // 初始化搜索状态
+    controller.searchKeyword.value = '';
+    controller.filteredBankList.value = controller.bankList;
+    
+    Get.bottomSheet(
+      Container(
+        height: Get.height * 0.7,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          ),
+        ),
+        child: Column(
+          children: [
+            // 标题栏
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: Colors.grey.shade200, width: 1),
                 ),
               ),
-              const SizedBox(height: 16),
-              Obx(() {
-                return Container(
-                  height: 300,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: controller.bankList.map((bank) {
-                        return _buildBankItem(
-                          bank.name,
-                          controller.bankName.value,
-                          () {
-                            controller.setSelectedBank(bank.name, bank.id);
-                            Get.back();
-                          },
-                        );
-                      }).toList(),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    I18nKeys.selectBank.tr,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.threeColor,
                     ),
                   ),
+                  GestureDetector(
+                    onTap: () => Get.back(),
+                    child: const Icon(
+                      Icons.close,
+                      size: 24,
+                      color: AppTheme.nineColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            // 搜索框
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: I18nKeys.searchBankName.tr,
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: AppTheme.nineColor,
+                  ),
+                  suffixIcon: Obx(() {
+                    if (controller.searchKeyword.isNotEmpty) {
+                      return GestureDetector(
+                        onTap: () {
+                          controller.clearSearch();
+                        },
+                        child: const Icon(
+                          Icons.clear,
+                          color: AppTheme.nineColor,
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  }),
+                  filled: true,
+                  fillColor: AppTheme.f9f9f9Color,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                ),
+                onChanged: (value) {
+                  controller.searchBanks(value);
+                },
+              ),
+            ),
+            
+            // 银行列表
+            Expanded(
+              child: Obx(() {
+                if (controller.filteredBankList.isEmpty) {
+                  return Center(
+                    child: Text(
+                      I18nKeys.noMatchingBankFound.tr,
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    ),
+                  );
+                }
+                
+                return ListView.builder(
+                  itemCount: controller.filteredBankList.length,
+                  itemBuilder: (context, index) {
+                    final bank = controller.filteredBankList[index];
+                    return _buildBankItem(
+                      bank.name,
+                      controller.bankName.value,
+                      () {
+                        controller.setSelectedBank(bank.name, bank.id);
+                        Get.back();
+                      },
+                    );
+                  },
                 );
               }),
-            ],
-          ),
-        );
-      },
+            ),
+          ],
+        ),
+      ),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
     );
   }
   

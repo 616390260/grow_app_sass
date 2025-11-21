@@ -646,5 +646,9 @@ class I18nKeys {
   static const messagesSent = 'messages_sent';
   static const unknownUser = 'unknown_user';
   
+  // Bank search
+  static const searchBankName = 'search_bank_name';
+  static const noMatchingBankFound = 'no_matching_bank_found';
+  
   
 }

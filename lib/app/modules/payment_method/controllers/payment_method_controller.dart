@@ -48,6 +48,12 @@ class PaymentMethodController extends BaseController {
   
   // 银行列表
   RxList<BankModel> bankList = <BankModel>[].obs;
+  // 过滤后的银行列表
+  RxList<BankModel> filteredBankList = <BankModel>[].obs;
+  // 选中的银行
+  var selectedBank = Rxn<BankModel>();
+  // 搜索关键字
+  var searchKeyword = ''.obs;
   
   // 加载银行列表
   Future<void> loadBankList() async {
@@ -57,6 +63,7 @@ class PaymentMethodController extends BaseController {
       // 成功回调
       (List<BankModel> bankDataList) {
         bankList.value = bankDataList;
+        filteredBankList.value = bankDataList; // 初始化过滤列表
         debugPrint('成功加载银行列表，共${bankDataList.length}条数据');
       },
       // 自定义错误消息
@@ -64,6 +71,25 @@ class PaymentMethodController extends BaseController {
       // 不显示加载状态
       showLoading: false,
     );
+  }
+
+  // 搜索银行
+  void searchBanks(String keyword) {
+    searchKeyword.value = keyword.toLowerCase();
+    if (keyword.isEmpty) {
+      filteredBankList.value = bankList;
+    } else {
+      filteredBankList.value = bankList.where((bank) =>
+        bank.name.toLowerCase().contains(searchKeyword.value)
+      ).toList();
+    }
+    print('搜索银行 - 关键词: $keyword, 结果数量: ${filteredBankList.length}');
+  }
+  
+  // 清除搜索
+  void clearSearch() {
+    searchKeyword.value = '';
+    filteredBankList.value = bankList;
   }
   
   // 设置选中的银行

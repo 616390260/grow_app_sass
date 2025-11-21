@@ -17,6 +17,10 @@ class HomeController extends BaseController {
   final recommendTasks = <RecommendTaskModel>[].obs;
   final domainName = ''.obs;
 
+  final Rxn<PopupAnnouncementModel> popupAnnouncement =
+      Rxn<PopupAnnouncementModel>();
+  bool _popupShown = false;
+
   final HomeApiService _homeApiService = HomeApiService();
 
   // 底部导航当前索引
@@ -43,6 +47,8 @@ class HomeController extends BaseController {
         domainName.value = homeInfo.domainName ?? '';
         announcements.value = homeInfo.announcements ?? [];
         recommendTasks.value = homeInfo.recommendTasks ?? [];
+
+        popupAnnouncement.value = homeInfo.popupAnnouncement;
 
         // 保留现有的accountBalance字段，暂时使用accountPoints的值
         accountBalance.value = homeInfo.accountPoints ?? 0;
@@ -101,14 +107,20 @@ class HomeController extends BaseController {
               await launchUrl(url, mode: LaunchMode.externalApplication);
             } else {
               // 下载链接无法打开时的提示
-              Get.snackbar(I18nKeys.downloadFailed.tr, I18nKeys.unableToOpenUrl.tr);
+              Get.snackbar(
+                I18nKeys.downloadFailed.tr,
+                I18nKeys.unableToOpenUrl.tr,
+              );
             }
           } else {
             // 下载链接为空时的提示
-            Get.snackbar(I18nKeys.downloadFailed.tr, I18nKeys.downloadLinkEmpty.tr);
+            Get.snackbar(
+              I18nKeys.downloadFailed.tr,
+              I18nKeys.downloadLinkEmpty.tr,
+            );
           }
         }
-      } 
+      }
     } catch (e) {
       // 错误处理
       Get.snackbar(I18nKeys.downloadFailed.tr, e.toString());
@@ -170,8 +182,13 @@ class HomeController extends BaseController {
       } catch (e) {
         print('拨打电话链接打开失败: $e');
       }
-    }else{
-       print('拨打电话链接链接为空');
+    } else {
+      print('拨打电话链接链接为空');
     }
+  }
+
+  bool get hasPopupShown => _popupShown;
+  void markPopupShown() {
+    _popupShown = true;
   }
 }
