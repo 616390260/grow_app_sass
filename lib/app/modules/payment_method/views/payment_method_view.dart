@@ -1,4 +1,5 @@
 import 'package:do_task_project/app/core/constants/image_assets.dart';
+import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -23,7 +24,14 @@ class PaymentMethodView extends BaseView<PaymentMethodController> {
       foregroundColor: Colors.black,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
-        onPressed: () => Get.back(),
+        onPressed: () {
+          if (Get.key.currentState!.canPop()) {
+            Get.back();
+          } else {
+            // 刷新后 fallback 到首页
+            Get.offAllNamed(Routes.root);
+          }
+        },
       ),
       // 沉浸式状态栏配置
       systemOverlayStyle: SystemUiOverlayStyle(
@@ -36,12 +44,12 @@ class PaymentMethodView extends BaseView<PaymentMethodController> {
   @override
   Widget buildContent(BuildContext context) {
     // 初始化时加载银行列表
-    if (controller.bankList.isEmpty) {
-      debugPrint('银行列表为空，开始加载银行列表...');
-      controller.loadBankList();
-    } else {
-      debugPrint('银行列表已加载，共${controller.bankList.length}条数据');
-    }
+    // if (controller.bankList.isEmpty) {
+    //   debugPrint('银行列表为空，开始加载银行列表...');
+    //   controller.loadBankList();
+    // } else {
+    //   debugPrint('银行列表已加载，共${controller.bankList.length}条数据');
+    // }
     
     return SingleChildScrollView(
       padding: const EdgeInsets.all(15),
@@ -123,7 +131,7 @@ class PaymentMethodView extends BaseView<PaymentMethodController> {
                 ),
                 _buildFormField(
                   label: I18nKeys.phoneNumber.tr,
-                  placeholder: I18nKeys.phoneNumberTip.tr,
+                  placeholder: I18nKeys.enterPhoneNumber.tr,
                   value: controller.phone,
                   onChanged: controller.setPhone,
                 ),

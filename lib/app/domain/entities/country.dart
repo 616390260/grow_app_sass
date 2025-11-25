@@ -1,3 +1,5 @@
+import 'package:do_task_project/app/data/models/bank_info_model.dart';
+
 class Country {
   final String id;
   final String name;
@@ -11,6 +13,7 @@ class Country {
   final String? className;
   final String? classNameLang;
   final String? recommend;
+  final BankInfo? bankInfo;
 
   const Country({
     required this.id,
@@ -25,5 +28,6 @@ class Country {
     this.className,
     this.classNameLang,
     this.recommend,
+    this.bankInfo,
   });
 }

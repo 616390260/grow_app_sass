@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'app/routes/app_pages.dart';
 import 'app/core/theme/app_theme.dart';
+import 'app/core/theme/responsive.dart';
 import 'app/core/bindings/global_binding.dart';
 import 'app/core/i18n/app_translations.dart';
 import 'app/core/i18n/locale_config.dart';
@@ -53,6 +54,10 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       debugShowCheckedModeBanner: false,
+      // 使用builder包装整个应用，确保在web端显示手机样式
+      builder: (context, child) {
+        return ResponsiveLayout(child: child!);
+      },
     );
   }
   

@@ -1,4 +1,5 @@
 import 'package:do_task_project/app/domain/entities/withdrawal_setting.dart';
+import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_controller.dart';
@@ -145,6 +146,7 @@ class AccountWithdrawalController extends BaseController {
     maxAmount.value = availableBalance.value - (selectedCountry.value.fee?.toInt()??0);
     minWithdrawalAmount.value = selectedCountry.value.minAmount?.toInt()??0;
     debugPrint('选择国家: ${selectedCountry.value.payName}, 最大提现金额: $maxAmount , min: ${minWithdrawalAmount.value}, fee: ${selectedCountry.value.fee?.toInt()??0}');
+    withdrawAmount.value = '';
   }
 
   // 设置提现金额
@@ -254,7 +256,12 @@ class AccountWithdrawalController extends BaseController {
           
           // 短暂延迟后返回上一页，确保用户能看到成功提示
           Future.delayed(const Duration(seconds: 1), () {
-            Navigator.pop(Get.context!);
+            if (Get.key.currentState!.canPop()) {
+              Get.back();
+            } else {
+              // 刷新后 fallback 到首页
+              Get.offAllNamed(Routes.root);
+            }
           });
         });
       },

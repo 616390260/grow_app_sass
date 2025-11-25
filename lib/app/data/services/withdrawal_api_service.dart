@@ -53,14 +53,12 @@ class WithdrawalApiService {
         queryParameters['timeType'] = timeRange;
       }
 
-      print('请求提现记录API: $_getWithdrawalRecordsEndpoint, 参数: $queryParameters');
       
       final responseData = await _httpService.get<Map<String, dynamic>>(
         _getWithdrawalRecordsEndpoint,
         queryParameters: queryParameters,
       );
       
-      print('获取到提现记录响应: $responseData');
       
       // 安全地转换数据模型
       return BaseListEntity<WithdrawalRecord>.fromJsonSafe(

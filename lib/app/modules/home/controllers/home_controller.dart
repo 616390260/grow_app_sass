@@ -19,6 +19,8 @@ class HomeController extends BaseController {
 
   final Rxn<PopupAnnouncementModel> popupAnnouncement =
       Rxn<PopupAnnouncementModel>();
+  final RxList<SystemAnnouncementModel> sysAnnouncement =
+      <SystemAnnouncementModel>[].obs;
   bool _popupShown = false;
 
   final HomeApiService _homeApiService = HomeApiService();
@@ -34,6 +36,9 @@ class HomeController extends BaseController {
 
   // 加载数据
   void loadData() {
+    // 重新加载数据时重置弹窗状态，允许再次显示弹窗
+    resetPopupShown();
+    
     safeApiCall(
       // API调用函数
       () async => await _homeApiService.getHomeInfo(),
@@ -49,6 +54,7 @@ class HomeController extends BaseController {
         recommendTasks.value = homeInfo.recommendTasks ?? [];
 
         popupAnnouncement.value = homeInfo.popupAnnouncement;
+        sysAnnouncement.value = homeInfo.sysAnnouncements ?? [];
 
         // 保留现有的accountBalance字段，暂时使用accountPoints的值
         accountBalance.value = homeInfo.accountPoints ?? 0;
@@ -190,5 +196,14 @@ class HomeController extends BaseController {
   bool get hasPopupShown => _popupShown;
   void markPopupShown() {
     _popupShown = true;
+  }
+
+  void markPopupClose() {
+    // 不再重置_popupShown状态，确保弹窗只在首次加载或刷新数据时显示
+  }
+  
+  // 只有在重新加载数据时才重置弹窗状态
+  void resetPopupShown() {
+    _popupShown = false;
   }
 }

@@ -33,7 +33,7 @@ class HttpService extends getx.GetxService {
   int get sendTimeout => _envConfig.sendTimeout;
 
   /// 是否启用日志
-  bool get enableLogging => _envConfig.enableNetworkLogging;
+  bool get enableLogging => _envConfig.enableLogging;
 
   @override
   void onInit() {
@@ -88,8 +88,8 @@ class HttpService extends getx.GetxService {
           final token = AuthService.to.token;
           if (token != null && token.isNotEmpty) {
             options.headers['APP-TOKEN'] = token;
-            if (enableLogging) {
-              print('添加Authorization头: ${_maskSensitiveData(token)}');
+            if (_envConfig.enableLogging) {
+              debugPrint('添加Authorization头: ${_maskSensitiveData(token)}');
             }
           }
         } catch (_) {
@@ -111,16 +111,20 @@ class HttpService extends getx.GetxService {
       },
       onError: (error, handler) async {
         _logError(error);
-        print('=== HttpService拦截器.onError 开始 ===');
-        print('Dio错误: $error');
-        print('状态码: ${error.response?.statusCode}');
-        print('响应数据: ${error.response?.data}');
+        if (_envConfig.enableLogging) {
+          debugPrint('=== HttpService拦截器.onError 开始 ===');
+          debugPrint('Dio错误: $error');
+          debugPrint('状态码: ${error.response?.statusCode}');
+          debugPrint('响应数据: ${error.response?.data}');
+        }
         
         final status = error.response?.statusCode;
         if (status == 401) {
           final handled = await _handleUnauthorized(error);
           if (handled != null) {
-            print('处理401错误成功');
+            if (_envConfig.enableLogging) {
+              debugPrint('处理401错误成功');
+            }
             handler.resolve(handled);
             return;
           }
@@ -129,20 +133,28 @@ class HttpService extends getx.GetxService {
         if (error.response != null) {
           final response = error.response;
           final data = response?.data;
-          print('开始处理业务错误');
+          if (_envConfig.enableLogging) {
+            debugPrint('开始处理业务错误');
+          }
           if (data is Map<String, dynamic>) {
             final businessCode = data['code'] as int?;
             final message = data['msg'] as String? ??
                           data['message'] as String? ??
                           I18nKeys.networkRequestFailed.tr;
-            print('业务码: $businessCode, 消息: $message');
+            if (_envConfig.enableLogging) {
+              debugPrint('业务码: $businessCode, 消息: $message');
+              if (businessCode != null && businessCode != 200) {
+                debugPrint('抛出业务错误异常');
+              }
+            }
             if (businessCode != null && businessCode != 200) {
-              print('抛出业务错误异常');
               throw _errorHandler.handleErrorCodeException(businessCode, message, showNotification: false);
             }
           }
         }
-        print('=== HttpService拦截器.onError 结束 ===');
+        if (_envConfig.enableLogging) {
+          debugPrint('=== HttpService拦截器.onError 结束 ===');
+        }
         handler.next(error);
       },
     );
@@ -236,13 +248,13 @@ class HttpService extends getx.GetxService {
     } on DioException catch (e) {
       final exception = _errorHandler.handleExceptionException(e, showNotification: false);
       if (enableLogging) {
-        print(exception.message);
+        debugPrint(exception.message);
       }
       throw exception;
     } catch (e) {
       final exception = _errorHandler.handleExceptionException(Exception(e.toString()), showNotification: false);
       if (enableLogging) {
-        print(exception.message);
+        debugPrint(exception.message);
       }
       throw exception;
     }
@@ -305,9 +317,9 @@ class HttpService extends getx.GetxService {
   T _handleResponseData<T>(
     Response response,
   ) {
-    print('=== HttpService._handleResponseData 开始 ===');
-    print('HTTP状态码: ${response.statusCode}');
-    print('响应数据: ${response.data}');
+    debugPrint('=== HttpService._handleResponseData 开始 ===');
+    debugPrint('HTTP状态码: ${response.statusCode}');
+    debugPrint('响应数据: ${response.data}');
     
     final responseData = response.data;
     
@@ -330,14 +342,14 @@ class HttpService extends getx.GetxService {
         return _convertDataToType<T>(businessData ?? responseData); 
       } else {
         // 业务逻辑失败，统一抛出ApiException，确保错误能够被上层捕获处理
-        print('业务逻辑失败，抛出异常: code=$code, message=$message');
+        debugPrint('业务逻辑失败，抛出异常: code=$code, message=$message');
         throw _errorHandler.handleErrorCodeException(code, message, showNotification: true);
       }
     }
 
     // 检查HTTP状态码（非标准响应格式时）
     if (response.statusCode != 200 && response.statusCode != 201) {
-      print('HTTP状态码异常，抛出HTTP请求失败异常');
+      debugPrint('HTTP状态码异常，抛出HTTP请求失败异常');
       throw _errorHandler.handleErrorCode<T>(response.statusCode, I18nKeys.networkRequestFailed.tr);
     }
 
@@ -377,7 +389,7 @@ class HttpService extends getx.GetxService {
         return data.toDouble() as T;
       } else if (T == bool) {
         if (enableLogging) {
-          print('处理bool类型: $data, 类型: ${data.runtimeType}');
+          debugPrint('处理bool类型: $data, 类型: ${data.runtimeType}');
         }
         if (data is bool) {
           // 直接返回bool类型数据
@@ -424,43 +436,43 @@ class HttpService extends getx.GetxService {
     final timestamp = DateTime.now().toIso8601String();
     final fullUrl = '${options.baseUrl}${options.path}';
 
-    print('\n' + '=' * 80);
-    print('🚀 HTTP REQUEST [${options.method.toUpperCase()}] - $timestamp');
-    print('=' * 80);
-    print('📍 URL: $fullUrl');
+    debugPrint('\n' + '=' * 80);
+    debugPrint('🚀 HTTP REQUEST [${options.method.toUpperCase()}] - $timestamp');
+    debugPrint('=' * 80);
+    debugPrint('📍 URL: $fullUrl');
 
     if (options.queryParameters.isNotEmpty) {
-      print('🔍 Query Parameters:');
+      debugPrint('🔍 Query Parameters:');
       options.queryParameters.forEach((key, value) {
-        print('   $key: $value');
+        debugPrint('   $key: $value');
       });
     }
 
-    print('📋 Headers:');
+    debugPrint('📋 Headers:');
     options.headers.forEach((key, value) {
       if (key.toLowerCase().contains('authorization') ||
           key.toLowerCase().contains('token')) {
-        print('   $key: ${_maskSensitiveData(value.toString())}');
+        debugPrint('   $key: ${_maskSensitiveData(value.toString())}');
       } else {
-        print('   $key: $value');
+        debugPrint('   $key: $value');
       }
     });
 
     if (options.data != null) {
-      print('📦 Request Body:');
+      debugPrint('📦 Request Body:');
       try {
         if (options.data is Map || options.data is List) {
-          print('   ${_formatJson(options.data)}');
+          debugPrint('   ${_formatJson(options.data)}');
         } else {
-          print('   ${options.data}');
+          debugPrint('   ${options.data}');
         }
       } catch (e) {
-        print('   ${options.data}');
+        debugPrint('   ${options.data}');
       }
     }
 
-    print('⏱️  Timeout: Connect(${options.connectTimeout?.inMilliseconds}ms) | Receive(${options.receiveTimeout?.inMilliseconds}ms) | Send(${options.sendTimeout?.inMilliseconds}ms)');
-    print('=' * 80 + '\n');
+    debugPrint('⏱️  Timeout: Connect(${options.connectTimeout?.inMilliseconds}ms) | Receive(${options.receiveTimeout?.inMilliseconds}ms) | Send(${options.sendTimeout?.inMilliseconds}ms)');
+    debugPrint('=' * 80 + '\n');
   }
 
   /// 打印响应信息
@@ -471,14 +483,14 @@ class HttpService extends getx.GetxService {
     final requestOptions = response.requestOptions;
     final fullUrl = '${requestOptions.baseUrl}${requestOptions.path}';
 
-    print('\n' + '=' * 80);
-    print('✅ HTTP RESPONSE [${response.statusCode}] - $timestamp');
-    print('=' * 80);
-    print('📍 URL: $fullUrl');
-    print('🔄 Method: ${requestOptions.method.toUpperCase()}');
-    print('📊 Status: ${response.statusCode} ${response.statusMessage ?? ''}');
+    debugPrint('\n' + '=' * 80);
+    debugPrint('✅ HTTP RESPONSE [${response.statusCode}] - $timestamp');
+    debugPrint('=' * 80);
+    debugPrint('📍 URL: $fullUrl');
+    debugPrint('🔄 Method: ${requestOptions.method.toUpperCase()}');
+    debugPrint('📊 Status: ${response.statusCode} ${response.statusMessage ?? ''}');
 
-    print('📦 Response Data:');
+    debugPrint('📦 Response Data:');
     try {
       if (response.data is Map || response.data is List) {
         final jsonStr = _formatJson(response.data);
@@ -488,11 +500,11 @@ class HttpService extends getx.GetxService {
         debugPrint('   $dataStr');
       }
     } catch (e) {
-      print('   ${response.data}');
+      debugPrint('   ${response.data}');
     }
 
-    print('📏 Content Length: ${response.data.toString().length} characters');
-    print('=' * 80 + '\n');
+    debugPrint('📏 Content Length: ${response.data.toString().length} characters');
+    debugPrint('=' * 80 + '\n');
   }
 
   /// 打印错误信息
@@ -503,38 +515,38 @@ class HttpService extends getx.GetxService {
     final requestOptions = error.requestOptions;
     final fullUrl = '${requestOptions.baseUrl}${requestOptions.path}';
 
-    print('\n' + '=' * 80);
-    print('❌ HTTP ERROR [${error.response?.statusCode ?? 'UNKNOWN'}] - $timestamp');
-    print('=' * 80);
-    print('📍 URL: $fullUrl');
-    print('🔄 Method: ${requestOptions.method.toUpperCase()}');
-    print('🚨 Error Type: ${error.type}');
-    print('💬 Error Message: ${error.message ?? 'Unknown error'}');
+    debugPrint('\n' + '=' * 80);
+    debugPrint('❌ HTTP ERROR [${error.response?.statusCode ?? 'UNKNOWN'}] - $timestamp');
+    debugPrint('=' * 80);
+    debugPrint('📍 URL: $fullUrl');
+    debugPrint('🔄 Method: ${requestOptions.method.toUpperCase()}');
+    debugPrint('🚨 Error Type: ${error.type}');
+    debugPrint('💬 Error Message: ${error.message ?? 'Unknown error'}');
 
     if (error.response != null) {
       final response = error.response!;
-      print('📊 Status: ${response.statusCode} ${response.statusMessage ?? ''}');
+      debugPrint('📊 Status: ${response.statusCode} ${response.statusMessage ?? ''}');
 
       if (response.data != null) {
-        print('📦 Error Response:');
+        debugPrint('📦 Error Response:');
         try {
           if (response.data is Map || response.data is List) {
-            print('   ${_formatJson(response.data)}');
+            debugPrint('   ${_formatJson(response.data)}');
           } else {
-            print('   ${response.data}');
+            debugPrint('   ${response.data}');
           }
         } catch (e) {
-          print('   ${response.data}');
+          debugPrint('   ${response.data}');
         }
       }
     }
 
     if (_envConfig.isDebug && error.stackTrace != null) {
-      print('🔍 Stack Trace:');
-      print('   ${error.stackTrace.toString().split('\n').take(10).join('\n   ')}');
+      debugPrint('🔍 Stack Trace:');
+      debugPrint('   ${error.stackTrace.toString().split('\n').take(10).join('\n   ')}');
     }
 
-    print('=' * 80 + '\n');
+    debugPrint('=' * 80 + '\n');
   }
 
   /// 格式化JSON数据

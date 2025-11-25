@@ -8,6 +8,7 @@ import 'package:do_task_project/app/core/utils/share_utils.dart';
 import 'package:do_task_project/app/data/services/invite_friend_api_service.dart';
 import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:do_task_project/app/modules/invite_friend/models/box_product_model.dart';
+import 'dart:async';
 
 class InviteFriendController extends BaseController {
   // 推荐链接
@@ -21,6 +22,16 @@ class InviteFriendController extends BaseController {
   
   // 邀请好友API服务
   final InviteFriendApiService _inviteFriendApiService = InviteFriendApiService();
+  
+  // 轮询定时器
+  Timer? _pollingTimer;
+
+  @override
+  void onClose() {
+    // 停止轮询定时器
+    stopPolling();
+    super.onClose();
+  }
 
   @override
   void onInit() {
@@ -29,6 +40,8 @@ class InviteFriendController extends BaseController {
     fetchReferralLink();
     // 初始化时获取宝箱产品列表
     fetchBoxProductList();
+    // 启动轮询定时器，每5秒刷新一次宝箱产品列表
+    startPolling();
   }
 
   /// 复制推荐链接到剪贴板
@@ -85,7 +98,6 @@ class InviteFriendController extends BaseController {
         setSuccess();
       },
       errorMessage: I18nKeys.processingFailed.tr,
-      showLoading: true,
       onError: () {
         setError(I18nKeys.processingFailed.tr);
       },
@@ -106,8 +118,6 @@ class InviteFriendController extends BaseController {
   Future<void> shareToFacebook() async {
     await ShareUtils.shareToFacebook(referralLink.value);
   }
-
-  /// 跳转到有效用户页面
 
   /// 跳转到有效用户页面
   void goToValidUsersPage() {
@@ -158,5 +168,23 @@ class InviteFriendController extends BaseController {
       // 显示加载状态
       showLoading: true,
     );
+  }
+
+  /// 停止轮询定时器
+  void stopPolling() {
+    _pollingTimer?.cancel();
+    _pollingTimer = null;
+  }
+
+  /// 启动轮询定时器
+  void startPolling() {
+    // 先停止之前的定时器
+    stopPolling();
+    
+    // 创建新的定时器，每5秒执行一次
+    _pollingTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      // 轮询获取宝箱产品列表
+      fetchBoxProductList();
+    });
   }
 }

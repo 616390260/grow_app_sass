@@ -4,7 +4,13 @@ class AppTranslations extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
     'zh_CN': {
+    // Message Center
+    
       "app_title": "Taskgo8",
+      'doNotRefresh':'不要刷新页面',
+      "select_currency": "选择货币",
+      'withdraw_amount': '提现金额',
+      "commission_calculation_method": "返佣计算方式",
       "download_app": "下载应用",
       "task_download_app": "点击下载应用，任务发送更稳定",
       "account_balance": "账户余额",
@@ -42,6 +48,10 @@ class AppTranslations extends Translations {
       "account_page": "账户页面",
       "service": "群组客服",
       "service_page": "群组客服页面",
+      "message_center": "消息中心",
+      'no_message': '暂无消息',
+      "expand": "展开",
+      "collapse": "收起",
       "home": "首页",
       "error": "错误",
       "warning": "警告",
@@ -335,7 +345,7 @@ class AppTranslations extends Translations {
       "step_two": "2. 发送复制的链接，邀请伙伴分享你的链接",
       "step_three": "3. 你的好友完成任务后可获得额外奖励",
       "direct_invitation_rule":
-          "一、直接邀请：通过你的直接邀请码注册的用户为“直属下级”，他们完成指定任务后，你可获得100-300积分",
+          "一级直属返佣20%\n\n*一级直属：通过您邀请链接的注册用户为一级直属下级，直属下级做任务您将获得20%返佣。比如直属下级做了任务获得1000积分，您将额外获得200积分。\n\n二级下属返佣10%\n\n*二级下属：您的一级直属下级邀请的注册用户，二级下属做任务您将获得10%返佣。比如二级下属做了任务获得1000积分，您将额外获得100积分。",
       "second_level_invitation_rule":
           "二、间接邀请：你的直属下级邀请的用户为“二级下级”，他们完成指定任务后，你可获得50-150积分",
       "video_loading_please_wait": "视频加载中，请稍后重试",
@@ -427,7 +437,7 @@ class AppTranslations extends Translations {
       "participation_conditions": "参与条件",
       "condition_item_1": "账户注册时间≥1天 且",
       "condition_item_2": "累计发送消息数≥5条",
-      "reward_content": "奖励内容：",
+      "reward_content": "🎯 奖励内容：\n\n✅ 达成条件即可开启宝箱，领取积分！\n\n✅ 多下级达标可多次开启，奖励不设上限！\n\n💡 如何操作？\n\n邀请好友注册并参与任务发送消息\n\n在活动页点击【开启宝箱】自动审核资格\n\n积分实时到账，可兑换好礼！\n\n❗️ 注意事项：\n\n系统自动检测下级有效任务。\n\n积分发放可能存在10分钟延迟\n\n活动长期有效，鼓励持续推广",
       "reward_tip": "满足条件即可开启宝箱领取积分！",
       "how_to_participate": "如何参与？",
       "participate_step_1": "邀请好友注册并参与任务发送消息，然后点击活动页面的“开启宝箱”",
@@ -593,9 +603,22 @@ class AppTranslations extends Translations {
       "verificationCodeFailed": "验证码验证失败",
       "verificationCodeSent": "验证码已发送",
       "send_message_success": "消息发送成功",
+      "invitation_steps": "邀请步骤",
+      'important_notes': '注意事项',
     },
+
+
+
+
     'en_US': {
       'app_title': 'Taskgo8',
+      'doNotRefresh':'Do not refresh the page',
+      "select_currency": "Select Currency",
+      'message_center': 'Message Center',
+      'no_message': 'No Messages',
+      'expand': 'Expand',
+      'collapse': 'Collapse',
+      'commission_calculation_method': 'Commission Calculation Method',
       'download_app': 'Download APP',
       'task_download_app': 'Click to download app for more stable task sending',
       'account_balance': 'Account Balance',
@@ -874,8 +897,7 @@ class AppTranslations extends Translations {
       'register_time_over_1_min': 'Registration time exceeds 1 minute',
       'send_messages_over_5': 'Sent more than 5 messages',
       'multiplied_rewards': 'Multiplied Rewards',
-      'conditions_can_be_met_multiple_times':
-          'Conditions can be met multiple times',
+      'conditions_can_be_met_multiple_times':'Conditions can be met multiple times',
       'invite_friends_and_send_message': 'Invite Friends and Send Messages',
       'copied': 'Copied',
       'rewards': 'Rewards',
@@ -986,8 +1008,6 @@ class AppTranslations extends Translations {
           'Currently, there are %s subordinates who have reached Level 2, you can get %s points as reward',
       'reward_points_available': '%s Points Available as Reward',
       'no_rewards_available': 'No Rewards Available for Claim',
-      'share_to_earn': 'Share to Earn',
-      'activity_rules': 'Activity Rules',
       'invitation_steps': 'Invitation Steps',
       'step_one':
           '1. Click the "Copy" button to copy the referral link or sharing method.',
@@ -997,7 +1017,7 @@ class AppTranslations extends Translations {
           '3. Your friend will get additional rewards by completing the task.',
       'commission_calculation': 'Commission Calculation Method',
       'direct_invitation_rule':
-          'I. Direct Invitation: Users who register with your direct invitation code are called "Direct Subordinates". You will get 100-300 points after they complete the specified task.',
+          'First-level direct rebate 20%\n\n*First-level direct: The registered user through your invitation link is a first-level direct subordinate. You will receive a 20% rebate for the direct subordinate to complete the task. For example, if the direct subordinate completes the task and gets 1,000 points, you will get an additional 200 points.\n\nSecond-level subordinate rebate 10%\n\n*Second-level subordinates: Registered users invited by your first-level direct subordinates, you will receive 10% rebate for the second-level subordinates to complete tasks. For example, if the second-level subordinates complete tasks and get 1,000 points, you will get an additional 100 points.',
       'second_level_invitation_rule':
           'II. Secondary Invitation: Users invited by your direct subordinates are called "Secondary Subordinates". You will get 50-150 points after they complete the specified task.',
       'video_loading_please_wait': 'Video Loading, please try again later',
@@ -1124,7 +1144,7 @@ class AppTranslations extends Translations {
       'participation_conditions': 'Participation Conditions',
       'condition_item_1': 'Account registration time ≥ 1 day and',
       'condition_item_2': 'Total number of messages sent ≥ 5',
-      'reward_content': 'Reward Content:',
+      'reward_content': '🎯 Reward Content：\n\n✅ Achieve the conditions to open the box and claim points!\n\n✅ Multiple subordinates meeting the conditions can open the box multiple times, with no upper limit on rewards!\n\n💡 How to Participate？\n\nInvite friends to register and participate in the task to send messages, then click "Open Box" on the event page\n\nQualification will be reviewed automatically, and points will be credited in real time. You can claim gifts first!\n\n❗️ Notice：\n\nThe system automatically detects valid tasks of subordinates. There may be a 10-minute delay in point distribution\n\nThe event is valid for a long time, continuous promotion is encouraged',
       'reward_tip': 'Meet the conditions to open the box and claim points!',
       'how_to_participate': 'How to Participate?',
       'participate_step_1':
@@ -1322,8 +1342,19 @@ class AppTranslations extends Translations {
       'withdraw_success': 'Withdrawal Successful',
       'send_message_success': 'Message Sent Successfully',
     },
+
+
+
     "hi_IN": {
+      'doNotRefresh':'पेज को रिफ्रेश न करें',
+      "select_currency": "валютा चुनें",
+      "invitation_steps": "प्रारंभिक स्टेप्स",
+      "message_center": "संदेश केंद्र",
+      'no_message': 'कोई संदेश नहीं मिला',
+      "expand": "पढ़ें",
+      "collapse": "छुपाएं",
       "app_title": "टास्कगो8",
+      'commission_calculation_method': 'प्रति घंटा कमाई गणना तरीका',
       "download_app": "ऐप डाउनलोड करें",
       "task_download_app":
           "अधिक स्थिर कार्य भेजने के लिए ऐप डाउनलोड करने के लिए क्लिक करें",
@@ -1582,10 +1613,8 @@ class AppTranslations extends Translations {
       "register_time_over_1_min": "पंजीकरण समय 1 मिनट से अधिक",
       "send_messages_over_5": "5 से अधिक संदेश भेजे गए",
       "multiplied_rewards": "गुणा किए गए रिवार्ड",
-      "conditions_can_be_met_multiple_times":
-          "शर्तें कई बार पूरी की जा सकती हैं",
-      "invite_friends_and_send_message":
-          "दोस्तों को आमंत्रित करें और संदेश भेजें",
+      "conditions_can_be_met_multiple_times":"शर्तें कई बार पूरी की जा सकती हैं",
+      "invite_friends_and_send_message":"दोस्तों को आमंत्रित करें और संदेश भेजें",
       "copied": "कॉपी किया गया",
       "rewards": "रिवार्ड्स",
       "achievement_level": "उपलब्धि स्तर",
@@ -1691,8 +1720,6 @@ class AppTranslations extends Translations {
           "वर्तमान में, %s अधीनस्थ लेवल 2 तक पहुंच चुके हैं, आप %s पॉइंट्स के रूप में रिवार्ड प्राप्त कर सकते हैं",
       "reward_points_available": "%s पॉइंट्स रिवार्ड के रूप में उपलब्ध",
       "no_rewards_available": "दावा के लिए कोई रिवार्ड उपलब्ध नहीं",
-      "share_to_earn": "शेयर करके कमाएं",
-      "activity_rules": "सक्रियता नियम",
       "invitation_steps": "आमंत्रण चरण",
       "step_one":
           "1. \"कॉपी\" बटन पर क्लिक करें ताकि रेफरल लिंक या शेयरिंग तरीका कॉपी हो जाए।",
@@ -1702,7 +1729,7 @@ class AppTranslations extends Translations {
           "3. आपका दोस्त कार्य पूरा करके अतिरिक्त रिवार्ड प्राप्त करेगा।",
       "commission_calculation": "कमीशन गणना तरीका",
       "direct_invitation_rule":
-          "I. सीधा आमंत्रण: आपके सीधे आमंत्रण कोड के साथ पंजीकरण करने वाले उपयोगकर्ताओं को \"सीधे अधीनस्थ\" कहा जाता है। वे निर्दिष्ट कार्य पूरा करने के बाद आपको 100-300 पॉइंट्स मिलेंगे।",
+          "प्रथम स्तर के प्रत्यक्ष कमीशन 20%\n\n*प्रथम स्तर: आपके आमंत्रण लिंक के माध्यम से रजिस्टर किए गए उपयोगकर्ता प्रथम स्तर के प्रत्यक्ष अधीनस्थ होते हैं, यदि प्रत्यक्ष अधीनस्थ कार्य करते हैं तो आपको 20% कमीशन मिलेगा। जैसे कि प्रत्यक्ष अधीनस्थ ने कार्य किया और 1000 अंक प्राप्त किए, तो आपको अतिरिक्त 200 अंक प्राप्त होंगे।\n\nद्वितीय स्तर के अधीनस्थ कमीशन 10%\n\n*द्वितीय स्तर: आपके पहले स्तर के प्रत्यक्ष अधीनस्थ द्वारा आमंत्रित उपयोगकर्ता, द्वितीय स्तर के अधीनस्थ कार्य करते हैं तो आपको 10% कमीशन मिलेगा। जैसे कि द्वितीय स्तर के अधीनस्थ ने कार्य किया और 1000 अंक प्राप्त किए, तो आपको अतिरिक्त 100 अंक प्राप्त होंगे।",
       "second_level_invitation_rule":
           "II. द्वितीयक आमंत्रण: आपके सीधे अधीनस्थों द्वारा आमंत्रित किए गए उपयोगकर्ताओं को \"द्वितीयक अधीनस्थ\" कहा जाता है। वे निर्दिष्ट कार्य पूरा करने के बाद आपको 50-150 पॉइंट्स मिलेंगे।",
       "video_loading_please_wait":
@@ -1808,7 +1835,7 @@ class AppTranslations extends Translations {
       "participation_conditions": "भाग लेने की शर्तें",
       "condition_item_1": "खाता पंजीकरण समय ≥ 1 दिन और",
       "condition_item_2": "भेजे गए संदेशों की कुल संख्या ≥ 5",
-      "reward_content": "रिवार्ड सामग्री:",
+      "reward_content": "🎯 पुरस्कार सामग्री:\n\n✅ शर्तें पूरी करने पर खजाना खोलें और अंक प्राप्त करें!\n\n✅ कई अधीनस्थ मानक पूरा करें तो कई बार खोल सकते हैं, पुरस्कारों की कोई सीमा नहीं!\n\n💡 कैसे करें?\n\nदोस्तों को पंजीकरण करने और कार्यों में संदेश भेजने के लिए आमंत्रित करें\n\nकार्यक्रम पृष्ठ पर “खजाना खोलें” पर क्लिक करें और स्वचालित रूप से पात्रता की जांच करें\n\nअंक वास्तविक समय में जमा होते हैं और शानदार उपहारों के लिए भुनाए जा सकते हैं!\n\n❗️ नोट:\n\nसिस्टम स्वचालित रूप से अधीनस्थों की मान्य कार्यों का पता लगाता है।\n\nअंक वितरण में 10 मिनट की देरी हो सकती है\n\nकार्यक्रम लंबे समय तक मान्य है, निरंतर प्रचार को प्रोत्साहित करता है",
       "reward_tip": "शर्तें पूरी करने के लिए बॉक्स खोलें और पॉइंट्स दावा करें!",
       "how_to_participate": "कैसे भाग लें?",
       "participate_step_1":
@@ -2004,8 +2031,20 @@ class AppTranslations extends Translations {
       "withdraw_success": "निकासी सफल",
       "send_message_success": "संदेश सफलतापूर्वक भेजा गया",
     },
+
+
+
     "id_ID": {
       "app_title": "Taskgo8",
+      'doNotRefresh':'Jangan refresh halaman ini',
+      "select_currency": "Pilih Mata Uang",
+      'withdraw_amount': 'Jumlah Penarikan',
+      "message_center": "Pusat Pesan",
+      'no_message': 'Tidak ada pesan',
+      "expand": "Pembesaran",
+      "collapse": "Penghorakan",
+      'commission_calculation_method': 'Metode Perhitungan Komisi',
+      'important_notes': 'Catatan Penting',
       "download_app": "Unduh Aplikasi",
       "task_download_app":
           "Klik untuk mengunduh aplikasi, pengiriman tugas lebih stabil",
@@ -2269,8 +2308,7 @@ class AppTranslations extends Translations {
       "register_time_over_1_min": "Waktu pendaftaran lebih dari 1 menit",
       "send_messages_over_5": "Mengirim pesan lebih dari 5 buah",
       "multiplied_rewards": "Hadiah Berganda",
-      "conditions_can_be_met_multiple_times":
-          "Syarat dapat dipenuhi beberapa kali",
+      "conditions_can_be_met_multiple_times":"Syarat dapat dipenuhi beberapa kali",
       "invite_friends_and_send_message": "Undang teman dan kirim pesan",
       "copied": "Telah disalin",
       "rewards": "Hadiah",
@@ -2385,7 +2423,7 @@ class AppTranslations extends Translations {
       "step_three":
           "3. Teman Anda dapat mendapatkan hadiah tambahan setelah menyelesaikan tugas",
       "direct_invitation_rule":
-          "I. Undangan Langsung: Pengguna yang mendaftar melalui kode undangan langsung Anda adalah \"anak bawah langsung\", setelah mereka menyelesaikan tugas tertentu, Anda dapat mendapatkan 100-300 poin",
+          "Komisi langsung tingkat pertama 20%\n\n*Langsung tingkat pertama: Pengguna terdaftar melalui tautan undangan Anda adalah bawahan langsung tingkat pertama. Anda akan menerima komisi 20% untuk bawahan langsung yang menyelesaikan tugas. Misalnya, jika bawahan langsung menyelesaikan tugas dan mendapatkan 1.000 poin, Anda akan mendapatkan 200 poin tambahan.\n\nKomisi bawahan tingkat kedua 10%\n\n*Bawahan tingkat kedua: Pengguna terdaftar yang diundang oleh bawahan langsung tingkat pertama Anda, Anda akan menerima komisi 10% untuk bawahan tingkat kedua yang menyelesaikan tugas. Misalnya, jika bawahan tingkat kedua menyelesaikan tugas dan mendapatkan 1.000 poin, Anda akan mendapatkan 100 poin tambahan.",
       "second_level_invitation_rule":
           "II. Undangan Tidak Langsung: Pengguna yang diundang oleh anak bawah langsung Anda adalah \"anak bawah level 2\", setelah mereka menyelesaikan tugas tertentu, Anda dapat mendapatkan 50-150 poin",
       "video_loading_please_wait":
@@ -2484,7 +2522,7 @@ class AppTranslations extends Translations {
       "participation_conditions": "Syarat Partisipasi",
       "condition_item_1": "Waktu pendaftaran akun ≥ 1 hari dan",
       "condition_item_2": "Total jumlah pesan yang dikirim ≥ 5 buah",
-      "reward_content": "Isi Hadiah:",
+      "reward_content": "🎯 Isi Hadiah:\n\n✅ Penuhi syarat untuk membuka peti harta karun dan mendapatkan poin!\n\n✅ Banyak bawahan yang memenuhi syarat dapat membuka beberapa kali, tanpa batasan hadiah!\n\n💡 Cara Beroperasi?\n\nUndang teman untuk mendaftar dan berpartisipasi dalam tugas mengirim pesan\n\nKlik “Buka Peti Harta Karun” di halaman acara untuk memverifikasi kelayakan secara otomatis\n\nPoin akan dikreditkan secara real-time dan dapat ditukar dengan hadiah menarik!\n\n❗️ Catatan:\n\nSistem secara otomatis mendeteksi tugas valid dari bawahan.\n\nPemberian poin mungkin mengalami keterlambatan hingga 10 menit\n\nAcara ini berlaku dalam jangka panjang, mendorong promosi berkelanjutan",
       "reward_tip": "Penuhi syarat untuk membuka kotak dan mengambil poin!",
       "how_to_participate": "Bagaimana cara berpartisipasi?",
       "participate_step_1":
@@ -2661,9 +2699,22 @@ class AppTranslations extends Translations {
       "verificationCodeFailed": "Verifikasi Kode Verifikasi Gagal",
       "verificationCodeSent": "Kode Verifikasi Telah Dikirim",
       "send_message_success": "Pesan Berhasil Dikirim",
+      'invitation_steps': 'Langkah-Langkah Undangan',
     },
+
+
+
     "bn_BD": {
       "app_title": "টাস্কগো8",
+      'doNotRefresh':'দয়া করে পেজ রিফ্রেশ করবেন না',
+      "select_currency": "валютা নির্বাচন করুন",
+      'withdraw_amount': 'প্রত্যাশিত ব্যাংক ট্রান্সফার',
+      "message_center": "মেসেজ কেন্ডার",
+      'no_message': 'কোন মেসেজ নেই',
+      "expand": "প্রসারিত করুন",
+      "collapse": "সংক্ষিপ্ত করুন",
+      'commission_calculation_method': 'প্রতি ঘন্টা কমিয়া গণনা तरीकা',
+      'important_notes': 'গুরুত্বপূর্ণ নোটস',
       "download_app": "অ্যাপ ডাউনলোড করুন",
       "task_download_app": "অ্যাপ ডাউনলোড করুন, টাস্ক পাঠানো আরও স্থিতিশীল হবে",
       "account_balance": "অ্যাকাউন্ট ব্যালেন্স",
@@ -2923,10 +2974,8 @@ class AppTranslations extends Translations {
       "register_time_over_1_min": "রেজিস্ট্রেশন সময় 1 মিনিটের বেশি",
       "send_messages_over_5": "মেসেজ পাঠানো 5টির বেশি",
       "multiplied_rewards": "গুণিত পুরস্কার",
-      "conditions_can_be_met_multiple_times":
-          "শর্তগুলি একাধিকবার পূরণ করা যেতে পারে",
-      "invite_friends_and_send_message":
-          "বন্ধু আমন্ত্রণ জানানো এবং মেসেজ পাঠানো",
+      "conditions_can_be_met_multiple_times":"শর্তগুলি একাধিকবার পূরণ করা যেতে পারে",
+      "invite_friends_and_send_message":"বন্ধু আমন্ত্রণ জানানো এবং মেসেজ পাঠানো",
       "copied": "কপি করা হয়েছে",
       "rewards": "পুরস্কার",
       "achievement_level": "সাফল্য লেভেল",
@@ -3037,7 +3086,7 @@ class AppTranslations extends Translations {
       "step_three":
           "3. আপনার বন্ধু টাস্ক সম্পন্ন করলে অতিরিক্ত পুরস্কার পাওয়া যাবে",
       "direct_invitation_rule":
-          "এক、সরাসরি আমন্ত্রণ：আপনার সরাসরি আমন্ত্রণ কোডের মাধ্যমে রেজিস্টার করা ব্যবহারকারী \"সরাসরি সাবর্ডিনেট\"，তারা নির্দিষ্ট টাস্ক সম্পন্ন করলে, আপনি 100-300 পয়েন্ট পেতে পারেন",
+          "প্রথম স্তরের সরাসরি রিবেট 20%\n\n*প্রথম স্তরের সরাসরি: আপনার আমন্ত্রণ লিঙ্কের মাধ্যমে নিবন্ধিত ব্যবহারকারী প্রথম স্তরের সরাসরি অধস্তন হবে, সরাসরি অধস্তন টাস্ক করলে আপনি 20% রিবেট পাবেন। উদাহরণস্বরূপ, সরাসরি অধস্তন টাস্ক করে 1000 পয়েন্ট অর্জন করলে আপনি অতিরিক্ত 200 পয়েন্ট পাবেন।\n\nদ্বিতীয় স্তরের অধস্তন রিবেট 10%\n\n*দ্বিতীয় স্তরের অধস্তন: আপনার প্রথম স্তরের সরাসরি অধস্তন দ্বারা আমন্ত্রিত নিবন্ধিত ব্যবহারকারী, দ্বিতীয় স্তরের অধস্তন টাস্ক করলে আপনি 10% রিবেট পাবেন। উদাহরণস্বরূপ, দ্বিতীয় স্তরের অধস্তন টাস্ক করে 1000 পয়েন্ট অর্জন করলে আপনি অতিরিক্ত 100 পয়েন্ট পাবেন।",
       "second_level_invitation_rule":
           "দুই、পরোক্ষ আমন্ত্রণ：আপনার সরাসরি সাবর্ডিনেটের আমন্ত্রণে রেজিস্টার করা ব্যবহারকারী \"সেকেন্ড লেভেল সাবর্ডিনেট\"，তারা নির্দিষ্ট টাস্ক সম্পন্ন করলে, আপনি 50-150 পয়েন্ট পেতে পারেন",
       "video_loading_please_wait": "ভিডিও লোড হচ্ছে, পরে পুনরায় চেষ্টা করুন",
@@ -3135,7 +3184,7 @@ class AppTranslations extends Translations {
       "participation_conditions": "অংশগ্রহণ শর্ত",
       "condition_item_1": "অ্যাকাউন্ট রেজিস্ট্রেশন সময় ≥1 দিন এবং",
       "condition_item_2": "সমগ্র পাঠানো মেসেজ সংখ্যা ≥5 টি",
-      "reward_content": "পুরস্কার বিষয়বস্তু：",
+      "reward_content": "🎯 পুরস্কারের বিষয়বস্তু:\n\n✅ শর্ত পূরণ করলে ধনুক খুলুন এবং পয়েন্ট নিন!\n\n✅ একাধিক অধীনস্তদের শর্ত পূরণ করলে একাধিকবার খুলতে পারবেন, পুরস্কারের কোনো সীমা নেই!\n\n💡 কিভাবে কাজ করবেন?\n\nবন্ধুদের নিবন্ধন করতে এবং কাজের মধ্যে বার্তা পাঠাতে আমন্ত্রণ জানান\n\nকার্যক্রম পৃষ্ঠায় “ধনুক খুলুন” ক্লিক করুন এবং স্বয়ংক্রিয়ভাবে যোগ্যতা যাচাই করুন\n\nপয়েন্টগুলি রিয়েল-টাইমে জমা হবে এবং দুর্দান্ত উপহারগুলির জন্য বিনিময় করা যাবে!\n\n❗️ নোট:\n\nসিস্টেম স্বয়ংক্রিয়ভাবে অধীনস্তদের কার্যকর কাজগুলি শনাক্ত করে।\n\nপয়েন্ট বিতরণে ১০ মিনিটের দেরি হতে পারে\n\nকার্যক্রম দীর্ঘ সময়ের জন্য বৈধ, ধারাবাহিক প্রচারকে উৎসাহিত করে",
       "reward_tip": "শর্ত পূরণ করলে বক্সটি খুলে পয়েন্ট গ্রহণ করুন！",
       "how_to_participate": "কিভাবে অংশগ্রহণ করবেন？",
       "participate_step_1":
@@ -3312,9 +3361,22 @@ class AppTranslations extends Translations {
       "verificationCodeFailed": "ভেরিফিকেশন কোড যাচাই ব্যর্থ",
       "verificationCodeSent": "ভেরিফিকেশন কোড পাঠানো হয়েছে",
       "send_message_success": "মেসেজ পাঠানো সফল",
+      'invitation_steps': 'আমন্ত্রণ পদ্ধতি',
     },
+
+
+
     "pt_BR": {
       "app_title": "Taskgo8",
+      'doNotRefresh':'Não refaça a página',
+      "select_currency": "Selecione a moeda",
+      'withdraw_amount': 'Quantia de saque',
+      "message_center": "Centro de mensagens",
+      'no_message': 'Nenhum mensagem encontrada',
+      "expand": "Expandir",
+      "collapse": "Colapsar",
+      'commission_calculation_method': 'Método de cálculo de comissão',
+      'important_notes': 'Notas importantes',
       "download_app": "Baixar aplicativo",
       "task_download_app":
           "Clique para baixar o aplicativo, o envio de tarefas é mais estável",
@@ -3574,13 +3636,11 @@ class AppTranslations extends Translations {
           "Usuários convidados por seus subordinados diretos são \"subordinados de nível 2\". Após eles concluirem tarefas designadas, você ganhará 50-150 pontos",
       "no_rewards_available": "Nenhuma recompensa disponível para resgate",
       "points_cashable": "Pontos podem ser convertidos em dinheiro",
-      "your_downline_must_meet":
-          "Seus subordinados devem atender aos requisitos",
+      "your_downline_must_meet":"Seus subordinados devem atender aos requisitos",
       "register_time_over_1_min": "Tempo de cadastro superior a 1 minuto",
       "send_messages_over_5": "Mais de 5 mensagens enviadas",
       "multiplied_rewards": "Recompensas multiplicadas",
-      "conditions_can_be_met_multiple_times":
-          "As condições podem ser atendidas várias vezes",
+      "conditions_can_be_met_multiple_times":"As condições podem ser atendidas várias vezes",
       "invite_friends_and_send_message": "Convide amigos e envie mensagens",
       "copied": "Copiado",
       "rewards": "Recompensas",
@@ -3693,7 +3753,7 @@ class AppTranslations extends Translations {
       "step_three":
           "3. Seus amigos ganharão recompensas extras após concluir as tarefas",
       "direct_invitation_rule":
-          "I. Convite direto: Usuários cadastrados por meio do seu código de convite direto são \"subordinados diretos\". Após eles concluirem tarefas designadas, você ganhará 100-300 pontos",
+          "Comissão de 20% para subordinados diretos de primeiro nível\n\n*Subordinados diretos de primeiro nível: o usuário registrado através do seu link de indicação é um subordinado direto de primeiro nível. Você receberá uma comissão de 20% pelas tarefas completadas por ele. Por exemplo, se o subordinado direto completar uma tarefa e ganhar 1000 pontos, você receberá 200 pontos extras.\n\nComissão de 10% para subordinados de segundo nível\n\n*Subordinados de segundo nível: Usuários registrados convidados por seus subordinados diretos de primeiro nível receberão um desconto de 10% para que os subordinados de segundo nível concluam tarefas. Por exemplo, se os subordinados de segundo nível concluírem tarefas e ganharem 1.000 pontos, você receberá 100 pontos adicionais.",
       "second_level_invitation_rule":
           "II. Convite indireto: Usuários convidados por seus subordinados diretos são \"subordinados de nível 2\". Após eles concluirem tarefas designadas, você ganhará 50-150 pontos",
       "video_loading_please_wait":
@@ -3792,7 +3852,7 @@ class AppTranslations extends Translations {
       "participation_conditions": "Condições de participação",
       "condition_item_1": "Tempo de cadastro da conta ≥ 1 dia e",
       "condition_item_2": "Número total de mensagens enviadas ≥ 5",
-      "reward_content": "Conteúdo da recompensa:",
+      "reward_content": "🎯 Conteúdo da Recompensa:\n\n✅ Atenda às condições para abrir o baú e receber pontos!\n\n✅ Múltiplos subordinados que atendem aos critérios podem abrir várias vezes, sem limite de recompensas!\n\n💡 Como Operar?\n\nConvide amigos para se registrar e participar de tarefas enviando mensagens\n\nClique em “Abrir Baú” na página do evento para verificar automaticamente a elegibilidade\n\nOs pontos são creditados em tempo real e podem ser trocados por ótimos prêmios!\n\n❗️ Notas:\n\nO sistema detecta automaticamente as tarefas válidas dos subordinados.\n\nA emissão de pontos pode ter um atraso de até 10 minutos\n\nO evento é válido por um longo período, incentivando a promoção contínua",
       "reward_tip": "Atenda às condições para abrir o baú e resgatar pontos!",
       "how_to_participate": "Como participar?",
       "participate_step_1":
@@ -3970,9 +4030,22 @@ class AppTranslations extends Translations {
       "verificationCodeFailed": "Falha na verificação do código de verificação",
       "verificationCodeSent": "Código de verificação enviado",
       "send_message_success": "Mensagem enviada com sucesso",
+      'invitation_steps': 'Passos de convite',
     },
+
+
+
     "es_MX": {
       "app_title": "Taskgo8",
+      'doNotRefresh':'No refresque la página',
+      "select_currency": "Seleccione la moneda",
+      'withdraw_amount': 'Cantidad de retiro',
+      "message_center": "Centro de mensajes",
+      'no_message': 'Nenhum mensagem encontrada',
+      "expand": "Expandir",
+      "collapse": "Colapsar",
+      'commission_calculation_method': 'Método de cálculo de comissão',
+      'important_notes': 'Notas importantes',
       "download_app": "Descargar la aplicación",
       "task_download_app":
           "Haz clic para descargar la aplicación, el envío de tareas es más estable",
@@ -4236,8 +4309,7 @@ class AppTranslations extends Translations {
       "register_time_over_1_min": "Tiempo de registro superior a 1 minuto",
       "send_messages_over_5": "Enviar más de 5 mensajes",
       "multiplied_rewards": "Recompensas multiplicadas",
-      "conditions_can_be_met_multiple_times":
-          "Las condiciones se pueden cumplir varias veces",
+      "conditions_can_be_met_multiple_times":"Las condiciones se pueden cumplir varias veces",
       "invite_friends_and_send_message": "Invita a amigos y envía mensajes",
       "copied": "Copiado",
       "rewards": "Recompensas",
@@ -4354,7 +4426,7 @@ class AppTranslations extends Translations {
       "step_three":
           "3. Tu amigo obtendrá recompensas adicionales después de completar la tarea",
       "direct_invitation_rule":
-          "I. Invitación directa: Los usuarios que se registran con tu código de invitación directo son \"subordinados directos\", y obtendrás 100-300 puntos después de que completen las tareas designadas",
+          "Reembolso del 20% por primer nivel directo\n\n*Primer nivel directo: los usuarios registrados a través de tu enlace de invitación son subordinados directos de primer nivel. Si un subordinado directo realiza tareas y gana 1000 puntos, recibirás 200 puntos adicionales.\n\nReembolso del 10% por segundo nivel\n\n*Segundo nivel: Los usuarios registrados que invitan tus subordinados directos de primer nivel, recibirás un reembolso del 10% si los subordinados de segundo nivel realizan tareas. Por ejemplo, si un subordinado de segundo nivel realiza una tarea y gana 1000 puntos, recibirás 100 puntos adicionales.",
       "second_level_invitation_rule":
           "II. Invitación indirecta: Los usuarios invitados por tus subordinados directos son \"subordinados de nivel 2\", y obtendrás 50-150 puntos después de que completen las tareas designadas",
       "video_loading_please_wait":
@@ -4455,7 +4527,7 @@ class AppTranslations extends Translations {
       "participation_conditions": "Condiciones de participación",
       "condition_item_1": "Tiempo de registro de la cuenta ≥ 1 día y",
       "condition_item_2": "Número total de mensajes enviados ≥ 5",
-      "reward_content": "Contenido de la recompensa: ",
+      "reward_content": "🎯 Contenido de la recompensa:\n\n✅ Cumple las condiciones para abrir el cofre y recibir puntos!\n\n✅ Varios subordinados que cumplan pueden abrir múltiples veces, ¡sin límite en las recompensas!\n\n💡 ¿Cómo operar?\n\nInvita a amigos a registrarse y participar en tareas enviando mensajes\n\nHaz clic en “Abrir Cofre” en la página del evento para verificar automáticamente la elegibilidad\n\n¡Los puntos se acreditan en tiempo real y se pueden canjear por grandes regalos!\n\n❗️ Notas:\n\nEl sistema detecta automáticamente las tareas válidas de los subordinados.\n\nLa emisión de puntos puede tener un retraso de hasta 10 minutos\n\nEl evento es válido por mucho tiempo, fomentando la promoción continua",
       "reward_tip":
           "Cumplir las condiciones para abrir la caja y reclamar puntos!",
       "how_to_participate": "¿Cómo participar?",
@@ -4633,6 +4705,7 @@ class AppTranslations extends Translations {
       "verificationCodeFailed": "Fallo en la verificación del código",
       "verificationCodeSent": "Código de verificación enviado",
       "send_message_success": "Mensaje enviado con éxito",
+      'invitation_steps': 'Pasos para invitar',
     },
   };
 }

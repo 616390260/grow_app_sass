@@ -20,6 +20,8 @@ class ImageAssets {
 
   // 登录相关图片
   static const String loginBg = '$_basePath/login_bg.png';
+  static const String error = '$_basePath/error.png';
+  static const String msgEmpty = '$_basePath/msg_empty.png';
   static const String loginPswCheck = '$_basePath/login_psw_check.png';
   static const String loginPswLook = '$_basePath/login_psw_look.png';
   static const String homeDownload = '$_basePath/home_download.png';

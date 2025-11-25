@@ -8,6 +8,7 @@ import '../utils/api_result.dart';
 import '../i18n/i18n_keys.dart';
 import '../exceptions/api_exception.dart';
 import '../utils/message_utils.dart'; // 添加MessageUtils导入
+import '../config/environment_config.dart';
 
 /// 统一的错误处理中心
 /// 整合所有错误处理逻辑，避免重复代码
@@ -25,7 +26,9 @@ class ErrorHandlerCenter {
     bool skipSpecialHandling = false,
   }) {
     // final errorMessage = _getErrorMessage(errorCode, message);
-    print('错误码: $errorCode, 错误信息: $message');
+    if (EnvironmentConfig.instance.enableLogging) {
+      print('错误码: $errorCode, 错误信息: $message');
+    }
     // 特殊错误码处理（可选择跳过）
     if (!skipSpecialHandling) {
       _handleSpecialErrorCode(errorCode);
@@ -46,13 +49,17 @@ class ErrorHandlerCenter {
     // 直接使用传入的message
     final errorMessage = message ?? I18nKeys.errorUnknown.tr;
     final code = errorCode ?? 500;
-    debugPrint('错误码: $code, 错误信息: $errorMessage');
+    if (EnvironmentConfig.instance.enableLogging) {
+      debugPrint('错误码: $code, 错误信息: $errorMessage');
+    }
     // 特殊错误码处理（可选择跳过）- 目前只有401需要特殊处理
     if (!skipSpecialHandling && code == 401) {
       _handleSpecialErrorCode(code);
     } else if (showNotification) {
       // 除401外的其他错误直接显示提示
-      debugPrint('showError: 错误信息: $errorMessage');
+      if (EnvironmentConfig.instance.enableLogging) {
+        debugPrint('showError: 错误信息: $errorMessage');
+      }
       MessageUtils.showError(errorMessage);
     }
 
@@ -91,7 +98,9 @@ class ErrorHandlerCenter {
     } else if (exception is FormatException) {
       return _handleFormatExceptionException(exception, showNotification: showNotification);
     } else {
-      print('handleExceptionException未知异常: $customMessage');
+      if (EnvironmentConfig.instance.enableLogging) {
+        print('handleExceptionException未知异常: $customMessage');
+      }
       final errorMessage = customMessage ?? I18nKeys.errorUnknown.tr;
       final result = ApiException(code: 500, message: errorMessage);
       

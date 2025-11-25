@@ -18,7 +18,17 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
         style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
       ),
       centerTitle: true,
-      leading: const BackButton(),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          if (Get.key.currentState!.canPop()) {
+            Get.back();
+          } else {
+            // 刷新后 fallback 到首页
+            Get.offAllNamed(Routes.root);
+          }
+        },
+      ),
       elevation: 0,
       backgroundColor: Colors.white,
       foregroundColor: AppTheme.threeColor,
@@ -166,6 +176,7 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
                   // 导航到支付方式页面并等待返回结果
                   dynamic result = await Get.toNamed(Routes.paymentMethod, arguments: {
                     'country': controller.selectedCountry.value.payName,
+                    'countryId': controller.selectedCountry.value.id,
                     'minAmount': (controller.selectedCountry.value.minAmount ?? 0).toStringAsFixed(0),
                     'dailyLimit': controller.withdrawalSetting.value.oneDayNum?.toString() ?? '2',
                   });
@@ -267,6 +278,16 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
             color: AppTheme.nineColor,
           ),
         ),
+        Obx(() => (controller.withdrawAmount.value.toString().isEmpty || controller.withdrawAmount.value == 0)
+          ? SizedBox()
+          : Text(
+              '${controller.withdrawAmount.value} ${I18nKeys.pointsLabel.tr}=${(double.parse(controller.withdrawAmount.value.toString()) * (controller.selectedCountry.value.exchangeRate ?? 1.0)).toStringAsFixed(2)} ${ controller.selectedCountry.value.code}',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: AppTheme.threeColor,
+              ),
+            ))
       ],
     );
   }

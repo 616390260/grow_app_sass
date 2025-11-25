@@ -12,8 +12,6 @@ class LoginView extends BaseView<LoginController> {
 
   const LoginView({Key? key}) : super(key: key);
 
-
-
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return null;
@@ -138,7 +136,10 @@ class LoginView extends BaseView<LoginController> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.black.withValues(alpha: 0.1), Colors.transparent],
+                  colors: [
+                    Colors.black.withValues(alpha: 0.1),
+                    Colors.transparent,
+                  ],
                 ),
               ),
             ),
@@ -174,7 +175,6 @@ class LoginView extends BaseView<LoginController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        
         // 账号输入框
         _buildInputField(
           label: I18nKeys.accountField.tr,
@@ -198,7 +198,6 @@ class LoginView extends BaseView<LoginController> {
       ],
     );
   }
-
 
   Widget _buildInputField({
     required String label,
@@ -225,25 +224,25 @@ class LoginView extends BaseView<LoginController> {
           () => Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    obscureText: obscureText,
-                    onSubmitted: onSubmitted,
-                    decoration: InputDecoration(
-                      hintText: placeholder,
-                      hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      focusedErrorBorder: InputBorder.none,
-                      filled: false,
-                      contentPadding: EdgeInsets.zero,
-                      // 移除suffixIcon，改为在右侧显示
-                    ),
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  obscureText: obscureText,
+                  onSubmitted: onSubmitted,
+                  decoration: InputDecoration(
+                    hintText: placeholder,
+                    hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    focusedErrorBorder: InputBorder.none,
+                    filled: false,
+                    contentPadding: EdgeInsets.zero,
+                    // 移除suffixIcon，改为在右侧显示
                   ),
                 ),
+              ),
               // 错误信息显示在右侧，与输入框对齐
               if (errorText.value.isNotEmpty) ...[
                 const SizedBox(width: 8),
@@ -378,6 +377,19 @@ class LoginView extends BaseView<LoginController> {
               fontSize: 13,
               color: AppTheme.loginColor,
               fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Obx(
+          () => InkWell(
+            onTap: controller.goToService,
+            child: Image.network(
+              controller.customerService.value?.icon ?? '',
+              errorBuilder: (context, error, stackTrace) =>
+                  Image.asset(ImageAssets.inviteTelegram,width: 30,height: 30,),
+              width: 30,
+              height: 30,
             ),
           ),
         ),

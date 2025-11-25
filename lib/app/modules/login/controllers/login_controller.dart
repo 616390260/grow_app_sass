@@ -1,4 +1,6 @@
+import 'package:do_task_project/app/domain/entities/social_link.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_controller.dart';
@@ -21,6 +23,7 @@ class LoginController extends BaseController {
   final passwordError = ''.obs;
   bool _isDisposed = false; // 标记控制器是否已被dispose
 
+  final Rxn<SocialLink> customerService = Rxn<SocialLink>();
   // 认证服务（包含用户凭据管理和邀请码管理）
   final _authService = AuthService.to;
 
@@ -37,10 +40,10 @@ class LoginController extends BaseController {
     accountController = TextEditingController();
     passwordController = TextEditingController();
     _isDisposed = false;
-    
+
     // 加载保存的凭据
     _loadSavedCredentials();
-
+    getService();
     // 监听输入变化，清除错误信息
     accountController.addListener(() {
       if (!_isDisposed && accountError.value.isNotEmpty) {
@@ -149,17 +152,15 @@ class LoginController extends BaseController {
 
     safeApiCall(
       // API调用函数
-      () async => await _authApiService.login(
-        account: account,
-        password: password,
-      ),
+      () async =>
+          await _authApiService.login(account: account, password: password),
       // 成功回调
       (token) async {
         // 检查控制器是否已被dispose
         if (_isDisposed) {
           return;
         }
-        
+
         // 1. 先保存token和凭据，确保所有依赖TextEditingController的操作在控制器dispose前完成
         try {
           // 使用认证服务保存token
@@ -176,12 +177,12 @@ class LoginController extends BaseController {
         } catch (_) {
           // 忽略异常，避免影响登录流程
         }
-        
+
         // 再次检查控制器是否已被dispose
         if (_isDisposed) {
           return;
         }
-        
+
         // 2. 设置成功状态和显示成功消息
         setSuccess();
         showSuccessMessage(I18nKeys.loginSuccess.tr);
@@ -219,7 +220,7 @@ class LoginController extends BaseController {
   void goToRegister() {
     // 直接从URL参数获取邀请码，更简单可靠
     final inviteCode = _getInviteCodeFromUrl();
-    
+
     // 如果有邀请码，传递给注册页面
     if (inviteCode != null && inviteCode.isNotEmpty) {
       Get.toNamed('${Routes.register}?i=$inviteCode');
@@ -255,5 +256,26 @@ class LoginController extends BaseController {
     passwordController.clear();
     rememberPassword.value = false;
     showSuccessMessage(I18nKeys.passwordClearedSuccess.tr);
+  }
+
+  void getService() {
+    safeApiCall(
+      // API调用函数 - 获取客服跳转地址
+      () async => await _authApiService.getCustomerService(),
+      // 成功回调
+      (socialLink) {
+        customerService.value = socialLink;
+      },
+      // 显示加载状态
+      showLoading: true,
+    );
+  }
+
+  void goToService() {
+    if (customerService.value?.link != null && customerService.value!.link.isNotEmpty) {
+      final Uri url = Uri.parse(customerService.value!.link);
+      launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+    }
   }
 }

@@ -12,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:html/parser.dart' as htmlParser;
 import 'package:http/http.dart';
 
 class HomeView extends BaseView<HomeController> {
@@ -300,21 +301,21 @@ class HomeView extends BaseView<HomeController> {
           const SizedBox(height: 15),
           Row(
             children: [
-              if (!kIsWeb) ...[
-                Expanded(
-                  child: FeatureCardWidget(
-                    title: I18nKeys.callCenter.tr,
-                    iconPath: ImageAssets.homePhone,
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFA6EFD1), Color(0xFFE2FAF1)],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ),
-                    onTap: controller.onCallCenterTap,
-                  ),
-                ),
-                const SizedBox(width: 18),
-              ],
+              // if (!kIsWeb) ...[
+              //   Expanded(
+              //     child: FeatureCardWidget(
+              //       title: I18nKeys.callCenter.tr,
+              //       iconPath: ImageAssets.homePhone,
+              //       gradient: const LinearGradient(
+              //         colors: [Color(0xFFA6EFD1), Color(0xFFE2FAF1)],
+              //         begin: Alignment.centerLeft,
+              //         end: Alignment.centerRight,
+              //       ),
+              //       onTap: controller.onCallCenterTap,
+              //     ),
+              //   ),
+              //   const SizedBox(width: 18),
+              // ],
               Expanded(
                 child: FeatureCardWidget(
                   title: I18nKeys.inviteFriend.tr,
@@ -380,6 +381,48 @@ class HomeView extends BaseView<HomeController> {
 }
 
 
+// 解析HTML内容为TextSpan
+TextSpan _parseHtmlToTextSpan(String html, TextStyle defaultStyle) {
+  try {
+    final document = htmlParser.parse(html);
+    final children = document.body?.children ?? [];
+    final spans = <TextSpan>[];
+
+    if (children.isEmpty) {
+      // 如果没有HTML标签，直接返回普通文本
+      return TextSpan(text: document.body?.text ?? html, style: defaultStyle);
+    }
+
+    for (var element in children) {
+      spans.add(_parseElement(element, defaultStyle));
+    }
+
+    return TextSpan(children: spans);
+  } catch (e) {
+    // 如果解析失败，返回原始文本
+    return TextSpan(text: html, style: defaultStyle);
+  }
+}
+
+// 解析单个HTML元素
+TextSpan _parseElement(var element, TextStyle baseStyle) {
+  TextStyle style = baseStyle;
+  String text = element.text ?? '';
+
+  // 处理常见的格式化标签
+  if (element.localName == 'strong' || element.localName == 'b') {
+    style = style.copyWith(fontWeight: FontWeight.bold);
+  } else if (element.localName == 'em' || element.localName == 'i') {
+    style = style.copyWith(fontStyle: FontStyle.italic);
+  } else if (element.localName == 'u') {
+    style = style.copyWith(decoration: TextDecoration.underline);
+  } else if (element.localName == 's' || element.localName == 'strike') {
+    style = style.copyWith(decoration: TextDecoration.lineThrough);
+  }
+
+  return TextSpan(text: text, style: style);
+}
+
 void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
   Get.dialog(
     Center(
@@ -404,7 +447,10 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 GestureDetector(
-                  onTap: () => Get.back(),
+                  onTap: () => {
+                    Get.back(),
+                    Get.find<HomeController>().markPopupClose()
+                  },
                   child: const Icon(
                     Icons.close,
                     size: 20,
@@ -413,20 +459,32 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
                 ),
               ],
             ),
-           
+            
             // 标题 - 左对齐
             Center(
-              child: Text(
-                pa.title ?? '',
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+              child: (pa.titleIsRichText == '1') ? RichText(
+                text: _parseHtmlToTextSpan(pa.title ?? '', const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: AppTheme.threeColor,
                   decoration: TextDecoration.none,
+                )),
+                maxLines: 2,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+              ) : RichText(
+                text: TextSpan(
+                  text: pa.title ?? '',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.threeColor,
+                    decoration: TextDecoration.none,
+                  ),
                 ),
+                maxLines: 2,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             const SizedBox(height: 16),
@@ -438,7 +496,15 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
               child: SingleChildScrollView(
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(
+                  child: (pa.contentIsRichText == '1') ? RichText(
+                    text: _parseHtmlToTextSpan(pa.content ?? '', const TextStyle(
+                      fontSize: 12,
+                      height: 1.5,
+                      fontWeight: FontWeight.w500,
+                      color: AppTheme.sixColor,
+                      decoration: TextDecoration.none,
+                    )),
+                  ) : Text(
                     pa.content ?? '',
                     style: const TextStyle(
                       fontSize: 12,

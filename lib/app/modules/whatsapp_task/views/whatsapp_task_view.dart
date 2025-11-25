@@ -1,9 +1,11 @@
 import 'package:do_task_project/app/core/constants/image_assets.dart';
+import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
 import '../../../core/base/base_view.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/i18n/i18n_keys.dart';
@@ -52,7 +54,14 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Get.back(),
+                    onPressed: () {
+                      if (Get.key.currentState!.canPop()) {
+                        Get.back();
+                      } else {
+                        // 刷新后 fallback 到首页
+                        Get.offAllNamed(Routes.root);
+                      }
+                    },
                   ),
                   Expanded(
                     child: Center(
@@ -385,16 +394,17 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
               ],
             ),
             child: Obx(() {
-              if (Get.find<WhatsappTaskController>().isVideoInitialized.value) {
-                return AspectRatio(
-                  aspectRatio: controller.videoController.value.aspectRatio,
+              if (Get.find<WhatsappTaskController>().isVideoInitialized.value && controller.chewieController != null) {
+                return SizedBox(
+                  width: double.infinity, // 宽度铺满布局
+                  height: 200, // 高度固定为200
                   child: Stack(
                     children: [
-                      VideoPlayer(controller.videoController),
+                      Chewie(controller: controller.chewieController!),
                       // 播放/暂停按钮覆盖层
                       Center(
                         child: AnimatedOpacity(
-                          opacity: controller.isPlaying.value ? 1.0 : 0.0,
+                          opacity: controller.isPlaying.value ? 0.0 : 1.0,
                           duration: const Duration(milliseconds: 300),
                           child: InkWell(
                             onTap: () {
@@ -405,7 +415,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                               height: 80,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.black.withValues(alpha: 0.5),
+                                color: Colors.black.withOpacity(0.5),
                               ),
                               child: const Icon(
                                 Icons.play_arrow,
@@ -424,10 +434,37 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                           },
                         ),
                       ),
+                      // 全屏/退出全屏按钮
+                      // Positioned(
+                      //   bottom: 10,
+                      //   right: 10,
+                      //   child: InkWell(
+                      //     onTap: () {
+                      //       // 使用chewie的全屏功能
+                      //       controller.toggleFullScreen();
+                      //     },
+                      //     child: Container(
+                      //       width: 40,
+                      //       height: 40,
+                      //       decoration: BoxDecoration(
+                      //         shape: BoxShape.circle,
+                      //         color: Colors.black.withOpacity(0.5),
+                      //       ),
+                      //       child: Icon(
+                      //         controller.chewieController != null && controller.chewieController!.isFullScreen 
+                      //             ? Icons.fullscreen_exit 
+                      //             : Icons.fullscreen,
+                      //         size: 24,
+                      //         color: Colors.white,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 );
-              } else {
+              }
+              else {
                 return Container(
                   height: 180,
                   alignment: Alignment.center,
@@ -594,7 +631,6 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                 GestureDetector(
                   onTap: () => _showCountryCodePicker(),
                   child: Row(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Obx(
                         () => Text(

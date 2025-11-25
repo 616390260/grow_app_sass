@@ -27,6 +27,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
+      fontFamily: 'sans-serif', // 使用通用字体族，避免依赖特定字体文件
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
         brightness: Brightness.light,
@@ -66,15 +67,15 @@ class AppTheme {
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: Brightness.light,
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
-        brightness: Brightness.dark,
+        brightness: Brightness.light,
       ),
       appBarTheme: const AppBarTheme(
         centerTitle: true,
         elevation: 0,
-        scrolledUnderElevation: 1,
+        scrolledUnderElevation: 0, // 设置为0以消除深色模式下的黑线
       ),
       cardTheme: CardThemeData(
         elevation: 2,

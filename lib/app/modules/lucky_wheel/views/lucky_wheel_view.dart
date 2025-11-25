@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:math';
 import 'dart:ui' as ui;
 import 'dart:async';
 import 'package:do_task_project/app/core/constants/image_assets.dart';
@@ -8,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/base/base_view.dart';
 import '../../../core/i18n/i18n_keys.dart';
+import '../../../routes/app_pages.dart'; // 正确导入路由配置文件
 import '../controllers/lucky_wheel_controller.dart';
 
 class LuckyWheelView extends BaseView<LuckyWheelController> {
@@ -20,7 +22,7 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
         image: DecorationImage(
           image: AssetImage(ImageAssets.wheelBg),
           fit: BoxFit.cover,
-          alignment: Alignment.topCenter
+          alignment: Alignment.topCenter,
         ),
       ),
       child: SafeArea(
@@ -39,7 +41,7 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
                     _buildSpinButton(),
                     const SizedBox(height: 33),
                     _buildRules(),
-                     const SizedBox(height: 44),
+                    const SizedBox(height: 44),
                   ],
                 ),
               ),
@@ -56,12 +58,15 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => Get.back(),
-            child: const Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-              size: 24,
-            ),
+            onTap: () {
+              if (Get.key.currentState!.canPop()) { // 使用GetX推荐的方式检查
+                Get.back();
+              } else {
+                // 刷新后 fallback 到首页
+                Get.offAllNamed(Routes.root);
+              }
+            },
+            child: const Icon(Icons.arrow_back, color: Colors.white, size: 24),
           ),
         ],
       ),
@@ -120,20 +125,20 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
             ),
           ),
           const SizedBox(height: 12),
-          Obx(() => Text(
-                        '${I18nKeys.availablePoints.tr}${controller.userPoints} ${I18nKeys.points.tr} (${I18nKeys.spinCost.tr})',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFFC27210),
-                        ),
-                      )),
-             
+          Obx(
+            () => Text(
+              '${I18nKeys.availablePoints.tr}${controller.userPoints} ${I18nKeys.points.tr} (${I18nKeys.spinCost.tr})',
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFFC27210),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
-
 
   Widget _buildWheelSection() {
     return Container(
@@ -161,7 +166,8 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
             animation: controller.animationController,
             builder: (context, child) {
               // 优化旋转逻辑，确保停在分区中间
-              double rotationValue = controller.rotationAnimation.value * 2 * pi;
+              double rotationValue =
+                  controller.rotationAnimation.value * 2 * pi;
               final wheelPainter = WheelPainter(controller.prizes);
               return Transform.rotate(
                 angle: rotationValue,
@@ -196,48 +202,52 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
                     ),
                   ),
                   // 中心圆圈按钮（去除白色加载指示器，使用自定义加载效果）
-                  Obx(() => GestureDetector(
-                    // onTap: controller.canSpin() ? controller.startSpin : null,
-                    onTap: controller.startSpin ,
-                    child: Container(
-                      width: 80,
-                      height: 80,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          colors: [Color(0xFFFF6B35), Color(0xFFFF8E53)],
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 8,
-                            offset: Offset(0, 4),
+                  Obx(
+                    () => GestureDetector(
+                      // onTap: controller.canSpin() ? controller.startSpin : null,
+                      onTap: controller.startSpin,
+                      child: Container(
+                        width: 80,
+                        height: 80,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            colors: [Color(0xFFFF6B35), Color(0xFFFF8E53)],
                           ),
-                        ],
-                      ),
-                      child: controller.isSpinning
-                          ? const Center(
-                              child: SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                  strokeWidth: 3,
-                                ),
-                              ),
-                            )
-                          : const Center(
-                              child: Text(
-                                'GO',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 8,
+                              offset: Offset(0, 4),
                             ),
+                          ],
+                        ),
+                        child: controller.isSpinning
+                            ? const Center(
+                                child: SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                    strokeWidth: 3,
+                                  ),
+                                ),
+                              )
+                            : const Center(
+                                child: Text(
+                                  'GO',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                      ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ],
@@ -280,15 +290,12 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
 
   Widget _buildRules() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal:15),
+      margin: const EdgeInsets.symmetric(horizontal: 15),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xFFFFF5E9),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.white,
-          width: 2,
-        ),
+        border: Border.all(color: Colors.white, width: 2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,9 +338,9 @@ class TrianglePointerPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // 创建向上的三角形路径
     final path = Path()
-      ..moveTo(size.width / 2, 0)  // 顶部尖端
-      ..lineTo(0, size.height)     // 左下角
-      ..lineTo(size.width, size.height)  // 右下角
+      ..moveTo(size.width / 2, 0) // 顶部尖端
+      ..lineTo(0, size.height) // 左下角
+      ..lineTo(size.width, size.height) // 右下角
       ..close();
 
     // 使用与圆圈相同的渐变色
@@ -371,10 +378,12 @@ class WheelPainter extends CustomPainter with ChangeNotifier {
   // 加载网络图片
   Future<void> _loadImage(String url) async {
     if (_imageCache.containsKey(url) || url.isEmpty) return;
-    
+
     final Completer<ui.Image> completer = Completer();
-    
-    final ImageStream stream = CachedNetworkImageProvider(url).resolve(const ImageConfiguration());
+
+    final ImageStream stream = CachedNetworkImageProvider(
+      url,
+    ).resolve(const ImageConfiguration());
     stream.addListener(
       ImageStreamListener(
         (ImageInfo info, bool synchronousCall) {
@@ -390,7 +399,7 @@ class WheelPainter extends CustomPainter with ChangeNotifier {
         },
       ),
     );
-    
+
     try {
       await completer.future;
       // 通知框架重新绘制
@@ -452,7 +461,7 @@ class WheelPainter extends CustomPainter with ChangeNotifier {
       if (prizes[i].imageUrl != null && prizes[i].imageUrl!.isNotEmpty) {
         // 尝试加载图片
         _loadImage(prizes[i].imageUrl!);
-        
+
         // 如果图片已加载到缓存中，则绘制
         if (_imageCache.containsKey(prizes[i].imageUrl)) {
           // 保存当前画布状态
@@ -461,42 +470,55 @@ class WheelPainter extends CustomPainter with ChangeNotifier {
           canvas.translate(contentX, contentY);
           // 根据计算的角度旋转画布
           canvas.rotate(contentRotation);
-          
+
           // 绘制图片（在文字上方）
           final image = _imageCache[prizes[i].imageUrl]!;
-          final srcRect = Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble());
+          final srcRect = Rect.fromLTWH(
+            0,
+            0,
+            image.width.toDouble(),
+            image.height.toDouble(),
+          );
           final dstRect = Rect.fromLTWH(-20, -40, 40, 40);
           canvas.drawImageRect(image, srcRect, dstRect, Paint());
-          
+
           // 恢复画布状态
           canvas.restore();
         }
       }
 
       // 绘制奖品文字
-      final colors = [
-        const Color(0xFFFFE4E1),
-        const Color(0xFFFFB6C1),
-        const Color(0xFFFFE4E1),
-        const Color(0xFFFFB6C1),
-        const Color(0xFFFFE4E1),
-        const Color(0xFFFFB6C1),
-      ];
+      // final colors = [
+      //   const Color(0xFFFFD700), // 金色
+      //   const Color(0xFFFF8C00), // 深橙色
+      //   const Color(0xFFFFD700),
+      //   const Color(0xFFFF8C00),
+      //   const Color(0xFFFFD700),
+      //   const Color(0xFFFF8C00),
+      // ];
 
       final textPainter = TextPainter(
         text: TextSpan(
           text: prizes[i].prizeValue.toString(),
           style: TextStyle(
-            color: colors[i ~/ 6],
+            color: const Color(0xFFFF8C00), // 使用%而不是~/确保正确循环使用颜色
             fontSize: 18,
             fontWeight: FontWeight.bold,
+            // 添加文字阴影增强可读性
+            shadows: [
+              Shadow(
+                offset: Offset(1, 1),
+                blurRadius: 2,
+                color: Colors.black.withOpacity(0.3),
+              ),
+            ],
           ),
         ),
         textDirection: TextDirection.ltr,
       );
 
       textPainter.layout();
-      
+
       // 保存当前画布状态
       canvas.save();
       // 将画布原点移动到内容位置
@@ -506,7 +528,10 @@ class WheelPainter extends CustomPainter with ChangeNotifier {
       // 绘制文字，调整位置使文字底部朝向圆心
       textPainter.paint(
         canvas,
-        Offset(-textPainter.width / 2, prizes[i].imageUrl != null && prizes[i].imageUrl!.isNotEmpty ? 15 : 0),
+        Offset(
+          -textPainter.width / 2,
+          prizes[i].imageUrl != null && prizes[i].imageUrl!.isNotEmpty ? 15 : 0,
+        ),
       );
       // 恢复画布状态
       canvas.restore();

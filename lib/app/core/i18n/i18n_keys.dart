@@ -86,6 +86,7 @@ class I18nKeys {
   static const withdrawalAmount = 'withdrawal_amount';
   static const status = 'status';
   static const time = 'time';
+  static const selectCurrency = 'select_currency';
   static const changePassword = 'change_password';
   static const languageSettings = 'language_settings';
   static const logout = 'logout';
@@ -98,6 +99,12 @@ class I18nKeys {
   static const changePasswordSuccess = 'changePasswordSuccess';
   static const changePasswordFailed = 'changePasswordFailed';
   static const oldPasswordIncorrect = 'oldPasswordIncorrect';
+  
+  // Message Center
+  static const String messageCenter = 'message_center';
+  static const String noMessage = 'no_message';
+  static const expand = 'expand';
+  static const collapse = 'collapse';
   static const newPasswordTooShort = 'newPasswordTooShort';
 
   // Register page
@@ -157,7 +164,6 @@ class I18nKeys {
   static const downloadWhatsapp = 'download_whatsapp';
   static const continueBindingSteps = 'continue_binding_steps';
   static const bindWhatsapp = 'bind_whatsapp';
-  static const collapse = 'collapse';
   static const enterVerificationCode = 'enterVerificationCode';
   static const onlyActiveUsers = 'onlyActiveUsers';
   static const enterPhoneNumber = 'enterPhoneNumber';

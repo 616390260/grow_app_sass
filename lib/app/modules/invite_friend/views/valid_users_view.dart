@@ -1,6 +1,7 @@
 import 'package:do_task_project/app/core/base/base_view.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
+import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -24,7 +25,14 @@ class ValidUsersView extends BaseView<ValidUsersController> {
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, size: 24, color: Colors.white),
-          onPressed: () => Get.back(),
+          onPressed: () => {
+            if (Get.key.currentState!.canPop()) {
+              Get.back()
+            } else {
+              // 刷新后 fallback 到首页
+              Get.offAllNamed(Routes.home),
+            }
+          },
         ),
         // 沉浸式状态栏配置
         systemOverlayStyle: SystemUiOverlayStyle(

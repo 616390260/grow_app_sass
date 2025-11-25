@@ -13,6 +13,11 @@ HomeInfoModel _$HomeInfoModelFromJson(Map<String, dynamic> json) =>
       announcements: (json['announcement'] as List<dynamic>?)
           ?.map((e) => BannerModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      sysAnnouncements: (json['sysAnnouncement'] as List<dynamic>?)
+          ?.map(
+            (e) => SystemAnnouncementModel.fromJson(e as Map<String, dynamic>),
+          )
+          .toList(), 
       recommendTasks: (json['recommendTask'] as List<dynamic>?)
           ?.map((e) => RecommendTaskModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -24,6 +29,7 @@ HomeInfoModel _$HomeInfoModelFromJson(Map<String, dynamic> json) =>
           : PopupAnnouncementModel.fromJson(
               json['popupAnnouncement'] as Map<String, dynamic>,
             ),
+     
     );
 
 Map<String, dynamic> _$HomeInfoModelToJson(HomeInfoModel instance) =>
@@ -36,6 +42,7 @@ Map<String, dynamic> _$HomeInfoModelToJson(HomeInfoModel instance) =>
       'todayPromotionIncome': instance.todayPromotionIncome,
       'vipLevel': instance.vipLevel,
       'popupAnnouncement': instance.popupAnnouncement,
+      'sysAnnouncement': instance.sysAnnouncements,
     };
 
 BannerModel _$BannerModelFromJson(Map<String, dynamic> json) => BannerModel(
@@ -156,6 +163,8 @@ PopupAnnouncementModel _$PopupAnnouncementModelFromJson(
   updateTime: json['updateTime'] as String?,
   remark: json['remark'] as String?,
   id: (json['id'] as num?)?.toInt(),
+  titleIsRichText: json['titleIsRichText'] as String?,
+  contentIsRichText: json['contentIsRichText'] as String?,
   title: json['title'] as String?,
   content: json['content'] as String?,
   sort: (json['sort'] as num?)?.toInt(),
@@ -176,8 +185,54 @@ Map<String, dynamic> _$PopupAnnouncementModelToJson(
   'updateTime': instance.updateTime,
   'remark': instance.remark,
   'id': instance.id,
+  'titleIsRichText': instance.titleIsRichText,
+  'contentIsRichText': instance.contentIsRichText,
   'title': instance.title,
   'content': instance.content,
+  'sort': instance.sort,
+  'status': instance.status,
+  'delFlag': instance.delFlag,
+  'type': instance.type,
+  'hyperLink': instance.hyperLink,
+  'iosHyperLink': instance.iosHyperLink,
+  'image': instance.image,
+};
+
+SystemAnnouncementModel _$SystemAnnouncementModelFromJson(
+  Map<String, dynamic> json,
+) => SystemAnnouncementModel(
+  createBy: json['createBy'] as String?,
+  createTime: json['createTime'] as String?,
+  updateBy: json['updateBy'] as String?,
+  updateTime: json['updateTime'] as String?,
+  remark: json['remark'] as String?,
+  id: (json['id'] as num?)?.toInt(),
+  title: json['title'] as String?,
+  content: json['content'] as String?,
+  titleIsRichText: json['titleIsRichText'] as String?,
+  contentIsRichText: json['contentIsRichText'] as String?,
+  sort: (json['sort'] as num?)?.toInt(),
+  status: json['status'] as String?,
+  delFlag: json['delFlag'] as String?,
+  type: json['type'] as String?,
+  hyperLink: json['hyperLink'] as String?,
+  iosHyperLink: json['iosHyperLink'] as String?,
+  image: json['image'] as String?,
+);
+
+Map<String, dynamic> _$SystemAnnouncementModelToJson(
+  SystemAnnouncementModel instance,
+) => <String, dynamic>{
+  'createBy': instance.createBy,
+  'createTime': instance.createTime,
+  'updateBy': instance.updateBy,
+  'updateTime': instance.updateTime,
+  'remark': instance.remark,
+  'id': instance.id,
+  'title': instance.title,
+  'content': instance.content,
+  'titleIsRichText': instance.titleIsRichText,
+  'contentIsRichText': instance.contentIsRichText,
   'sort': instance.sort,
   'status': instance.status,
   'delFlag': instance.delFlag,

@@ -1,3 +1,6 @@
+import 'package:do_task_project/app/core/models/base_list_entity.dart';
+import 'package:do_task_project/app/data/models/country_model.dart';
+import 'package:do_task_project/app/data/services/country_api_service.dart';
 import 'package:do_task_project/app/modules/main/controllers/main_controller.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -9,25 +12,30 @@ import '../../../routes/app_pages.dart';
 import '../../../data/services/auth_api_service.dart';
 import '../../../data/models/user_model.dart';
 import '../../../core/services/auth_service.dart';
+import '../../../core/theme/app_theme.dart';
 
 class AccountController extends BaseController {
   // 用户信息
   final userName = 'Alen'.obs;
   final avatar = ''.obs;
+  final code = ''.obs;
   final referralCode = 'ILKBWU94'.obs;
   final pointsBalance = 100.obs; // 积分
   final trxBalance = 0.04.obs; // TRX 余额
   final showBalance = true.obs;
-  
+  // 国家列表（响应式）
+  RxList<CountryModel> countries = <CountryModel>[].obs;
   // 认证API服务
   final _authApiService = AuthApiService();
-  
+  RxInt selectedCurrencyIndex = 0.obs;
   // 认证服务（包含用户凭据管理）
   final _authService = AuthService.to;
+  final CountryApiService _countryApiService = CountryApiService();
 
   @override
   void onInit() {
     super.onInit();
+    loadCountries();
     // 懒加载：不在这里自动加载数据，等待tab切换时由MainController加载
   }
 
@@ -37,9 +45,10 @@ class AccountController extends BaseController {
       (user) {
         userName.value = user.userName ?? '';
         avatar.value = user.avatar ?? '';
+        code.value = user.code ?? '';
         referralCode.value = user.inviteCode ?? '';
         pointsBalance.value = user.points ?? 0;
-        trxBalance.value = user.exchangeRate ?? 0.0;
+        trxBalance.value = (user.points ?? 0) * (user.exchangeRate ?? 0.0);
         setSuccess();
       },
       errorMessage: I18nKeys.loadUserInfoFailed.tr,
@@ -52,7 +61,7 @@ class AccountController extends BaseController {
 
   // 显隐余额
   void toggleBalanceVisibility() {
-    showBalance.value = !showBalance.value;
+    
   }
 
   // 复制推荐码
@@ -170,5 +179,139 @@ class AccountController extends BaseController {
     // 获取MainController并切换到群客服tab（索引3）
     final mainController = Get.find<MainController>();
     mainController.onTabChanged(3);
+  }
+
+   // 加载国家列表
+  void loadCountries() {
+    safeApiCall(
+      // API调用函数
+      () async => await _countryApiService.getCountryList(),
+      // 成功回调
+      (BaseListEntity<CountryModel> response) {
+        try {
+          print('获取到国家列表数量: ${response.records.length}');
+
+          final List<CountryModel> countryList = response.records;
+
+          // 更新国家列表
+          if (countryList.isNotEmpty) {
+            countries.assignAll(countryList);
+          }
+        } catch (e) {
+          print('处理国家列表时异常: $e');
+        }
+      },
+      // 自定义错误消息
+      errorMessage: I18nKeys.loadCountriesFailed.tr,
+      // 不显示全局加载状态，避免与其他操作冲突
+      showLoading: false,
+      // 错误回调（保持静默失败）
+      onError: () {
+        print(I18nKeys.loadCountriesFailed.tr);
+      },
+    );
+  }
+
+  // 显示兑换弹窗
+  void showExchangePop() {
+    // 确保有数据
+    if (countries.isEmpty) {
+      loadCountries();
+      // 给数据加载一点时间
+      Future.delayed(const Duration(milliseconds: 2000), () {
+        _showModal();
+      });
+    } else {
+      _showModal();
+    }
+  }
+  
+  // 显示底部弹窗的私有方法
+  void _showModal() {
+    showModalBottomSheet(
+      context: Get.context!,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 标题和关闭按钮行
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    I18nKeys.selectCurrency.tr,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.threeColor,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () => Get.back(),
+                    child: const Icon(Icons.close),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              // 货币列表
+              Obx(() {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: List.generate(countries.length, (index) {
+                    final country = countries[index];
+                    final isSelected = selectedCurrencyIndex.value == index;
+                    final pointsAmount = 100;
+                    final exchangeAmount = pointsAmount * (country.exchangeRate ?? 0);
+                    
+                    return InkWell(
+                      onTap: () {
+                        selectedCurrencyIndex.value = index;
+                        Get.back();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: AppTheme.nineColor,
+                              width: 0.5,
+                            ),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '${pointsAmount}${I18nKeys.points.tr} = ${exchangeAmount.toStringAsFixed(2)} ${country.code}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppTheme.threeColor,
+                              ),
+                            ),
+                            if (isSelected)
+                              Icon(
+                                Icons.check,
+                                color: AppTheme.primaryColor,
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+                );
+              }),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

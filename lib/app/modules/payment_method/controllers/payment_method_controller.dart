@@ -3,6 +3,7 @@ import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../../../data/services/bank_api_service.dart';
 import 'package:flutter/foundation.dart';
+import '../../../data/models/bank_info_model.dart';
 
 // 银行模型类
 class BankModel {
@@ -44,7 +45,10 @@ class PaymentMethodController extends BaseController {
   RxString phone = ''.obs;
   
   // 国家/地区（从上个页面传递）
-  String country = Get.arguments?['country'] ?? 'nigeria';
+  String country = Get.arguments?['country'] ?? '';
+  int countryId = Get.arguments?['countryId'] ?? 0;
+  // 银行信息对象
+  BankInfo? bankInfo = Get.arguments?['bankInfo'];
   
   // 银行列表
   RxList<BankModel> bankList = <BankModel>[].obs;
@@ -59,12 +63,12 @@ class PaymentMethodController extends BaseController {
   Future<void> loadBankList() async {
     safeApiCall(
       // 真实API调用函数
-      () async => await _apiService.getBankList(),
+      () async => await _apiService.getBankList(countryId: countryId),
       // 成功回调
       (List<BankModel> bankDataList) {
         bankList.value = bankDataList;
         filteredBankList.value = bankDataList; // 初始化过滤列表
-        debugPrint('成功加载银行列表，共${bankDataList.length}条数据');
+        debugPrint('成功加载银行列表，共${bankDataList.length}条数据，国家ID: $countryId');
       },
       // 自定义错误消息
       errorMessage: I18nKeys.getBankListFailed.tr,
@@ -101,22 +105,19 @@ class PaymentMethodController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    // 打印接收到的bankInfo信息
+    if (bankInfo != null) {
+      print('成功接收到bankInfo: ${bankInfo}');
+    } else {
+      print('未接收到bankInfo');
+    }
+    // 打印接收到的国家ID
+    print('接收到的国家ID: $countryId');
+    print('接收到的国家名称: $country');
     // 初始化数据
-    loadPaymentData();
+    loadBankList();
   }
   
-  // 加载支付信息
-  void loadPaymentData() async {
-    setLoading(true);
-    try {
-      // 模拟从API获取数据
-      await Future.delayed(const Duration(seconds: 1));
-      setSuccess();
-    } catch (e) {
-      setError(I18nKeys.errorUnknown.tr);
-      showErrorMessage(I18nKeys.errorUnknown.tr);
-    }
-  }
   
   // 设置银行名称
   void setBankName(String name) {

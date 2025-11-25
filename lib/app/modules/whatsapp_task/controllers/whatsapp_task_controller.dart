@@ -1,6 +1,8 @@
 import 'package:do_task_project/app/domain/entities/online_number.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
@@ -35,6 +37,7 @@ class WhatsappTaskController extends BaseController {
 
   // 视频播放器控制器
   late VideoPlayerController videoController;
+  ChewieController? chewieController;
   final isVideoInitialized = false.obs;
   final isPlaying = false.obs;
 
@@ -75,19 +78,37 @@ class WhatsappTaskController extends BaseController {
   void _initVideoController() {
     if (videoUrl.value.isNotEmpty) {
       try {
-        videoController =
-            VideoPlayerController.networkUrl(
+        // 确保先释放旧的控制器资源
+        _disposeVideoResources();
+        
+        videoController = VideoPlayerController.networkUrl(
                 Uri.parse(videoUrl.value),
                 videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
-              )
-              ..initialize().then((_) {
-                isVideoInitialized.value = true;
-              })
-              ..addListener(() {
+              );
+              
+        // 延迟初始化以避免lifecycle消息问题
+        Future.delayed(const Duration(milliseconds: 100), () {
+          try {
+            videoController.initialize().then((_) {
+              isVideoInitialized.value = true;
+              _setupChewieController();
+            });
+            
+            videoController.addListener(() {
+              try {
                 isPlaying.value = videoController.value.isPlaying;
-              })
-              ..setLooping(false);
+              } catch (e) {
+                // 避免在控制器已释放时访问
+                isPlaying.value = false;
+              }
+            });
+          } catch (e) {
+            Get.log('Error initializing video: $e');
+            _initDefaultVideoController();
+          }
+        });
       } catch (e) {
+        Get.log('Error setting up video controller: $e');
         // 如果视频URL无效，使用默认视频
         _initDefaultVideoController();
       }
@@ -99,28 +120,93 @@ class WhatsappTaskController extends BaseController {
 
   // 初始化默认视频控制器
   void _initDefaultVideoController() {
-    videoController =
-        VideoPlayerController.networkUrl(
+    // 确保先释放旧的控制器资源
+    _disposeVideoResources();
+    
+    videoController = VideoPlayerController.networkUrl(
             Uri.parse(
               'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
             ),
             videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
-          )
-          ..initialize().then((_) {
-            isVideoInitialized.value = true;
-          })
-          ..addListener(() {
+          );
+    
+    // 延迟初始化以避免lifecycle消息问题
+    Future.delayed(const Duration(milliseconds: 100), () {
+      try {
+        videoController.initialize().then((_) {
+          isVideoInitialized.value = true;
+          _setupChewieController();
+        });
+        
+        videoController.addListener(() {
+          try {
             isPlaying.value = videoController.value.isPlaying;
-          })
-          ..setLooping(false);
+          } catch (e) {
+            // 避免在控制器已释放时访问
+            isPlaying.value = false;
+          }
+        });
+      } catch (e) {
+        Get.log('Error initializing default video: $e');
+      }
+    });
+  }
+  
+  // 释放视频相关资源
+  void _disposeVideoResources() {
+    try {
+      chewieController?.dispose();
+      // 不要在这里dispose videoController，因为我们会重新赋值
+    } catch (e) {
+      Get.log('Error disposing video resources: $e');
+    }
+  }
+  
+  // 设置Chewie控制器
+  void _setupChewieController() {
+    try {
+      if (videoController.value.isInitialized) {
+        // 确保先释放旧的控制器
+        if (chewieController != null) {
+          chewieController!.dispose();
+        }
+        
+        chewieController = ChewieController(
+            videoPlayerController: videoController,
+            autoPlay: false,
+            looping: false,
+            aspectRatio: videoController.value.aspectRatio,
+            showControls: false, // 隐藏默认控件，使用自定义控件
+            allowFullScreen: true,
+            allowPlaybackSpeedChanging: false,
+            errorBuilder: (context, errorMessage) {
+              return Center(
+                child: Text(
+                  'Video playback error',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                ),
+              );
+            },
+          );
+      }
+    } catch (e) {
+      // 捕获任何初始化错误
+      Get.log('Error setting up Chewie controller: $e');
+    }
   }
 
   @override
   void onClose() {
     try {
       // 安全释放视频资源
+      chewieController?.dispose();
       videoController.dispose();
-    } catch (e) {}
+    } catch (e) {
+      Get.log('Error disposing resources on close: $e');
+    }
     super.onClose();
   }
 
@@ -326,6 +412,18 @@ class WhatsappTaskController extends BaseController {
       }
     } else {
       showErrorMessage(I18nKeys.videoLoadingPleaseWait.tr);
+    }
+  }
+  
+  // 切换全屏模式
+  void toggleFullScreen() async {
+    // 切换全屏状态
+    if (chewieController != null) {
+      if (chewieController!.isFullScreen) {
+        chewieController!.exitFullScreen();
+      } else {
+        chewieController!.enterFullScreen();
+      }
     }
   }
 

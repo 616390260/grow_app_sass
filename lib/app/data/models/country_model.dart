@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:do_task_project/app/domain/entities/country.dart';
+import 'package:do_task_project/app/data/models/bank_info_model.dart';
 
 part 'country_model.g.dart';
 
@@ -80,6 +81,16 @@ class CountryModel {
 
   /// 转换为实体
   Country toEntity() {
+    // 解析银行信息
+    BankInfo? parsedBankInfo;
+    if (bankInfo != null && bankInfo!.isNotEmpty) {
+      try {
+        parsedBankInfo = BankInfo.fromJsonString(bankInfo!);
+      } catch (e) {
+        print('Failed to parse bankInfo: $e');
+      }
+    }
+
     return Country(
       id: id.toString(),
       name: payName,
@@ -93,6 +104,7 @@ class CountryModel {
       className: className,
       classNameLang: classNameLang,
       recommend: recommend,
+      bankInfo: parsedBankInfo,
     );
   }
 }

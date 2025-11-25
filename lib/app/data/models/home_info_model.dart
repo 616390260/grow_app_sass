@@ -37,6 +37,10 @@ class HomeInfoModel {
   @JsonKey(name: 'popupAnnouncement')
   final PopupAnnouncementModel? popupAnnouncement;
 
+  /// 系统公告数组
+  @JsonKey(name: 'sysAnnouncement')
+  final List<SystemAnnouncementModel>? sysAnnouncements;
+
   HomeInfoModel({
     this.domainName,
     this.accountPoints,
@@ -46,6 +50,7 @@ class HomeInfoModel {
     this.todayPromotionIncome,
     this.vipLevel,
     this.popupAnnouncement,
+    this.sysAnnouncements,
   });
 
   factory HomeInfoModel.fromJson(Map<String, dynamic> json) =>
@@ -349,6 +354,10 @@ class PopupAnnouncementModel {
 
   @JsonKey(name: 'id')
   final int? id;
+  @JsonKey(name: 'titleIsRichText')
+  final String? titleIsRichText;
+  @JsonKey(name: 'contentIsRichText')
+  final String? contentIsRichText;
 
   @JsonKey(name: 'title')
   final String? title;
@@ -384,6 +393,8 @@ class PopupAnnouncementModel {
     this.updateTime,
     this.remark,
     this.id,
+    this.titleIsRichText,
+    this.contentIsRichText,
     this.title,
     this.content,
     this.sort,
@@ -399,4 +410,84 @@ class PopupAnnouncementModel {
       _$PopupAnnouncementModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$PopupAnnouncementModelToJson(this);
+}
+
+/// 系统公告模型
+@JsonSerializable()
+class SystemAnnouncementModel {
+  @JsonKey(name: 'createBy')
+  final String? createBy;
+
+  @JsonKey(name: 'createTime')
+  final String? createTime;
+
+  @JsonKey(name: 'updateBy')
+  final String? updateBy;
+
+  @JsonKey(name: 'updateTime')
+  final String? updateTime;
+
+  @JsonKey(name: 'remark')
+  final String? remark;
+
+  @JsonKey(name: 'id')
+  final int? id;
+
+  @JsonKey(name: 'title')
+  final String? title;
+
+  @JsonKey(name: 'content')
+  final String? content;
+
+  @JsonKey(name: 'titleIsRichText')
+  final String? titleIsRichText;
+
+  @JsonKey(name: 'contentIsRichText')
+  final String? contentIsRichText;
+
+  @JsonKey(name: 'sort')
+  final int? sort;
+
+  @JsonKey(name: 'status')
+  final String? status;
+
+  @JsonKey(name: 'delFlag')
+  final String? delFlag;
+
+  @JsonKey(name: 'type')
+  final String? type;
+
+  @JsonKey(name: 'hyperLink')
+  final String? hyperLink;
+
+  @JsonKey(name: 'iosHyperLink')
+  final String? iosHyperLink;
+
+  @JsonKey(name: 'image')
+  final String? image;
+
+  SystemAnnouncementModel({
+    this.createBy,
+    this.createTime,
+    this.updateBy,
+    this.updateTime,
+    this.remark,
+    this.id,
+    this.title,
+    this.content,
+    this.titleIsRichText,
+    this.contentIsRichText,
+    this.sort,
+    this.status,
+    this.delFlag,
+    this.type,
+    this.hyperLink,
+    this.iosHyperLink,
+    this.image,
+  });
+
+  factory SystemAnnouncementModel.fromJson(Map<String, dynamic> json) =>
+      _$SystemAnnouncementModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SystemAnnouncementModelToJson(this);
 }

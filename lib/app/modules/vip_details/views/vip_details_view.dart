@@ -321,7 +321,7 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
                               borderRadius: BorderRadius.circular(15),
                             ),
                             child: Text(
-                              I18nKeys.activated.tr,
+                              reward.isActivated == true ? I18nKeys.activated.tr : I18nKeys.notActivated.tr,
                               style: TextStyle(
                                 fontSize: 11,
                                 color: Colors.white,

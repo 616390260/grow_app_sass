@@ -1,6 +1,7 @@
 import '../models/home_info_model.dart';
 import '../../core/services/http_service.dart';
 import 'package:flutter/foundation.dart';
+import '../../core/config/environment_config.dart';
 
 /// 任务中心API服务
 class TaskCenterApiService {
@@ -19,14 +20,18 @@ class TaskCenterApiService {
         'size': limit,
       };
 
-      debugPrint('请求任务列表API: $_getTaskListEndpoint, 参数: $queryParameters');
+      if (EnvironmentConfig.instance.enableLogging) {
+        debugPrint('请求任务列表API: $_getTaskListEndpoint, 参数: $queryParameters');
+      }
       
       final responseData = await _httpService.get<Map<String, dynamic>>(
         _getTaskListEndpoint,
         queryParameters: queryParameters,
       );
       
-      debugPrint('获取到任务列表响应: $responseData, 类型: ${responseData.runtimeType}');
+      if (EnvironmentConfig.instance.enableLogging) {
+        debugPrint('获取到任务列表响应: $responseData, 类型: ${responseData.runtimeType}');
+      }
       
       // 检查响应数据结构
       
@@ -37,20 +42,26 @@ class TaskCenterApiService {
         if (responseData.containsKey('records') || 
             responseData.containsKey('total') || 
             responseData.containsKey('pages')) {
-          debugPrint('使用方式1解析: 直接将响应数据作为TaskListResponse');
+          if (EnvironmentConfig.instance.enableLogging) {
+            debugPrint('使用方式1解析: 直接将响应数据作为TaskListResponse');
+          }
           return TaskListResponse.fromJson(responseData);
         }
         
         // 方式2: 从data字段获取（标准API响应格式）
         if (responseData.containsKey('data') && responseData['data'] is Map<String, dynamic>) {
           final data = responseData['data'] as Map<String, dynamic>;
-          debugPrint('使用方式2解析: 从data字段获取分页数据: $data');
+          if (EnvironmentConfig.instance.enableLogging) {
+            debugPrint('使用方式2解析: 从data字段获取分页数据: $data');
+          }
           return TaskListResponse.fromJson(data);
         }
         
         // 方式3: 如果records直接在根级
         if (responseData.containsKey('records') && responseData['records'] is List) {
-          debugPrint('使用方式3解析: records直接在根级');
+          if (EnvironmentConfig.instance.enableLogging) {
+            debugPrint('使用方式3解析: records直接在根级');
+          }
           List<RecommendTaskModel> recordList = [];
           for (var item in responseData['records'] as List) {
             if (item is Map<String, dynamic>) {
@@ -67,14 +78,20 @@ class TaskCenterApiService {
         }
              
       } catch (e) {
-        debugPrint('解析任务列表数据异常: $e');
+        if (EnvironmentConfig.instance.enableLogging) {
+          debugPrint('解析任务列表数据异常: $e');
+        }
       }
       
       // 兜底方案：返回空的响应对象
-      debugPrint('所有解析方式失败，返回空响应');
+      if (EnvironmentConfig.instance.enableLogging) {
+        debugPrint('所有解析方式失败，返回空响应');
+      }
       return TaskListResponse(records: [], total: 0, size: limit, current: page, pages: 0);
     } catch (e) {
-      debugPrint('获取任务列表异常: $e');
+      if (EnvironmentConfig.instance.enableLogging) {
+        debugPrint('获取任务列表异常: $e');
+      }
       rethrow;
     }
   }

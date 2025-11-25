@@ -1,3 +1,5 @@
+import 'package:do_task_project/app/domain/entities/social_link.dart';
+
 import '../../core/services/http_service.dart';
 import '../../core/utils/json_convert.dart';
 import '../models/user_model.dart';
@@ -10,6 +12,7 @@ class AuthApiService {
   static const String _loginEndpoint = 'app/login';
   static const String _logoutEndpoint = 'app/user/logout';
   static const String _getUserInfoEndpoint = 'app/user/getInfo';
+  static const String _getCustomerServiceEndpoint = 'app/customerService/getPerson';
 
   /// 注册
   /// 返回服务端原始数据 `Map<String, dynamic>`
@@ -19,12 +22,14 @@ class AuthApiService {
     required String password,
     String? confirmPassword,
     String? inviteCode,
+    String? domainName,
   }) async {
     final data = <String, dynamic>{
       'account': account,
       'password': password,
       if (confirmPassword != null) 'confirmPassword': confirmPassword,
       if (inviteCode != null && inviteCode.isNotEmpty) 'inputInviteCode': inviteCode,
+      if (domainName != null && domainName.isNotEmpty) 'domainName': domainName,
     };
 
     // 使用 HttpService 的 postData 方法，直接返回泛型对象
@@ -99,5 +104,16 @@ class AuthApiService {
       'app/user/updatePassword',
       queryParameters: queryParameters,
     );
+  }
+  
+  /// 获取客服跳转地址
+Future<SocialLink> getCustomerService() async {
+    // 先获取原始Map数据
+    final responseData = await _httpService.get<Map<String, dynamic>>(
+      _getCustomerServiceEndpoint,
+    );
+    
+    // 使用modelFromJson工具方法正确转换数据为SocialLink对象
+    return JsonConvert.modelFromJson(responseData, SocialLink.fromJson)!;
   }
 }

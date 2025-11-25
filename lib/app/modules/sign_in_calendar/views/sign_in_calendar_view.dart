@@ -1,5 +1,6 @@
 import 'package:do_task_project/app/core/constants/image_assets.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
+import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -50,7 +51,14 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () => Get.back(),
+                  onPressed: () => {
+                    if (Get.key.currentState!.canPop()) {
+                      Get.back()
+                    } else {
+                      // 刷新后 fallback 到首页
+                      Get.offAllNamed(Routes.home),
+                    }
+                  },
                 ),
                 Expanded(
                   child: Center(

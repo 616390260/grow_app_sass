@@ -1,6 +1,7 @@
 import 'package:do_task_project/app/core/constants/image_assets.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:do_task_project/app/core/theme/text_styles.dart';
+import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -41,7 +42,14 @@ class InviteFriendView extends BaseView<InviteFriendController> {
           centerTitle: true,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Get.back(),
+            onPressed: () => {
+              if (Get.key.currentState!.canPop()) {
+                Get.back()
+              } else {
+                // 刷新后 fallback 到首页
+                Get.offAllNamed(Routes.home),
+              }
+            },
           ),
           // 沉浸式状态栏配置
           systemOverlayStyle: SystemUiOverlayStyle(
@@ -245,19 +253,20 @@ class InviteFriendView extends BaseView<InviteFriendController> {
                       ),
                     ),
 
-                    const SizedBox(height: 15),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          I18nKeys.yourDownlineMustMeet.tr,
-                          style: TextStyles.smallThreeColorW500,
-                        ),
-                        const SizedBox(height: 10),
-                        _buildConditionItem(I18nKeys.registerTimeOver1Min.tr),
-                        _buildConditionItem(I18nKeys.sendMessagesOver5.tr),
-                      ],
-                    ),
+                    // const SizedBox(height: 15),
+                    
+                    // Column(
+                    //   crossAxisAlignment: CrossAxisAlignment.start,
+                    //   children: [
+                    //     Text(
+                    //       I18nKeys.yourDownlineMustMeet.tr,
+                    //       style: TextStyles.smallThreeColorW500,
+                    //     ),
+                    //     const SizedBox(height: 10),
+                    //     _buildConditionItem(I18nKeys.registerTimeOver1Min.tr),
+                    //     _buildConditionItem(I18nKeys.sendMessagesOver5.tr),
+                    //   ],
+                    // ),
 
                     // 奖励内容
                     const SizedBox(height: 20),
@@ -265,37 +274,37 @@ class InviteFriendView extends BaseView<InviteFriendController> {
                       I18nKeys.rewardContent.tr,
                       style: TextStyles.smallThreeColorW500,
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      I18nKeys.multipliedRewards.tr,
-                      style: TextStyles.smallThreeColorW500,
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      I18nKeys.conditionsCanBeMetMultipleTimes.tr,
-                      style: TextStyles.smallThreeColorW500,
-                    ),
+                    // const SizedBox(height: 10),
+                    // Text(
+                    //   I18nKeys.multipliedRewards.tr,
+                    //   style: TextStyles.smallThreeColorW500,
+                    // ),
+                    // const SizedBox(height: 5),
+                    // Text(
+                    //   I18nKeys.conditionsCanBeMetMultipleTimes.tr,
+                    //   style: TextStyles.smallThreeColorW500,
+                    // ),
 
-                    // 如何操作
-                    const SizedBox(height: 20),
-                    Text(
-                      I18nKeys.howToOperate.tr,
-                      style: TextStyles.smallThreeColorW500,
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      I18nKeys.inviteFriendsAndSendMessage.tr,
-                      style: TextStyles.smallThreeColorW500,
-                    ),
+                    // // 如何操作
+                    // const SizedBox(height: 20),
+                    // Text(
+                    //   I18nKeys.howToOperate.tr,
+                    //   style: TextStyles.smallThreeColorW500,
+                    // ),
+                    // const SizedBox(height: 10),
+                    // Text(
+                    //   I18nKeys.inviteFriendsAndSendMessage.tr,
+                    //   style: TextStyles.smallThreeColorW500,
+                    // ),
 
-                    // 注意事项
-                    const SizedBox(height: 20),
-                    Text(I18nKeys.importantNotes.tr, style: TextStyles.smallThreeColorW500),
-                    const SizedBox(height: 10),
-                    Text(
-                      I18nKeys.inviteFriendsAndSendMessage.tr,
-                      style: TextStyles.smallThreeColorW500,
-                    ),
+                    // // 注意事项
+                    // const SizedBox(height: 20),
+                    // Text(I18nKeys.importantNotes.tr, style: TextStyles.smallThreeColorW500),
+                    // const SizedBox(height: 10),
+                    // Text(
+                    //   I18nKeys.inviteFriendsAndSendMessage.tr,
+                    //   style: TextStyles.smallThreeColorW500,
+                    // ),
                   ],
                 ),
               ),

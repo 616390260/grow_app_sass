@@ -1,4 +1,5 @@
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
+import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:get/get.dart';
 import 'dart:async';
 import '../../../core/base/base_controller.dart';
@@ -124,7 +125,12 @@ class VipDetailsController extends BaseController {
 
   // 返回上一页
   void onBackPress() {
-    Get.back();
+    if (Get.key.currentState!.canPop()) {
+      Get.back();
+    } else {
+      // 刷新后 fallback 到首页
+      Get.offAllNamed(Routes.root);
+    }
   }
 
   // 领取奖励按钮点击

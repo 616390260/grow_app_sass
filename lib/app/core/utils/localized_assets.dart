@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -18,13 +19,22 @@ class LocalizedAssets {
   /// [imageName] 图片文件名（包含扩展名）
   /// 返回完整的资源路径
   static String getImagePath(String imageName) {
+    // Web平台上，由于Flutter构建时会创建嵌套的assets目录结构，需要特殊处理
+    bool isWeb = kIsWeb;
+    String basePath = isWeb ? 'assets/assets' : 'assets';
+    
+    // 特殊处理logo.png，直接使用根目录下的版本
+    if (imageName == 'logo.png') {
+      return '$basePath/images/logo.png';
+    }
+    
     final locale = Get.locale ?? const Locale('zh', 'CN');
     final languageCode = locale.languageCode;
     
     // 获取支持的语言代码，如果不支持则使用默认
     final supportedLocale = _supportedLocales[languageCode] ?? 'default';
     
-    return 'assets/images/$supportedLocale/$imageName';
+    return '$basePath/images/$supportedLocale/$imageName';
   }
 
   /// 获取本地化的AssetImage对象
@@ -39,15 +49,24 @@ class LocalizedAssets {
   /// [languageCode] 语言代码（可选，默认使用当前语言）
   /// 返回资源路径，如果指定语言不存在则返回默认路径
   static String getImagePathWithFallback(String imageName, [String? languageCode]) {
+    // Web平台上，由于Flutter构建时会创建嵌套的assets目录结构，需要特殊处理
+    bool isWeb = kIsWeb;
+    String basePath = isWeb ? 'assets/assets' : 'assets';
+    
+    // 特殊处理logo.png，直接使用根目录下的版本
+    if (imageName == 'logo.png') {
+      return '$basePath/images/logo.png';
+    }
+    
     languageCode ??= Get.locale?.languageCode ?? 'zh';
     final supportedLocale = _supportedLocales[languageCode];
     
     if (supportedLocale != null) {
-      return 'assets/images/$supportedLocale/$imageName';
+      return '$basePath/images/$supportedLocale/$imageName';
     }
     
     // 如果不支持该语言，使用默认资源
-    return 'assets/images/default/$imageName';
+    return '$basePath/images/default/$imageName';
   }
 
   /// 获取所有支持的语言代码列表
@@ -66,8 +85,30 @@ class LocalizedAssets {
 /// 扩展方法，为String添加本地化图片获取功能
 extension LocalizedAssetString on String {
   /// 获取本地化图片路径
-  String get localizedImagePath => LocalizedAssets.getImagePath(this);
+  String get localizedImagePath {
+    // Web平台上，由于Flutter构建时会创建嵌套的assets目录结构，需要特殊处理
+    bool isWeb = kIsWeb;
+    String basePath = isWeb ? 'assets/assets' : 'assets';
+    
+    // 特殊处理logo.png，直接使用根目录下的版本
+    if (this == 'logo.png') {
+      return '$basePath/images/logo.png';
+    }
+    
+    return LocalizedAssets.getImagePath(this);
+  }
   
   /// 获取本地化AssetImage对象
-  AssetImage get localizedImage => LocalizedAssets.getLocalizedImage(this);
+  AssetImage get localizedImage {
+    // Web平台上，由于Flutter构建时会创建嵌套的assets目录结构，需要特殊处理
+    bool isWeb = kIsWeb;
+    String basePath = isWeb ? 'assets/assets' : 'assets';
+    
+    // 特殊处理logo.png，直接使用根目录下的版本
+    if (this == 'logo.png') {
+      return AssetImage('$basePath/images/logo.png');
+    }
+    
+    return LocalizedAssets.getLocalizedImage(this);
+  }
 }

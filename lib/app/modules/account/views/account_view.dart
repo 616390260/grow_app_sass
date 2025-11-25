@@ -1,5 +1,8 @@
 import 'package:do_task_project/app/core/theme/app_theme.dart';
+import 'package:do_task_project/app/core/widgets/localized_app_bar.dart';
+import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../controllers/account_controller.dart';
@@ -11,17 +14,22 @@ class AccountView extends BaseView<AccountController> {
   const AccountView({Key? key}) : super(key: key);
 
   @override
-  PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return null;
-  }
-
-  @override
   Widget buildContent(BuildContext context) {
+     SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.light,
+      ),
+    );
     final Color primary = const Color(0xFF4A90E2);
     return Obx(
       () => SingleChildScrollView(
-        child: Column(
-          children: [
+        // 为整个滚动视图设置白色背景，确保在暗黑模式下也不会变黑
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            children: [
             // 顶部头部 + 余额卡片
             Stack(
               clipBehavior: Clip.none,
@@ -62,13 +70,13 @@ class AccountView extends BaseView<AccountController> {
                                     ),
                                     child: ClipOval(
                                       child: Image.network(
-                                        controller.avatar.value,
+                                        controller.avatar.value ,
                                         width: 64,
                                         height: 64,
                                         fit: BoxFit.cover,
                                         errorBuilder:
                                             (context, error, stackTrace) =>
-                                                const Icon(Icons.error),
+                                                Image.asset(ImageAssets.error),
                                       ),
                                     ),
                                   ),
@@ -135,23 +143,28 @@ class AccountView extends BaseView<AccountController> {
                                             ImageAssets.mineService,
                                             width: 22,
                                             height: 22,
-                                            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                                            colorFilter: const ColorFilter.mode(
+                                              Colors.white,
+                                              BlendMode.srcIn,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                      // const SizedBox(width: 7),
-                                      // GestureDetector(
-                                      //   onTap: () {},
-                                      //   child: Container(
-                                      //     padding: const EdgeInsets.all(6),
-                                      //     child: SvgPicture.asset(
-                                      //       ImageAssets.mineMsg,
-                                      //       color: Colors.white,
-                                      //       width: 23,
-                                      //       height: 22,
-                                      //     ),
-                                      //   ),
-                                      // ),
+                                      const SizedBox(width: 7),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Get.toNamed(Routes.messageCenter);
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(6),
+                                          child: SvgPicture.asset(
+                                            ImageAssets.mineMsg,
+                                            color: Colors.white,
+                                            width: 23,
+                                            height: 22,
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -236,6 +249,7 @@ class AccountView extends BaseView<AccountController> {
             const SizedBox(height: 16),
           ],
         ),
+      )
       ),
     );
   }
@@ -252,27 +266,31 @@ class AccountView extends BaseView<AccountController> {
         child: Stack(
           children: [
             // 右上角装饰标签
-            // Positioned(
-            //   right: 0,
-            //   top: 0,
-            //   child: Container(
-            //     width: 78,
-            //     height: 28,
-            //     alignment: Alignment.center,
-            //     decoration: BoxDecoration(
-            //       color: AppTheme.loginColor.withOpacity(0.6),
-            //       borderRadius: const BorderRadius.only(
-            //         topRight: Radius.circular(10),
-            //         bottomLeft: Radius.circular(40),
-            //       ),
-            //     ),
-            //     child: SvgPicture.asset(
-            //       ImageAssets.mineSwitch,
-            //       width: 24,
-            //       height: 24,
-            //     ),
-            //   ),
-            // ),
+            Positioned(
+              right: 0,
+              top: 0,
+              
+              child: GestureDetector(
+                onTap: controller.showExchangePop,
+                child: Container(
+                  width: 78,
+                  height: 28,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: AppTheme.loginColor.withOpacity(0.6),
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      bottomLeft: Radius.circular(40),
+                    ),
+                  ),
+                  child: SvgPicture.asset(
+                    ImageAssets.mineSwitch,
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 22, top: 16),
               child: Column(
@@ -339,7 +357,7 @@ class AccountView extends BaseView<AccountController> {
                           ),
                           const SizedBox(width: 13),
                           Text(
-                            'TRX',
+                            controller.code.value,
                             style: TextStyle(
                               color: AppTheme.nineColor,
                               fontSize: 14,
@@ -384,7 +402,10 @@ class AccountView extends BaseView<AccountController> {
                 imagePath,
                 width: 17,
                 height: 17,
-                colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(
+                  Colors.white,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
             const SizedBox(width: 11),
@@ -401,7 +422,10 @@ class AccountView extends BaseView<AccountController> {
               ImageAssets.rightGray,
               width: 15,
               height: 15,
-              colorFilter: ColorFilter.mode(AppTheme.nineColor, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(
+                AppTheme.nineColor,
+                BlendMode.srcIn,
+              ),
             ),
           ],
         ),

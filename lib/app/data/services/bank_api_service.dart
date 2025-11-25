@@ -9,12 +9,13 @@ class BankApiService {
   static const String _getBankCodeEndpoint = 'app/goldenFlowInfo/getBankCode';
 
   /// 获取银行列表
-  Future<List<BankModel>> getBankList() async {
+  Future<List<BankModel>> getBankList({int? countryId}) async {
     try {
-      print('请求银行列表API: $_getBankCodeEndpoint');
+      print('请求银行列表API: $_getBankCodeEndpoint, 参数countryId: $countryId');
       
       final responseData = await _httpService.get<List<dynamic>>(
         _getBankCodeEndpoint,
+        queryParameters: {'name': countryId},
       );
       
       print('获取到银行列表响应: $responseData');

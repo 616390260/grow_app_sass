@@ -39,6 +39,8 @@ import '../modules/income_details/bindings/income_details_binding.dart';
 import '../modules/income_details/views/income_details_view.dart';
 import '../modules/invite_friend/views/valid_users_view.dart';
 import '../modules/invite_friend/controllers/valid_users_controller.dart';
+import '../modules/message_center/bindings/message_center_binding.dart';
+import '../modules/message_center/views/message_center_view.dart';
 
 part 'app_routes.dart';
 
@@ -166,6 +168,11 @@ class AppPages {
       name: Routes.incomeDetails,
       page: () => IncomeDetailsPage(),
       binding: IncomeDetailsBinding(),
+    ),
+    GetPage(
+      name: _Paths.messageCenter,
+      page: () => const MessageCenterView(),
+      binding: MessageCenterBinding(),
     ),
    
   ];

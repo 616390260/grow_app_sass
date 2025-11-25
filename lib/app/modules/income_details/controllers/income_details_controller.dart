@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:do_task_project/app/core/base/base_controller.dart';
+import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:do_task_project/app/data/services/income_details_api_service.dart';
 import 'package:do_task_project/app/data/services/dict_api_service.dart';
@@ -249,7 +250,12 @@ class IncomeDetailsController extends BaseController {
 
   // 返回上一页
   void onBackPress() {
-    Navigator.pop(Get.context!);
+    if (Get.key.currentState!.canPop()) {
+      Get.back();
+    } else {
+      // 刷新后 fallback 到首页
+      Get.offAllNamed(Routes.root);
+    }
   }
 }
 

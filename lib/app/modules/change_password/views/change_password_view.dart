@@ -1,4 +1,5 @@
 import 'package:do_task_project/app/core/theme/app_theme.dart';
+import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_view.dart';
@@ -17,7 +18,14 @@ class ChangePasswordView extends BaseView<ChangePasswordController> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Get.back(),
+          onPressed: () {
+            if (Get.key.currentState!.canPop()) {
+              Get.back();
+            } else {
+              // 刷新后 fallback 到首页
+              Get.offAllNamed(Routes.root);
+            }
+          },
         ),
         title: Text(
           I18nKeys.changePassword.tr,

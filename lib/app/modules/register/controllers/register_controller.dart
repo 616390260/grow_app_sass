@@ -190,6 +190,8 @@ class RegisterController extends BaseController {
         password: password,
         confirmPassword: confirmPassword,
         inviteCode: inviteCode.isNotEmpty ? inviteCode : null,
+        // Web平台添加域名参数
+        domainName: kIsWeb ? Uri.base.host : null,
       ),
       // 成功回调
       (result) {
