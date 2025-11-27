@@ -40,7 +40,12 @@ class InviteFriendController extends BaseController {
     fetchReferralLink();
     // 初始化时获取宝箱产品列表
     fetchBoxProductList();
-    // 启动轮询定时器，每5秒刷新一次宝箱产品列表
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    // 页面首次可见时启动轮询定时器
     startPolling();
   }
 
@@ -120,8 +125,15 @@ class InviteFriendController extends BaseController {
   }
 
   /// 跳转到有效用户页面
-  void goToValidUsersPage() {
-    Get.toNamed(Routes.validUsers);
+  void goToValidUsersPage() async {
+    // 跳转到其他页面时停止轮询
+    stopPolling();
+    // 使用await来等待页面返回
+    await Get.toNamed(Routes.validUsers);
+    // 当从有效用户页面返回时，检查当前路由并重新启动轮询
+    if (Get.currentRoute == Routes.inviteFriend) {
+      startPolling();
+    }
   }
 
   void receiveBoxProduct(int index) async {

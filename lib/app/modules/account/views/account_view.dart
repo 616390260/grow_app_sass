@@ -332,7 +332,7 @@ class AccountView extends BaseView<AccountController> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(width: 13),
+                          const SizedBox(width: 8),
                           Text(
                             I18nKeys.pointsLabel.tr,
                             style: TextStyle(
@@ -342,7 +342,7 @@ class AccountView extends BaseView<AccountController> {
                           ),
                         ],
                       ),
-                      const SizedBox(width: 80),
+                      const SizedBox(width: 30),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -355,7 +355,7 @@ class AccountView extends BaseView<AccountController> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(width: 13),
+                          const SizedBox(width: 8),
                           Text(
                             controller.code.value,
                             style: TextStyle(

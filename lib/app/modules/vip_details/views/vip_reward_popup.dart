@@ -1,6 +1,7 @@
 import 'package:do_task_project/app/core/constants/image_assets.dart';
 import 'package:do_task_project/app/data/models/vip_model.dart';
 import 'package:do_task_project/app/modules/vip_details/components/vip_badge.dart';
+import 'package:do_task_project/app/modules/vip_details/controllers/vip_details_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
@@ -8,16 +9,20 @@ import 'package:do_task_project/app/core/theme/app_theme.dart';
 
 class VipRewardPopup extends StatelessWidget {
   final String resetTime;
+  final int promotionIncome;
   final List<VipLevelItemModel> rewardLevels;
 
-  const VipRewardPopup({
+
+  VipRewardPopup({
     Key? key,
     required this.resetTime,
     required this.rewardLevels,
+    required this.promotionIncome,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final VipDetailsController controller = Get.find<VipDetailsController>();
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
@@ -122,7 +127,7 @@ class VipRewardPopup extends StatelessWidget {
                         Expanded(
                           flex: 3,
                           child: Text(
-                            reward.promotionPoints.toString(),
+                            '${promotionIncome.toString()}/${reward.promotionPoints.toString()}',
                             style: TextStyle(
                               color: AppTheme.threeColor,
                               fontSize: 15,
@@ -143,25 +148,70 @@ class VipRewardPopup extends StatelessWidget {
                         ),
                         Expanded(
                           flex: 2,
-                          child: Container(
-                            alignment: Alignment.center,
-                            margin: const EdgeInsets.only(right: 4),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 9,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: reward.isActivated ?? false ? AppTheme.primaryColor : AppTheme.dddColor,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Text(
-                              reward.isActivated ?? false ? I18nKeys.activated.tr : I18nKeys.vipNotActivated.tr,
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
+                          child: reward.isReceived == true 
+                            ? Container(
+                                alignment: Alignment.center,
+                                margin: const EdgeInsets.only(right: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 9,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.dddColor,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: Text(
+                                  I18nKeys.alreadyReceived.tr,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              )
+                            : reward.isActivated == true 
+                              ? GestureDetector(
+                                  onTap: () {
+                                    controller.claimReward(reward.id ?? 0);
+                                  },
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    margin: const EdgeInsets.only(right: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                      vertical: 3,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFFF8E6A),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Text(
+                                      I18nKeys.claimReward.tr,
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  alignment: Alignment.center,
+                                  margin: const EdgeInsets.only(right: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 9,
+                                    vertical: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.dddColor,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Text(
+                                    I18nKeys.vipNotActivated.tr,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
                         ),
                       ],
                     ),

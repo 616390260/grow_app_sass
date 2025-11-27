@@ -102,7 +102,9 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
                 ),
               ),
               const SizedBox(width: 5),
-              Obx(() => VipBadge(text: controller.currentVipLevel.value.toString())),
+              Obx(
+                () => VipBadge(text: controller.nextVipLevel.value.toString()),
+              ),
             ],
           ),
           const SizedBox(height: 5),
@@ -288,7 +290,7 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
                         Expanded(
                           flex: 3,
                           child: Text(
-                            reward.promotionPoints.toString(),
+                            '${controller.currentPullNum.value}/${reward.promotionPoints.toString()}',
                             style: TextStyle(
                               color: AppTheme.threeColor,
                               fontSize: 15,
@@ -309,25 +311,70 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
                         ),
                         Expanded(
                           flex: 2,
-                          child: Container(
-                            alignment: Alignment.center,
-                            margin: const EdgeInsets.only(right: 4),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 9,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppTheme.dddColor,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Text(
-                              reward.isActivated == true ? I18nKeys.activated.tr : I18nKeys.notActivated.tr,
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
+                          child: reward.isReceived == true
+                              ? Container(
+                                  alignment: Alignment.center,
+                                  margin: const EdgeInsets.only(right: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                    vertical: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.dddColor,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Text(
+                                    I18nKeys.alreadyReceived.tr,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )
+                              : reward.isActivated == true
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        controller.claimReward(reward.id ?? 0);
+                                      },
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        margin: const EdgeInsets.only(right: 4),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 4,
+                                          vertical: 3,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFFF8E6A),
+                                          borderRadius: BorderRadius.circular(15),
+                                        ),
+                                        child: Text(
+                                          I18nKeys.claimReward.tr,
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      alignment: Alignment.center,
+                                      margin: const EdgeInsets.only(right: 4),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 9,
+                                        vertical: 3,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.dddColor,
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child: Text(
+                                        I18nKeys.notActivated.tr,
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
                         ),
                       ],
                     ),

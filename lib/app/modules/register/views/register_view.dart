@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_view.dart';
 import '../../../core/i18n/i18n_keys.dart';
@@ -215,6 +214,7 @@ class RegisterView extends BaseView<RegisterController> {
           controller: controller.inviteCodeController,
           focusNode: controller.inviteCodeFocus,
           errorText: controller.inviteCodeErrorRx,
+          enabled: !controller.isInviteCodeFromUrl, // 如果邀请码来自URL参数，则不可编辑
           onSubmitted: (_) => controller.register(),
         ),
         Container(
@@ -232,6 +232,7 @@ class RegisterView extends BaseView<RegisterController> {
     required FocusNode focusNode,
     required RxString errorText,
     bool obscureText = false,
+    bool enabled = true,
     Widget? suffixIcon,
     Function(String)? onSubmitted,
   }) {
@@ -256,6 +257,7 @@ class RegisterView extends BaseView<RegisterController> {
                   controller: controller,
                   focusNode: focusNode,
                   obscureText: obscureText,
+                  enabled: enabled,
                   onSubmitted: onSubmitted,
                   decoration: InputDecoration(
                     hintText: placeholder,

@@ -48,6 +48,10 @@ class RegisterController extends BaseController {
   final _authApiService = AuthApiService();
   final _authService = AuthService.to;
 
+  // 邀请码输入框状态
+  final _isInviteCodeFromUrl = false.obs;
+  bool get isInviteCodeFromUrl => _isInviteCodeFromUrl.value;
+
   @override
   void onInit() {
     super.onInit();
@@ -73,6 +77,21 @@ class RegisterController extends BaseController {
     passwordController.addListener(_validatePassword);
     confirmPasswordController.addListener(_validateConfirmPassword);
     inviteCodeController.addListener(_validateInviteCode);
+    inviteCodeController.addListener(_onInviteCodeChanged);
+  }
+
+  /// 监听邀请码变化，当用户开始输入时重置状态
+  void _onInviteCodeChanged() {
+    if (_isInviteCodeFromUrl.value) {
+      // 检查邀请码内容是否与URL中的内容不同
+      final currentCode = inviteCodeController.text;
+      final urlCode = Get.parameters['i'];
+      
+      // 如果内容不同或者控制器内容为空，说明用户手动输入了
+      if (urlCode == null || currentCode != urlCode || currentCode.isEmpty) {
+        _isInviteCodeFromUrl.value = false;
+      }
+    }
   }
 
   /// 切换密码可见性
@@ -251,6 +270,12 @@ class RegisterController extends BaseController {
   /// 如果找到邀请码，自动填充到邀请码输入框
   void getInviteCodeFromUrl() {
     try {
+      // 先重置状态，避免不同场景下的状态不一致
+      _isInviteCodeFromUrl.value = false;
+      
+      // 临时移除监听器，避免设置邀请码时触发监听器
+      inviteCodeController.removeListener(_onInviteCodeChanged);
+      
       String? inviteCode;
       
       // 1. 尝试从Get参数中获取邀请码（适用于所有平台）
@@ -270,7 +295,13 @@ class RegisterController extends BaseController {
       // 3. 如果找到邀请码，自动填充到控制器
       if (inviteCode != null && inviteCode.isNotEmpty) {
         inviteCodeController.text = inviteCode;
+         _isInviteCodeFromUrl.value = true;
       }
+      
+      // 设置标记状态（必须在设置文本后）
+      
+      // 恢复监听器
+      inviteCodeController.addListener(_onInviteCodeChanged);
     } catch (e) {
       // 捕获可能的错误，避免影响页面正常加载
       debugPrint('获取邀请码失败: $e');

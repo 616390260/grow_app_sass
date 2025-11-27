@@ -30,7 +30,7 @@ class ValidUsersView extends BaseView<ValidUsersController> {
               Get.back()
             } else {
               // 刷新后 fallback 到首页
-              Get.offAllNamed(Routes.home),
+              Get.offAllNamed(Routes.inviteFriend),
             }
           },
         ),

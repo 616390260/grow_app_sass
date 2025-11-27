@@ -9,7 +9,7 @@ class VipDetailsModel {
   final String vipLevel;
 
   @JsonKey(name: 'points')
-  final double points;
+  final int points;
 
   @JsonKey(name: 'nextVipLevel')
   final String nextVipLevel;
@@ -57,6 +57,8 @@ class VipDetailsModel {
 /// VIP等级列表项数据模型
 @JsonSerializable()
 class VipLevelItemModel {
+  @JsonKey(name: 'id')
+  final int? id;
   @JsonKey(name: 'vipLevel')
   final String? vipLevel;
 
@@ -76,6 +78,7 @@ class VipLevelItemModel {
   final bool? isReceived;
 
   VipLevelItemModel({
+    this.id,
     this.vipLevel,
     this.promotionPoints,
     this.firstRewardPoints,

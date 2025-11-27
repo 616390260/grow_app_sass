@@ -56,7 +56,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                       Get.back()
                     } else {
                       // 刷新后 fallback 到首页
-                      Get.offAllNamed(Routes.home),
+                      Get.offAllNamed(Routes.root),
                     }
                   },
                 ),

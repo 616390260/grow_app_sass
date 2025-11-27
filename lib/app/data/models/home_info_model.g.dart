@@ -13,11 +13,6 @@ HomeInfoModel _$HomeInfoModelFromJson(Map<String, dynamic> json) =>
       announcements: (json['announcement'] as List<dynamic>?)
           ?.map((e) => BannerModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      sysAnnouncements: (json['sysAnnouncement'] as List<dynamic>?)
-          ?.map(
-            (e) => SystemAnnouncementModel.fromJson(e as Map<String, dynamic>),
-          )
-          .toList(), 
       recommendTasks: (json['recommendTask'] as List<dynamic>?)
           ?.map((e) => RecommendTaskModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -29,7 +24,11 @@ HomeInfoModel _$HomeInfoModelFromJson(Map<String, dynamic> json) =>
           : PopupAnnouncementModel.fromJson(
               json['popupAnnouncement'] as Map<String, dynamic>,
             ),
-     
+      sysAnnouncements: (json['sysAnnouncement'] as List<dynamic>?)
+          ?.map(
+            (e) => SystemAnnouncementModel.fromJson(e as Map<String, dynamic>),
+          )
+          .toList(),
     );
 
 Map<String, dynamic> _$HomeInfoModelToJson(HomeInfoModel instance) =>
@@ -241,3 +240,21 @@ Map<String, dynamic> _$SystemAnnouncementModelToJson(
   'iosHyperLink': instance.iosHyperLink,
   'image': instance.image,
 };
+
+VersionUpdateModel _$VersionUpdateModelFromJson(Map<String, dynamic> json) =>
+    VersionUpdateModel(
+      buildNumber: json['buildNumber'] as String?,
+      description: json['description'] as String?,
+      downloadUrl: json['downloadUrl'] as String?,
+      forceUpdate: json['forceUpdate'] as String?,
+      versionNo: json['versionNo'] as String?,
+    );
+
+Map<String, dynamic> _$VersionUpdateModelToJson(VersionUpdateModel instance) =>
+    <String, dynamic>{
+      'buildNumber': instance.buildNumber,
+      'description': instance.description,
+      'downloadUrl': instance.downloadUrl,
+      'forceUpdate': instance.forceUpdate,
+      'versionNo': instance.versionNo,
+    };

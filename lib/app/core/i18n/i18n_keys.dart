@@ -360,6 +360,7 @@ class I18nKeys {
   static const notActivated = 'not_activated';
   static const activated = 'activated';
   static const firstActivation = 'first_activation';
+  static const alreadyReceived = 'already_received';
   
   // General error messages
   static const errorUnknown = 'error_unknown';
@@ -588,6 +589,24 @@ class I18nKeys {
   static const insufficientPermissionsPleaseLoginAgain = 'insufficient_permissions_please_login_again';
   static const errorInvalidParams = 'error_invalid_params';
   
+  // Version update related
+  static const versionUpdateFound = 'version_update_found';
+  static const versionUpdateAvailable = 'version_update_available';
+  static const updateNow = 'update_now';
+  static const updateLater = 'update_later';
+  static const downloadStarted = 'download_started';
+  static const downloadingNewVersion = 'downloading_new_version';
+  static const downloadCompleted = 'download_completed';
+  static const preparingInstallation = 'preparing_installation';
+  static const installationPrompt = 'installation_prompt';
+  static const completeInstallationInSystem = 'complete_installation_in_system';
+  static const insufficientPermissions = 'insufficient_permissions';
+  static const needStoragePermission = 'need_storage_permission';
+  static const needInstallPermission = 'need_install_permission';
+  static const downloadLinkInvalid = 'download_link_invalid';
+  
+
+  
   // Box/Treasure chest related
   static const invalidBoxIndex = 'invalid_box_index';
   static const invalidBoxId = 'invalid_box_id';
@@ -655,6 +674,8 @@ class I18nKeys {
   // Bank search
   static const searchBankName = 'search_bank_name';
   static const noMatchingBankFound = 'no_matching_bank_found';
+
+  static const claimRewardSuccess = 'claim_reward_success';
   
   
 }

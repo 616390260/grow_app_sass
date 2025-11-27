@@ -11,6 +11,7 @@ class WhatsappApiService {
   static const String _getOnlineNumbersEndpoint = 'app/wsNumber/online';
   static const String _getTaskInfoEndpoint = 'app/wsNumber/getTaskInfo';
   static const String _sendMsgEndpoint = 'app/wsNumber/sendMsg';
+  static const String _getAreaCodesEndpoint = 'app/wsNumber/areaCodeList';
 
   /// 获取登录验证码
   Future<String> getLoginCode(String phoneNumber) async {
@@ -126,6 +127,40 @@ class WhatsappApiService {
     } catch (e) {
       debugPrint('Error sending WhatsApp message: $e');
       rethrow;
+    }
+  }
+
+  /// 获取国家区号列表
+  Future<List<Map<String, dynamic>>> getAreaCodes() async {
+    try {
+      final response = await _httpService.get<dynamic>(_getAreaCodesEndpoint);
+
+      List<dynamic> dataList;
+      if (response is Map<String, dynamic>) {
+        if (response['data'] is List) {
+          dataList = response['data'] as List;
+        } else {
+          return [];
+        }
+      } else if (response is List) {
+        dataList = response;
+      } else {
+        return [];
+      }
+
+      final List<Map<String, dynamic>> codes = [];
+      for (final item in dataList) {
+        if (item is Map<String, dynamic>) {
+          codes.add({
+            'short': item['short'] ?? '',
+            'en': item['en'] ?? '',
+            'code': item['code'] ?? '',
+          });
+        }
+      }
+      return codes;
+    } catch (e) {
+      return [];
     }
   }
 }

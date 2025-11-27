@@ -9,7 +9,7 @@ part of 'vip_model.dart';
 VipDetailsModel _$VipDetailsModelFromJson(Map<String, dynamic> json) =>
     VipDetailsModel(
       vipLevel: json['vipLevel'] as String,
-      points: (json['points'] as num).toDouble(),
+      points: (json['points'] as num).toInt(),
       nextVipLevel: json['nextVipLevel'] as String,
       promotionPoints: (json['promotionPoints'] as num).toInt(),
       currentPullNum: (json['currentPullNum'] as num).toInt(),
@@ -40,6 +40,7 @@ Map<String, dynamic> _$VipDetailsModelToJson(VipDetailsModel instance) =>
 
 VipLevelItemModel _$VipLevelItemModelFromJson(Map<String, dynamic> json) =>
     VipLevelItemModel(
+      id: (json['id'] as num?)?.toInt(),
       vipLevel: json['vipLevel'] as String?,
       promotionPoints: (json['promotionPoints'] as num?)?.toInt(),
       firstRewardPoints: (json['firstRewardPoints'] as num?)?.toInt(),
@@ -50,6 +51,7 @@ VipLevelItemModel _$VipLevelItemModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$VipLevelItemModelToJson(VipLevelItemModel instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'vipLevel': instance.vipLevel,
       'promotionPoints': instance.promotionPoints,
       'firstRewardPoints': instance.firstRewardPoints,

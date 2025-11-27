@@ -13,7 +13,7 @@ class VipDetailsController extends BaseController {
   
   // VIP等级和余额
   final currentVipLevel = 'VIP0'.obs;
-  final vipBalance = 0.0.obs;
+  final vipBalance = 0.obs;
   final progressValue = 0.0.obs; // 进度条值 (0.0-1.0)
   final nextVipLevel = 'VIP1'.obs;
   
@@ -22,6 +22,7 @@ class VipDetailsController extends BaseController {
   
   // 推广收益
   final promotionIncome = 0.obs;
+  final currentPullNum = 0.obs;
   
   // 每日奖励重置时间
   final dailyResetTime = ''.obs;
@@ -99,9 +100,10 @@ class VipDetailsController extends BaseController {
         nextVipLevel.value = vipDetails.nextVipLevel;
         vipBalance.value = vipDetails.points;
         promotionIncome.value = vipDetails.promotionPoints;
-        promotionProgress.value = '${vipDetails.promotionPoints}/${vipDetails.totalPromotionPoints}';
+        currentPullNum.value = vipDetails.currentPullNum;
+        promotionProgress.value = '${vipDetails.promotionPoints}/${vipDetails.subordinatePullNum}';
         if (vipDetails.totalPromotionPoints > 0) {
-          progressValue.value = vipDetails.promotionPoints / vipDetails.totalPromotionPoints;
+          progressValue.value = vipDetails.promotionPoints / vipDetails.subordinatePullNum;
           if (progressValue.value > 1.0) progressValue.value = 1.0;
           if (progressValue.value < 0.0) progressValue.value = 0.0;
         }
@@ -145,8 +147,23 @@ class VipDetailsController extends BaseController {
     Get.dialog(
       Obx(() => VipRewardPopup(
         resetTime: dailyResetTime.value,
+        promotionIncome: promotionIncome.value,
         rewardLevels: vipTodayRewards.toList(),
       )),
+    );
+  }
+
+  // 领取VIP奖励
+  void claimReward(int vipLevel) async {
+    await safeApiCall<dynamic>(
+      () => _vipApiService.getReward(vipLevel),
+      (response) {
+        // 重新加载数据以更新UI
+        showSuccessMessage(I18nKeys.claimRewardSuccess.tr);
+        loadVipDetails();
+      },
+      errorMessage: I18nKeys.claimRewardFailed.tr,
+      showLoading: true,
     );
   }
 }

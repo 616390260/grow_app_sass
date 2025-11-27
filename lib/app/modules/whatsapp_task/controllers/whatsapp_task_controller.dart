@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/services.dart';
-import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../data/services/whatsapp_api_service.dart';
@@ -80,12 +79,12 @@ class WhatsappTaskController extends BaseController {
       try {
         // 确保先释放旧的控制器资源
         _disposeVideoResources();
-        
+
         videoController = VideoPlayerController.networkUrl(
-                Uri.parse(videoUrl.value),
-                videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
-              );
-              
+          Uri.parse(videoUrl.value),
+          videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+        );
+
         // 延迟初始化以避免lifecycle消息问题
         Future.delayed(const Duration(milliseconds: 100), () {
           try {
@@ -93,7 +92,7 @@ class WhatsappTaskController extends BaseController {
               isVideoInitialized.value = true;
               _setupChewieController();
             });
-            
+
             videoController.addListener(() {
               try {
                 isPlaying.value = videoController.value.isPlaying;
@@ -122,14 +121,14 @@ class WhatsappTaskController extends BaseController {
   void _initDefaultVideoController() {
     // 确保先释放旧的控制器资源
     _disposeVideoResources();
-    
+
     videoController = VideoPlayerController.networkUrl(
-            Uri.parse(
-              'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
-            ),
-            videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
-          );
-    
+      Uri.parse(
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+      ),
+      videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+    );
+
     // 延迟初始化以避免lifecycle消息问题
     Future.delayed(const Duration(milliseconds: 100), () {
       try {
@@ -137,7 +136,7 @@ class WhatsappTaskController extends BaseController {
           isVideoInitialized.value = true;
           _setupChewieController();
         });
-        
+
         videoController.addListener(() {
           try {
             isPlaying.value = videoController.value.isPlaying;
@@ -151,7 +150,7 @@ class WhatsappTaskController extends BaseController {
       }
     });
   }
-  
+
   // 释放视频相关资源
   void _disposeVideoResources() {
     try {
@@ -161,7 +160,7 @@ class WhatsappTaskController extends BaseController {
       Get.log('Error disposing video resources: $e');
     }
   }
-  
+
   // 设置Chewie控制器
   void _setupChewieController() {
     try {
@@ -170,27 +169,24 @@ class WhatsappTaskController extends BaseController {
         if (chewieController != null) {
           chewieController!.dispose();
         }
-        
+
         chewieController = ChewieController(
-            videoPlayerController: videoController,
-            autoPlay: false,
-            looping: false,
-            aspectRatio: videoController.value.aspectRatio,
-            showControls: false, // 隐藏默认控件，使用自定义控件
-            allowFullScreen: true,
-            allowPlaybackSpeedChanging: false,
-            errorBuilder: (context, errorMessage) {
-              return Center(
-                child: Text(
-                  'Video playback error',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                  ),
-                ),
-              );
-            },
-          );
+          videoPlayerController: videoController,
+          autoPlay: false,
+          looping: false,
+          aspectRatio: videoController.value.aspectRatio,
+          showControls: false, // 隐藏默认控件，使用自定义控件
+          allowFullScreen: true,
+          allowPlaybackSpeedChanging: false,
+          errorBuilder: (context, errorMessage) {
+            return Center(
+              child: Text(
+                'Video playback error',
+                style: const TextStyle(color: Colors.white, fontSize: 14),
+              ),
+            );
+          },
+        );
       }
     } catch (e) {
       // 捕获任何初始化错误
@@ -341,35 +337,22 @@ class WhatsappTaskController extends BaseController {
 
   // 加载国家代码数据
   Future<void> loadCountryCodes() async {
-    try {
-      final String response = await rootBundle.loadString(
-        'assets/areaCode.json',
-      );
-      final data = json.decode(response);
-
-      List<Map<String, dynamic>> codes = [];
-      data.forEach((key, value) {
-        if (value is List) {
-          for (var item in value) {
-            if (item is Map && item.containsKey('code')) {
-              codes.add({
-                'short': item['short'] ?? '',
-                'en': item['en'] ?? '',
-                'code': item['code'] ?? '',
-              });
-            }
-          }
-        }
-      });
-
-      // 按英文名称排序
-      codes.sort((a, b) => a['en'].compareTo(b['en']));
-      countryCodes.assignAll(codes);
-      // 初始化过滤列表
-      filteredCountryCodes.assignAll(codes);
-    } catch (e) {
-      countryCodes.assignAll([]);
-    }
+    await safeApiCall<List<Map<String, dynamic>>>(
+      () => _whatsappApiService.getAreaCodes(),
+      (codes) {
+        codes.sort(
+          (a, b) =>
+              (a['en'] ?? '').toString().compareTo((b['en'] ?? '').toString()),
+        );
+        countryCodes.assignAll(codes);
+        filteredCountryCodes.assignAll(codes);
+      },
+      showLoading: true,
+      errorMessage: I18nKeys.loadCountriesFailed.tr,
+      onError: () {
+        countryCodes.assignAll([]);
+      },
+    );
   }
 
   // 选择国家代码
@@ -414,7 +397,7 @@ class WhatsappTaskController extends BaseController {
       showErrorMessage(I18nKeys.videoLoadingPleaseWait.tr);
     }
   }
-  
+
   // 切换全屏模式
   void toggleFullScreen() async {
     // 切换全屏状态
@@ -445,7 +428,7 @@ class WhatsappTaskController extends BaseController {
       () => _whatsappApiService.sendMessage(id),
       (result) {
         // 处理成功响应
-      showSuccessMessage(I18nKeys.sendMessageSuccess.tr);
+        showSuccessMessage(I18nKeys.sendMessageSuccess.tr);
       },
       showLoading: true,
       errorMessage: I18nKeys.sendMessageFailed.tr,

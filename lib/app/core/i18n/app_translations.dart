@@ -7,6 +7,7 @@ class AppTranslations extends Translations {
     // Message Center
     
       "app_title": "Taskgo8",
+      "claim_reward_success": "领取奖励成功",
       'doNotRefresh':'不要刷新页面',
       "select_currency": "选择货币",
       'withdraw_amount': '提现金额',
@@ -30,6 +31,25 @@ class AppTranslations extends Translations {
       "future_launch": "掌上开启未来",
       "summit_2024": "2024数字应用峰会",
       "explore_digital_transformation": "探索数字转型新机遇",
+      
+      // Version update related
+      "version_update_found": "发现新版本",
+      "version_update_available": "有新版本可用，建议立即更新",
+      "update_now": "立即更新",
+      "update_later": "稍后更新",
+      "download_started": "开始下载",
+      "downloading_new_version": "新版本正在下载中...",
+      "download_completed": "下载完成",
+      "preparing_installation": "正在准备安装...",
+      "installation_prompt": "安装提示",
+      "complete_installation_in_system": "请在系统安装界面完成安装",
+      "download_failed": "下载失败",
+      "insufficient_permissions": "权限不足",
+      "need_storage_permission": "需要存储权限才能下载APK",
+      "need_install_permission": "需要安装未知来源应用的权限才能安装APK",
+      "download_link_invalid": "下载链接无效",
+      
+  
       "promotion": "推广",
       "promotion_page": "推广页面",
       "tasks": "任务",
@@ -296,6 +316,7 @@ class AppTranslations extends Translations {
       "reward": "奖励",
       "operation": "操作",
       "not_activated": "未激活",
+      "already_received": "已领取",
       "activated": "已激活",
       "first_activation": "首次激活",
       "error_cancel": "操作已取消",
@@ -612,6 +633,24 @@ class AppTranslations extends Translations {
 
     'en_US': {
       'app_title': 'Taskgo8',
+      // Version update related
+      "version_update_found": "New version found",
+      "version_update_available": "New version available",
+      "update_now": "Update Now",
+      "update_later": "Update Later",
+      "download_started": "Download started",
+      "downloading_new_version": "Downloading new version...",
+      "download_completed": "Download completed",
+      "preparing_installation": "Preparing installation...",
+      "installation_prompt": "Installation Prompt",
+      "complete_installation_in_system": "Please complete the installation in the system installation interface",
+      "download_failed": "Download failed",
+      "insufficient_permissions": "Insufficient permissions",
+      "need_storage_permission": "Need storage permission to download APK",
+      "need_install_permission": "Need to install unknown source application permission to install APK",
+      "download_link_invalid": "Download link is invalid",
+      "already_received": "Already Received",
+      "claim_reward_success": "Claim reward success",
       'doNotRefresh':'Do not refresh the page',
       "select_currency": "Select Currency",
       'message_center': 'Message Center',
@@ -1346,6 +1385,25 @@ class AppTranslations extends Translations {
 
 
     "hi_IN": {
+      // Version update related
+      "version_update_found": "नया संस्करण उपलब्ध",
+      "version_update_available": "हालांकि नया संस्करण उपलब्ध है, इसका उपयोग सुझाव दिया गया है",
+      "update_now": "अभी अपडेट करें",
+      "update_later": " बाद में अपडेट करें",
+      "download_started": "डाउनलोड शुरू करें",
+      "downloading_new_version": "नया संस्करण डाउनलोड कर रहा है...",
+      "download_completed": "डाउनलोड पूरा हुआ",
+      "preparing_installation": "इंस्टॉलेशन पूर्वparation...",
+      "installation_prompt": "इंस्टॉलेशन प्रॉम्प्ट",
+      "complete_installation_in_system": "कृपया सिस्टम इंस्टॉलेशन इंटरफेस पर पूरी इंस्टॉलेशन करें",
+      "download_failed": "डाउनलोड विफल",
+      "insufficient_permissions": "अपेक्षित अनुमति नहीं मिली",
+      "need_storage_permission": "स्टोरेज अनुमति की आवश्यकता है ताकि APK डाउनलोड किया जा सके",
+      "need_install_permission": "अन्य स्रोत से ऐप इंस्टॉल करने के लिए इंस्टॉल अज्ञात अनुप्रयोग अनुमति की आवश्यकता है",
+      "download_link_invalid": "डाउनलोड लिंक अमान्य",
+
+      "already_received": "पहले से प्राप्त किया गया",
+      "claim_reward_success": "पुरस्कार प्राप्त करके धन्यवाद!",
       'doNotRefresh':'पेज को रिफ्रेश न करें',
       "select_currency": "валютा चुनें",
       "invitation_steps": "प्रारंभिक स्टेप्स",
@@ -2035,7 +2093,25 @@ class AppTranslations extends Translations {
 
 
     "id_ID": {
+      // Version update related
+      "version_update_found": "Temukan Versi Baru",
+      "version_update_available": "Temukan Versi Baru, Saran Imporan Update",
+      "update_now": "Update Sekarang",
+      "update_later": "Update Nanti",
+      "download_started": "Mulai Unduh",
+      "downloading_new_version": "Mundur Versi Baru...",
+      "download_completed": "Unduh Selesai",
+      "preparing_installation": "Siap Instalasi...",
+      "installation_prompt": "Pembesaran Instalasi",
+      "complete_installation_in_system": "Silakan selesaikan instalasi di layar penginstalan sistem",
+      "download_failed": "Unduh Gagal",
+      "insufficient_permissions": "Izin tidak cukup",
+      "need_storage_permission": "perlukan izin penyimpanan untuk mengunduh APK",
+      "need_install_permission": "perlukan izin instalasi aplikasi dari sumber tidak dikenal untuk menginstal APK",
+      "download_link_invalid": "Link unduh tidak valid",
+      "already_received": "Sudah Diterima",
       "app_title": "Taskgo8",
+      "claim_reward_success": "Pembesaran hadiah berhasil",
       'doNotRefresh':'Jangan refresh halaman ini',
       "select_currency": "Pilih Mata Uang",
       'withdraw_amount': 'Jumlah Penarikan',
@@ -2705,7 +2781,25 @@ class AppTranslations extends Translations {
 
 
     "bn_BD": {
+      // Version update related
+      "version_update_found": "নতুন ভার্সন পাওয়া গেছে",
+      "version_update_available": "নতুন ভার্সন পাওয়া গেছে এবং এটি ইনস্টল করার জন্য প্রয়োজন",
+      "update_now": "এখনই আপডেট করুন",
+      "update_later": "পরে আপডেট করুন",
+      "download_started": "ডাউনলোড শুরু হয়েছে",
+      "downloading_new_version": "নতুন ভার্সন ডাউনলোড হচ্ছে...",
+      "download_completed": "ডাউনলোড সম্পন্ন হয়েছে",
+      "preparing_installation": "ইনস্টলেশন প্রসেস প্রস্তুত হচ্ছে...",
+      "installation_prompt": "ইনস্টলেশন প্রmpt",
+      "complete_installation_in_system": "অ্যাপ্লিকেশন ইনস্টল করার জন্য সিস্টেমের ইনস্টলেশন প্রসেসটি সম্পন্ন করুন",
+      "download_failed": "ডাউনলোড ব্যর্থ হয়েছে",
+      "insufficient_permissions": "অবশ্যই প্রয়োজনীয় অনুমতি নেই",
+      "need_storage_permission": "অবশ্যই স্টোরেজ অনুমতি প্রয়োজন",
+      "need_install_permission": "অবশ্যই ইনস্টল অনুমতি প্রয়োজন",
+      "download_link_invalid": "ডাউনলোড লিঙ্ক無效",
+      "already_received": "এই টাস্কটি আগে থেকে পেয়েছেন",
       "app_title": "টাস্কগো8",
+      "claim_reward_success": "রিডিও প্রাপ্ত করা সফল হয়েছে",
       'doNotRefresh':'দয়া করে পেজ রিফ্রেশ করবেন না',
       "select_currency": "валютা নির্বাচন করুন",
       'withdraw_amount': 'প্রত্যাশিত ব্যাংক ট্রান্সফার',
@@ -3367,7 +3461,25 @@ class AppTranslations extends Translations {
 
 
     "pt_BR": {
+      // Version update related
+      "version_update_found": "Nova versão disponível",
+      "version_update_available": "Há uma nova versão disponível. Deseja atualizar?",
+      "update_now": "Atualizar agora",
+      "update_later": "Atualizar mais tarde",
+      "download_started": "Download iniciado",
+      "downloading_new_version": "Baixando nova versão...",
+      "download_completed": "Download concluído",
+      "preparing_installation": "Preparando instalação...",
+      "installation_prompt": "Instalar agora?",
+      "complete_installation_in_system": "Complete a instalação no sistema",
+      "download_failed": "Download falhou",
+      "insufficient_permissions": "Permissões insuficientes",
+      "need_storage_permission": "Precisa de permissão de armazenamento",
+      "need_install_permission": "Precisa de permissão de instalação de aplicativos desconhecidos",
+      "download_link_invalid": "Link de download inválido",
+      "already_received": "Já recebeu",
       "app_title": "Taskgo8",
+      "claim_reward_success": "Prêmio claimed successfully",
       'doNotRefresh':'Não refaça a página',
       "select_currency": "Selecione a moeda",
       'withdraw_amount': 'Quantia de saque',
@@ -4036,7 +4148,25 @@ class AppTranslations extends Translations {
 
 
     "es_MX": {
+      // Version update related
+      "version_update_found": "Nueva versión disponible",
+      "version_update_available": "Há uma nova versão disponível. Deseja atualizar?",
+      "update_now": "Atualizar agora",
+      "update_later": "Atualizar mais tarde",
+      "download_started": "Download iniciado",
+      "downloading_new_version": "Baixando nova versão...",
+      "download_completed": "Download concluído",
+      "preparing_installation": "Preparando instalação...",
+      "installation_prompt": "Instalar agora?",
+      "complete_installation_in_system": "Complete a instalação no sistema",
+      "download_failed": "Download falhou",
+      "insufficient_permissions": "Permissões insuficientes",
+      "need_storage_permission": "Precisa de permissão de armazenamento",
+      "need_install_permission": "Precisa de permissão de instalação de aplicativos desconhecidos",
+      "download_link_invalid": "Link de download inválido",
+      "already_received": "Ya ha recibido",
       "app_title": "Taskgo8",
+      "claim_reward_success": "Premio claimed successfully",
       'doNotRefresh':'No refresque la página',
       "select_currency": "Seleccione la moneda",
       'withdraw_amount': 'Cantidad de retiro',

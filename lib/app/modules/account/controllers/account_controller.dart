@@ -61,7 +61,7 @@ class AccountController extends BaseController {
 
   // 显隐余额
   void toggleBalanceVisibility() {
-    
+    showBalance.value = !showBalance.value;
   }
 
   // 复制推荐码

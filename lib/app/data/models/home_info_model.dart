@@ -491,3 +491,35 @@ class SystemAnnouncementModel {
 
   Map<String, dynamic> toJson() => _$SystemAnnouncementModelToJson(this);
 }
+
+/// 版本更新模型
+@JsonSerializable()
+class VersionUpdateModel {
+  @JsonKey(name: 'buildNumber')
+  final String? buildNumber;
+
+  @JsonKey(name: 'description')
+  final String? description;
+
+  @JsonKey(name: 'downloadUrl')
+  final String? downloadUrl;
+
+  @JsonKey(name: 'forceUpdate')
+  final String? forceUpdate;
+
+  @JsonKey(name: 'versionNo')
+  final String? versionNo;
+
+  VersionUpdateModel({
+    this.buildNumber,
+    this.description,
+    this.downloadUrl,
+    this.forceUpdate,
+    this.versionNo,
+  });
+
+  factory VersionUpdateModel.fromJson(Map<String, dynamic> json) =>
+      _$VersionUpdateModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$VersionUpdateModelToJson(this);
+}

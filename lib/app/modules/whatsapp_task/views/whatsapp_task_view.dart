@@ -665,12 +665,11 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                             offset: controller.phoneNumber.value.length,
                           ),
                     onChanged: (value) {
-                      // 只允许输入数字
-                      final filteredValue = value.replaceAll(
-                        RegExp(r'[^\d]'),
-                        '',
-                      );
-                      controller.phoneNumber.value = filteredValue;
+                      // 过滤非数字字符，并移除开头的所有0
+                      final validValue = value
+                          .replaceAll(RegExp(r'[^\d]'), '')
+                          .replaceAll(RegExp(r'^0+'), '');
+                      controller.phoneNumber.value = validValue;
                     },
                     decoration: InputDecoration(
                       border: InputBorder.none,
