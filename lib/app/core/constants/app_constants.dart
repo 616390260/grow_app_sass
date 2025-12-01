@@ -11,6 +11,7 @@ class AppConstants {
   static const String storageKeyFirstLaunch = 'first_launch';
   static const String storageKeyUserToken = 'user_token';
   static const String storageKeyUserInfo = 'user_info';
+  static const String storageKeyAppVersion = 'app_version';
 
   // 网络配置
   static const int connectTimeout = 15000;

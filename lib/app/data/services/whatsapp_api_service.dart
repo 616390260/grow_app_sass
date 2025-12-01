@@ -18,11 +18,9 @@ class WhatsappApiService {
     try {
       final data = await _httpService.get<String>(
         _getLoginCodeEndpoint,
-        queryParameters: {
-          'phone': phoneNumber,
-        },
+        queryParameters: {'phone': phoneNumber},
       );
-      
+
       return data;
     } catch (e) {
       rethrow;
@@ -36,12 +34,11 @@ class WhatsappApiService {
       final response = await _httpService.get<dynamic>(
         _getOnlineNumbersEndpoint,
       );
-      
-      
+
       // 处理API响应
       if (response != null) {
         List<dynamic> dataList;
-        
+
         // 检查响应结构
         if (response is Map<String, dynamic>) {
           // 如果是标准API格式，从data字段获取
@@ -58,21 +55,19 @@ class WhatsappApiService {
           debugPrint('Unexpected response format: ${response.runtimeType}');
           return [];
         }
-        
+
         debugPrint('Data list length: ${dataList.length}');
-        
+
         if (dataList.isNotEmpty) {
           debugPrint('First item sample: ${dataList[0]}');
           debugPrint('First item type: ${dataList[0].runtimeType}');
         }
-        
+
         try {
-          final result = dataList
-              .map((item) {
-                debugPrint('Processing item: $item');
-                return OnlineNumber.fromJson(item as Map<String, dynamic>);
-              })
-              .toList();
+          final result = dataList.map((item) {
+            debugPrint('Processing item: $item');
+            return OnlineNumber.fromJson(item as Map<String, dynamic>);
+          }).toList();
           debugPrint('Parsed ${result.length} OnlineNumber objects');
           return result;
         } catch (e, stackTrace) {
@@ -81,7 +76,7 @@ class WhatsappApiService {
           return [];
         }
       }
-      
+
       debugPrint('Response is null');
       return [];
     } catch (e, stackTrace) {
@@ -98,7 +93,7 @@ class WhatsappApiService {
       final data = await _httpService.get<Map<String, dynamic>>(
         _getTaskInfoEndpoint,
       );
-      
+
       return data;
     } catch (e) {
       debugPrint('Error fetching task info: $e');
@@ -108,7 +103,7 @@ class WhatsappApiService {
         'todaySendNum': 0,
         'videoUrl': '',
         'wsDownloadUrl': '',
-        'yesterdayPoints': 0
+        'yesterdayPoints': 0,
       };
     }
   }
@@ -118,11 +113,9 @@ class WhatsappApiService {
     try {
       final data = await _httpService.get<Map<String, dynamic>>(
         _sendMsgEndpoint,
-        queryParameters: {
-          'id': id,
-        },
+        queryParameters: {'id': id},
       );
-      
+
       return data;
     } catch (e) {
       debugPrint('Error sending WhatsApp message: $e');

@@ -6,6 +6,8 @@ import 'package:do_task_project/app/data/services/auth_api_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart' as getx;
 import '../config/environment_config.dart';
+import 'package:get_storage/get_storage.dart';
+import '../constants/app_constants.dart';
 import '../utils/json_convert.dart';
 import '../i18n/i18n_keys.dart';
 import 'error_handler_center.dart';
@@ -82,6 +84,15 @@ class HttpService extends getx.GetxService {
         // 添加app-type请求头：Web平台传2，Android/iOS平台传1
         final appType = kIsWeb ? '2' : '1';
         options.headers['app-type'] = appType;
+        try {
+          final box = GetStorage();
+          final appVersion = box.read<String>(
+            AppConstants.storageKeyAppVersion,
+          );
+          if (appVersion != null && appVersion.isNotEmpty) {
+            options.headers['App-Version'] = appVersion;
+          }
+        } catch (_) {}
 
         // 注入token到请求头
         try {
@@ -99,7 +110,8 @@ class HttpService extends getx.GetxService {
         // 添加语言信息到请求头
         final currentLocale = getx.Get.locale;
         if (currentLocale != null) {
-          options.headers['accept-language'] = '${currentLocale.languageCode}_${currentLocale.countryCode ?? ''}';
+          options.headers['accept-language'] =
+              '${currentLocale.languageCode}_${currentLocale.countryCode ?? ''}';
         }
 
         _logRequest(options);
@@ -117,7 +129,7 @@ class HttpService extends getx.GetxService {
           debugPrint('状态码: ${error.response?.statusCode}');
           debugPrint('响应数据: ${error.response?.data}');
         }
-        
+
         final status = error.response?.statusCode;
         if (status == 401) {
           final handled = await _handleUnauthorized(error);
@@ -129,7 +141,7 @@ class HttpService extends getx.GetxService {
             return;
           }
         }
-                // 处理其他错误，提取业务错误码
+        // 处理其他错误，提取业务错误码
         if (error.response != null) {
           final response = error.response;
           final data = response?.data;
@@ -138,9 +150,10 @@ class HttpService extends getx.GetxService {
           }
           if (data is Map<String, dynamic>) {
             final businessCode = data['code'] as int?;
-            final message = data['msg'] as String? ??
-                          data['message'] as String? ??
-                          I18nKeys.networkRequestFailed.tr;
+            final message =
+                data['msg'] as String? ??
+                data['message'] as String? ??
+                I18nKeys.networkRequestFailed.tr;
             if (_envConfig.enableLogging) {
               debugPrint('业务码: $businessCode, 消息: $message');
               if (businessCode != null && businessCode != 200) {
@@ -148,7 +161,11 @@ class HttpService extends getx.GetxService {
               }
             }
             if (businessCode != null && businessCode != 200) {
-              throw _errorHandler.handleErrorCodeException(businessCode, message, showNotification: false);
+              throw _errorHandler.handleErrorCodeException(
+                businessCode,
+                message,
+                showNotification: false,
+              );
             }
           }
         }
@@ -190,8 +207,8 @@ class HttpService extends getx.GetxService {
   /// 判断是否应该重试
   bool _shouldRetry(DioException error) {
     return error.type == DioExceptionType.connectionTimeout ||
-           error.type == DioExceptionType.receiveTimeout ||
-           error.type == DioExceptionType.connectionError;
+        error.type == DioExceptionType.receiveTimeout ||
+        error.type == DioExceptionType.connectionError;
   }
 
   /// 检查网络连接
@@ -203,7 +220,6 @@ class HttpService extends getx.GetxService {
       return true; // 如果检查失败，假设网络可用
     }
   }
-
 
   /// GET请求
   Future<T> get<T>(
@@ -223,10 +239,12 @@ class HttpService extends getx.GetxService {
     } on DioException catch (e) {
       throw _errorHandler.handleExceptionException(e, showNotification: false);
     } catch (e) {
-      throw _errorHandler.handleExceptionException(Exception(e.toString()), showNotification: false);
+      throw _errorHandler.handleExceptionException(
+        Exception(e.toString()),
+        showNotification: false,
+      );
     }
   }
-
 
   /// POST请求 - 直接返回泛型对象
   Future<T> postData<T>(
@@ -246,13 +264,19 @@ class HttpService extends getx.GetxService {
       );
       return _handleResponseData<T>(response);
     } on DioException catch (e) {
-      final exception = _errorHandler.handleExceptionException(e, showNotification: false);
+      final exception = _errorHandler.handleExceptionException(
+        e,
+        showNotification: false,
+      );
       if (enableLogging) {
         debugPrint(exception.message);
       }
       throw exception;
     } catch (e) {
-      final exception = _errorHandler.handleExceptionException(Exception(e.toString()), showNotification: false);
+      final exception = _errorHandler.handleExceptionException(
+        Exception(e.toString()),
+        showNotification: false,
+      );
       if (enableLogging) {
         debugPrint(exception.message);
       }
@@ -280,10 +304,12 @@ class HttpService extends getx.GetxService {
     } on DioException catch (e) {
       throw _errorHandler.handleExceptionException(e, showNotification: false);
     } catch (e) {
-      throw _errorHandler.handleExceptionException(Exception(e.toString()), showNotification: false);
+      throw _errorHandler.handleExceptionException(
+        Exception(e.toString()),
+        showNotification: false,
+      );
     }
   }
-
 
   /// DELETE请求 - 直接返回泛型对象
   Future<T> deleteData<T>(
@@ -305,58 +331,64 @@ class HttpService extends getx.GetxService {
     } on DioException catch (e) {
       throw _errorHandler.handleExceptionException(e, showNotification: true);
     } catch (e) {
-      throw _errorHandler.handleExceptionException(Exception(e.toString()), showNotification: true);
+      throw _errorHandler.handleExceptionException(
+        Exception(e.toString()),
+        showNotification: true,
+      );
     }
   }
 
-
-
-
   /// 处理响应 - 使用JsonConvert进行类型转换
   /// 增强对json_serializable注解的模型类的支持
-  T _handleResponseData<T>(
-    Response response,
-  ) {
+  T _handleResponseData<T>(Response response) {
     debugPrint('=== HttpService._handleResponseData 开始 ===');
     debugPrint('HTTP状态码: ${response.statusCode}');
     debugPrint('响应数据: ${response.data}');
-    
+
     final responseData = response.data;
-    
+
     // 检查响应体中的业务code（处理标准API响应格式）
     if (responseData is Map<String, dynamic>) {
       final code = responseData['code'] as int?;
-      final message = responseData['msg'] as String? ?? 
-                     responseData['message'] as String? ?? 
-                     '请求成功';
-      
+      final message =
+          responseData['msg'] as String? ??
+          responseData['message'] as String? ??
+          '请求成功';
+
       if (code == 200) {
         // 业务逻辑成功，从响应中提取data字段
         final businessData = responseData['data'];
-        
+
         // 如果直接请求的是bool类型，并且data字段是bool，直接返回
         if (T == bool && businessData is bool) {
           return businessData as T;
         }
-        
-        return _convertDataToType<T>(businessData ?? responseData); 
+
+        return _convertDataToType<T>(businessData ?? responseData);
       } else {
         // 业务逻辑失败，统一抛出ApiException，确保错误能够被上层捕获处理
         debugPrint('业务逻辑失败，抛出异常: code=$code, message=$message');
-        throw _errorHandler.handleErrorCodeException(code, message, showNotification: true);
+        throw _errorHandler.handleErrorCodeException(
+          code,
+          message,
+          showNotification: true,
+        );
       }
     }
 
     // 检查HTTP状态码（非标准响应格式时）
     if (response.statusCode != 200 && response.statusCode != 201) {
       debugPrint('HTTP状态码异常，抛出HTTP请求失败异常');
-      throw _errorHandler.handleErrorCode<T>(response.statusCode, I18nKeys.networkRequestFailed.tr);
+      throw _errorHandler.handleErrorCode<T>(
+        response.statusCode,
+        I18nKeys.networkRequestFailed.tr,
+      );
     }
 
     // 非标准API响应格式（非Map），直接进行类型转换
     return _convertDataToType<T>(responseData);
   }
-  
+
   /// 通用数据类型转换方法
   /// 将任意类型数据转换为指定的泛型类型
   T _convertDataToType<T>(dynamic data) {
@@ -369,7 +401,7 @@ class HttpService extends getx.GetxService {
       if (result != null) {
         return result;
       }
-      
+
       // 2. 针对Map类型数据的特殊处理（支持json_serializable）
       if (data is Map<String, dynamic>) {
         try {
@@ -379,7 +411,7 @@ class HttpService extends getx.GetxService {
           // 继续尝试其他方式
         }
       }
-      
+
       // 3. 处理基本类型转换
       if (T == String) {
         return data.toString() as T;
@@ -400,17 +432,25 @@ class HttpService extends getx.GetxService {
         } else if (data is String) {
           // 字符串转换为bool
           final lowerData = data.toLowerCase();
-          return (lowerData == 'true' || lowerData == '1' || lowerData == 'yes' || lowerData == 'on') as T;
+          return (lowerData == 'true' ||
+                  lowerData == '1' ||
+                  lowerData == 'yes' ||
+                  lowerData == 'on')
+              as T;
         }
         // 如果以上都不匹配，尝试toString后再判断
         final stringValue = data?.toString()?.toLowerCase();
         if (stringValue != null) {
-          return (stringValue == 'true' || stringValue == '1' || stringValue == 'yes' || stringValue == 'on') as T;
+          return (stringValue == 'true' ||
+                  stringValue == '1' ||
+                  stringValue == 'yes' ||
+                  stringValue == 'on')
+              as T;
         }
         // 默认返回false
         return false as T;
       }
-      
+
       // 4. 尝试直接类型转换作为最后手段
       try {
         return data as T;
@@ -418,8 +458,10 @@ class HttpService extends getx.GetxService {
         throw Exception('类型转换失败: 无法将响应数据转换为类型 $T: $e');
       }
     } catch (e) {
-        final errorMsg = e is Exception ? e.toString() : I18nKeys.unknownTypeConversionException.tr;
-        throw Exception('类型转换异常: $errorMsg');
+      final errorMsg = e is Exception
+          ? e.toString()
+          : I18nKeys.unknownTypeConversionException.tr;
+      throw Exception('类型转换异常: $errorMsg');
     }
   }
 
@@ -437,7 +479,9 @@ class HttpService extends getx.GetxService {
     final fullUrl = '${options.baseUrl}${options.path}';
 
     debugPrint('\n' + '=' * 80);
-    debugPrint('🚀 HTTP REQUEST [${options.method.toUpperCase()}] - $timestamp');
+    debugPrint(
+      '🚀 HTTP REQUEST [${options.method.toUpperCase()}] - $timestamp',
+    );
     debugPrint('=' * 80);
     debugPrint('📍 URL: $fullUrl');
 
@@ -471,7 +515,9 @@ class HttpService extends getx.GetxService {
       }
     }
 
-    debugPrint('⏱️  Timeout: Connect(${options.connectTimeout?.inMilliseconds}ms) | Receive(${options.receiveTimeout?.inMilliseconds}ms) | Send(${options.sendTimeout?.inMilliseconds}ms)');
+    debugPrint(
+      '⏱️  Timeout: Connect(${options.connectTimeout?.inMilliseconds}ms) | Receive(${options.receiveTimeout?.inMilliseconds}ms) | Send(${options.sendTimeout?.inMilliseconds}ms)',
+    );
     debugPrint('=' * 80 + '\n');
   }
 
@@ -488,7 +534,9 @@ class HttpService extends getx.GetxService {
     debugPrint('=' * 80);
     debugPrint('📍 URL: $fullUrl');
     debugPrint('🔄 Method: ${requestOptions.method.toUpperCase()}');
-    debugPrint('📊 Status: ${response.statusCode} ${response.statusMessage ?? ''}');
+    debugPrint(
+      '📊 Status: ${response.statusCode} ${response.statusMessage ?? ''}',
+    );
 
     debugPrint('📦 Response Data:');
     try {
@@ -503,7 +551,9 @@ class HttpService extends getx.GetxService {
       debugPrint('   ${response.data}');
     }
 
-    debugPrint('📏 Content Length: ${response.data.toString().length} characters');
+    debugPrint(
+      '📏 Content Length: ${response.data.toString().length} characters',
+    );
     debugPrint('=' * 80 + '\n');
   }
 
@@ -516,7 +566,9 @@ class HttpService extends getx.GetxService {
     final fullUrl = '${requestOptions.baseUrl}${requestOptions.path}';
 
     debugPrint('\n' + '=' * 80);
-    debugPrint('❌ HTTP ERROR [${error.response?.statusCode ?? 'UNKNOWN'}] - $timestamp');
+    debugPrint(
+      '❌ HTTP ERROR [${error.response?.statusCode ?? 'UNKNOWN'}] - $timestamp',
+    );
     debugPrint('=' * 80);
     debugPrint('📍 URL: $fullUrl');
     debugPrint('🔄 Method: ${requestOptions.method.toUpperCase()}');
@@ -525,7 +577,9 @@ class HttpService extends getx.GetxService {
 
     if (error.response != null) {
       final response = error.response!;
-      debugPrint('📊 Status: ${response.statusCode} ${response.statusMessage ?? ''}');
+      debugPrint(
+        '📊 Status: ${response.statusCode} ${response.statusMessage ?? ''}',
+      );
 
       if (response.data != null) {
         debugPrint('📦 Error Response:');
@@ -543,7 +597,9 @@ class HttpService extends getx.GetxService {
 
     if (_envConfig.isDebug && error.stackTrace != null) {
       debugPrint('🔍 Stack Trace:');
-      debugPrint('   ${error.stackTrace.toString().split('\n').take(10).join('\n   ')}');
+      debugPrint(
+        '   ${error.stackTrace.toString().split('\n').take(10).join('\n   ')}',
+      );
     }
 
     debugPrint('=' * 80 + '\n');
@@ -558,14 +614,6 @@ class HttpService extends getx.GetxService {
       return data.toString();
     }
   }
-
-
-
-
-
-
-
-
 
   Future<Response?> _handleUnauthorized(DioException error) async {
     final request = error.requestOptions;
@@ -584,11 +632,17 @@ class HttpService extends getx.GetxService {
     try {
       final account = AuthService.to.getSavedAccount();
       final password = AuthService.to.getSavedPassword();
-      if (account == null || password == null || account.isEmpty || password.isEmpty) {
+      if (account == null ||
+          password == null ||
+          account.isEmpty ||
+          password.isEmpty) {
         return null;
       }
 
-      final newToken = await AuthApiService().login(account: account, password: password);
+      final newToken = await AuthApiService().login(
+        account: account,
+        password: password,
+      );
       if (newToken.isNotEmpty) {
         await AuthService.to.saveToken(newToken);
 

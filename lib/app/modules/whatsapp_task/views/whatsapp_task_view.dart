@@ -394,7 +394,8 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
               ],
             ),
             child: Obx(() {
-              if (Get.find<WhatsappTaskController>().isVideoInitialized.value && controller.chewieController != null) {
+              if (Get.find<WhatsappTaskController>().isVideoInitialized.value &&
+                  controller.chewieController != null) {
                 return SizedBox(
                   width: double.infinity, // 宽度铺满布局
                   height: 200, // 高度固定为200
@@ -451,8 +452,8 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                       //         color: Colors.black.withOpacity(0.5),
                       //       ),
                       //       child: Icon(
-                      //         controller.chewieController != null && controller.chewieController!.isFullScreen 
-                      //             ? Icons.fullscreen_exit 
+                      //         controller.chewieController != null && controller.chewieController!.isFullScreen
+                      //             ? Icons.fullscreen_exit
                       //             : Icons.fullscreen,
                       //         size: 24,
                       //         color: Colors.white,
@@ -463,8 +464,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                     ],
                   ),
                 );
-              }
-              else {
+              } else {
                 return Container(
                   height: 180,
                   alignment: Alignment.center,
@@ -944,60 +944,65 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                               ),
                             ],
                           ),
-                          GetPlatform.isWeb
-                              ? Row(
-                                  children: List.generate(3, (i) {
-                                    return Icon(
-                                      Icons.star,
-                                      size: 14,
-                                      color: i < (onlineNumber.rating ?? 0)
-                                          ? Colors.orange
-                                          : Colors.grey.shade300,
-                                    );
-                                  }),
-                                )
-                              : GestureDetector(
-                                  onTap: () {
-                                    if (onlineNumber.canSendMsg == false) {
-                                      return;
-                                    }
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: Text(I18nKeys.newTask.tr),
-                                          content: Text(
-                                            I18nKeys.confirmSend.tr,
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: Text(I18nKeys.cancel.tr),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                controller.sendWhatsAppMessage(onlineNumber.id ?? '');
-                                                Navigator.of(context).pop();
-                                                // 这里可以添加发送消息的逻辑
-                                              },
-                                              child: Text(I18nKeys.confirm.tr),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 9,
-                                      vertical: 2,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: onlineNumber.canSendMsg == false ? Colors.grey.shade300 : null,
-                                      gradient: onlineNumber.canSendMsg == false ? null : const LinearGradient(
+                          // GetPlatform.isWeb
+                          //     ? Row(
+                          //         children: List.generate(3, (i) {
+                          //           return Icon(
+                          //             Icons.star,
+                          //             size: 14,
+                          //             color: i < (onlineNumber.rating ?? 0)
+                          //                 ? Colors.orange
+                          //                 : Colors.grey.shade300,
+                          //           );
+                          //         }),
+                          //       )
+                          //     :
+                          GestureDetector(
+                            onTap: () {
+                              if (onlineNumber.canSendMsg == false) {
+                                return;
+                              }
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(I18nKeys.newTask.tr),
+                                    content: Text(I18nKeys.confirmSend.tr),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text(I18nKeys.cancel.tr),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          controller.sendWhatsAppMessage(
+                                            onlineNumber.id ?? '',
+                                          );
+                                          Navigator.of(context).pop();
+                                          // 这里可以添加发送消息的逻辑
+                                        },
+                                        child: Text(I18nKeys.confirm.tr),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 9,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: onlineNumber.canSendMsg == false
+                                    ? Colors.grey.shade300
+                                    : null,
+                                gradient: onlineNumber.canSendMsg == false
+                                    ? null
+                                    : const LinearGradient(
                                         colors: [
                                           Color(0xFF47B9F2),
                                           Color(0xFF477DF2),
@@ -1005,17 +1010,17 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                                         begin: Alignment.centerLeft,
                                         end: Alignment.centerRight,
                                       ),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Text(
-                                      I18nKeys.send.tr,
-                                      style: TextStyle(
-                                        color:  Colors.white,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Text(
+                                I18nKeys.send.tr,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
                                 ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -1045,5 +1050,4 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
       ),
     );
   }
-  
 }
