@@ -3,6 +3,14 @@ import 'package:flutter/foundation.dart';
 /// 环境类型枚举
 enum EnvironmentType { debug, release }
 
+/// String扩展方法
+extension StringExtensions on String {
+  /// 如果字符串为空，返回默认值
+  String ifEmpty(String Function() defaultValue) {
+    return isEmpty ? defaultValue() : this;
+  }
+}
+
 /// 环境配置类
 class EnvironmentConfig {
   static EnvironmentConfig? _instance;
@@ -23,6 +31,10 @@ class EnvironmentConfig {
 
   /// 获取基础URL
   String get baseUrl {
+    // 优先使用运行时配置，如果没有则使用默认配置
+    final customUrl = _getRuntimeUrl();
+    if (customUrl != null) return customUrl;
+    
     switch (currentEnvironment) {
       case EnvironmentType.debug:
         // return 'http://192.168.3.46:8081/'; // 开发环境API地址
@@ -34,6 +46,29 @@ class EnvironmentConfig {
         // return 'http://47.243.76.157:8083/'; // 生产环境API地址
         // return 'http://34.150.117.135:8083/'; // 生产环境API地址
         return 'https://api.eiorjgoiej.com/'; // 生产环境API地址
+    }
+  }
+
+  /// 获取运行时配置的URL（通过 --dart-define 传入）
+  String? _getRuntimeUrl() {
+    const baseUrlKey = 'BASE_URL';
+    const debugUrlKey = 'DEBUG_BASE_URL';
+    const releaseUrlKey = 'RELEASE_BASE_URL';
+    
+    if (currentEnvironment == EnvironmentType.debug) {
+      // 调试环境优先使用调试专用URL，然后是通用URL
+      final debugUrl = const String.fromEnvironment(debugUrlKey);
+      if (debugUrl.isNotEmpty) return debugUrl;
+      
+      final baseUrl = const String.fromEnvironment(baseUrlKey);
+      return baseUrl.isNotEmpty ? baseUrl : null;
+    } else {
+      // 生产环境优先使用生产专用URL，然后是通用URL
+      final releaseUrl = const String.fromEnvironment(releaseUrlKey);
+      if (releaseUrl.isNotEmpty) return releaseUrl;
+      
+      final baseUrl = const String.fromEnvironment(baseUrlKey);
+      return baseUrl.isNotEmpty ? baseUrl : null;
     }
   }
 
