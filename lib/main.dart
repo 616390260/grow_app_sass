@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
     final initialRoute = authService.needLogin ? Routes.login : AppPages.initial;
     
     return GetMaterialApp(
-      title: 'Taskgo8',
+      title: 'wsjob',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,

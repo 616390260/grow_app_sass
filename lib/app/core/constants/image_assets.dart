@@ -11,7 +11,7 @@ class ImageAssets {
   // 默认图片路径
   static const String _defaultPath = '$_basePath/default';
 
-  static const String logo = '$_basePath/logo.png';
+  static const String logo = '$_basePath/logo.jpg';
   static const String home = '$_basePath/home.svg';
   static const String promotion = '$_basePath/promotion.svg';
   static const String tasks = '$_basePath/task.svg';

@@ -6,7 +6,7 @@ class AppTranslations extends Translations {
     'zh_CN': {
     // Message Center
     
-      "app_title": "Taskgo8",
+      "app_title": "wsjob",
       "claim_reward_success": "领取奖励成功",
       'doNotRefresh':'不要刷新页面',
       "select_currency": "选择货币",
@@ -632,7 +632,7 @@ class AppTranslations extends Translations {
 
 
     'en_US': {
-      'app_title': 'Taskgo8',
+      'app_title': 'wsjob',
       // Version update related
       "version_update_found": "New version found",
       "version_update_available": "New version available",
@@ -2110,7 +2110,7 @@ class AppTranslations extends Translations {
       "need_install_permission": "perlukan izin instalasi aplikasi dari sumber tidak dikenal untuk menginstal APK",
       "download_link_invalid": "Link unduh tidak valid",
       "already_received": "Sudah Diterima",
-      "app_title": "Taskgo8",
+      "app_title": "wsjob",
       "claim_reward_success": "Pembesaran hadiah berhasil",
       'doNotRefresh':'Jangan refresh halaman ini',
       "select_currency": "Pilih Mata Uang",
@@ -3478,7 +3478,7 @@ class AppTranslations extends Translations {
       "need_install_permission": "Precisa de permissão de instalação de aplicativos desconhecidos",
       "download_link_invalid": "Link de download inválido",
       "already_received": "Já recebeu",
-      "app_title": "Taskgo8",
+      "app_title": "wsjob",
       "claim_reward_success": "Prêmio claimed successfully",
       'doNotRefresh':'Não refaça a página',
       "select_currency": "Selecione a moeda",
@@ -4165,7 +4165,7 @@ class AppTranslations extends Translations {
       "need_install_permission": "Precisa de permissão de instalação de aplicativos desconhecidos",
       "download_link_invalid": "Link de download inválido",
       "already_received": "Ya ha recibido",
-      "app_title": "Taskgo8",
+      "app_title": "wsjob",
       "claim_reward_success": "Premio claimed successfully",
       'doNotRefresh':'No refresque la página',
       "select_currency": "Seleccione la moneda",
