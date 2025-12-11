@@ -1,18 +1,18 @@
-import 'package:do_task_project/app/core/models/base_list_entity.dart';
-import 'package:do_task_project/app/data/models/country_model.dart';
-import 'package:do_task_project/app/data/services/country_api_service.dart';
-import 'package:do_task_project/app/modules/main/controllers/main_controller.dart';
 import 'package:get/get.dart';
+import 'package:do_task_project/app/core/theme/app_theme.dart';
+import 'package:do_task_project/app/core/config/currency_config.dart';
+import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
+import 'package:do_task_project/app/data/models/user_model.dart';
+import 'package:do_task_project/app/data/models/country_model.dart';
+import 'package:do_task_project/app/core/models/base_list_entity.dart';
+import 'package:do_task_project/app/data/services/auth_api_service.dart';
+import 'package:do_task_project/app/data/services/country_api_service.dart';
+import 'package:do_task_project/app/core/services/auth_service.dart';
+import 'package:do_task_project/app/modules/main/controllers/main_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
 import '../../../core/base/base_controller.dart';
-import '../../../core/i18n/i18n_keys.dart';
 import '../../../routes/app_pages.dart';
-import '../../../data/services/auth_api_service.dart';
-import '../../../data/models/user_model.dart';
-import '../../../core/services/auth_service.dart';
-import '../../../core/theme/app_theme.dart';
 
 class AccountController extends BaseController {
   // 用户信息
@@ -21,16 +21,53 @@ class AccountController extends BaseController {
   final code = ''.obs;
   final referralCode = 'ILKBWU94'.obs;
   final pointsBalance = 100.obs; // 积分
-  final trxBalance = 0.04.obs; // TRX 余额
+  final trxBalance = 0.0.obs; // TRX 余额
   final showBalance = true.obs;
+  final isConvertedDisplay = false.obs; // 是否显示换算后的余额
   // 国家列表（响应式）
   RxList<CountryModel> countries = <CountryModel>[].obs;
   // 认证API服务
   final _authApiService = AuthApiService();
-  RxInt selectedCurrencyIndex = 0.obs;
+  RxInt selectedCurrencyIndex = (-1).obs; // 默认不选中任何货币
   // 认证服务（包含用户凭据管理）
   final _authService = AuthService.to;
   final CountryApiService _countryApiService = CountryApiService();
+
+  /// 计算属性：当前积分换算的金额
+  double get currentConvertedAmount {
+    if (countries.isEmpty || selectedCurrencyIndex.value < 0 || selectedCurrencyIndex.value >= countries.length) {
+      return 0.0;
+    }
+    
+    final selectedCountry = countries[selectedCurrencyIndex.value];
+    return CurrencyConfig.calculateAmount(
+      pointsBalance.value.toDouble(), 
+      selectedCountry.exchangeRate
+    );
+  }
+
+
+  /// 计算属性：当前选中货币的代码
+  String get currentCurrencyCode {
+    if (countries.isEmpty || selectedCurrencyIndex.value < 0 || selectedCurrencyIndex.value >= countries.length) {
+      return '';
+    }
+    
+    final selectedCountry = countries[selectedCurrencyIndex.value];
+    return selectedCountry.code ?? '';
+  }
+
+  /// 计算属性：当前选中货币的格式化金额字符串
+  String get formattedCurrentAmount {
+    if (currentCurrencyCode.isEmpty) {
+      return '0.00';
+    }
+    
+    return CurrencyConfig.formatAmount(
+      currentConvertedAmount, 
+      currentCurrencyCode
+    );
+  }
 
   @override
   void onInit() {
@@ -189,7 +226,7 @@ class AccountController extends BaseController {
       // 成功回调
       (BaseListEntity<CountryModel> response) {
         try {
-          print('获取到国家列表数量: ${response.records.length}');
+          // 获取到国家列表数量: ${response.records.length}
 
           final List<CountryModel> countryList = response.records;
 
@@ -198,7 +235,7 @@ class AccountController extends BaseController {
             countries.assignAll(countryList);
           }
         } catch (e) {
-          print('处理国家列表时异常: $e');
+          // 处理国家列表时异常: $e
         }
       },
       // 自定义错误消息
@@ -207,7 +244,7 @@ class AccountController extends BaseController {
       showLoading: false,
       // 错误回调（保持静默失败）
       onError: () {
-        print(I18nKeys.loadCountriesFailed.tr);
+        // I18nKeys.loadCountriesFailed.tr
       },
     );
   }
@@ -274,6 +311,7 @@ class AccountController extends BaseController {
                     return InkWell(
                       onTap: () {
                         selectedCurrencyIndex.value = index;
+                        isConvertedDisplay.value = true; // 切换到换算显示模式
                         Get.back();
                       },
                       child: Container(
@@ -290,7 +328,7 @@ class AccountController extends BaseController {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '${pointsAmount}${I18nKeys.points.tr} = ${exchangeAmount.toStringAsFixed(2)} ${country.code}',
+                              '$pointsAmount${I18nKeys.points.tr} = ${exchangeAmount.toStringAsFixed(2)} ${country.code}',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: AppTheme.threeColor,

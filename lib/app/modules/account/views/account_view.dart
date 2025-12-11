@@ -1,5 +1,5 @@
 import 'package:do_task_project/app/core/theme/app_theme.dart';
-import 'package:do_task_project/app/core/widgets/localized_app_bar.dart';
+
 import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +11,7 @@ import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import '../../../core/constants/image_assets.dart';
 
 class AccountView extends BaseView<AccountController> {
-  const AccountView({Key? key}) : super(key: key);
+  const AccountView({super.key});
 
   @override
   Widget buildContent(BuildContext context) {
@@ -159,7 +159,10 @@ class AccountView extends BaseView<AccountController> {
                                           padding: const EdgeInsets.all(6),
                                           child: SvgPicture.asset(
                                             ImageAssets.mineMsg,
-                                            color: Colors.white,
+                                            colorFilter: const ColorFilter.mode(
+                                              Colors.white,
+                                              BlendMode.srcIn,
+                                            ),
                                             width: 23,
                                             height: 22,
                                           ),
@@ -277,7 +280,7 @@ class AccountView extends BaseView<AccountController> {
                   height: 28,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: AppTheme.loginColor.withOpacity(0.6),
+                    color: AppTheme.loginColor.withValues(alpha: 0.6),
                     borderRadius: const BorderRadius.only(
                       topRight: Radius.circular(10),
                       bottomLeft: Radius.circular(40),
@@ -348,7 +351,9 @@ class AccountView extends BaseView<AccountController> {
                         children: [
                           Text(
                             visible
-                                ? controller.trxBalance.value.toStringAsFixed(2)
+                                ? (controller.isConvertedDisplay.value 
+                                    ? controller.formattedCurrentAmount 
+                                    : controller.trxBalance.value.toStringAsFixed(2))
                                 : '***',
                             style: const TextStyle(
                               fontSize: 24,
@@ -357,7 +362,11 @@ class AccountView extends BaseView<AccountController> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            controller.code.value,
+                            controller.isConvertedDisplay.value
+                                ? (controller.currentCurrencyCode.isNotEmpty 
+                                    ? controller.currentCurrencyCode 
+                                    : controller.code.value)
+                                : controller.code.value,
                             style: TextStyle(
                               color: AppTheme.nineColor,
                               fontSize: 14,

@@ -380,7 +380,6 @@ class HomeView extends BaseView<HomeController> {
   }
 }
 
-
 // 解析HTML内容为TextSpan
 TextSpan _parseHtmlToTextSpan(String html, TextStyle defaultStyle) {
   try {
@@ -449,7 +448,7 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
                 GestureDetector(
                   onTap: () => {
                     Get.back(),
-                    Get.find<HomeController>().markPopupClose()
+                    Get.find<HomeController>().markPopupClose(),
                   },
                   child: const Icon(
                     Icons.close,
@@ -459,33 +458,38 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
                 ),
               ],
             ),
-            
+
             // 标题 - 左对齐
             Center(
-              child: (pa.titleIsRichText == '1') ? RichText(
-                text: _parseHtmlToTextSpan(pa.title ?? '', const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.threeColor,
-                  decoration: TextDecoration.none,
-                )),
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-              ) : RichText(
-                text: TextSpan(
-                  text: pa.title ?? '',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.threeColor,
-                    decoration: TextDecoration.none,
-                  ),
-                ),
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-              ),
+              child: (pa.titleIsRichText == '1')
+                  ? RichText(
+                      text: _parseHtmlToTextSpan(
+                        pa.title ?? '',
+                        const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.threeColor,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  : RichText(
+                      text: TextSpan(
+                        text: pa.title ?? '',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.threeColor,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
             ),
             const SizedBox(height: 16),
             // 内容 - 左对齐
@@ -496,24 +500,29 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
               child: SingleChildScrollView(
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: (pa.contentIsRichText == '1') ? RichText(
-                    text: _parseHtmlToTextSpan(pa.content ?? '', const TextStyle(
-                      fontSize: 12,
-                      height: 1.5,
-                      fontWeight: FontWeight.w500,
-                      color: AppTheme.sixColor,
-                      decoration: TextDecoration.none,
-                    )),
-                  ) : Text(
-                    pa.content ?? '',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      height: 1.5,
-                      fontWeight: FontWeight.w500,
-                      color: AppTheme.sixColor,
-                      decoration: TextDecoration.none,
-                    ),
-                  ),
+                  child: (pa.contentIsRichText == '1')
+                      ? RichText(
+                          text: _parseHtmlToTextSpan(
+                            pa.content ?? '',
+                            const TextStyle(
+                              fontSize: 12,
+                              height: 1.5,
+                              fontWeight: FontWeight.w500,
+                              color: AppTheme.sixColor,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          pa.content ?? '',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            height: 1.5,
+                            fontWeight: FontWeight.w500,
+                            color: AppTheme.sixColor,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
                 ),
               ),
             ),
