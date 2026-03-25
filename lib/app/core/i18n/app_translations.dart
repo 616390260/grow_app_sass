@@ -90,6 +90,7 @@ class AppTranslations extends Translations {
       "bank_name": "发卡银行",
       "account_number": "收款账号",
       "account_name": "收款人姓名",
+      "wallet_address": "钱包地址",
       "login_password": "登录密码",
       "select_bank": "选择银行",
       "income_details": "收益明细",
@@ -375,6 +376,7 @@ class AppTranslations extends Translations {
       "please_select_bank_placeholder": "请选择发卡银行",
       "please_enter_account_number_placeholder": "请输入收款账号",
       "please_enter_account_name_placeholder": "请输入收款人姓名",
+      "please_enter_wallet_address_placeholder": "请输入钱包地址",
       "please_enter_login_password_placeholder": "请输入登录密码",
       "sign_in": "签到",
       "consecutive_sign_in_days": "连续签到天数",
@@ -719,6 +721,7 @@ class AppTranslations extends Translations {
       'bank_name': 'Issuing Bank',
       'account_number': 'Receiving Account Number',
       'account_name': 'Payee Name',
+      'wallet_address': 'Wallet Address',
       'login_password': 'Login Password',
       'select_bank': 'Select Bank',
       'income_details': 'Earnings Details',
@@ -1066,6 +1069,7 @@ class AppTranslations extends Translations {
       'please_enter_account_number_placeholder':
           'Please Enter Receiving Account Number',
       'please_enter_account_name_placeholder': 'Please Enter Payee Name',
+      'please_enter_wallet_address_placeholder': 'Please Enter Wallet Address',
       'please_enter_login_password_placeholder': 'Please Enter Login Password',
       'sign_in': 'Sign In',
       'consecutive_sign_in_days': 'Consecutive Sign-in Days',
@@ -1471,6 +1475,7 @@ class AppTranslations extends Translations {
       "bank_name": "जारीकर्ता बैंक",
       "account_number": "प्राप्ति खाता नंबर",
       "account_name": "प्राप्तकर्ता का नाम",
+      "wallet_address": "वॉलेट पता",
       "login_password": "लॉगिन पासवर्ड",
       "select_bank": "बैंक चुनें",
       "income_details": "कमाई विवरण",
@@ -1799,6 +1804,7 @@ class AppTranslations extends Translations {
           "कृपया प्राप्ति खाता नंबर दर्ज करें",
       "please_enter_account_name_placeholder":
           "कृपया प्राप्तकर्ता का नाम दर्ज करें",
+      "please_enter_wallet_address_placeholder": "कृपया वॉलेट पता दर्ज करें",
       "please_enter_login_password_placeholder":
           "कृपया लॉगिन पासवर्ड दर्ज करें",
       "sign_in": "साइन-इन करें",
@@ -2180,6 +2186,7 @@ class AppTranslations extends Translations {
       "bank_name": "Bank Penerbit Kartu",
       "account_number": "Nomor Rekening Penerima",
       "account_name": "Nama Penerima",
+      "wallet_address": "Alamat Dompet",
       "login_password": "Kata Sandi Login",
       "select_bank": "Pilih Bank",
       "income_details": "Detail Pendapatan",
@@ -2511,6 +2518,7 @@ class AppTranslations extends Translations {
       "please_enter_account_number_placeholder":
           "Silakan masukkan nomor rekening penerima",
       "please_enter_account_name_placeholder": "Silakan masukkan nama penerima",
+      "please_enter_wallet_address_placeholder": "Silakan masukkan alamat dompet",
       "please_enter_login_password_placeholder":
           "Silakan masukkan kata sandi login",
       "sign_in": "Absensi",
@@ -2867,6 +2875,7 @@ class AppTranslations extends Translations {
       "bank_name": "ব্যাংক নাম",
       "account_number": "রিসিভিং অ্যাকাউন্ট নম্বর",
       "account_name": "রিসিভারের নাম",
+      "wallet_address": "ওয়ালেট ঠিকানা",
       "login_password": "লগইন পাসওয়ার্ড",
       "select_bank": "ব্যাংক নির্বাচন করুন",
       "income_details": "আয় বিবরণ",
@@ -3191,6 +3200,7 @@ class AppTranslations extends Translations {
           "অনুগ্রহ করে রিসিভিং অ্যাকাউন্ট নম্বর ইনপুট করুন",
       "please_enter_account_name_placeholder":
           "অনুগ্রহ করে রিসিভারের নাম ইনপুট করুন",
+      "please_enter_wallet_address_placeholder": "অনুগ্রহ করে ওয়ালেট ঠিকানা ইনপুট করুন",
       "please_enter_login_password_placeholder":
           "অনুগ্রহ করে লগইন পাসওয়ার্ড ইনপুট করুন",
       "sign_in": "সাইন-ইন",
@@ -3548,6 +3558,7 @@ class AppTranslations extends Translations {
       "bank_name": "Banco emissor",
       "account_number": "Número da conta recebedora",
       "account_name": "Nome do titular da conta",
+      "wallet_address": "Endereço da carteira",
       "login_password": "Senha de login",
       "select_bank": "Selecionar banco",
       "income_details": "Detalhes da renda",
@@ -3877,6 +3888,7 @@ class AppTranslations extends Translations {
           "Digite o número da conta recebedora",
       "please_enter_account_name_placeholder":
           "Digite o nome do titular da conta",
+      "please_enter_wallet_address_placeholder": "Digite o endereço da carteira",
       "please_enter_login_password_placeholder": "Digite a senha de login",
       "sign_in": "Check-in",
       "consecutive_sign_in_days": "Dias consecutivos de check-in",
@@ -4235,6 +4247,7 @@ class AppTranslations extends Translations {
       "bank_name": "Banco emisor",
       "account_number": "Número de cuenta de recepción",
       "account_name": "Nombre del beneficiario",
+      "wallet_address": "Dirección de billetera",
       "login_password": "Contraseña de inicio de sesión",
       "select_bank": "Seleccionar banco",
       "income_details": "Detalles de ingresos",
@@ -4568,6 +4581,7 @@ class AppTranslations extends Translations {
           "Ingresa el número de cuenta de recepción",
       "please_enter_account_name_placeholder":
           "Ingresa el nombre del beneficiario",
+      "please_enter_wallet_address_placeholder": "Ingresa la dirección de la billetera",
       "please_enter_login_password_placeholder":
           "Ingresa la contraseña de inicio de sesión",
       "sign_in": "Registrarse",

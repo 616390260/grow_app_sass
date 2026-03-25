@@ -184,15 +184,13 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
                   // 处理返回的数据
                   if (result != null) {
                     print('收到支付方式页面返回数据: $result');
-                    // 这里可以处理返回的数据，例如保存到控制器中或更新UI
-                    // 示例：
                     controller.bankName.value = result['bankName'] ?? '';
                     controller.phone.value = result['phone'] ?? '';
                     controller.bankCode.value = result['bankCode'] ?? 0;
                     controller.accountNumber.value = result['accountNumber'] ?? '';
                     controller.accountName.value = result['accountName'] ?? '';
                     controller.loginPassword.value = result['loginPassword'] ?? '';
-                    
+                    controller.payCard.value = result['payCard'] ?? '';
                   }
                 },
                 child: Text(

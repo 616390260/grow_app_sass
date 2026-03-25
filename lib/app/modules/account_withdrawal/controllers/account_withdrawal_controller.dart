@@ -22,6 +22,8 @@ class AccountWithdrawalController extends BaseController {
   RxString phone = ''.obs;
   RxInt bankCode = 0.obs;
   RxString loginPassword = ''.obs;
+  // TRX 钱包地址
+  RxString payCard = ''.obs;
   
   // 可用余额（从用户信息获取，响应式变量）
   RxInt availableBalance = 0.obs;
@@ -207,27 +209,42 @@ class AccountWithdrawalController extends BaseController {
     }
 
     // 验证支付信息是否完整
-    if (accountNumber.value.isEmpty ||
-        accountName.value.isEmpty ||
-        bankName.value.isEmpty ||
-        loginPassword.value.isEmpty) {
-      Get.snackbar(
-        I18nKeys.error.tr,
-        I18nKeys.completePaymentInfo.tr,
-        snackPosition: SnackPosition.TOP,
-      );
-      return;
+    final bool isTrx = selectedCountry.value.payName.toUpperCase() == 'TRX';
+    if (isTrx) {
+      // TRX 模式：验证钱包地址
+      if (payCard.value.isEmpty || loginPassword.value.isEmpty) {
+        Get.snackbar(
+          I18nKeys.error.tr,
+          I18nKeys.completePaymentInfo.tr,
+          snackPosition: SnackPosition.TOP,
+        );
+        return;
+      }
+    } else {
+      // 普通模式：验证银行、账号、姓名
+      if (accountNumber.value.isEmpty ||
+          accountName.value.isEmpty ||
+          bankName.value.isEmpty ||
+          loginPassword.value.isEmpty) {
+        Get.snackbar(
+          I18nKeys.error.tr,
+          I18nKeys.completePaymentInfo.tr,
+          snackPosition: SnackPosition.TOP,
+        );
+        return;
+      }
     }
 
-    // 构建提现请求参数
+    // 构建提现请求参数（TRX 模式用 payCard 作为 account 字段）
     final requestData = {
-      "account": accountNumber.value,
+      "account": isTrx ? payCard.value : accountNumber.value,
       "bankId": bankCode.value,
       "phone": phone.value,
       "goldenFlowId": selectedCountry.value.id,
       "loginPassword": loginPassword.value,
-      "name": accountName.value,
+      "name": isTrx ? payCard.value : accountName.value,
       "points": int.tryParse(withdrawAmount.value) ?? 0,
+      if (isTrx) "payCard": payCard.value,
     };
 
     print(

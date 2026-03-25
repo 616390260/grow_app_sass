@@ -34,18 +34,18 @@ class EnvironmentConfig {
     // 优先使用运行时配置，如果没有则使用默认配置
     final customUrl = _getRuntimeUrl();
     if (customUrl != null) return customUrl;
-    
+
     switch (currentEnvironment) {
       case EnvironmentType.debug:
         // return 'http://192.168.3.46:8081/'; // 开发环境API地址
         // return 'http://47.243.76.157:8083/'; // 测试环境API地址
         // return 'http://34.150.117.135:8083/'; // 测试环境API地址
-        // return 'http://192.168.3.81:8083/'; // 测试环境API地址
-        return 'https://api.wsjob1.com/'; // 测试环境API地址
+        return 'http://192.168.3.206:8083/'; // 测试环境API地址
+      // return 'https://api.wacashsys.com/'; // 测试环境API地址
       case EnvironmentType.release:
         // return 'http://47.243.76.157:8083/'; // 生产环境API地址
         // return 'http://34.150.117.135:8083/'; // 生产环境API地址
-        return 'https://api.wsjob1.com/'; // 生产环境API地址
+        return 'https://api.wacashsys.com/'; // 生产环境API地址
     }
   }
 
@@ -54,19 +54,19 @@ class EnvironmentConfig {
     const baseUrlKey = 'BASE_URL';
     const debugUrlKey = 'DEBUG_BASE_URL';
     const releaseUrlKey = 'RELEASE_BASE_URL';
-    
+
     if (currentEnvironment == EnvironmentType.debug) {
       // 调试环境优先使用调试专用URL，然后是通用URL
       final debugUrl = const String.fromEnvironment(debugUrlKey);
       if (debugUrl.isNotEmpty) return debugUrl;
-      
+
       final baseUrl = const String.fromEnvironment(baseUrlKey);
       return baseUrl.isNotEmpty ? baseUrl : null;
     } else {
       // 生产环境优先使用生产专用URL，然后是通用URL
       final releaseUrl = const String.fromEnvironment(releaseUrlKey);
       if (releaseUrl.isNotEmpty) return releaseUrl;
-      
+
       final baseUrl = const String.fromEnvironment(baseUrlKey);
       return baseUrl.isNotEmpty ? baseUrl : null;
     }
@@ -125,9 +125,9 @@ class EnvironmentConfig {
   String get appName {
     switch (currentEnvironment) {
       case EnvironmentType.debug:
-        return 'DoTask (Debug)'; // 调试版本应用名称
+        return 'wacash (Debug)'; // 调试版本应用名称
       case EnvironmentType.release:
-        return 'DoTask'; // 正式版本应用名称
+        return 'wacash'; // 正式版本应用名称
     }
   }
 

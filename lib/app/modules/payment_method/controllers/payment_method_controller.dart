@@ -43,12 +43,18 @@ class PaymentMethodController extends BaseController {
   
   // 手机号
   RxString phone = ''.obs;
+
+  // TRX 钱包地址（字段名 payCard）
+  RxString payCard = ''.obs;
   
   // 国家/地区（从上个页面传递）
   String country = Get.arguments?['country'] ?? '';
   int countryId = Get.arguments?['countryId'] ?? 0;
   // 银行信息对象
   BankInfo? bankInfo = Get.arguments?['bankInfo'];
+
+  /// 是否为TRX支付方式
+  bool get isTrx => country.toUpperCase() == 'TRX';
   
   // 银行列表
   RxList<BankModel> bankList = <BankModel>[].obs;
@@ -143,20 +149,34 @@ class PaymentMethodController extends BaseController {
   void setPhone(String number) {
     phone.value = number;
   }
+
+  /// 设置TRX钱包地址
+  void setPayCard(String address) {
+    payCard.value = address;
+  }
   
   // 验证表单
   bool validateForm() {
-    if (bankName.value.isEmpty) {
-      showErrorMessage(I18nKeys.pleaseSelectBankPlaceholder.tr);
-      return false;
-    }
-    if (accountNumber.value.isEmpty) {
-      showErrorMessage(I18nKeys.pleaseEnterAccountNumberPlaceholder.tr);
-      return false;
-    }
-    if (accountName.value.isEmpty) {
-      showErrorMessage(I18nKeys.pleaseEnterAccountNamePlaceholder.tr);
-      return false;
+    if (isTrx) {
+      // TRX 模式：只需验证钱包地址和登录密码
+      if (payCard.value.isEmpty) {
+        showErrorMessage(I18nKeys.pleaseEnterWalletAddressPlaceholder.tr);
+        return false;
+      }
+    } else {
+      // 普通模式：验证银行、账号、姓名
+      if (bankName.value.isEmpty) {
+        showErrorMessage(I18nKeys.pleaseSelectBankPlaceholder.tr);
+        return false;
+      }
+      if (accountNumber.value.isEmpty) {
+        showErrorMessage(I18nKeys.pleaseEnterAccountNumberPlaceholder.tr);
+        return false;
+      }
+      if (accountName.value.isEmpty) {
+        showErrorMessage(I18nKeys.pleaseEnterAccountNamePlaceholder.tr);
+        return false;
+      }
     }
     if (loginPassword.value.isEmpty) {
       showErrorMessage(I18nKeys.pleaseEnterLoginPasswordPlaceholder.tr);
@@ -178,6 +198,7 @@ class PaymentMethodController extends BaseController {
       'accountNumber': accountNumber.value,
       'accountName': accountName.value,
       'loginPassword': loginPassword.value,
+      'payCard': payCard.value,
     });
     
     

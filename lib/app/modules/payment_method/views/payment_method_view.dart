@@ -73,14 +73,18 @@ class PaymentMethodView extends BaseView<PaymentMethodController> {
             padding: const EdgeInsets.symmetric(horizontal: 14),
             child: Column(
               children: [
-                // 表单字段
-                InkWell(
-                  onTap: () => _showBankSelectDialog(),
-                  child: Container(
-                    // padding: const EdgeInsets.symmetric(
-                    //   horizontal: 0,
-                    //   vertical: 20,
-                    // ),
+                if (controller.isTrx) ...[
+                  // TRX 模式：只显示钱包地址字段
+                  _buildFormField(
+                    label: I18nKeys.walletAddress.tr,
+                    placeholder: I18nKeys.pleaseEnterWalletAddressPlaceholder.tr,
+                    value: controller.payCard,
+                    onChanged: controller.setPayCard,
+                  ),
+                ] else ...[
+                  // 普通模式：发卡银行、收款账号、收款人姓名
+                  InkWell(
+                    onTap: () => _showBankSelectDialog(),
                     child: _buildBankFormField(
                       label: I18nKeys.bankName.tr,
                       placeholder: I18nKeys.pleaseSelectBankPlaceholder.tr,
@@ -88,30 +92,29 @@ class PaymentMethodView extends BaseView<PaymentMethodController> {
                       onChanged: controller.setBankName,
                     ),
                   ),
-                ),
-
-                Container(
-                  height: 0.5,
-                  color: AppTheme.lineColor,
-                  margin: const EdgeInsets.symmetric(horizontal: 14),
-                ),
-                _buildFormField(
-                  label: I18nKeys.accountNumber.tr,
-                  placeholder: I18nKeys.pleaseEnterAccountNumberPlaceholder.tr,
-                  value: controller.accountNumber,
-                  onChanged: controller.setAccountNumber,
-                ),
-                Container(
-                  height: 0.5,
-                  color: AppTheme.lineColor,
-                  margin: const EdgeInsets.symmetric(horizontal: 14),
-                ),
-                _buildFormField(
-                  label: I18nKeys.accountName.tr,
-                  placeholder: I18nKeys.pleaseEnterAccountNamePlaceholder.tr,
-                  value: controller.accountName,
-                  onChanged: controller.setAccountName,
-                ),
+                  Container(
+                    height: 0.5,
+                    color: AppTheme.lineColor,
+                    margin: const EdgeInsets.symmetric(horizontal: 14),
+                  ),
+                  _buildFormField(
+                    label: I18nKeys.accountNumber.tr,
+                    placeholder: I18nKeys.pleaseEnterAccountNumberPlaceholder.tr,
+                    value: controller.accountNumber,
+                    onChanged: controller.setAccountNumber,
+                  ),
+                  Container(
+                    height: 0.5,
+                    color: AppTheme.lineColor,
+                    margin: const EdgeInsets.symmetric(horizontal: 14),
+                  ),
+                  _buildFormField(
+                    label: I18nKeys.accountName.tr,
+                    placeholder: I18nKeys.pleaseEnterAccountNamePlaceholder.tr,
+                    value: controller.accountName,
+                    onChanged: controller.setAccountName,
+                  ),
+                ],
                 Container(
                   height: 0.5,
                   color: AppTheme.lineColor,

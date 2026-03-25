@@ -196,6 +196,7 @@ class I18nKeys {
   static const bankName = 'bank_name';
   static const accountNumber = 'account_number';
   static const accountName = 'account_name';
+  static const walletAddress = 'wallet_address';
   static const selectBank = 'select_bank';
   static const loginPassword = 'login_password';
   static const withdrawTo = 'withdraw_to';
@@ -501,6 +502,7 @@ class I18nKeys {
   static const pleaseSelectBankPlaceholder = 'please_select_bank_placeholder';
   static const pleaseEnterAccountNumberPlaceholder = 'please_enter_account_number_placeholder';
   static const pleaseEnterAccountNamePlaceholder = 'please_enter_account_name_placeholder';
+  static const pleaseEnterWalletAddressPlaceholder = 'please_enter_wallet_address_placeholder';
   static const pleaseEnterLoginPasswordPlaceholder = 'please_enter_login_password_placeholder';
   
   // Sign-in related
