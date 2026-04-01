@@ -45,8 +45,8 @@ class EnvironmentConfig {
       case EnvironmentType.release:
         // return 'http://47.243.76.157:8083/'; // 生产环境API地址
         // return 'http://34.150.117.135:8083/'; // 生产环境API地址
-        // return 'https://api.eiorjgoiej.com/'; // 生产环境API地址
-        return 'https://api.wacashsys.com/'; // 生产环境API地址
+        return 'https://api.eiorjgoiej.com/'; // 生产环境API地址
+      // return 'https://api.wacashsys.com/'; // 生产环境API地址
     }
   }
 
@@ -126,9 +126,9 @@ class EnvironmentConfig {
   String get appName {
     switch (currentEnvironment) {
       case EnvironmentType.debug:
-        return 'wacash (Debug)'; // 调试版本应用名称
+        return 'taskgo (Debug)'; // 调试版本应用名称
       case EnvironmentType.release:
-        return 'wacash'; // 正式版本应用名称
+        return 'taskgo'; // 正式版本应用名称
     }
   }
 
