@@ -20,6 +20,14 @@ class AccountController extends BaseController {
   final avatar = ''.obs;
   final code = ''.obs;
   final referralCode = 'ILKBWU94'.obs;
+  /// 推荐码是否可见，默认隐藏
+  final isReferralCodeVisible = false.obs;
+
+  /// 切换推荐码显示/隐藏
+  void toggleReferralCodeVisibility() {
+    isReferralCodeVisible.value = !isReferralCodeVisible.value;
+  }
+
   final pointsBalance = 100.obs; // 积分
   final trxBalance = 0.0.obs; // TRX 余额
   final showBalance = true.obs;

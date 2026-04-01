@@ -87,17 +87,19 @@ class AccountView extends BaseView<AccountController> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        controller.userName.value,
+                                      Obx(() => Text(
+                                        controller.isReferralCodeVisible.value
+                                            ? controller.userName.value
+                                            : '••••••',
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 22,
                                           fontWeight: FontWeight.w500,
                                         ),
                                         overflow: TextOverflow.ellipsis,
-                                      ),
+                                      )),
                                       const SizedBox(height: 4),
-                                      Row(
+                                      Obx(() => Row(
                                         children: [
                                           Text(
                                             '${I18nKeys.referralCode.tr}: ',
@@ -108,12 +110,25 @@ class AccountView extends BaseView<AccountController> {
                                           ),
                                           Flexible(
                                             child: Text(
-                                              controller.referralCode.value,
+                                              controller.isReferralCodeVisible.value
+                                                  ? controller.referralCode.value
+                                                  : '••••••••',
                                               style: const TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 14,
                                               ),
                                               overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 5),
+                                          GestureDetector(
+                                            onTap: controller.toggleReferralCodeVisibility,
+                                            child: Icon(
+                                              controller.isReferralCodeVisible.value
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
+                                              color: Colors.white,
+                                              size: 14,
                                             ),
                                           ),
                                           const SizedBox(width: 5),
@@ -126,7 +141,7 @@ class AccountView extends BaseView<AccountController> {
                                             ),
                                           ),
                                         ],
-                                      ),
+                                      )),
                                     ],
                                   ),
                                 ),
