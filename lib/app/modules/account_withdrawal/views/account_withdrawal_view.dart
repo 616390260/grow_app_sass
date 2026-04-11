@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:do_task_project/app/core/base/base_view.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
-import 'package:do_task_project/app/core/theme/text_styles.dart';
 import '../controllers/account_withdrawal_controller.dart';
 
 class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
@@ -179,6 +178,7 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
                     'countryId': controller.selectedCountry.value.id,
                     'minAmount': (controller.selectedCountry.value.minAmount ?? 0).toStringAsFixed(0),
                     'dailyLimit': controller.withdrawalSetting.value.oneDayNum?.toString() ?? '2',
+                    'sendTaskNum': controller.withdrawalSetting.value.sendTaskNum?.toString() ?? '5',
                   });
                   
                   // 处理返回的数据
@@ -324,11 +324,21 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
           ),
         ),
         const SizedBox(height: 7),
-        Obx(() => Text(
-          '${I18nKeys.minWithdrawAmount.trArgs([(controller.selectedCountry.value.minAmount??0).toStringAsFixed(0)])}'
-          '\n${I18nKeys.dailyWithdrawLimit.trArgs([controller.withdrawalSetting.value.oneDayNum?.toString() ?? '2'])}\n${I18nKeys.withdrawTips.tr}',
-          style: TextStyle(fontSize: 13, color: AppTheme.sixColor,fontWeight: FontWeight.w500),
-        )),
+        Obx(() {
+          final setting = controller.withdrawalSetting.value;
+          final taskNumStr = setting.sendTaskNum?.toString() ?? '5';
+          return Text(
+            '${I18nKeys.minWithdrawAmount.trArgs([(controller.selectedCountry.value.minAmount ?? 0).toStringAsFixed(0)])}'
+            '\n${I18nKeys.dailyWithdrawLimit.trArgs([setting.oneDayNum?.toString() ?? '2'])}'
+            '\n${I18nKeys.withdrawTips.tr}'
+            '\n${I18nKeys.withdrawTaskRequirement.trArgs([taskNumStr, taskNumStr])}',
+            style: TextStyle(
+              fontSize: 13,
+              color: AppTheme.sixColor,
+              fontWeight: FontWeight.w500,
+            ),
+          );
+        }),
       ],
     );
   }

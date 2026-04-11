@@ -32,7 +32,7 @@ class ActivitiesView extends BaseView<ActivitiesController> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          stops: [0.0, 0.2, 0.35],
+          stops: [0.0, 0.38, 0.58],
           colors: [Color(0xFF477DF2), Color(0xFF47ABF2), Color(0xFFF9F9F9)],
         ),
       ),
@@ -281,6 +281,7 @@ class ActivitiesView extends BaseView<ActivitiesController> {
 
   Widget _buildTaskCard(ActivityGroup group) {
     return _buildActivityCard(
+      cardKey: 'task',
       group: group,
       accentColor: AppTheme.primaryColor,
       iconUrl:
@@ -296,6 +297,7 @@ class ActivitiesView extends BaseView<ActivitiesController> {
 
   Widget _buildCommissionCard(ActivityGroup group) {
     return _buildActivityCard(
+      cardKey: 'commission',
       group: group,
       accentColor: const Color(0xFFB84A00),
       iconUrl:
@@ -311,6 +313,7 @@ class ActivitiesView extends BaseView<ActivitiesController> {
 
   Widget _buildSubordinateCard(ActivityGroup group) {
     return _buildActivityCard(
+      cardKey: 'subordinate',
       group: group,
       accentColor: const Color(0xFF2E7D32),
       iconUrl:
@@ -322,9 +325,10 @@ class ActivitiesView extends BaseView<ActivitiesController> {
     );
   }
 
-  // ── 通用活动卡片 ──────────────────────────────────────────
+  // ── 通用活动卡片（可折叠）────────────────────────────────
 
   Widget _buildActivityCard({
+    required String cardKey,
     required ActivityGroup group,
     required Color accentColor,
     required String iconUrl,
@@ -333,116 +337,189 @@ class ActivitiesView extends BaseView<ActivitiesController> {
     required String milestoneUnit,
     required IconData milestoneIcon,
   }) {
-    final cardBg = Colors.white;
     final milestoneRowBg = accentColor.withValues(alpha: 0.04);
     final milestoneRowBorder = accentColor.withValues(alpha: 0.1);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: accentColor.withValues(alpha: 0.1),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 卡片头部
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-            child: Row(
-              children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: accentColor.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(14),
-                    child: Image.network(
-                      iconUrl,
+    return Obx(() {
+      final isExpanded = controller.isCardExpanded(cardKey);
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: accentColor.withValues(alpha: 0.1),
+              blurRadius: 18,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── 可点击头部 ──────────────────────────────────
+            InkWell(
+              onTap: () => controller.toggleCard(cardKey),
+              borderRadius: BorderRadius.circular(20),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                child: Row(
+                  children: [
+                    Container(
                       width: 56,
                       height: 56,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) => Icon(
-                        Icons.emoji_events_rounded,
-                        size: 28,
-                        color: accentColor,
+                      decoration: BoxDecoration(
+                        color: accentColor.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(14),
                       ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800,
-                          color: const Color(0xFF1A1C1E),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: Image.network(
+                          iconUrl,
+                          width: 56,
+                          height: 56,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) => Icon(
+                            Icons.emoji_events_rounded,
+                            size: 28,
+                            color: accentColor,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 3),
-                      Text(
-                        subtitle,
-                        style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF1A1C1E),
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            subtitle,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // 分割线
-          Divider(
-            height: 1,
-            thickness: 1,
-            color: Colors.grey.withValues(alpha: 0.1),
-          ),
-
-          // 所有类型统一使用同一套里程碑行样式
-          // rewardType=1 时，只要有一个已领取，其他全部禁用
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 10, 12, 14),
-            child: Column(
-              children: group.items.asMap().entries.map((entry) {
-                final index = entry.key;
-                final item = entry.value;
-                return Column(
-                  children: [
-                    if (index > 0) const SizedBox(height: 8),
-                    _buildMilestoneRow(
-                      item: item,
-                      accentColor: accentColor,
-                      rowBg: milestoneRowBg,
-                      rowBorder: milestoneRowBorder,
-                      milestoneUnit: milestoneUnit,
-                      milestoneIcon: milestoneIcon,
-                      // rewardType=1：整组已领取则禁用未领取的按钮
-                      otherClaimed:
-                          group.isSingleClaim &&
-                          group.isGroupClaimed &&
-                          !item.claimed,
+                    ),
+                    // 展开/收起箭头
+                    AnimatedRotation(
+                      turns: isExpanded ? 0.5 : 0,
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeInOut,
+                      child: Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: accentColor,
+                        size: 24,
+                      ),
                     ),
                   ],
-                );
-              }).toList(),
+                ),
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+
+            // ── 可折叠内容区 ────────────────────────────────
+            AnimatedCrossFade(
+              firstChild: const SizedBox(width: double.infinity),
+              secondChild: Column(
+                children: [
+                  Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: Colors.grey.withValues(alpha: 0.1),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ...group.items.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final item = entry.value;
+                          return Column(
+                            children: [
+                              if (index > 0) const SizedBox(height: 8),
+                              _buildMilestoneRow(
+                                item: item,
+                                accentColor: accentColor,
+                                rowBg: milestoneRowBg,
+                                rowBorder: milestoneRowBorder,
+                                milestoneUnit: milestoneUnit,
+                                milestoneIcon: milestoneIcon,
+                                otherClaimed:
+                                    group.isSingleClaim &&
+                                    group.isGroupClaimed &&
+                                    !item.claimed,
+                              ),
+                            ],
+                          );
+                        }),
+
+                        // 卡片底部说明文字
+                        if (group.description != null &&
+                            group.description!.isNotEmpty) ...[
+                          const SizedBox(height: 12),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: accentColor.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: accentColor.withValues(alpha: 0.25),
+                              ),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  Icons.info_rounded,
+                                  size: 18,
+                                  color: accentColor,
+                                ),
+                                const SizedBox(width: 9),
+                                Expanded(
+                                  child: Text(
+                                    group.description!,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: const Color(0xFF2C2C2C),
+                                      height: 1.6,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              crossFadeState: isExpanded
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
+              duration: const Duration(milliseconds: 250),
+              sizeCurve: Curves.easeInOut,
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   // ── rewardType=1：整体进度条 + 里程碑列表 + 单次领取按钮 ───
@@ -506,6 +583,7 @@ class ActivitiesView extends BaseView<ActivitiesController> {
               _buildPointsBadge(item, accentColor),
             ],
           ),
+
           const SizedBox(height: 10),
 
           // 进度条

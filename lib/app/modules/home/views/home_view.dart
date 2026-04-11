@@ -6,15 +6,12 @@ import 'package:do_task_project/app/modules/home/controllers/home_controller.dar
 import 'package:do_task_project/app/modules/home/views/widgets/banner_carousel_widget.dart';
 import 'package:do_task_project/app/modules/home/views/widgets/feature_card_widget.dart';
 import 'package:do_task_project/app/modules/home/views/widgets/task_card_widget.dart';
-import 'package:do_task_project/app/modules/vip_details/components/vip_badge.dart';
 import 'package:do_task_project/app/data/models/home_info_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:html/parser.dart' as htmlParser;
-import 'package:http/http.dart';
-
 class HomeView extends BaseView<HomeController> {
   const HomeView({super.key});
 
@@ -115,15 +112,6 @@ class HomeView extends BaseView<HomeController> {
                     color: Colors.white,
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Obx(
-                  () => VipBadge(
-                    text: controller.vipLevel.value.isEmpty
-                        ? 'VIP0'
-                        : controller.vipLevel.value,
-                    textBackgroundColor: const Color(0xFFA7C3FF),
                   ),
                 ),
               ],

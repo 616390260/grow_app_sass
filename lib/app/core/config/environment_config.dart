@@ -42,7 +42,8 @@ class EnvironmentConfig {
         // return 'http://34.150.117.135:8083/'; // 测试环境API地址
         // return 'http://192.168.3.206:8083/'; // 测试环境API地址
         // return 'https://api.wacashsys.com/'; // 测试环境API地址
-        // return 'http://192.168.1.145:8083/'; // 本地测试API地址
+        // return 'http://192.168.1.145:8083/'; // 本地测试A
+        // PI地址
         return 'https://api.eiorjgoiej.com/'; // 线上API地址
       case EnvironmentType.release:
         // return 'http://47.243.76.157:8083/'; // 生产环境API地址

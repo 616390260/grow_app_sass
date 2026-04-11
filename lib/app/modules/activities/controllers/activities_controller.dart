@@ -8,6 +8,7 @@ import '../../../core/i18n/i18n_keys.dart';
 import '../../../data/models/activity_model.dart';
 import '../../../data/services/activity_api_service.dart';
 import '../../../data/services/configuration_api_service.dart';
+import '../../main/controllers/main_controller.dart';
 
 /// 活动页面控制器
 class ActivitiesController extends BaseController {
@@ -31,8 +32,25 @@ class ActivitiesController extends BaseController {
 
   Timer? _midnightTimer;
 
+  /// Activities 在 IndexedStack 中的 tab 索引
+  static const int _activitiesTabIndex = 3;
+
   /// 正在领取中的活动 id（用于按钮 loading 状态）
   final RxInt claimingId = (-1).obs;
+
+  /// 当前已展开的活动卡片 key 集合（'task' / 'commission' / 'subordinate'）
+  final RxSet<String> expandedCards = <String>{}.obs;
+
+  /// 切换卡片展开/收起
+  void toggleCard(String key) {
+    if (expandedCards.contains(key)) {
+      expandedCards.remove(key);
+    } else {
+      expandedCards.add(key);
+    }
+  }
+
+  bool isCardExpanded(String key) => expandedCards.contains(key);
 
   /// 快捷访问各活动分组
   ActivityGroup? get taskActivity => activityData.value?.taskActivity;
@@ -43,14 +61,34 @@ class ActivitiesController extends BaseController {
   void onInit() {
     super.onInit();
     _tickMidnight();
-    _midnightTimer =
-        Timer.periodic(const Duration(seconds: 1), (_) => _tickMidnight());
+    _startTimer();
+
+    // 监听主页 tab 变化：离开 Activities tab 时暂停，切回来时恢复
+    ever(Get.find<MainController>().currentTabIndex, (int index) {
+      if (index == _activitiesTabIndex) {
+        _tickMidnight();
+        _startTimer();
+      } else {
+        _stopTimer();
+      }
+    });
   }
 
   @override
   void onClose() {
-    _midnightTimer?.cancel();
+    _stopTimer();
     super.onClose();
+  }
+
+  void _startTimer() {
+    if (_midnightTimer != null) return;
+    _midnightTimer =
+        Timer.periodic(const Duration(seconds: 1), (_) => _tickMidnight());
+  }
+
+  void _stopTimer() {
+    _midnightTimer?.cancel();
+    _midnightTimer = null;
   }
 
   void _tickMidnight() {

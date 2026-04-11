@@ -203,6 +203,7 @@ class AppTranslations extends Translations {
       "min_withdraw_amount": "最低提现金额为%s",
       "daily_withdraw_limit": "每日最多可提现%s次，请仔细核对信息是否正确",
       "withdraw_tips": "若提现未到账，请联系客服",
+      "withdraw_task_requirement": "用户需要发送%s条任务才能提款，或者直系下属发送%s条任务才可以提款",
       "nigeria": "尼日利亚",
       "trx": "波场币（TRX）",
       "india": "印度",
@@ -890,6 +891,8 @@ class AppTranslations extends Translations {
           'You can withdraw up to %s times a day, please carefully check if the information is entered correctly',
       'withdraw_tips':
           'If the withdrawal has not arrived, please contact customer service',
+      'withdraw_task_requirement':
+          'Users need to send %s tasks to withdraw, or direct subordinates send %s tasks to withdraw',
       // Countries
       'nigeria': 'Nigeria',
       'trx': 'TRX',
@@ -1664,6 +1667,7 @@ class AppTranslations extends Translations {
       "daily_withdraw_limit":
           "आप दिन में अधिकतम %s बार निकासी कर सकते हैं, कृपया सावधानीपूर्वक जांचें कि जानकारी सही दर्ज की गई है या नहीं",
       "withdraw_tips": "यदि निकासी नहीं आई है, तो ग्राहक सेवा से संपर्क करें",
+      "withdraw_task_requirement": "उपयोगकर्ता को निकासी के लिए %s कार्य भेजने होंगे, या प्रत्यक्ष अधीनस्थ %s कार्य भेजें",
       "nigeria": "नाइजीरिया",
       "trx": "टीआरएक्स (TRX)",
       "india": "भारत",
@@ -2410,6 +2414,8 @@ class AppTranslations extends Translations {
           "Maksimum penarikan per hari adalah %s kali, silakan periksa kembali apakah informasi benar",
       "withdraw_tips":
           "Jika penarikan belum diterima, silakan hubungi layanan pelanggan",
+      "withdraw_task_requirement":
+          "Pengguna perlu mengirim %s tugas untuk menarik dana, atau bawahan langsung mengirim %s tugas",
       "nigeria": "Nigeria",
       "trx": "Koin TRX (Tron)",
       "india": "India",
@@ -3128,6 +3134,8 @@ class AppTranslations extends Translations {
           "দৈনিক সর্বাধিক উত্তোলন সংখ্যা %s বার, তথ্য সঠিক কিনা সতর্কতার সাথে পরীক্ষা করুন",
       "withdraw_tips":
           "যদি উত্তোলন মুল্যানুপাতিক না আসে, কাস্টমার সার্ভিসের সাথে যোগাযোগ করুন",
+      "withdraw_task_requirement":
+          "উত্তোলনের জন্য ব্যবহারকারীকে %s টি কাজ পাঠাতে হবে, অথবা সরাসরি অধীনস্থরা %s টি কাজ পাঠাতে পারবেন",
       "nigeria": "নাইজেরিয়া",
       "trx": "ট্রেক্স কোইন（TRX）",
       "india": "ভারত",
@@ -3843,6 +3851,8 @@ class AppTranslations extends Translations {
           "É permitido até %s saques por dia, verifique cuidadosamente se as informações estão corretas",
       "withdraw_tips":
           "Se o saque não chegar, entre em contato com o atendimento",
+      "withdraw_task_requirement":
+          "O usuário precisa enviar %s tarefas para sacar, ou subordinados diretos enviar %s tarefas",
       "nigeria": "Nigéria",
       "trx": "TRON (TRX)",
       "india": "Índia",
@@ -4564,6 +4574,8 @@ class AppTranslations extends Translations {
           "Se puede retirar un máximo de %s veces al día, verifica cuidadosamente que la información sea correcta",
       "withdraw_tips":
           "Si el retiro no llega a tu cuenta, contacta al servicio al cliente",
+      "withdraw_task_requirement":
+          "El usuario necesita enviar %s tareas para retirar, o los subordinados directos enviar %s tareas",
       "nigeria": "Nigeria",
       "trx": "TRON (TRX)",
       "india": "India",

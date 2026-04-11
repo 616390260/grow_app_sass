@@ -446,6 +446,14 @@ class PaymentMethodView extends BaseView<PaymentMethodController> {
           I18nKeys.withdrawTips.tr,
           style: TextStyle(fontSize: 13, color: AppTheme.sixColor),
         ),
+        const SizedBox(height: 4),
+        Text(
+          I18nKeys.withdrawTaskRequirement.trArgs([
+            Get.arguments?['sendTaskNum'] ?? '5',
+            Get.arguments?['sendTaskNum'] ?? '5',
+          ]),
+          style: TextStyle(fontSize: 13, color: AppTheme.sixColor),
+        ),
       ],
     );
   }

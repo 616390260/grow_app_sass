@@ -492,6 +492,7 @@ class I18nKeys {
   static const minWithdrawAmount = 'min_withdraw_amount';
   static const dailyWithdrawLimit = 'daily_withdraw_limit';
   static const withdrawTips = 'withdraw_tips';
+  static const withdrawTaskRequirement = 'withdraw_task_requirement';
 
 
   static const vipDetailsMore = 'vip_details_more';

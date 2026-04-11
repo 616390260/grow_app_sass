@@ -70,11 +70,15 @@ class ActivityGroup {
   /// 各档位里程碑列表（按 sort 升序）
   final List<ActivityItem> items;
 
+  /// 活动说明文字，显示在卡片底部（可为空）
+  final String? description;
+
   const ActivityGroup({
     required this.type,
     required this.rewardType,
     required this.currentCount,
     required this.items,
+    this.description,
   });
 
   /// 是否为整体单次领取模式
@@ -113,6 +117,7 @@ class ActivityGroup {
       rewardType: json['rewardType']?.toString() ?? '0',
       currentCount: json['currentCount'] as int? ?? 0,
       items: items,
+      description: json['description'] as String?,
     );
   }
 }

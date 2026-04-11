@@ -5,12 +5,16 @@ class WithdrawalSetting {
   final String? createTime;
   final String? updateTime;
 
+  /// 用户本人或直系下属需发送的最少任务条数，满足才可提款
+  final int? sendTaskNum;
+
   const WithdrawalSetting({
     this.id,
     this.oneDayNum,
     this.maxPoints,
     this.createTime,
     this.updateTime,
+    this.sendTaskNum,
   });
 
   factory WithdrawalSetting.fromJson(Map<String, dynamic>? json) {
@@ -23,6 +27,7 @@ class WithdrawalSetting {
       maxPoints: json['maxPoints'] as int?,
       createTime: json['createTime'] as String?,
       updateTime: json['updateTime'] as String?,
+      sendTaskNum: json['sendTaskNum'] as int?,
     );
   }
 
@@ -33,6 +38,7 @@ class WithdrawalSetting {
       'maxPoints': maxPoints,
       'createTime': createTime,
       'updateTime': updateTime,
+      'sendTaskNum': sendTaskNum,
     };
   }
 }
