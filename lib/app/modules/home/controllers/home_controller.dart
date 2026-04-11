@@ -39,11 +39,6 @@ class HomeController extends BaseController {
   // 底部导航当前索引
   final currentTabIndex = 0.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // 懒加载：不在这里自动加载数据，等待tab切换时由MainController加载
-  }
 
   // 加载数据
   void loadData() {
@@ -102,8 +97,12 @@ class HomeController extends BaseController {
       int maxLength = newVerParts.length > currentVerParts.length
           ? newVerParts.length
           : currentVerParts.length;
-      while (newVerParts.length < maxLength) newVerParts.add(0);
-      while (currentVerParts.length < maxLength) currentVerParts.add(0);
+      while (newVerParts.length < maxLength) {
+        newVerParts.add(0);
+      }
+      while (currentVerParts.length < maxLength) {
+        currentVerParts.add(0);
+      }
 
       // 逐位比较版本号
       for (int i = 0; i < maxLength; i++) {
@@ -220,7 +219,7 @@ class HomeController extends BaseController {
         );
       }
     } catch (e) {
-      Get.snackbar(I18nKeys.downloadFailed.tr, '${e.toString()}');
+      Get.snackbar(I18nKeys.downloadFailed.tr, e.toString());
     }
   }
 
@@ -257,6 +256,7 @@ class HomeController extends BaseController {
   }
 
   // 刷新数据
+  @override
   void refreshData() {
     loadData();
   }

@@ -10,7 +10,7 @@ import '../../smart/views/smart_view.dart';
 import '../../account/views/account_view.dart';
 
 class MainView extends BaseView<MainController> {
-  const MainView({Key? key}) : super(key: key);
+  const MainView({super.key});
 
   @override
   Widget buildContent(BuildContext context) {

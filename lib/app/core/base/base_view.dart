@@ -6,7 +6,7 @@ import '../theme/loading_style.dart';
 
 /// 基础视图类，封装通用UI组件
 abstract class BaseView<T extends BaseController> extends GetView<T> {
-  const BaseView({Key? key}) : super(key: key);
+  const BaseView({super.key});
 
   /// 构建页面内容，子类必须实现
   Widget buildContent(BuildContext context);
@@ -166,7 +166,7 @@ abstract class BaseView<T extends BaseController> extends GetView<T> {
 
 /// 带有SafeArea的基础视图
 abstract class SafeBaseView<T extends BaseController> extends BaseView<T> {
-  const SafeBaseView({Key? key}) : super(key: key);
+  const SafeBaseView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +178,7 @@ abstract class SafeBaseView<T extends BaseController> extends BaseView<T> {
 
 /// 带有滚动功能的基础视图
 abstract class ScrollableBaseView<T extends BaseController> extends BaseView<T> {
-  const ScrollableBaseView({Key? key}) : super(key: key);
+  const ScrollableBaseView({super.key});
 
   /// 滚动控制器
   ScrollController? get scrollController => null;

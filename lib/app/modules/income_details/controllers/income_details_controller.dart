@@ -187,6 +187,7 @@ class IncomeDetailsController extends BaseController {
   }
 
   // 加载更多数据
+  @override
   void loadMoreData() async {
     if (!_hasMoreData || isLoading || isLoadingMore.value) return;
     isLoadingMore.value = true;

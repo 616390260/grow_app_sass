@@ -7,7 +7,7 @@ import '../../../core/i18n/i18n_keys.dart';
 import '../controllers/change_password_controller.dart';
 
 class ChangePasswordView extends BaseView<ChangePasswordController> {
-  const ChangePasswordView({Key? key}) : super(key: key);
+  const ChangePasswordView({super.key});
 
   @override
   Widget buildContent(BuildContext context) {

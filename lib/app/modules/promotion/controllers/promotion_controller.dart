@@ -27,11 +27,6 @@ class PromotionController extends BaseController {
   // API服务
   final _promotionApiService = PromotionApiService();
 
-  @override
-  void onInit() {
-    super.onInit();
-    // 懒加载：不在这里自动加载数据，等待tab切换时由MainController加载
-  }
 
   void loadData() async {
     await safeApiCall<PromotionData>(

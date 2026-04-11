@@ -75,7 +75,7 @@ class AuthApiService {
     // 特殊处理UserModel类型
     if (T == UserModel) {
       // 直接使用json_serializable生成的fromJson方法
-      final userData = (responseData is Map<String, dynamic> && responseData.containsKey('data'))
+      final userData = (responseData.containsKey('data'))
           ? responseData['data']
           : responseData;
       

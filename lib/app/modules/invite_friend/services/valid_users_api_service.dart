@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:do_task_project/app/core/services/http_service.dart';
 import 'package:do_task_project/app/modules/invite_friend/models/invite_info_response_model.dart';
 

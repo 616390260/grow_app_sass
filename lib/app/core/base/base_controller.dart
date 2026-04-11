@@ -114,6 +114,7 @@ abstract class BaseController extends GetxController {
   }
 
   /// 页面初始化方法，子类可重写
+  @override
   void onInit() {
     super.onInit();
     initData();

@@ -14,12 +14,9 @@ class SmartController extends BaseController {
   
   // 加载状态
   final RxBool _isLoading = false.obs;
+  @override
   bool get isLoading => _isLoading.value;
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   // 立即咨询按钮点击事件
   void onConsultNow() {

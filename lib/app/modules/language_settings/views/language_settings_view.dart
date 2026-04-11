@@ -5,7 +5,7 @@ import '../../../core/i18n/i18n_keys.dart';
 import '../controllers/language_settings_controller.dart';
 
 class LanguageSettingsView extends BaseView<LanguageSettingsController> {
-  const LanguageSettingsView({Key? key}) : super(key: key);
+  const LanguageSettingsView({super.key});
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {

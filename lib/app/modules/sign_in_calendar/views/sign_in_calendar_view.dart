@@ -9,7 +9,7 @@ import '../../../core/i18n/i18n_keys.dart';
 import '../controllers/sign_in_calendar_controller.dart';
 
 class SignInCalendarView extends BaseView<SignInCalendarController> {
-  const SignInCalendarView({Key? key}) : super(key: key);
+  const SignInCalendarView({super.key});
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
@@ -173,7 +173,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${rewardPoints} ',
+                        '$rewardPoints ',
                         style: const TextStyle(
                           color: AppTheme.signYellowColor,
                           fontSize: 13,
@@ -181,7 +181,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
                         ),
                       ),
                       Text(
-                        '${I18nKeys.points.tr}',
+                        I18nKeys.points.tr,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 13,

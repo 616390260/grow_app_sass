@@ -7,7 +7,7 @@ import '../../../core/i18n/i18n_keys.dart';
 import '../controllers/vip_details_controller.dart';
 
 class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
-  const VipDetailsView({Key? key}) : super(key: key);
+  const VipDetailsView({super.key});
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {

@@ -85,9 +85,9 @@ class LoadingDialog extends StatelessWidget {
   final String? message;
 
   const LoadingDialog({
-    Key? key,
+    super.key,
     this.message,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -120,10 +120,10 @@ class FullScreenLoadingDialog extends StatelessWidget {
   final Color? backgroundColor;
 
   const FullScreenLoadingDialog({
-    Key? key,
+    super.key,
     this.message,
     this.backgroundColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -177,10 +177,10 @@ class ProgressLoadingDialog extends StatelessWidget {
   final String? message;
 
   const ProgressLoadingDialog({
-    Key? key,
+    super.key,
     required this.progress,
     this.message,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -247,13 +247,13 @@ class LoadingStateBuilder extends StatelessWidget {
   final Widget Function()? onError;
 
   const LoadingStateBuilder({
-    Key? key,
+    super.key,
     required this.controller,
     required this.onIdle,
     this.onLoading,
     this.onSuccess,
     this.onError,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

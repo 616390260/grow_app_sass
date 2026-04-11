@@ -2,7 +2,6 @@ import 'package:do_task_project/app/core/models/base_list_entity.dart';
 import 'package:do_task_project/app/modules/user_points_details/models/user_points_model.dart';
 
 import '../../core/services/http_service.dart';
-import '../../modules/income_details/models/income_details_model.dart';
 
 /// 用户积分相关 API 服务
 class UserPointsApiService {

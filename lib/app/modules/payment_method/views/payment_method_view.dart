@@ -10,7 +10,7 @@ import '../../../core/theme/app_theme.dart';
 import '../controllers/payment_method_controller.dart';
 
 class PaymentMethodView extends BaseView<PaymentMethodController> {
-  const PaymentMethodView({Key? key}) : super(key: key);
+  const PaymentMethodView({super.key});
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
@@ -391,7 +391,6 @@ class PaymentMethodView extends BaseView<PaymentMethodController> {
     required String placeholder,
     required RxString value,
     required void Function(String) onChanged,
-    bool isPassword = false,
   }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -409,7 +408,7 @@ class PaymentMethodView extends BaseView<PaymentMethodController> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
             child: Text(
-              '${controller.bankName.value.isEmpty ? placeholder : controller.bankName.value}',
+              controller.bankName.value.isEmpty ? placeholder : controller.bankName.value,
               style: const TextStyle(fontSize: 14, color: AppTheme.nineColor),
             ),
           ),

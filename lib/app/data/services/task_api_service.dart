@@ -31,10 +31,7 @@ class TaskApiService {
       queryParameters: queryParams,
     );
 
-    if (data is List) {
-      return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
-    }
-    return <Task>[];
+    return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
   }
 
   /// 根据ID获取任务
@@ -49,7 +46,7 @@ class TaskApiService {
   /// 创建新任务
   Future<Task> createTask(Task task) async {
     final taskModel = TaskModel.fromEntity(task);
-    
+
     final data = await _httpService.postData<Map<String, dynamic>>(
       _tasksEndpoint,
       data: taskModel.toJson(),
@@ -61,7 +58,7 @@ class TaskApiService {
   /// 更新任务
   Future<Task> updateTask(String taskId, Task task) async {
     final taskModel = TaskModel.fromEntity(task);
-    
+
     final data = await _httpService.putData<Map<String, dynamic>>(
       '$_tasksEndpoint/$taskId',
       data: taskModel.toJson(),
@@ -111,14 +108,12 @@ class TaskApiService {
       _taskStatsEndpoint,
     );
 
-    if (data is Map<String, dynamic>) {
-      return data.map((key, value) => MapEntry(key, value as int));
-    }
-    return <String, int>{};
+    return data.map((key, value) => MapEntry(key, value as int));
   }
 
   /// 搜索任务
-  Future<List<Task>> searchTasks(String query, {
+  Future<List<Task>> searchTasks(
+    String query, {
     int page = 1,
     int limit = 20,
   }) async {
@@ -131,10 +126,7 @@ class TaskApiService {
       },
     );
 
-    if (data is List) {
-      return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
-    }
-    return <Task>[];
+    return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
   }
 
   /// 按状态获取任务
@@ -144,10 +136,7 @@ class TaskApiService {
       queryParameters: {'status': status.index},
     );
 
-    if (data is List) {
-      return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
-    }
-    return <Task>[];
+    return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
   }
 
   /// 按优先级获取任务
@@ -157,10 +146,7 @@ class TaskApiService {
       queryParameters: {'priority': priority.index},
     );
 
-    if (data is List) {
-      return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
-    }
-    return <Task>[];
+    return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
   }
 
   /// 获取过期任务
@@ -169,10 +155,7 @@ class TaskApiService {
       '$_tasksEndpoint/overdue',
     );
 
-    if (data is List) {
-      return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
-    }
-    return <Task>[];
+    return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
   }
 
   /// 获取今日任务
@@ -181,16 +164,14 @@ class TaskApiService {
       '$_tasksEndpoint/today',
     );
 
-    if (data is List) {
-      return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
-    }
-    return <Task>[];
+    return data.map((item) => TaskModel.fromJson(item).toEntity()).toList();
   }
 
   /// 同步任务到服务器
   Future<bool> syncTasks(List<Task> tasks) async {
-    final tasksData = tasks.map((task) => TaskModel.fromEntity(task).toJson()).toList();
-    
+    final tasksData =
+        tasks.map((task) => TaskModel.fromEntity(task).toJson()).toList();
+
     await _httpService.postData<dynamic>(
       '$_tasksEndpoint/sync',
       data: {'tasks': tasksData},

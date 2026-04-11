@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import '../../../core/base/base_view.dart';
 import '../../../core/theme/app_theme.dart';

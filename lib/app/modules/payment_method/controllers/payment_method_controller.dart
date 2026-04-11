@@ -113,7 +113,7 @@ class PaymentMethodController extends BaseController {
     super.onInit();
     // 打印接收到的bankInfo信息
     if (bankInfo != null) {
-      print('成功接收到bankInfo: ${bankInfo}');
+      print('成功接收到bankInfo: $bankInfo');
     } else {
       print('未接收到bankInfo');
     }

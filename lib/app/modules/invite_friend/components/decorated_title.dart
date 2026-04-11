@@ -12,7 +12,7 @@ class DecoratedTitle extends StatelessWidget {
   final double underlineTopPosition;
 
   const DecoratedTitle({
-    Key? key,
+    super.key,
     required this.title,
     this.textStyle = const TextStyle(
       fontSize: 14,
@@ -24,7 +24,7 @@ class DecoratedTitle extends StatelessWidget {
     this.underlineHeight = 11,
     this.underlineBorderRadius = 5,
     this.underlineTopPosition = 14,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

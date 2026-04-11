@@ -11,7 +11,7 @@ import 'package:html/parser.dart' as htmlParser;
 import '../controllers/message_center_controller.dart';
 
 class MessageCenterView extends BaseView<MessageCenterController> {
-  const MessageCenterView({Key? key}) : super(key: key);
+  const MessageCenterView({super.key});
 
   @override
   Widget buildContent(BuildContext context) {
@@ -178,7 +178,7 @@ class MessageCenterView extends BaseView<MessageCenterController> {
     final List<TextSpan> children = [];
 
     // 处理文本节点
-    if (element.text?.trim().isNotEmpty ?? false) {
+    if (element.text.trim().isNotEmpty ?? false) {
       children.add(TextSpan(text: element.text));
     }
 

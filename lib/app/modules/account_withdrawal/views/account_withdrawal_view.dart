@@ -8,7 +8,7 @@ import 'package:do_task_project/app/core/theme/text_styles.dart';
 import '../controllers/account_withdrawal_controller.dart';
 
 class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
-  const AccountWithdrawalView({Key? key}) : super(key: key);
+  const AccountWithdrawalView({super.key});
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {

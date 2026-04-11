@@ -10,7 +10,7 @@ import '../../../core/i18n/i18n_keys.dart';
 class LoginView extends BaseView<LoginController> {
   // 不再使用FocusNode，改为通过FocusScope管理焦点
 
-  const LoginView({Key? key}) : super(key: key);
+  const LoginView({super.key});
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
@@ -42,7 +42,7 @@ class LoginView extends BaseView<LoginController> {
 
     return Scaffold(
       extendBodyBehindAppBar: true, // 让body延伸到AppBar后面
-      body: Container(
+      body: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: Stack(
           children: [
@@ -102,7 +102,7 @@ class LoginView extends BaseView<LoginController> {
   }
 
   Widget _buildTopSection() {
-    return Container(
+    return SizedBox(
       height: 283, // 添加状态栏高度
       child: Stack(
         children: [

@@ -120,7 +120,7 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: const Color(0xFFAD1616),
+                color: Color(0xFFAD1616),
               ),
             ),
           ),
@@ -131,7 +131,7 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: const Color(0xFFC27210),
+                color: Color(0xFFC27210),
               ),
             ),
           ),
@@ -305,7 +305,7 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF764308),
+              color: Color(0xFF764308),
             ),
           ),
           const SizedBox(height: 14),
@@ -314,7 +314,7 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,
-              color: const Color(0xFF764308),
+              color: Color(0xFF764308),
             ),
           ),
           const SizedBox(height: 10),
@@ -323,7 +323,7 @@ class LuckyWheelView extends BaseView<LuckyWheelController> {
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,
-              color: const Color(0xFF764308),
+              color: Color(0xFF764308),
             ),
           ),
         ],
@@ -370,7 +370,9 @@ class WheelPainter extends CustomPainter with ChangeNotifier {
   @override
   void dispose() {
     // 释放图片资源
-    _imageCache.values.forEach((image) => image.dispose());
+    for (var image in _imageCache.values) {
+      image.dispose();
+    }
     _imageCache.clear();
     super.dispose();
   }

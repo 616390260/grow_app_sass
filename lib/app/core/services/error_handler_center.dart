@@ -3,7 +3,6 @@ import 'package:dio/dio.dart';
 import 'package:do_task_project/app/core/services/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart';
 import '../utils/api_result.dart';
 import '../i18n/i18n_keys.dart';
 import '../exceptions/api_exception.dart';

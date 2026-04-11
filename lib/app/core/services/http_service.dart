@@ -439,7 +439,7 @@ class HttpService extends getx.GetxService {
               as T;
         }
         // 如果以上都不匹配，尝试toString后再判断
-        final stringValue = data?.toString()?.toLowerCase();
+        final stringValue = data?.toString().toLowerCase();
         if (stringValue != null) {
           return (stringValue == 'true' ||
                   stringValue == '1' ||
@@ -478,7 +478,7 @@ class HttpService extends getx.GetxService {
     final timestamp = DateTime.now().toIso8601String();
     final fullUrl = '${options.baseUrl}${options.path}';
 
-    debugPrint('\n' + '=' * 80);
+    debugPrint('\n${'=' * 80}');
     debugPrint(
       '🚀 HTTP REQUEST [${options.method.toUpperCase()}] - $timestamp',
     );
@@ -529,7 +529,7 @@ class HttpService extends getx.GetxService {
     final requestOptions = response.requestOptions;
     final fullUrl = '${requestOptions.baseUrl}${requestOptions.path}';
 
-    debugPrint('\n' + '=' * 80);
+    debugPrint('\n${'=' * 80}');
     debugPrint('✅ HTTP RESPONSE [${response.statusCode}] - $timestamp');
     debugPrint('=' * 80);
     debugPrint('📍 URL: $fullUrl');
@@ -565,7 +565,7 @@ class HttpService extends getx.GetxService {
     final requestOptions = error.requestOptions;
     final fullUrl = '${requestOptions.baseUrl}${requestOptions.path}';
 
-    debugPrint('\n' + '=' * 80);
+    debugPrint('\n${'=' * 80}');
     debugPrint(
       '❌ HTTP ERROR [${error.response?.statusCode ?? 'UNKNOWN'}] - $timestamp',
     );
@@ -595,7 +595,7 @@ class HttpService extends getx.GetxService {
       }
     }
 
-    if (_envConfig.isDebug && error.stackTrace != null) {
+    if (_envConfig.isDebug) {
       debugPrint('🔍 Stack Trace:');
       debugPrint(
         '   ${error.stackTrace.toString().split('\n').take(10).join('\n   ')}',

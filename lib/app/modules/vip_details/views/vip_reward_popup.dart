@@ -13,12 +13,12 @@ class VipRewardPopup extends StatelessWidget {
   final List<VipLevelItemModel> rewardLevels;
 
 
-  VipRewardPopup({
-    Key? key,
+  const VipRewardPopup({
+    super.key,
     required this.resetTime,
     required this.rewardLevels,
     required this.promotionIncome,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

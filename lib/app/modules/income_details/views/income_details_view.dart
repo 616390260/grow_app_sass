@@ -6,6 +6,8 @@ import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:do_task_project/app/modules/income_details/controllers/income_details_controller.dart';
 
 class IncomeDetailsPage extends BaseView<IncomeDetailsController> {
+  const IncomeDetailsPage({super.key});
+
   @override
   Widget buildContent(BuildContext context) {
     return Scaffold(
@@ -166,7 +168,7 @@ class IncomeDetailsPage extends BaseView<IncomeDetailsController> {
               ),
               const SizedBox(height: 16),
               Obx(() {
-                return Container(
+                return SizedBox(
                   height: 300,
                   child: SingleChildScrollView(
                     child: Column(
@@ -211,7 +213,7 @@ class IncomeDetailsPage extends BaseView<IncomeDetailsController> {
               ),
               const SizedBox(height: 16),
               Obx(() {
-                return Container(
+                return SizedBox(
                   height: 300,
                   child: SingleChildScrollView(
                     child: Column(

@@ -9,12 +9,12 @@ class TaskCardWidget extends StatelessWidget {
   final VoidCallback? onTap;
 
   const TaskCardWidget({
-    Key? key,
+    super.key,
     required this.title,
     required this.description,
     required this.buttonText,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

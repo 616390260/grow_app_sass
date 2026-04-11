@@ -12,7 +12,7 @@ import '../controllers/invite_friend_controller.dart';
 import '../components/decorated_title.dart';
 
 class InviteFriendView extends BaseView<InviteFriendController> {
-  const InviteFriendView({Key? key}) : super(key: key);
+  const InviteFriendView({super.key});
 
   @override
   Widget buildContent(BuildContext context) {
@@ -65,7 +65,7 @@ class InviteFriendView extends BaseView<InviteFriendController> {
             children: [
               // 顶部插图
               const SizedBox(height: 88),
-              Container(
+              SizedBox(
                 height: 217,
                 child: Image.asset(
                   ImageAssets.inviteBg,

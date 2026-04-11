@@ -1,6 +1,5 @@
 import '../models/vip_model.dart';
 import '../../core/services/http_service.dart';
-import 'package:get/get.dart';
 
 /// VIP相关 API 服务
 class VipApiService {

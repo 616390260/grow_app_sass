@@ -15,11 +15,6 @@ class TasksController extends BaseController {
   bool _hasMore = true;
   bool _isLoading = false;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // 懒加载：不在这里自动加载数据，等待tab切换时由MainController加载
-  }
 
   /// 加载任务列表（支持分页）
   Future<void> loadTasks({bool isRefresh = false}) async {

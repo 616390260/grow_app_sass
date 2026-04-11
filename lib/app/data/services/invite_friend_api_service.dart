@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 
 import '../../core/services/http_service.dart';
 import '../../modules/invite_friend/models/box_product_model.dart';

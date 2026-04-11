@@ -11,7 +11,7 @@ class LocalizedAppBar extends StatelessWidget implements PreferredSizeWidget {
   final TextStyle? titleTextStyle;
 
   const LocalizedAppBar({
-    Key? key,
+    super.key,
     required this.titleKey,
     this.centerTitle = true,
     this.actions,
@@ -19,7 +19,7 @@ class LocalizedAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.backgroundColor,
     this.foregroundColor,
     this.titleTextStyle,
-  }) : super(key: key);
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);

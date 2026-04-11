@@ -9,14 +9,14 @@ class FeatureCardWidget extends StatelessWidget {
   final double? height;
 
   const FeatureCardWidget({
-    Key? key,
+    super.key,
     required this.title,
     required this.iconPath,
     required this.gradient,
     this.onTap,
     this.width,
     this.height = 50,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

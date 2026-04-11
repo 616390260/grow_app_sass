@@ -9,7 +9,7 @@ import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:do_task_project/app/domain/entities/customer_service.dart';
 
 class SmartView extends BaseView<SmartController> {
-  const SmartView({Key? key}) : super(key: key);
+  const SmartView({super.key});
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
@@ -28,7 +28,7 @@ class SmartView extends BaseView<SmartController> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [AppTheme.primaryColor, Color(0xFF47ABF2), Color(0xFFF9F9F9)],
-          stops: const [0.2, 0.4, 0.8],
+          stops: [0.2, 0.4, 0.8],
         ),
       ),
       child: SafeArea(

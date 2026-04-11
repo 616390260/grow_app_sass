@@ -11,7 +11,7 @@ import '../../../core/base/base_view.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 
 class TasksView extends BaseView<TasksController> {
-  const TasksView({Key? key}) : super(key: key);
+  const TasksView({super.key});
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
@@ -177,11 +177,11 @@ class TaskCard extends StatelessWidget {
   final VoidCallback onStartTask;
 
   const TaskCard({
-    Key? key,
+    super.key,
     required this.titleKey,
     required this.descriptionKey,
     required this.onStartTask,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -6,9 +6,9 @@ class PromotionBannerWidget extends StatelessWidget {
   final VoidCallback? onTap;
 
   const PromotionBannerWidget({
-    Key? key,
+    super.key,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

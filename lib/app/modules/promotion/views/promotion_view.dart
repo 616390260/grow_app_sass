@@ -10,7 +10,7 @@ import 'package:do_task_project/app/core/widgets/localized_app_bar.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 
 class PromotionView extends BaseView<PromotionController> {
-  const PromotionView({Key? key}) : super(key: key);
+  const PromotionView({super.key});
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
@@ -665,7 +665,7 @@ class PromotionView extends BaseView<PromotionController> {
       if (isTitleLine) {
         // 标题行应用特殊样式
         spans.add(TextSpan(
-          text: lines[i] + '\n\n',
+          text: '${lines[i]}\n\n',
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 12,
@@ -675,7 +675,7 @@ class PromotionView extends BaseView<PromotionController> {
       } else {
         // 内容行应用默认样式
         spans.add(TextSpan(
-          text: lines[i] + '\n\n',
+          text: '${lines[i]}\n\n',
         ));
       }
     }

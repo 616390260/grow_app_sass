@@ -44,7 +44,7 @@ class JsonConvert {
         return (json != 0) as T;
       }
       // 如果是其他类型，尝试toString后再判断
-      final stringValue = json?.toString()?.toLowerCase();
+      final stringValue = json?.toString().toLowerCase();
       if (stringValue != null) {
         return (stringValue == 'true' || stringValue == '1' || stringValue == 'yes') as T;
       }
@@ -93,7 +93,7 @@ class JsonConvert {
 
   /// 安全地从Map中获取指定类型的值
   static T? safeGet<T>(Map<String, dynamic> map, String key, {T? defaultValue}) {
-    if (map == null || !map.containsKey(key)) return defaultValue;
+    if (!map.containsKey(key)) return defaultValue;
     
     final value = map[key];
     if (value == null) return defaultValue;
@@ -143,7 +143,7 @@ class JsonConvert {
 
   /// 安全地从List中获取指定类型的值
   static T? safeGetAt<T>(List<dynamic> list, int index, {T? defaultValue}) {
-    if (list == null || index < 0 || index >= list.length) return defaultValue;
+    if (index < 0 || index >= list.length) return defaultValue;
     
     try {
       return fromJsonAsT<T>(list[index]) ?? defaultValue;

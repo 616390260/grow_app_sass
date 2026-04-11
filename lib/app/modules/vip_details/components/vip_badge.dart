@@ -18,7 +18,7 @@ class VipBadge extends StatelessWidget {
   final double iconSize;
 
   const VipBadge({
-    Key? key,
+    super.key,
     required this.text,
     this.imagePath = ImageAssets.vipCrown,
     this.badgeColor = AppTheme.vipOrange,
@@ -30,7 +30,7 @@ class VipBadge extends StatelessWidget {
     this.height = 20,
     this.borderRadius = 10,
     this.iconSize = 14,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

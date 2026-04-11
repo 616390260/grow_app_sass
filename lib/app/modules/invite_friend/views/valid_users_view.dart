@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 import '../controllers/valid_users_controller.dart';
 
 class ValidUsersView extends BaseView<ValidUsersController> {
-  const ValidUsersView({Key? key}) : super(key: key);
+  const ValidUsersView({super.key});
 
   @override
   Widget buildContent(BuildContext context) {

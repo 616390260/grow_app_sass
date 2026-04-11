@@ -16,7 +16,7 @@ import 'package:html/parser.dart' as htmlParser;
 import 'package:http/http.dart';
 
 class HomeView extends BaseView<HomeController> {
-  const HomeView({Key? key}) : super(key: key);
+  const HomeView({super.key});
 
   @override
   bool get enableRefresh => true;

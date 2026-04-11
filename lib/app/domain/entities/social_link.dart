@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 /// 社交媒体链接实体类
 class SocialLink {

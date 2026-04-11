@@ -104,7 +104,7 @@ void main() {
       for (final String key in allKeysList) {
         if (translatedKeys.contains(key)) {
           // 找到现有的翻译值
-          final RegExp valueRegex = RegExp("'$key':\s*'([^']*)'|'$key':\s*\"([^\"]*)\"");
+          final RegExp valueRegex = RegExp("'$key':s*'([^']*)'|'$key':s*\"([^\"]*)\"");
           final match = valueRegex.firstMatch(appTranslationsContent);
           String value;
           if (match != null) {

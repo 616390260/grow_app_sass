@@ -8,12 +8,12 @@ class BannerCarouselWidget extends StatefulWidget {
   final void Function(int)? onBannerTap;
   
   const BannerCarouselWidget({
-    Key? key,
+    super.key,
     this.bannerImages = const [
       ImageAssets.homeBanner,
     ],
     this.onBannerTap,
-  }) : super(key: key);
+  });
 
   @override
   State<BannerCarouselWidget> createState() => _BannerCarouselWidgetState();
