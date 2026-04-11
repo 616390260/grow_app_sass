@@ -295,6 +295,7 @@ class I18nKeys {
   static const noticeContent = 'notice_content';
   static const activityPeriod = 'activity_period';
   static const periodContent = 'period_content';
+  static const myActivities = 'my_activities';
   
   // Promotion Page
   static const cashReward = 'cash_reward';
@@ -678,6 +679,36 @@ class I18nKeys {
   static const noMatchingBankFound = 'no_matching_bank_found';
 
   static const claimRewardSuccess = 'claim_reward_success';
-  
-  
+
+  // ── 活动页面 ──────────────────────────────────────────────
+  static const activities = 'activities';
+  static const activityReach = 'activity_reach';
+  static const activityPoints = 'activity_points';
+  static const hotActivities = 'hot_activities';
+  static const hotActivitiesSubtitle = 'hot_activities_subtitle';
+  static const activityAnnouncementBanner = 'activity_announcement_banner';
+  static const dailyTaskBonusTitle = 'daily_task_bonus_title';
+  static const dailyTaskBonusSubtitle = 'daily_task_bonus_subtitle';
+  static const commissionBonusTitle = 'commission_bonus_title';
+  static const commissionBonusSubtitle = 'commission_bonus_subtitle';
+  static const subordinateBonusTitle = 'subordinate_bonus_title';
+  static const subordinateBonusSubtitle = 'subordinate_bonus_subtitle';
+  static const subordinateActiveHint = 'subordinate_active_hint';
+  static const activityProgress = 'activity_progress';
+  static const activityTodayCommission = 'activity_today_commission';
+  static const activityActiveSubordinates = 'activity_active_subordinates';
+  static const activityClaimableOnce = 'activity_claimable_once';
+  static const activityClaim = 'activity_claim';
+  static const activityClaimed = 'activity_claimed';
+  static const activityNotReached = 'activity_not_reached';
+  static const activityEarnedPoints = 'activity_earned_points';
+  static const activityNotClaimable = 'activity_not_claimable';
+  static const activityClaimFailed = 'activity_claim_failed';
+  static const activityTaskUnit = 'activity_task_unit';
+  static const activityGoalUnit = 'activity_goal_unit';
+  static const activityMemberUnit = 'activity_member_unit';
+  static const activityMidnightCountdownLabel = 'activity_midnight_countdown_label';
+  static const activityMidnightTimezoneNote = 'activity_midnight_timezone_note';
+
+
 }

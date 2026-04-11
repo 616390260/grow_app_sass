@@ -14,6 +14,9 @@ class BottomNavigationWidget extends StatelessWidget {
     required this.onTap,
   });
 
+  static const Color _activeColor = Color(0xFF427AF2);
+  static const Color _inactiveColor = Color(0xFFDDDDDD);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,25 +33,23 @@ class BottomNavigationWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _buildNavItem(0, ImageAssets.home, I18nKeys.home.tr),
-          _buildNavItem(1, ImageAssets.promotion, I18nKeys.promotion.tr),
-          _buildNavItem(2, ImageAssets.tasks, I18nKeys.tasks.tr),
-          _buildNavItem(3, ImageAssets.service, I18nKeys.service.tr),
-          _buildNavItem(4, ImageAssets.account, I18nKeys.account.tr),
+          _buildSvgNavItem(0, ImageAssets.home, I18nKeys.home.tr),
+          _buildSvgNavItem(1, ImageAssets.promotion, I18nKeys.promotion.tr),
+          _buildSvgNavItem(2, ImageAssets.tasks, I18nKeys.tasks.tr),
+          _buildIconNavItem(3, Icons.local_activity_rounded, I18nKeys.activities.tr),
+          _buildSvgNavItem(4, ImageAssets.service, I18nKeys.service.tr),
+          _buildSvgNavItem(5, ImageAssets.account, I18nKeys.account.tr),
         ],
       ),
     );
   }
 
-  Widget _buildNavItem(int index, String imagePath, String label) {
+  /// SVG 图标导航项
+  Widget _buildSvgNavItem(int index, String imagePath, String label) {
     final isSelected = currentIndex == index;
-
     return Expanded(
       child: GestureDetector(
-        onTap: () {
-          onTap(index);
-          // 在主页面中仅切换索引，不做路由跳转
-        },
+        onTap: () => onTap(index),
         child: Container(
           color: Colors.transparent,
           child: Column(
@@ -59,26 +60,53 @@ class BottomNavigationWidget extends StatelessWidget {
                 width: 20,
                 height: 20,
                 colorFilter: ColorFilter.mode(
-                  isSelected ? const Color(0xFF427AF2) : const Color(0xFFDDDDDD),
+                  isSelected ? _activeColor : _inactiveColor,
                   BlendMode.srcIn,
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                label,
-                maxLines: 1,
-                style: TextStyle(
-                  fontSize: 10,
-                  overflow: TextOverflow.ellipsis,
-                  color: isSelected
-                      ? const Color(0xFF427AF2)
-                      : const Color(0xFF999999),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              _buildLabel(label, isSelected),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  /// Material Icon 导航项（用于没有 SVG 资源的 tab）
+  Widget _buildIconNavItem(int index, IconData iconData, String label) {
+    final isSelected = currentIndex == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => onTap(index),
+        child: Container(
+          color: Colors.transparent,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                iconData,
+                size: 20,
+                color: isSelected ? _activeColor : _inactiveColor,
+              ),
+              const SizedBox(height: 4),
+              _buildLabel(label, isSelected),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLabel(String label, bool isSelected) {
+    return Text(
+      label,
+      maxLines: 1,
+      style: TextStyle(
+        fontSize: 10,
+        overflow: TextOverflow.ellipsis,
+        color: isSelected ? _activeColor : const Color(0xFF999999),
+        fontWeight: FontWeight.w500,
       ),
     );
   }

@@ -80,6 +80,7 @@ dependencies:
   video_player: ^2.8.2
   chewie: ^1.8.1
   cached_network_image: ^3.4.1
+  timezone: ^0.10.1
 
 dev_dependencies:
   flutter_test:

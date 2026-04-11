@@ -6,6 +6,7 @@ import '../../home/views/widgets/bottom_navigation_widget.dart';
 import '../../home/views/home_view.dart';
 import '../../promotion/views/promotion_view.dart';
 import '../../tasks/views/tasks_view.dart';
+import '../../activities/views/activities_view.dart';
 import '../../smart/views/smart_view.dart';
 import '../../account/views/account_view.dart';
 
@@ -20,6 +21,7 @@ class MainView extends BaseView<MainController> {
             HomeView(),
             PromotionView(),
             TasksView(),
+            ActivitiesView(),
             SmartView(),
             AccountView(),
           ],

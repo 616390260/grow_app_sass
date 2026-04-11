@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:timezone/data/latest.dart' as tz_data;
 import 'app/routes/app_pages.dart';
 import 'app/core/theme/app_theme.dart';
 import 'app/core/theme/responsive.dart';
@@ -12,7 +13,10 @@ import 'app/core/services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
+  /// 时区数据库（活动页「距 0 点」倒计时等）
+  tz_data.initializeTimeZones();
+
   // 初始化 GetStorage（默认与命名box）
   await GetStorage.init();
   await GetStorage.init('sign_in_calendar');
