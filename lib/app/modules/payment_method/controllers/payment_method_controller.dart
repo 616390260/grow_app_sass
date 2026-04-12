@@ -170,7 +170,7 @@ class PaymentMethodController extends BaseController {
       // 普通模式：验证银行、账号、姓名
       if (bankName.value.isEmpty) {
         showErrorMessage(isIndia
-            ? I18nKeys.pleaseEnterBankName.tr
+            ? I18nKeys.pleaseEnterIfsc.tr
             : I18nKeys.pleaseSelectBankPlaceholder.tr);
         return false;
       }

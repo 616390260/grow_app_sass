@@ -373,6 +373,7 @@ class AppTranslations extends Translations {
       "refresh": "刷新",
       "please_select_bank_placeholder": "请选择发卡银行",
       "please_enter_bank_name": "请输入银行名称",
+      "please_enter_ifsc": "请输入 IFSC",
       "please_enter_account_number_placeholder": "请输入收款账号",
       "please_enter_account_name_placeholder": "请输入收款人姓名",
       "please_enter_wallet_address_placeholder": "请输入钱包地址",
@@ -1067,6 +1068,7 @@ class AppTranslations extends Translations {
       'refresh': 'Refresh',
       'please_select_bank_placeholder': 'Please Select Issuing Bank',
       'please_enter_bank_name': 'Please Enter Bank Name',
+      'please_enter_ifsc': 'Please enter IFSC',
       'please_enter_account_number_placeholder':
           'Please Enter Receiving Account Number',
       'please_enter_account_name_placeholder': 'Please Enter Payee Name',
@@ -1807,6 +1809,7 @@ class AppTranslations extends Translations {
       "refresh": "रिफ्रेश करें",
       "please_select_bank_placeholder": "कृपया जारीकर्ता बैंक चुनें",
       "please_enter_bank_name": "कृपया बैंक का नाम दर्ज करें",
+      "please_enter_ifsc": "कृपया IFSC दर्ज करें",
       "please_enter_account_number_placeholder":
           "कृपया प्राप्ति खाता नंबर दर्ज करें",
       "please_enter_account_name_placeholder":
@@ -2526,6 +2529,7 @@ class AppTranslations extends Translations {
       "refresh": "Refresh",
       "please_select_bank_placeholder": "Silakan pilih bank penerbit kartu",
       "please_enter_bank_name": "Masukkan nama bank",
+      "please_enter_ifsc": "Masukkan IFSC",
       "please_enter_account_number_placeholder":
           "Silakan masukkan nomor rekening penerima",
       "please_enter_account_name_placeholder": "Silakan masukkan nama penerima",
@@ -3212,6 +3216,7 @@ class AppTranslations extends Translations {
       "refresh": "রিফ্রেশ করুন",
       "please_select_bank_placeholder": "অনুগ্রহ করে ব্যাংক নির্বাচন করুন",
       "please_enter_bank_name": "ব্যাংকের নাম লিখুন",
+      "please_enter_ifsc": "IFSC লিখুন",
       "please_enter_account_number_placeholder":
           "অনুগ্রহ করে রিসিভিং অ্যাকাউন্ট নম্বর ইনপুট করুন",
       "please_enter_account_name_placeholder":
@@ -3905,6 +3910,7 @@ class AppTranslations extends Translations {
       "refresh": "Atualizar",
       "please_select_bank_placeholder": "Selecione o banco emissor",
       "please_enter_bank_name": "Digite o nome do banco",
+      "please_enter_ifsc": "Digite o IFSC",
       "please_enter_account_number_placeholder":
           "Digite o número da conta recebedora",
       "please_enter_account_name_placeholder":
@@ -4602,6 +4608,7 @@ class AppTranslations extends Translations {
       "refresh": "Actualizar",
       "please_select_bank_placeholder": "Selecciona el banco emisor",
       "please_enter_bank_name": "Ingresa el nombre del banco",
+      "please_enter_ifsc": "Ingresa el IFSC",
       "please_enter_account_number_placeholder":
           "Ingresa el número de cuenta de recepción",
       "please_enter_account_name_placeholder":

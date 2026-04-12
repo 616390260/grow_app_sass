@@ -85,8 +85,8 @@ class PaymentMethodView extends BaseView<PaymentMethodController> {
                   // 普通模式：发卡银行（印度为文本输入，其他为选择器）
                   if (controller.isIndia)
                     _buildFormField(
-                      label: I18nKeys.bankName.tr,
-                      placeholder: I18nKeys.pleaseEnterBankName.tr,
+                      label: 'IFSC',
+                      placeholder: I18nKeys.pleaseEnterIfsc.tr,
                       value: controller.bankName,
                       onChanged: controller.setBankName,
                     )
