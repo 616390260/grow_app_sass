@@ -4,11 +4,10 @@ class AppTranslations extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
     'zh_CN': {
-    // Message Center
-    
-      "app_title": "wsjob",
+      // Message Center
+      "app_title": "WaCash",
       "claim_reward_success": "领取奖励成功",
-      'doNotRefresh':'不要刷新页面',
+      'doNotRefresh': '不要刷新页面',
       "select_currency": "选择货币",
       'withdraw_amount': '提现金额',
       "commission_calculation_method": "返佣计算方式",
@@ -31,7 +30,7 @@ class AppTranslations extends Translations {
       "future_launch": "掌上开启未来",
       "summit_2024": "2024数字应用峰会",
       "explore_digital_transformation": "探索数字转型新机遇",
-      
+
       // Version update related
       "version_update_found": "发现新版本",
       "version_update_available": "有新版本可用，建议立即更新",
@@ -48,8 +47,7 @@ class AppTranslations extends Translations {
       "need_storage_permission": "需要存储权限才能下载APK",
       "need_install_permission": "需要安装未知来源应用的权限才能安装APK",
       "download_link_invalid": "下载链接无效",
-      
-  
+
       "promotion": "推广",
       "promotion_page": "推广页面",
       "tasks": "任务",
@@ -374,6 +372,7 @@ class AppTranslations extends Translations {
       "no_online_numbers": "暂无在线号码可用",
       "refresh": "刷新",
       "please_select_bank_placeholder": "请选择发卡银行",
+      "please_enter_bank_name": "请输入银行名称",
       "please_enter_account_number_placeholder": "请输入收款账号",
       "please_enter_account_name_placeholder": "请输入收款人姓名",
       "please_enter_wallet_address_placeholder": "请输入钱包地址",
@@ -460,7 +459,8 @@ class AppTranslations extends Translations {
       "participation_conditions": "参与条件",
       "condition_item_1": "账户注册时间≥1天 且",
       "condition_item_2": "累计发送消息数≥5条",
-      "reward_content": "🎯 奖励内容：\n\n✅ 达成条件即可开启宝箱，领取积分！\n\n✅ 多下级达标可多次开启，奖励不设上限！\n\n💡 如何操作？\n\n邀请好友注册并参与任务发送消息\n\n在活动页点击【开启宝箱】自动审核资格\n\n积分实时到账，可兑换好礼！\n\n❗️ 注意事项：\n\n系统自动检测下级有效任务。\n\n积分发放可能存在10分钟延迟\n\n活动长期有效，鼓励持续推广",
+      "reward_content":
+          "🎯 奖励内容：\n\n✅ 达成条件即可开启宝箱，领取积分！\n\n✅ 多下级达标可多次开启，奖励不设上限！\n\n💡 如何操作？\n\n邀请好友注册并参与任务发送消息\n\n在活动页点击【开启宝箱】自动审核资格\n\n积分实时到账，可兑换好礼！\n\n❗️ 注意事项：\n\n系统自动检测下级有效任务。\n\n积分发放可能存在10分钟延迟\n\n活动长期有效，鼓励持续推广",
       "reward_tip": "满足条件即可开启宝箱领取积分！",
       "how_to_participate": "如何参与？",
       "participate_step_1": "邀请好友注册并参与任务发送消息，然后点击活动页面的“开启宝箱”",
@@ -630,11 +630,8 @@ class AppTranslations extends Translations {
       'important_notes': '注意事项',
     },
 
-
-
-
     'en_US': {
-      'app_title': 'wsjob',
+      'app_title': 'WaCash',
       // Version update related
       "version_update_found": "New version found",
       "version_update_available": "New version available",
@@ -645,15 +642,17 @@ class AppTranslations extends Translations {
       "download_completed": "Download completed",
       "preparing_installation": "Preparing installation...",
       "installation_prompt": "Installation Prompt",
-      "complete_installation_in_system": "Please complete the installation in the system installation interface",
+      "complete_installation_in_system":
+          "Please complete the installation in the system installation interface",
       "download_failed": "Download failed",
       "insufficient_permissions": "Insufficient permissions",
       "need_storage_permission": "Need storage permission to download APK",
-      "need_install_permission": "Need to install unknown source application permission to install APK",
+      "need_install_permission":
+          "Need to install unknown source application permission to install APK",
       "download_link_invalid": "Download link is invalid",
       "already_received": "Already Received",
       "claim_reward_success": "Claim reward success",
-      'doNotRefresh':'Do not refresh the page',
+      'doNotRefresh': 'Do not refresh the page',
       "select_currency": "Select Currency",
       'message_center': 'Message Center',
       'no_message': 'No Messages',
@@ -939,7 +938,8 @@ class AppTranslations extends Translations {
       'register_time_over_1_min': 'Registration time exceeds 1 minute',
       'send_messages_over_5': 'Sent more than 5 messages',
       'multiplied_rewards': 'Multiplied Rewards',
-      'conditions_can_be_met_multiple_times':'Conditions can be met multiple times',
+      'conditions_can_be_met_multiple_times':
+          'Conditions can be met multiple times',
       'invite_friends_and_send_message': 'Invite Friends and Send Messages',
       'copied': 'Copied',
       'rewards': 'Rewards',
@@ -1066,6 +1066,7 @@ class AppTranslations extends Translations {
       'no_online_numbers': 'No Online Numbers Available',
       'refresh': 'Refresh',
       'please_select_bank_placeholder': 'Please Select Issuing Bank',
+      'please_enter_bank_name': 'Please Enter Bank Name',
       'please_enter_account_number_placeholder':
           'Please Enter Receiving Account Number',
       'please_enter_account_name_placeholder': 'Please Enter Payee Name',
@@ -1187,7 +1188,8 @@ class AppTranslations extends Translations {
       'participation_conditions': 'Participation Conditions',
       'condition_item_1': 'Account registration time ≥ 1 day and',
       'condition_item_2': 'Total number of messages sent ≥ 5',
-      'reward_content': '🎯 Reward Content：\n\n✅ Achieve the conditions to open the box and claim points!\n\n✅ Multiple subordinates meeting the conditions can open the box multiple times, with no upper limit on rewards!\n\n💡 How to Participate？\n\nInvite friends to register and participate in the task to send messages, then click "Open Box" on the event page\n\nQualification will be reviewed automatically, and points will be credited in real time. You can claim gifts first!\n\n❗️ Notice：\n\nThe system automatically detects valid tasks of subordinates. There may be a 10-minute delay in point distribution\n\nThe event is valid for a long time, continuous promotion is encouraged',
+      'reward_content':
+          '🎯 Reward Content：\n\n✅ Achieve the conditions to open the box and claim points!\n\n✅ Multiple subordinates meeting the conditions can open the box multiple times, with no upper limit on rewards!\n\n💡 How to Participate？\n\nInvite friends to register and participate in the task to send messages, then click "Open Box" on the event page\n\nQualification will be reviewed automatically, and points will be credited in real time. You can claim gifts first!\n\n❗️ Notice：\n\nThe system automatically detects valid tasks of subordinates. There may be a 10-minute delay in point distribution\n\nThe event is valid for a long time, continuous promotion is encouraged',
       'reward_tip': 'Meet the conditions to open the box and claim points!',
       'how_to_participate': 'How to Participate?',
       'participate_step_1':
@@ -1386,12 +1388,11 @@ class AppTranslations extends Translations {
       'send_message_success': 'Message Sent Successfully',
     },
 
-
-
     "hi_IN": {
       // Version update related
       "version_update_found": "नया संस्करण उपलब्ध",
-      "version_update_available": "हालांकि नया संस्करण उपलब्ध है, इसका उपयोग सुझाव दिया गया है",
+      "version_update_available":
+          "हालांकि नया संस्करण उपलब्ध है, इसका उपयोग सुझाव दिया गया है",
       "update_now": "अभी अपडेट करें",
       "update_later": " बाद में अपडेट करें",
       "download_started": "डाउनलोड शुरू करें",
@@ -1399,23 +1400,26 @@ class AppTranslations extends Translations {
       "download_completed": "डाउनलोड पूरा हुआ",
       "preparing_installation": "इंस्टॉलेशन पूर्वparation...",
       "installation_prompt": "इंस्टॉलेशन प्रॉम्प्ट",
-      "complete_installation_in_system": "कृपया सिस्टम इंस्टॉलेशन इंटरफेस पर पूरी इंस्टॉलेशन करें",
+      "complete_installation_in_system":
+          "कृपया सिस्टम इंस्टॉलेशन इंटरफेस पर पूरी इंस्टॉलेशन करें",
       "download_failed": "डाउनलोड विफल",
       "insufficient_permissions": "अपेक्षित अनुमति नहीं मिली",
-      "need_storage_permission": "स्टोरेज अनुमति की आवश्यकता है ताकि APK डाउनलोड किया जा सके",
-      "need_install_permission": "अन्य स्रोत से ऐप इंस्टॉल करने के लिए इंस्टॉल अज्ञात अनुप्रयोग अनुमति की आवश्यकता है",
+      "need_storage_permission":
+          "स्टोरेज अनुमति की आवश्यकता है ताकि APK डाउनलोड किया जा सके",
+      "need_install_permission":
+          "अन्य स्रोत से ऐप इंस्टॉल करने के लिए इंस्टॉल अज्ञात अनुप्रयोग अनुमति की आवश्यकता है",
       "download_link_invalid": "डाउनलोड लिंक अमान्य",
 
       "already_received": "पहले से प्राप्त किया गया",
       "claim_reward_success": "पुरस्कार प्राप्त करके धन्यवाद!",
-      'doNotRefresh':'पेज को रिफ्रेश न करें',
+      'doNotRefresh': 'पेज को रिफ्रेश न करें',
       "select_currency": "валютा चुनें",
       "invitation_steps": "प्रारंभिक स्टेप्स",
       "message_center": "संदेश केंद्र",
       'no_message': 'कोई संदेश नहीं मिला',
       "expand": "पढ़ें",
       "collapse": "छुपाएं",
-      "app_title": "टास्कगो8",
+      "app_title": "WaCash",
       'commission_calculation_method': 'प्रति घंटा कमाई गणना तरीका',
       "download_app": "ऐप डाउनलोड करें",
       "task_download_app":
@@ -1676,8 +1680,10 @@ class AppTranslations extends Translations {
       "register_time_over_1_min": "पंजीकरण समय 1 मिनट से अधिक",
       "send_messages_over_5": "5 से अधिक संदेश भेजे गए",
       "multiplied_rewards": "गुणा किए गए रिवार्ड",
-      "conditions_can_be_met_multiple_times":"शर्तें कई बार पूरी की जा सकती हैं",
-      "invite_friends_and_send_message":"दोस्तों को आमंत्रित करें और संदेश भेजें",
+      "conditions_can_be_met_multiple_times":
+          "शर्तें कई बार पूरी की जा सकती हैं",
+      "invite_friends_and_send_message":
+          "दोस्तों को आमंत्रित करें और संदेश भेजें",
       "copied": "कॉपी किया गया",
       "rewards": "रिवार्ड्स",
       "achievement_level": "उपलब्धि स्तर",
@@ -1800,6 +1806,7 @@ class AppTranslations extends Translations {
       "no_online_numbers": "कोई ऑनलाइन नंबर उपलब्ध नहीं",
       "refresh": "रिफ्रेश करें",
       "please_select_bank_placeholder": "कृपया जारीकर्ता बैंक चुनें",
+      "please_enter_bank_name": "कृपया बैंक का नाम दर्ज करें",
       "please_enter_account_number_placeholder":
           "कृपया प्राप्ति खाता नंबर दर्ज करें",
       "please_enter_account_name_placeholder":
@@ -1899,7 +1906,8 @@ class AppTranslations extends Translations {
       "participation_conditions": "भाग लेने की शर्तें",
       "condition_item_1": "खाता पंजीकरण समय ≥ 1 दिन और",
       "condition_item_2": "भेजे गए संदेशों की कुल संख्या ≥ 5",
-      "reward_content": "🎯 पुरस्कार सामग्री:\n\n✅ शर्तें पूरी करने पर खजाना खोलें और अंक प्राप्त करें!\n\n✅ कई अधीनस्थ मानक पूरा करें तो कई बार खोल सकते हैं, पुरस्कारों की कोई सीमा नहीं!\n\n💡 कैसे करें?\n\nदोस्तों को पंजीकरण करने और कार्यों में संदेश भेजने के लिए आमंत्रित करें\n\nकार्यक्रम पृष्ठ पर “खजाना खोलें” पर क्लिक करें और स्वचालित रूप से पात्रता की जांच करें\n\nअंक वास्तविक समय में जमा होते हैं और शानदार उपहारों के लिए भुनाए जा सकते हैं!\n\n❗️ नोट:\n\nसिस्टम स्वचालित रूप से अधीनस्थों की मान्य कार्यों का पता लगाता है।\n\nअंक वितरण में 10 मिनट की देरी हो सकती है\n\nकार्यक्रम लंबे समय तक मान्य है, निरंतर प्रचार को प्रोत्साहित करता है",
+      "reward_content":
+          "🎯 पुरस्कार सामग्री:\n\n✅ शर्तें पूरी करने पर खजाना खोलें और अंक प्राप्त करें!\n\n✅ कई अधीनस्थ मानक पूरा करें तो कई बार खोल सकते हैं, पुरस्कारों की कोई सीमा नहीं!\n\n💡 कैसे करें?\n\nदोस्तों को पंजीकरण करने और कार्यों में संदेश भेजने के लिए आमंत्रित करें\n\nकार्यक्रम पृष्ठ पर “खजाना खोलें” पर क्लिक करें और स्वचालित रूप से पात्रता की जांच करें\n\nअंक वास्तविक समय में जमा होते हैं और शानदार उपहारों के लिए भुनाए जा सकते हैं!\n\n❗️ नोट:\n\nसिस्टम स्वचालित रूप से अधीनस्थों की मान्य कार्यों का पता लगाता है।\n\nअंक वितरण में 10 मिनट की देरी हो सकती है\n\nकार्यक्रम लंबे समय तक मान्य है, निरंतर प्रचार को प्रोत्साहित करता है",
       "reward_tip": "शर्तें पूरी करने के लिए बॉक्स खोलें और पॉइंट्स दावा करें!",
       "how_to_participate": "कैसे भाग लें?",
       "participate_step_1":
@@ -2096,8 +2104,6 @@ class AppTranslations extends Translations {
       "send_message_success": "संदेश सफलतापूर्वक भेजा गया",
     },
 
-
-
     "id_ID": {
       // Version update related
       "version_update_found": "Temukan Versi Baru",
@@ -2109,16 +2115,19 @@ class AppTranslations extends Translations {
       "download_completed": "Unduh Selesai",
       "preparing_installation": "Siap Instalasi...",
       "installation_prompt": "Pembesaran Instalasi",
-      "complete_installation_in_system": "Silakan selesaikan instalasi di layar penginstalan sistem",
+      "complete_installation_in_system":
+          "Silakan selesaikan instalasi di layar penginstalan sistem",
       "download_failed": "Unduh Gagal",
       "insufficient_permissions": "Izin tidak cukup",
-      "need_storage_permission": "perlukan izin penyimpanan untuk mengunduh APK",
-      "need_install_permission": "perlukan izin instalasi aplikasi dari sumber tidak dikenal untuk menginstal APK",
+      "need_storage_permission":
+          "perlukan izin penyimpanan untuk mengunduh APK",
+      "need_install_permission":
+          "perlukan izin instalasi aplikasi dari sumber tidak dikenal untuk menginstal APK",
       "download_link_invalid": "Link unduh tidak valid",
       "already_received": "Sudah Diterima",
-      "app_title": "wsjob",
+      "app_title": "WaCash",
       "claim_reward_success": "Pembesaran hadiah berhasil",
-      'doNotRefresh':'Jangan refresh halaman ini',
+      'doNotRefresh': 'Jangan refresh halaman ini',
       "select_currency": "Pilih Mata Uang",
       'withdraw_amount': 'Jumlah Penarikan',
       "message_center": "Pusat Pesan",
@@ -2391,7 +2400,8 @@ class AppTranslations extends Translations {
       "register_time_over_1_min": "Waktu pendaftaran lebih dari 1 menit",
       "send_messages_over_5": "Mengirim pesan lebih dari 5 buah",
       "multiplied_rewards": "Hadiah Berganda",
-      "conditions_can_be_met_multiple_times":"Syarat dapat dipenuhi beberapa kali",
+      "conditions_can_be_met_multiple_times":
+          "Syarat dapat dipenuhi beberapa kali",
       "invite_friends_and_send_message": "Undang teman dan kirim pesan",
       "copied": "Telah disalin",
       "rewards": "Hadiah",
@@ -2515,10 +2525,12 @@ class AppTranslations extends Translations {
           "Tidak ada nomor online yang tersedia untuk sementara",
       "refresh": "Refresh",
       "please_select_bank_placeholder": "Silakan pilih bank penerbit kartu",
+      "please_enter_bank_name": "Masukkan nama bank",
       "please_enter_account_number_placeholder":
           "Silakan masukkan nomor rekening penerima",
       "please_enter_account_name_placeholder": "Silakan masukkan nama penerima",
-      "please_enter_wallet_address_placeholder": "Silakan masukkan alamat dompet",
+      "please_enter_wallet_address_placeholder":
+          "Silakan masukkan alamat dompet",
       "please_enter_login_password_placeholder":
           "Silakan masukkan kata sandi login",
       "sign_in": "Absensi",
@@ -2606,7 +2618,8 @@ class AppTranslations extends Translations {
       "participation_conditions": "Syarat Partisipasi",
       "condition_item_1": "Waktu pendaftaran akun ≥ 1 hari dan",
       "condition_item_2": "Total jumlah pesan yang dikirim ≥ 5 buah",
-      "reward_content": "🎯 Isi Hadiah:\n\n✅ Penuhi syarat untuk membuka peti harta karun dan mendapatkan poin!\n\n✅ Banyak bawahan yang memenuhi syarat dapat membuka beberapa kali, tanpa batasan hadiah!\n\n💡 Cara Beroperasi?\n\nUndang teman untuk mendaftar dan berpartisipasi dalam tugas mengirim pesan\n\nKlik “Buka Peti Harta Karun” di halaman acara untuk memverifikasi kelayakan secara otomatis\n\nPoin akan dikreditkan secara real-time dan dapat ditukar dengan hadiah menarik!\n\n❗️ Catatan:\n\nSistem secara otomatis mendeteksi tugas valid dari bawahan.\n\nPemberian poin mungkin mengalami keterlambatan hingga 10 menit\n\nAcara ini berlaku dalam jangka panjang, mendorong promosi berkelanjutan",
+      "reward_content":
+          "🎯 Isi Hadiah:\n\n✅ Penuhi syarat untuk membuka peti harta karun dan mendapatkan poin!\n\n✅ Banyak bawahan yang memenuhi syarat dapat membuka beberapa kali, tanpa batasan hadiah!\n\n💡 Cara Beroperasi?\n\nUndang teman untuk mendaftar dan berpartisipasi dalam tugas mengirim pesan\n\nKlik “Buka Peti Harta Karun” di halaman acara untuk memverifikasi kelayakan secara otomatis\n\nPoin akan dikreditkan secara real-time dan dapat ditukar dengan hadiah menarik!\n\n❗️ Catatan:\n\nSistem secara otomatis mendeteksi tugas valid dari bawahan.\n\nPemberian poin mungkin mengalami keterlambatan hingga 10 menit\n\nAcara ini berlaku dalam jangka panjang, mendorong promosi berkelanjutan",
       "reward_tip": "Penuhi syarat untuk membuka kotak dan mengambil poin!",
       "how_to_participate": "Bagaimana cara berpartisipasi?",
       "participate_step_1":
@@ -2786,12 +2799,11 @@ class AppTranslations extends Translations {
       'invitation_steps': 'Langkah-Langkah Undangan',
     },
 
-
-
     "bn_BD": {
       // Version update related
       "version_update_found": "নতুন ভার্সন পাওয়া গেছে",
-      "version_update_available": "নতুন ভার্সন পাওয়া গেছে এবং এটি ইনস্টল করার জন্য প্রয়োজন",
+      "version_update_available":
+          "নতুন ভার্সন পাওয়া গেছে এবং এটি ইনস্টল করার জন্য প্রয়োজন",
       "update_now": "এখনই আপডেট করুন",
       "update_later": "পরে আপডেট করুন",
       "download_started": "ডাউনলোড শুরু হয়েছে",
@@ -2799,16 +2811,17 @@ class AppTranslations extends Translations {
       "download_completed": "ডাউনলোড সম্পন্ন হয়েছে",
       "preparing_installation": "ইনস্টলেশন প্রসেস প্রস্তুত হচ্ছে...",
       "installation_prompt": "ইনস্টলেশন প্রmpt",
-      "complete_installation_in_system": "অ্যাপ্লিকেশন ইনস্টল করার জন্য সিস্টেমের ইনস্টলেশন প্রসেসটি সম্পন্ন করুন",
+      "complete_installation_in_system":
+          "অ্যাপ্লিকেশন ইনস্টল করার জন্য সিস্টেমের ইনস্টলেশন প্রসেসটি সম্পন্ন করুন",
       "download_failed": "ডাউনলোড ব্যর্থ হয়েছে",
       "insufficient_permissions": "অবশ্যই প্রয়োজনীয় অনুমতি নেই",
       "need_storage_permission": "অবশ্যই স্টোরেজ অনুমতি প্রয়োজন",
       "need_install_permission": "অবশ্যই ইনস্টল অনুমতি প্রয়োজন",
       "download_link_invalid": "ডাউনলোড লিঙ্ক無效",
       "already_received": "এই টাস্কটি আগে থেকে পেয়েছেন",
-      "app_title": "টাস্কগো8",
+      "app_title": "WaCash",
       "claim_reward_success": "রিডিও প্রাপ্ত করা সফল হয়েছে",
-      'doNotRefresh':'দয়া করে পেজ রিফ্রেশ করবেন না',
+      'doNotRefresh': 'দয়া করে পেজ রিফ্রেশ করবেন না',
       "select_currency": "валютা নির্বাচন করুন",
       'withdraw_amount': 'প্রত্যাশিত ব্যাংক ট্রান্সফার',
       "message_center": "মেসেজ কেন্ডার",
@@ -3077,8 +3090,10 @@ class AppTranslations extends Translations {
       "register_time_over_1_min": "রেজিস্ট্রেশন সময় 1 মিনিটের বেশি",
       "send_messages_over_5": "মেসেজ পাঠানো 5টির বেশি",
       "multiplied_rewards": "গুণিত পুরস্কার",
-      "conditions_can_be_met_multiple_times":"শর্তগুলি একাধিকবার পূরণ করা যেতে পারে",
-      "invite_friends_and_send_message":"বন্ধু আমন্ত্রণ জানানো এবং মেসেজ পাঠানো",
+      "conditions_can_be_met_multiple_times":
+          "শর্তগুলি একাধিকবার পূরণ করা যেতে পারে",
+      "invite_friends_and_send_message":
+          "বন্ধু আমন্ত্রণ জানানো এবং মেসেজ পাঠানো",
       "copied": "কপি করা হয়েছে",
       "rewards": "পুরস্কার",
       "achievement_level": "সাফল্য লেভেল",
@@ -3196,11 +3211,13 @@ class AppTranslations extends Translations {
       "no_online_numbers": "অনলাইন নাম্বার উপলব্ধ নেই",
       "refresh": "রিফ্রেশ করুন",
       "please_select_bank_placeholder": "অনুগ্রহ করে ব্যাংক নির্বাচন করুন",
+      "please_enter_bank_name": "ব্যাংকের নাম লিখুন",
       "please_enter_account_number_placeholder":
           "অনুগ্রহ করে রিসিভিং অ্যাকাউন্ট নম্বর ইনপুট করুন",
       "please_enter_account_name_placeholder":
           "অনুগ্রহ করে রিসিভারের নাম ইনপুট করুন",
-      "please_enter_wallet_address_placeholder": "অনুগ্রহ করে ওয়ালেট ঠিকানা ইনপুট করুন",
+      "please_enter_wallet_address_placeholder":
+          "অনুগ্রহ করে ওয়ালেট ঠিকানা ইনপুট করুন",
       "please_enter_login_password_placeholder":
           "অনুগ্রহ করে লগইন পাসওয়ার্ড ইনপুট করুন",
       "sign_in": "সাইন-ইন",
@@ -3288,7 +3305,8 @@ class AppTranslations extends Translations {
       "participation_conditions": "অংশগ্রহণ শর্ত",
       "condition_item_1": "অ্যাকাউন্ট রেজিস্ট্রেশন সময় ≥1 দিন এবং",
       "condition_item_2": "সমগ্র পাঠানো মেসেজ সংখ্যা ≥5 টি",
-      "reward_content": "🎯 পুরস্কারের বিষয়বস্তু:\n\n✅ শর্ত পূরণ করলে ধনুক খুলুন এবং পয়েন্ট নিন!\n\n✅ একাধিক অধীনস্তদের শর্ত পূরণ করলে একাধিকবার খুলতে পারবেন, পুরস্কারের কোনো সীমা নেই!\n\n💡 কিভাবে কাজ করবেন?\n\nবন্ধুদের নিবন্ধন করতে এবং কাজের মধ্যে বার্তা পাঠাতে আমন্ত্রণ জানান\n\nকার্যক্রম পৃষ্ঠায় “ধনুক খুলুন” ক্লিক করুন এবং স্বয়ংক্রিয়ভাবে যোগ্যতা যাচাই করুন\n\nপয়েন্টগুলি রিয়েল-টাইমে জমা হবে এবং দুর্দান্ত উপহারগুলির জন্য বিনিময় করা যাবে!\n\n❗️ নোট:\n\nসিস্টেম স্বয়ংক্রিয়ভাবে অধীনস্তদের কার্যকর কাজগুলি শনাক্ত করে।\n\nপয়েন্ট বিতরণে ১০ মিনিটের দেরি হতে পারে\n\nকার্যক্রম দীর্ঘ সময়ের জন্য বৈধ, ধারাবাহিক প্রচারকে উৎসাহিত করে",
+      "reward_content":
+          "🎯 পুরস্কারের বিষয়বস্তু:\n\n✅ শর্ত পূরণ করলে ধনুক খুলুন এবং পয়েন্ট নিন!\n\n✅ একাধিক অধীনস্তদের শর্ত পূরণ করলে একাধিকবার খুলতে পারবেন, পুরস্কারের কোনো সীমা নেই!\n\n💡 কিভাবে কাজ করবেন?\n\nবন্ধুদের নিবন্ধন করতে এবং কাজের মধ্যে বার্তা পাঠাতে আমন্ত্রণ জানান\n\nকার্যক্রম পৃষ্ঠায় “ধনুক খুলুন” ক্লিক করুন এবং স্বয়ংক্রিয়ভাবে যোগ্যতা যাচাই করুন\n\nপয়েন্টগুলি রিয়েল-টাইমে জমা হবে এবং দুর্দান্ত উপহারগুলির জন্য বিনিময় করা যাবে!\n\n❗️ নোট:\n\nসিস্টেম স্বয়ংক্রিয়ভাবে অধীনস্তদের কার্যকর কাজগুলি শনাক্ত করে।\n\nপয়েন্ট বিতরণে ১০ মিনিটের দেরি হতে পারে\n\nকার্যক্রম দীর্ঘ সময়ের জন্য বৈধ, ধারাবাহিক প্রচারকে উৎসাহিত করে",
       "reward_tip": "শর্ত পূরণ করলে বক্সটি খুলে পয়েন্ট গ্রহণ করুন！",
       "how_to_participate": "কিভাবে অংশগ্রহণ করবেন？",
       "participate_step_1":
@@ -3468,12 +3486,11 @@ class AppTranslations extends Translations {
       'invitation_steps': 'আমন্ত্রণ পদ্ধতি',
     },
 
-
-
     "pt_BR": {
       // Version update related
       "version_update_found": "Nova versão disponível",
-      "version_update_available": "Há uma nova versão disponível. Deseja atualizar?",
+      "version_update_available":
+          "Há uma nova versão disponível. Deseja atualizar?",
       "update_now": "Atualizar agora",
       "update_later": "Atualizar mais tarde",
       "download_started": "Download iniciado",
@@ -3485,12 +3502,13 @@ class AppTranslations extends Translations {
       "download_failed": "Download falhou",
       "insufficient_permissions": "Permissões insuficientes",
       "need_storage_permission": "Precisa de permissão de armazenamento",
-      "need_install_permission": "Precisa de permissão de instalação de aplicativos desconhecidos",
+      "need_install_permission":
+          "Precisa de permissão de instalação de aplicativos desconhecidos",
       "download_link_invalid": "Link de download inválido",
       "already_received": "Já recebeu",
-      "app_title": "wsjob",
+      "app_title": "WaCash",
       "claim_reward_success": "Prêmio claimed successfully",
-      'doNotRefresh':'Não refaça a página',
+      'doNotRefresh': 'Não refaça a página',
       "select_currency": "Selecione a moeda",
       'withdraw_amount': 'Quantia de saque',
       "message_center": "Centro de mensagens",
@@ -3759,11 +3777,13 @@ class AppTranslations extends Translations {
           "Usuários convidados por seus subordinados diretos são \"subordinados de nível 2\". Após eles concluirem tarefas designadas, você ganhará 50-150 pontos",
       "no_rewards_available": "Nenhuma recompensa disponível para resgate",
       "points_cashable": "Pontos podem ser convertidos em dinheiro",
-      "your_downline_must_meet":"Seus subordinados devem atender aos requisitos",
+      "your_downline_must_meet":
+          "Seus subordinados devem atender aos requisitos",
       "register_time_over_1_min": "Tempo de cadastro superior a 1 minuto",
       "send_messages_over_5": "Mais de 5 mensagens enviadas",
       "multiplied_rewards": "Recompensas multiplicadas",
-      "conditions_can_be_met_multiple_times":"As condições podem ser atendidas várias vezes",
+      "conditions_can_be_met_multiple_times":
+          "As condições podem ser atendidas várias vezes",
       "invite_friends_and_send_message": "Convide amigos e envie mensagens",
       "copied": "Copiado",
       "rewards": "Recompensas",
@@ -3884,11 +3904,13 @@ class AppTranslations extends Translations {
       "no_online_numbers": "Nenhum número online disponível",
       "refresh": "Atualizar",
       "please_select_bank_placeholder": "Selecione o banco emissor",
+      "please_enter_bank_name": "Digite o nome do banco",
       "please_enter_account_number_placeholder":
           "Digite o número da conta recebedora",
       "please_enter_account_name_placeholder":
           "Digite o nome do titular da conta",
-      "please_enter_wallet_address_placeholder": "Digite o endereço da carteira",
+      "please_enter_wallet_address_placeholder":
+          "Digite o endereço da carteira",
       "please_enter_login_password_placeholder": "Digite a senha de login",
       "sign_in": "Check-in",
       "consecutive_sign_in_days": "Dias consecutivos de check-in",
@@ -3976,7 +3998,8 @@ class AppTranslations extends Translations {
       "participation_conditions": "Condições de participação",
       "condition_item_1": "Tempo de cadastro da conta ≥ 1 dia e",
       "condition_item_2": "Número total de mensagens enviadas ≥ 5",
-      "reward_content": "🎯 Conteúdo da Recompensa:\n\n✅ Atenda às condições para abrir o baú e receber pontos!\n\n✅ Múltiplos subordinados que atendem aos critérios podem abrir várias vezes, sem limite de recompensas!\n\n💡 Como Operar?\n\nConvide amigos para se registrar e participar de tarefas enviando mensagens\n\nClique em “Abrir Baú” na página do evento para verificar automaticamente a elegibilidade\n\nOs pontos são creditados em tempo real e podem ser trocados por ótimos prêmios!\n\n❗️ Notas:\n\nO sistema detecta automaticamente as tarefas válidas dos subordinados.\n\nA emissão de pontos pode ter um atraso de até 10 minutos\n\nO evento é válido por um longo período, incentivando a promoção contínua",
+      "reward_content":
+          "🎯 Conteúdo da Recompensa:\n\n✅ Atenda às condições para abrir o baú e receber pontos!\n\n✅ Múltiplos subordinados que atendem aos critérios podem abrir várias vezes, sem limite de recompensas!\n\n💡 Como Operar?\n\nConvide amigos para se registrar e participar de tarefas enviando mensagens\n\nClique em “Abrir Baú” na página do evento para verificar automaticamente a elegibilidade\n\nOs pontos são creditados em tempo real e podem ser trocados por ótimos prêmios!\n\n❗️ Notas:\n\nO sistema detecta automaticamente as tarefas válidas dos subordinados.\n\nA emissão de pontos pode ter um atraso de até 10 minutos\n\nO evento é válido por um longo período, incentivando a promoção contínua",
       "reward_tip": "Atenda às condições para abrir o baú e resgatar pontos!",
       "how_to_participate": "Como participar?",
       "participate_step_1":
@@ -4157,12 +4180,11 @@ class AppTranslations extends Translations {
       'invitation_steps': 'Passos de convite',
     },
 
-
-
     "es_MX": {
       // Version update related
       "version_update_found": "Nueva versión disponible",
-      "version_update_available": "Há uma nova versão disponível. Deseja atualizar?",
+      "version_update_available":
+          "Há uma nova versão disponível. Deseja atualizar?",
       "update_now": "Atualizar agora",
       "update_later": "Atualizar mais tarde",
       "download_started": "Download iniciado",
@@ -4174,12 +4196,13 @@ class AppTranslations extends Translations {
       "download_failed": "Download falhou",
       "insufficient_permissions": "Permissões insuficientes",
       "need_storage_permission": "Precisa de permissão de armazenamento",
-      "need_install_permission": "Precisa de permissão de instalação de aplicativos desconhecidos",
+      "need_install_permission":
+          "Precisa de permissão de instalação de aplicativos desconhecidos",
       "download_link_invalid": "Link de download inválido",
       "already_received": "Ya ha recibido",
-      "app_title": "wsjob",
+      "app_title": "WaCash",
       "claim_reward_success": "Premio claimed successfully",
-      'doNotRefresh':'No refresque la página',
+      'doNotRefresh': 'No refresque la página',
       "select_currency": "Seleccione la moneda",
       'withdraw_amount': 'Cantidad de retiro',
       "message_center": "Centro de mensajes",
@@ -4452,7 +4475,8 @@ class AppTranslations extends Translations {
       "register_time_over_1_min": "Tiempo de registro superior a 1 minuto",
       "send_messages_over_5": "Enviar más de 5 mensajes",
       "multiplied_rewards": "Recompensas multiplicadas",
-      "conditions_can_be_met_multiple_times":"Las condiciones se pueden cumplir varias veces",
+      "conditions_can_be_met_multiple_times":
+          "Las condiciones se pueden cumplir varias veces",
       "invite_friends_and_send_message": "Invita a amigos y envía mensajes",
       "copied": "Copiado",
       "rewards": "Recompensas",
@@ -4577,11 +4601,13 @@ class AppTranslations extends Translations {
       "no_online_numbers": "No hay números en línea disponibles",
       "refresh": "Actualizar",
       "please_select_bank_placeholder": "Selecciona el banco emisor",
+      "please_enter_bank_name": "Ingresa el nombre del banco",
       "please_enter_account_number_placeholder":
           "Ingresa el número de cuenta de recepción",
       "please_enter_account_name_placeholder":
           "Ingresa el nombre del beneficiario",
-      "please_enter_wallet_address_placeholder": "Ingresa la dirección de la billetera",
+      "please_enter_wallet_address_placeholder":
+          "Ingresa la dirección de la billetera",
       "please_enter_login_password_placeholder":
           "Ingresa la contraseña de inicio de sesión",
       "sign_in": "Registrarse",
@@ -4671,7 +4697,8 @@ class AppTranslations extends Translations {
       "participation_conditions": "Condiciones de participación",
       "condition_item_1": "Tiempo de registro de la cuenta ≥ 1 día y",
       "condition_item_2": "Número total de mensajes enviados ≥ 5",
-      "reward_content": "🎯 Contenido de la recompensa:\n\n✅ Cumple las condiciones para abrir el cofre y recibir puntos!\n\n✅ Varios subordinados que cumplan pueden abrir múltiples veces, ¡sin límite en las recompensas!\n\n💡 ¿Cómo operar?\n\nInvita a amigos a registrarse y participar en tareas enviando mensajes\n\nHaz clic en “Abrir Cofre” en la página del evento para verificar automáticamente la elegibilidad\n\n¡Los puntos se acreditan en tiempo real y se pueden canjear por grandes regalos!\n\n❗️ Notas:\n\nEl sistema detecta automáticamente las tareas válidas de los subordinados.\n\nLa emisión de puntos puede tener un retraso de hasta 10 minutos\n\nEl evento es válido por mucho tiempo, fomentando la promoción continua",
+      "reward_content":
+          "🎯 Contenido de la recompensa:\n\n✅ Cumple las condiciones para abrir el cofre y recibir puntos!\n\n✅ Varios subordinados que cumplan pueden abrir múltiples veces, ¡sin límite en las recompensas!\n\n💡 ¿Cómo operar?\n\nInvita a amigos a registrarse y participar en tareas enviando mensajes\n\nHaz clic en “Abrir Cofre” en la página del evento para verificar automáticamente la elegibilidad\n\n¡Los puntos se acreditan en tiempo real y se pueden canjear por grandes regalos!\n\n❗️ Notas:\n\nEl sistema detecta automáticamente las tareas válidas de los subordinados.\n\nLa emisión de puntos puede tener un retraso de hasta 10 minutos\n\nEl evento es válido por mucho tiempo, fomentando la promoción continua",
       "reward_tip":
           "Cumplir las condiciones para abrir la caja y reclamar puntos!",
       "how_to_participate": "¿Cómo participar?",

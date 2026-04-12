@@ -14,7 +14,7 @@ class PromotionApiService {
       final responseData = await _httpService.get<Map<String, dynamic>>(
         _getInviteHomeEndpoint,
       );
-      
+
       // 转换数据模型，确保能处理null值
       return PromotionData.fromJson(responseData);
     } catch (e) {
@@ -22,16 +22,19 @@ class PromotionApiService {
       rethrow;
     }
   }
-  
+
   /// 领取奖励
-  Future<void> receiveReward({required int reachTwoStarUsers, required int twoStarRewardPoints}) async {
+  Future<void> receiveReward({
+    required int reachTwoStarUsers,
+    required int twoStarRewardPoints,
+  }) async {
     try {
       await _httpService.get(
         _receiveRewardEndpoint,
         queryParameters: {
           'reachTwoStarUsers': reachTwoStarUsers,
-          'twoStarRewardPoints': twoStarRewardPoints
-        }
+          'twoStarRewardPoints': twoStarRewardPoints,
+        },
       );
     } catch (e) {
       // 错误处理

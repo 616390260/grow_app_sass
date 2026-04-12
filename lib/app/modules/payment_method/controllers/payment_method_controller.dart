@@ -55,6 +55,9 @@ class PaymentMethodController extends BaseController {
 
   /// 是否为TRX支付方式
   bool get isTrx => country.toUpperCase() == 'TRX';
+
+  /// 是否为印度（发卡银行改为手动输入）
+  bool get isIndia => country.toLowerCase().contains('india') || country.contains('印度');
   
   // 银行列表
   RxList<BankModel> bankList = <BankModel>[].obs;
@@ -166,7 +169,9 @@ class PaymentMethodController extends BaseController {
     } else {
       // 普通模式：验证银行、账号、姓名
       if (bankName.value.isEmpty) {
-        showErrorMessage(I18nKeys.pleaseSelectBankPlaceholder.tr);
+        showErrorMessage(isIndia
+            ? I18nKeys.pleaseEnterBankName.tr
+            : I18nKeys.pleaseSelectBankPlaceholder.tr);
         return false;
       }
       if (accountNumber.value.isEmpty) {

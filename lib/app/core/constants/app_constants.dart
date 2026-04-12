@@ -1,7 +1,7 @@
 /// 应用常量
 class AppConstants {
   // 应用信息
-  static const String appName = 'wsjob';
+  static const String appName = 'WaCash';
   static const String appVersion = '1.0.0';
   static const String appDescription = 'I18nKeys.appDescription'; // 使用国际化键
 
@@ -73,9 +73,11 @@ class AppConstants {
   static const double opacityHigh = 0.87;
 
   // 正则表达式
-  static const String emailRegex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+  static const String emailRegex =
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
   static const String phoneRegex = r'^1[3-9]\d{9}$';
-  static const String passwordRegex = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$';
+  static const String passwordRegex =
+      r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$';
 
   // 日期格式
   static const String dateFormat = 'yyyy-MM-dd';
@@ -84,7 +86,8 @@ class AppConstants {
   static const String fullDateTimeFormat = 'yyyy-MM-dd HH:mm:ss';
 
   // 错误消息
-  static const String errorNetworkUnavailable = 'I18nKeys.errorNetworkUnavailable';
+  static const String errorNetworkUnavailable =
+      'I18nKeys.errorNetworkUnavailable';
   static const String errorTimeout = 'I18nKeys.errorTimeout';
   static const String errorServerError = 'I18nKeys.errorServerError';
   static const String errorUnknown = 'I18nKeys.errorUnknown';
@@ -143,10 +146,39 @@ class AppConstants {
   static const String languageEn = 'en';
 
   // 文件类型
-  static const List<String> imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-  static const List<String> documentExtensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt'];
-  static const List<String> videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv'];
-  static const List<String> audioExtensions = ['mp3', 'wav', 'aac', 'flac', 'ogg'];
+  static const List<String> imageExtensions = [
+    'jpg',
+    'jpeg',
+    'png',
+    'gif',
+    'bmp',
+    'webp',
+  ];
+  static const List<String> documentExtensions = [
+    'pdf',
+    'doc',
+    'docx',
+    'xls',
+    'xlsx',
+    'ppt',
+    'pptx',
+    'txt',
+  ];
+  static const List<String> videoExtensions = [
+    'mp4',
+    'avi',
+    'mov',
+    'wmv',
+    'flv',
+    'mkv',
+  ];
+  static const List<String> audioExtensions = [
+    'mp3',
+    'wav',
+    'aac',
+    'flac',
+    'ogg',
+  ];
 
   // 文件大小限制（字节）
   static const int maxImageSize = 10 * 1024 * 1024; // 10MB

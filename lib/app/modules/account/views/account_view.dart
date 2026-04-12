@@ -59,7 +59,6 @@ class AccountView extends BaseView<AccountController> {
                               children: [
                                 CircleAvatar(
                                   radius: 32,
-
                                   child: Container(
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
@@ -70,7 +69,7 @@ class AccountView extends BaseView<AccountController> {
                                     ),
                                     child: ClipOval(
                                       child: Image.network(
-                                        controller.avatar.value ,
+                                        controller.avatar.value,
                                         width: 64,
                                         height: 64,
                                         fit: BoxFit.cover,

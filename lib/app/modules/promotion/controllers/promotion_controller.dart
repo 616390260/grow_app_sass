@@ -27,7 +27,6 @@ class PromotionController extends BaseController {
   // API服务
   final _promotionApiService = PromotionApiService();
 
-
   void loadData() async {
     await safeApiCall<PromotionData>(
       () => _promotionApiService.getInviteHome(),
@@ -75,10 +74,9 @@ class PromotionController extends BaseController {
         // 调用API领取奖励
         await _promotionApiService.receiveReward(
           reachTwoStarUsers: reachTwoStarUsers.value,
-          twoStarRewardPoints: twoStarRewardPoints.value
+          twoStarRewardPoints: twoStarRewardPoints.value,
         );
-      }, 
-      (result) => isReceived.value = false);
+      }, (result) => isReceived.value = false);
     } catch (e) {
       showErrorMessage('${I18nKeys.claimRewardFailed.tr}: $e');
     }
@@ -88,15 +86,13 @@ class PromotionController extends BaseController {
   Future<void> copyInviteLink() async {
     try {
       await AppUtils.copyToClipboard(inviteUrl.value);
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   /// 复制邀请码
   Future<void> copyInviteCode() async {
     try {
       await AppUtils.copyToClipboard(inviteCode.value);
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 }

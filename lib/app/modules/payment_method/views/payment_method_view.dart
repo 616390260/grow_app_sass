@@ -82,16 +82,24 @@ class PaymentMethodView extends BaseView<PaymentMethodController> {
                     onChanged: controller.setPayCard,
                   ),
                 ] else ...[
-                  // 普通模式：发卡银行、收款账号、收款人姓名
-                  InkWell(
-                    onTap: () => _showBankSelectDialog(),
-                    child: _buildBankFormField(
+                  // 普通模式：发卡银行（印度为文本输入，其他为选择器）
+                  if (controller.isIndia)
+                    _buildFormField(
                       label: I18nKeys.bankName.tr,
-                      placeholder: I18nKeys.pleaseSelectBankPlaceholder.tr,
+                      placeholder: I18nKeys.pleaseEnterBankName.tr,
                       value: controller.bankName,
                       onChanged: controller.setBankName,
+                    )
+                  else
+                    InkWell(
+                      onTap: () => _showBankSelectDialog(),
+                      child: _buildBankFormField(
+                        label: I18nKeys.bankName.tr,
+                        placeholder: I18nKeys.pleaseSelectBankPlaceholder.tr,
+                        value: controller.bankName,
+                        onChanged: controller.setBankName,
+                      ),
                     ),
-                  ),
                   Container(
                     height: 0.5,
                     color: AppTheme.lineColor,

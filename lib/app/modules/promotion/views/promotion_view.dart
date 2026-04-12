@@ -630,7 +630,7 @@ class PromotionView extends BaseView<PromotionController> {
       ),
     );
   }
-  
+
   // 构建佣金规则文本，单独设置关键部分样式，支持多语言
   Widget _buildCommissionRuleText() {
     return RichText(
@@ -644,42 +644,42 @@ class PromotionView extends BaseView<PromotionController> {
       ),
     );
   }
-  
+
   // 解析规则文本并应用相应样式，支持多语言
   // 采用简单直接的格式：按换行符分割，第1和3行为标题，第2和4行为内容
   List<TextSpan> _parseAndStyleRuleText() {
     final List<TextSpan> spans = [];
     final String ruleText = I18nKeys.directInvitationRule.tr;
-    
+
     // 按换行符分割文本
     final List<String> lines = ruleText.split('\n\n');
-    
+
     // 处理每一行，固定格式：第1和3行为标题，第2和4行为内容
     for (int i = 0; i < lines.length; i++) {
       // 跳过空行
       if (lines[i].trim().isEmpty) continue;
-      
+
       // 检查是否是标题行（第1和3行，索引从0开始）
       bool isTitleLine = (i == 0 || i == 2);
-      
+
       if (isTitleLine) {
         // 标题行应用特殊样式
-        spans.add(TextSpan(
-          text: '${lines[i]}\n\n',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-            color: AppTheme.threeColor,
+        spans.add(
+          TextSpan(
+            text: '${lines[i]}\n\n',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              color: AppTheme.threeColor,
+            ),
           ),
-        ));
+        );
       } else {
         // 内容行应用默认样式
-        spans.add(TextSpan(
-          text: '${lines[i]}\n\n',
-        ));
+        spans.add(TextSpan(text: '${lines[i]}\n\n'));
       }
     }
-    
+
     return spans;
   }
 }
