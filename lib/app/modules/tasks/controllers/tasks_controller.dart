@@ -8,13 +8,16 @@ import '../../../data/models/home_info_model.dart';
 class TasksController extends BaseController {
   final tasks = <RecommendTaskModel>[].obs;
   final TaskCenterApiService _taskApiService = TaskCenterApiService();
-    final HomeApiService _homeApiService = HomeApiService();
+  final HomeApiService _homeApiService = HomeApiService();
+
   // 分页相关
   final int _limit = 20;
   int _page = 1;
   bool _hasMore = true;
   bool _isLoading = false;
 
+  @override
+  void initData() => loadTasks();
 
   /// 加载任务列表（支持分页）
   Future<void> loadTasks({bool isRefresh = false}) async {

@@ -41,24 +41,22 @@ class FeatureCardWidget extends StatelessWidget {
           children: [
             Flexible(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.only(left: 10, right: 4),
                 child: Text(
                   title,
-                  overflow: TextOverflow.visible,
-                  softWrap: true,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF333333),
                   ),
                 ),
               ),
             ),
-            Container(
-              width: 42,
-              height: 30,
-              padding: EdgeInsets.only(right: 12),
-              child: Image.asset(iconPath, fit: BoxFit.cover,width: 30,height: 30,),
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Image.asset(iconPath, width: 26, height: 26, fit: BoxFit.contain),
             ),
           ],
         ),

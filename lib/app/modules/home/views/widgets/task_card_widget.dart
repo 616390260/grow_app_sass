@@ -21,7 +21,7 @@ class TaskCardWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(left: 2, bottom: 10),
       decoration: BoxDecoration(
-        color: AppTheme.bgColor,
+        color: AppTheme.primaryLightest,
         borderRadius: BorderRadius.circular(5),
       ),
       child: Row(
@@ -34,7 +34,7 @@ class TaskCardWidget extends StatelessWidget {
             padding: const EdgeInsets.all(6),
             margin: const EdgeInsets.only(left: 13, top: 11),
             decoration: BoxDecoration(
-              color: const Color(0xFFFF8E6A),
+              color: AppTheme.primaryColor,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Image.asset(ImageAssets.homeTask, width: 14, height: 14),
@@ -81,7 +81,7 @@ class TaskCardWidget extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(7),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF4A90E2),
+                      color: AppTheme.primaryColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(

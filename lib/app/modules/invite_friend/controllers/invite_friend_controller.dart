@@ -13,9 +13,13 @@ import 'dart:async';
 class InviteFriendController extends BaseController {
   // 推荐链接
   final referralLink = ''.obs;
-  
-  // 复制状态
+  // 邀请码（从推荐链接 URL 参数 ?i= 提取）
+  final inviteCode = ''.obs;
+
+  // 推荐链接复制状态
   final isCopied = false.obs;
+  // 邀请码复制状态
+  final isCopiedCode = false.obs;
   
   // 宝箱产品列表
   final boxProducts = <BoxProductModel>[].obs;
@@ -47,6 +51,20 @@ class InviteFriendController extends BaseController {
     super.onReady();
     // 页面首次可见时启动轮询定时器
     startPolling();
+  }
+
+  /// 复制邀请码到剪贴板
+  Future<void> copyInviteCode() async {
+    try {
+      await Clipboard.setData(ClipboardData(text: inviteCode.value));
+      isCopiedCode.value = true;
+      MessageUtils.showSuccess(I18nKeys.copiedToClipboard.tr);
+      Future.delayed(const Duration(seconds: 2), () {
+        isCopiedCode.value = false;
+      });
+    } catch (e) {
+      MessageUtils.showError(I18nKeys.failedToCopyLink.tr);
+    }
   }
 
   /// 复制推荐链接到剪贴板
@@ -83,6 +101,15 @@ class InviteFriendController extends BaseController {
       () => _inviteFriendApiService.getReferralLink(),
       (link) {
         referralLink.value = link;
+        // 从 URL 参数 ?i= 提取邀请码
+        final uri = Uri.tryParse(link);
+        if (uri != null) {
+          final code = uri.queryParameters['i'] ?? '';
+          inviteCode.value = code;
+        } else {
+          final idx = link.lastIndexOf('=');
+          if (idx != -1) inviteCode.value = link.substring(idx + 1);
+        }
         setSuccess();
       },
       errorMessage: I18nKeys.processingFailed.tr,

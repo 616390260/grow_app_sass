@@ -1,3 +1,4 @@
+import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:do_task_project/app/core/constants/image_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -14,7 +15,7 @@ class BottomNavigationWidget extends StatelessWidget {
     required this.onTap,
   });
 
-  static const Color _activeColor = Color(0xFF427AF2);
+  static const Color _activeColor = AppTheme.primaryColor;
   static const Color _inactiveColor = Color(0xFFDDDDDD);
 
   @override

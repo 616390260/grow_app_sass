@@ -20,10 +20,10 @@ void main() async {
   // 初始化 GetStorage（默认与命名box）
   await GetStorage.init();
   await GetStorage.init('sign_in_calendar');
-  
+
   // 初始化全局依赖
   GlobalBinding().dependencies();
-  
+
   runApp(const MyApp());
 }
 
@@ -34,13 +34,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // 从URL参数获取并保存邀请码（在决定路由之前）
     _saveInviteCodeFromUrl();
-    
+
     // 根据认证状态确定初始路由
     final authService = Get.find<AuthService>();
-    final initialRoute = authService.needLogin ? Routes.login : AppPages.initial;
-    
+    final initialRoute = authService.needLogin
+        ? Routes.login
+        : AppPages.initial;
+
     return GetMaterialApp(
-      title: 'wsjob',
+      title: 'Taskgo',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
@@ -62,12 +64,15 @@ class MyApp extends StatelessWidget {
       },
     );
   }
-  
+
   /// 从URL参数获取邀请码并保存
   void _saveInviteCodeFromUrl() {
     try {
       // 从Get参数中获取邀请码（适用于所有平台）
-      final inviteCode = Get.parameters['i'] ?? Get.parameters['invite_code'] ?? Get.parameters['referral'];
+      final inviteCode =
+          Get.parameters['i'] ??
+          Get.parameters['invite_code'] ??
+          Get.parameters['referral'];
       if (inviteCode != null && inviteCode.isNotEmpty) {
         // 直接使用GetStorage保存邀请码，避免GetX依赖注入的时序问题
         final storage = GetStorage();

@@ -1,3 +1,4 @@
+import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
@@ -20,14 +21,14 @@ class PromotionBannerWidget extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFF4A90E2), Color(0xFF7BB3F0)],
+            colors: [AppTheme.primaryColor, AppTheme.primaryGradientMid],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF4A90E2).withValues(alpha: 0.3),
+              color: AppTheme.primaryColor.withValues(alpha: 0.3),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -9,9 +10,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/base/base_controller.dart';
+import '../../../core/utils/midnight_countdown_util.dart';
 import '../../../routes/app_pages.dart';
 import '../../../data/services/home_api_service.dart';
+import '../../../data/services/activity_api_service.dart';
+import '../../../data/services/configuration_api_service.dart';
 import '../../../data/models/home_info_model.dart';
+import '../../../data/models/activity_model.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../core/constants/app_constants.dart';
@@ -39,6 +44,92 @@ class HomeController extends BaseController {
   // 底部导航当前索引
   final currentTabIndex = 0.obs;
 
+
+  // 热门活动数据（从活动接口获取）
+  final Rx<ActivityAllData?> activityData = Rx<ActivityAllData?>(null);
+  final ActivityApiService _activityApiService = ActivityApiService();
+  final ConfigurationApiService _configurationApiService = ConfigurationApiService();
+
+  // 活动卡片展开状态
+  final RxSet<String> expandedCards = <String>{}.obs;
+  final RxInt claimingId = (-1).obs;
+
+  void toggleCard(String key) {
+    if (expandedCards.contains(key)) {
+      expandedCards.remove(key);
+    } else {
+      expandedCards.add(key);
+    }
+  }
+
+  bool isCardExpanded(String key) => expandedCards.contains(key);
+
+  Future<void> claim(int activityId) async {
+    claimingId.value = activityId;
+    await safeApiCall<int>(
+      () => _activityApiService.claim(activityId),
+      (earnedPoints) {
+        Get.snackbar(
+          I18nKeys.success.tr,
+          I18nKeys.activityEarnedPoints.tr.replaceAll('@points', '$earnedPoints'),
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: const Color(0xFF2E7D32),
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(12),
+          borderRadius: 12,
+          icon: const Icon(Icons.check_circle_rounded, color: Colors.white),
+        );
+        loadData();
+      },
+      onError: () {
+        Get.snackbar(
+          I18nKeys.error.tr,
+          I18nKeys.activityClaimFailed.tr,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: const Color(0xFFD32F2F),
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(12),
+          borderRadius: 12,
+          icon: const Icon(Icons.error_rounded, color: Colors.white),
+        );
+      },
+    );
+    claimingId.value = -1;
+  }
+
+  // 倒计时
+  static const int _timezoneConfigurationId = 24;
+  final RxString activityTimezone = ''.obs;
+  final RxString midnightCountdownText = '00:00:00'.obs;
+  Timer? _midnightTimer;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _tickMidnight();
+    _startTimer();
+  }
+
+  @override
+  void onClose() {
+    _stopTimer();
+    super.onClose();
+  }
+
+  void _startTimer() {
+    _midnightTimer ??=
+        Timer.periodic(const Duration(seconds: 1), (_) => _tickMidnight());
+  }
+
+  void _stopTimer() {
+    _midnightTimer?.cancel();
+    _midnightTimer = null;
+  }
+
+  void _tickMidnight() {
+    final d = MidnightCountdownUtil.untilMidnight(activityTimezone.value);
+    midnightCountdownText.value = MidnightCountdownUtil.formatHms(d);
+  }
 
   // 加载数据
   void loadData() {
@@ -77,6 +168,27 @@ class HomeController extends BaseController {
       errorMessage: I18nKeys.loadDataFailed.tr,
       // 显示加载状态
       showLoading: true,
+    );
+
+    // 加载活动数据（同步拉取时区配置）
+    safeApiCall<ActivityAllData>(
+      () async {
+        final cfgFuture =
+            _configurationApiService.getById(_timezoneConfigurationId);
+        final actFuture = _activityApiService.getAll();
+        try {
+          final cfg = await cfgFuture;
+          activityTimezone.value = cfg.content?.trim() ?? '';
+        } catch (_) {
+          activityTimezone.value = '';
+        }
+        _tickMidnight();
+        return await actFuture;
+      },
+      (result) {
+        activityData.value = result;
+      },
+      showLoading: false,
     );
   }
 
@@ -380,6 +492,15 @@ class HomeController extends BaseController {
   //     print(I18nKeys.callLinkEmpty.tr);
   //   }
   // }
+
+  // 活动点击处理：任务活动跳任务页，佣金/下属活动跳推广页
+  void onActivityTap(ActivityGroup group) {
+    if (group == activityData.value?.taskActivity) {
+      Get.toNamed(Routes.tasks);
+    } else {
+      Get.toNamed(Routes.promotion);
+    }
+  }
 
   bool get hasPopupShown => _popupShown;
   void markPopupShown() {

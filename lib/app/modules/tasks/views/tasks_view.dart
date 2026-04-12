@@ -16,7 +16,7 @@ class TasksView extends BaseView<TasksController> {
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return AppBar(
-      backgroundColor: const Color(0xFF477DF2),
+      backgroundColor: AppTheme.primaryColor,
       elevation: 0,
       title: Text(
         I18nKeys.taskCenter.tr,
@@ -37,7 +37,7 @@ class TasksView extends BaseView<TasksController> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           stops: [0.2, 0.4, 0.8],
-          colors: [Color(0xFF477DF2), Color(0xFF47ABF2), Color(0xFFF9F9F9)],
+          colors: [AppTheme.primaryColor, AppTheme.primaryGradientMid, Color(0xFFF9F9F9)],
         ),
       ),
       child: Stack(
@@ -129,12 +129,14 @@ class TasksView extends BaseView<TasksController> {
                               ImageAssets.homeDownload,
                               width: 14,
                               height: 14,
+                              color: AppTheme.primaryColor,
+                              colorBlendMode: BlendMode.srcIn,
                             ),
                             const SizedBox(width: 2),
                             Text(
                               I18nKeys.taskDownloadApp.tr,
                               style: const TextStyle(
-                                color: AppTheme.loginColor,
+                                color: AppTheme.primaryColor,
                                 fontSize: 12,
                               ),
                             ),

@@ -15,7 +15,7 @@ class ActivitiesView extends BaseView<ActivitiesController> {
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return LocalizedAppBar(
       titleKey: I18nKeys.myActivities,
-      backgroundColor: const Color(0xFF477DF2),
+      backgroundColor: AppTheme.primaryColor,
       foregroundColor: Colors.white,
       titleTextStyle: const TextStyle(
         color: Colors.white,
@@ -33,7 +33,7 @@ class ActivitiesView extends BaseView<ActivitiesController> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           stops: [0.0, 0.38, 0.58],
-          colors: [Color(0xFF477DF2), Color(0xFF47ABF2), Color(0xFFF9F9F9)],
+          colors: [AppTheme.primaryColor, AppTheme.primaryGradientMid, Color(0xFFF9F9F9)],
         ),
       ),
       child: Obx(() {
@@ -44,7 +44,7 @@ class ActivitiesView extends BaseView<ActivitiesController> {
         }
         return RefreshIndicator(
           onRefresh: () async => controller.loadData(),
-          color: const Color(0xFF477DF2),
+          color: AppTheme.primaryColor,
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
             child: Column(

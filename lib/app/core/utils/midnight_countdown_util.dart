@@ -44,10 +44,10 @@ class MidnightCountdownUtil {
         final nextMidnightUtc =
             todayMidnightUtc.add(const Duration(days: 1));
         final diff = nextMidnightUtc.difference(nowLocal);
-        debugPrint(
-          '[Countdown] offset=$offset  nowLocal=$nowLocal  '
-          'nextMidnight=$nextMidnightUtc  diff=$diff',
-        );
+        // debugPrint(
+        //   '[Countdown] offset=$offset  nowLocal=$nowLocal  '
+        //   'nextMidnight=$nextMidnightUtc  diff=$diff',
+        // );
         return diff.isNegative ? Duration.zero : diff;
       }
       // 2. 再尝试 IANA 名（如 Asia/Tokyo、Etc/UTC）
@@ -58,7 +58,7 @@ class MidnightCountdownUtil {
             tz.TZDateTime(loc, now.year, now.month, now.day)
                 .add(const Duration(days: 1));
         final diff = nextMidnight.difference(now);
-        debugPrint('[Countdown] IANA tz=$tzStr  now=$now  diff=$diff');
+        // debugPrint('[Countdown] IANA tz=$tzStr  now=$now  diff=$diff');
         return diff.isNegative ? Duration.zero : diff;
       } catch (e) {
         debugPrint('[Countdown] getLocation failed for "$tzStr": $e');

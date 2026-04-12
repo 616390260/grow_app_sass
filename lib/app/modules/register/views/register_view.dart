@@ -1,3 +1,4 @@
+import 'package:do_task_project/app/core/config/environment_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -17,14 +18,14 @@ class RegisterView extends BaseView<RegisterController> {
 
   @override
   Widget buildContent(BuildContext context) {
-    // 设置沉浸式状态栏
+    // 绿色背景顶部，使用浅色（白色）状态栏图标
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent, // 透明状态栏
-        statusBarIconBrightness: Brightness.dark, // 状态栏图标为深色
-        statusBarBrightness: Brightness.light, // iOS状态栏内容为深色
-        systemNavigationBarColor: Colors.white, // 导航栏背景色
-        systemNavigationBarIconBrightness: Brightness.dark, // 导航栏图标为深色
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
     
@@ -42,7 +43,7 @@ class RegisterView extends BaseView<RegisterController> {
 
             // 表单容器区域（覆盖层，带圆角和白色背景）
             Positioned(
-              top: 223, // 调整位置让表单覆盖在顶部区域上
+              top: 265,
               left: 0,
               right: 0,
               bottom: 0,
@@ -89,41 +90,61 @@ class RegisterView extends BaseView<RegisterController> {
 
   Widget _buildTopSection() {
     return SizedBox(
-      height: 283, // 添加状态栏高度
+      height: 320,
       child: Stack(
         children: [
-          // 背景图片，延伸到状态栏
+          // 绿色渐变背景
           Positioned.fill(
-            child: Image.asset(ImageAssets.loginBg, fit: BoxFit.cover),
-          ),
-          // 注册标题
-          Positioned(
-            top: 140,
-            left: 0,
-            right: 0,
-            child: Column(
-              children: [
-                _buildTitle(),
-                const SizedBox(height: 11),
-
-                // 蓝色装饰线
-                _buildDecorationLine(),
-              ],
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [AppTheme.primaryColor, AppTheme.primaryGradientMid],
+                ),
+              ),
             ),
           ),
-          // 状态栏区域的渐变遮罩（可选，增强状态栏图标可见性）
+          // 装饰圆圈（右上）
           Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: MediaQuery.of(Get.context!).padding.top + 20,
+            top: -40,
+            right: -40,
             child: Container(
+              width: 160,
+              height: 160,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.black.withValues(alpha: 0.1), Colors.transparent],
-                ),
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.07),
+              ),
+            ),
+          ),
+          // 装饰圆圈（左下）
+          Positioned(
+            bottom: 10,
+            left: -30,
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.05),
+              ),
+            ),
+          ),
+          // Logo + 平台名 + 注册标题
+          Positioned.fill(
+            child: SafeArea(
+              bottom: false,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 8),
+                  _buildLogoSection(),
+                  const SizedBox(height: 18),
+                  _buildTitle(),
+                  const SizedBox(height: 10),
+                  _buildDecorationLine(),
+                ],
               ),
             ),
           ),
@@ -132,13 +153,61 @@ class RegisterView extends BaseView<RegisterController> {
     );
   }
 
+  /// Logo 图标 + 平台名称
+  Widget _buildLogoSection() {
+    return Column(
+      children: [
+        Container(
+          width: 76,
+          height: 76,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 3),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.25),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+              BoxShadow(
+                color: AppTheme.primaryColor.withValues(alpha: 0.4),
+                blurRadius: 12,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: ClipOval(
+            child: Image.asset(ImageAssets.logo, fit: BoxFit.cover),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          EnvironmentConfig.instance.brandName,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+            letterSpacing: 2.0,
+            shadows: [
+              Shadow(
+                color: Color(0x40000000),
+                blurRadius: 8,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildTitle() {
     return Text(
       I18nKeys.register.tr,
       style: const TextStyle(
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: FontWeight.bold,
-        color: AppTheme.threeColor,
+        color: Colors.white,
       ),
     );
   }
@@ -146,9 +215,9 @@ class RegisterView extends BaseView<RegisterController> {
   Widget _buildDecorationLine() {
     return Container(
       width: 33,
-      height: 6,
+      height: 5,
       decoration: BoxDecoration(
-        color: const Color(0xFF4A90E2),
+        color: Colors.white.withValues(alpha: 0.75),
         borderRadius: BorderRadius.circular(22),
       ),
     );

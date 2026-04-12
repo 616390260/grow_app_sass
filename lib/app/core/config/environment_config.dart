@@ -42,8 +42,7 @@ class EnvironmentConfig {
         // return 'http://34.150.117.135:8083/'; // 测试环境API地址
         // return 'http://192.168.3.206:8083/'; // 测试环境API地址
         // return 'https://api.wacashsys.com/'; // 测试环境API地址
-        // return 'http://192.168.1.145:8083/'; // 本地测试A
-        // PI地址
+        // return 'http://192.168.1.145:8083/'; // 本地测试API地址
         return 'https://api.eiorjgoiej.com/'; // 线上API地址
       case EnvironmentType.release:
         // return 'http://47.243.76.157:8083/'; // 生产环境API地址
@@ -125,15 +124,21 @@ class EnvironmentConfig {
     }
   }
 
-  /// 获取应用名称
+  /// 应用基础名称（修改此处即可全局更改品牌名）
+  static const String _baseName = 'Taskgo';
+
+  /// 获取应用名称（含调试标记，用于内部日志/标题栏）
   String get appName {
     switch (currentEnvironment) {
       case EnvironmentType.debug:
-        return 'taskgo (Debug)'; // 调试版本应用名称
+        return '$_baseName (Debug)';
       case EnvironmentType.release:
-        return 'taskgo'; // 正式版本应用名称
+        return _baseName;
     }
   }
+
+  /// 品牌展示名称：不含调试标记，用于登录页等用户可见区域
+  String get brandName => _baseName;
 
   /// 获取应用版本后缀
   String get versionSuffix {

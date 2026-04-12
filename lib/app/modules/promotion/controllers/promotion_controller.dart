@@ -24,6 +24,10 @@ class PromotionController extends BaseController {
   final yesterdayCommission = 0.0.obs;
   final isReceived = false.obs;
 
+  // 复制状态
+  final isCopiedLink = false.obs;
+  final isCopiedCode = false.obs;
+
   // API服务
   final _promotionApiService = PromotionApiService();
 
@@ -88,15 +92,17 @@ class PromotionController extends BaseController {
   Future<void> copyInviteLink() async {
     try {
       await AppUtils.copyToClipboard(inviteUrl.value);
-    } catch (e) {
-    }
+      isCopiedLink.value = true;
+      Future.delayed(const Duration(seconds: 2), () => isCopiedLink.value = false);
+    } catch (e) {}
   }
 
   /// 复制邀请码
   Future<void> copyInviteCode() async {
     try {
       await AppUtils.copyToClipboard(inviteCode.value);
-    } catch (e) {
-    }
+      isCopiedCode.value = true;
+      Future.delayed(const Duration(seconds: 2), () => isCopiedCode.value = false);
+    } catch (e) {}
   }
 }

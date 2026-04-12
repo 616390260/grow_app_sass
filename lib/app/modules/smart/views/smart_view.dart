@@ -27,7 +27,7 @@ class SmartView extends BaseView<SmartController> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [AppTheme.primaryColor, Color(0xFF47ABF2), Color(0xFFF9F9F9)],
+          colors: [AppTheme.primaryColor, AppTheme.primaryGradientMid, Color(0xFFF9F9F9)],
           stops: [0.2, 0.4, 0.8],
         ),
       ),

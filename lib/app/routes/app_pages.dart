@@ -42,6 +42,9 @@ import '../modules/invite_friend/controllers/valid_users_controller.dart';
 import '../modules/message_center/bindings/message_center_binding.dart';
 import '../modules/message_center/views/message_center_view.dart';
 
+import '../modules/activities/bindings/activities_binding.dart';
+import '../modules/activities/views/activities_view.dart';
+
 part 'app_routes.dart';
 
 /// GetX 应用路由配置
@@ -174,6 +177,10 @@ class AppPages {
       page: () => const MessageCenterView(),
       binding: MessageCenterBinding(),
     ),
-   
+    GetPage(
+      name: _Paths.activities,
+      page: () => const ActivitiesView(),
+      binding: ActivitiesBinding(),
+    ),
   ];
 }

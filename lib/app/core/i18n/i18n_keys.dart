@@ -299,6 +299,10 @@ class I18nKeys {
   
   // Promotion Page
   static const cashReward = 'cash_reward';
+  static const inviteNewUserReward = 'invite_new_user_reward';
+  static const level1DirectActive = 'level_1_direct_active';
+  static const level2DirectActive = 'level_2_direct_active';
+  static const commissionRebate = 'commission_rebate';
   static const inviteNewUser = 'invite_new_user';
   static const inviteEarnings = 'invite_earnings';
   static const totalEarnings = 'total_earnings';

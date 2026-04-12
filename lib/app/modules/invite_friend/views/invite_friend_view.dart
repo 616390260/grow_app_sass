@@ -22,8 +22,8 @@ class InviteFriendView extends BaseView<InviteFriendController> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            const Color(0xFF477DF2), // 20% 位置
-            const Color(0xFF47ABF2), // 60% 位置
+            AppTheme.primaryColor, // 20% 位置
+            AppTheme.primaryGradientMid, // 60% 位置
             const Color(0xFFF9F9F9), // 100% 位置
           ],
           stops: const [0.0, 0.2, 0.6],
@@ -105,124 +105,9 @@ class InviteFriendView extends BaseView<InviteFriendController> {
                 ),
               ),
 
-              // 推荐链接部分
+              // 分享卡片（推荐链接 + 邀请码）
               const SizedBox(height: 15),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 18,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      I18nKeys.referralLink.tr,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppTheme.threeColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    Container(
-                      height: 48,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppTheme.primaryColor,
-                          width: 0.5,
-                        ),
-                        color: AppTheme.f9f9f9Color,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 15,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              controller.referralLink.value,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: AppTheme.threeColor,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Obx(
-                            () => InkWell(
-                              onTap: controller.copyReferralLink,
-                              child: Text(
-                                controller.isCopied.value
-                                    ? I18nKeys.copied.tr
-                                    : I18nKeys.copy.tr,
-                                style: TextStyle(
-                                  color: AppTheme.primaryColor,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // 分享说明
-                    const SizedBox(height: 17),
-                    Center(
-                      child: Text(
-                        I18nKeys.shareToSocialApps.tr,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppTheme.sixColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-
-                    // 社交媒体分享按钮
-                    const SizedBox(height: 17),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        GestureDetector(
-                          onTap: () => controller.shareToTelegram(),
-                          child: Image.asset(
-                            ImageAssets.inviteTelegram,
-                            width: 30,
-                            height: 30,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => controller.shareToWhatsApp(),
-                          child: Image.asset(
-                            ImageAssets.inviteWhatsapp,
-                            width: 30,
-                            height: 30,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => controller.shareToFacebook(),
-                          child: Image.asset(
-                            ImageAssets.inviteFacebook,
-                            width: 30,
-                            height: 30,
-                          ),
-                        ),
-                        // 可以添加更多分享按钮
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+              _buildShareCard(),
 
               // 奖励表格
               const SizedBox(height: 30),
@@ -315,6 +200,152 @@ class InviteFriendView extends BaseView<InviteFriendController> {
           ),
         ),
       ),
+    );
+  }
+
+  /// 分享卡片：推荐链接 + 邀请码 + 邀请收益入口
+  Widget _buildShareCard() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(15, 18, 15, 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── 推荐链接行 ──
+          Text(
+            I18nKeys.referralLink.tr,
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppTheme.sixColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          _buildCopyRow(
+            valueObs: controller.referralLink,
+            isCopiedObs: controller.isCopied,
+            onCopy: controller.copyReferralLink,
+          ),
+          const SizedBox(height: 14),
+
+          // ── 邀请码行 ──
+          Text(
+            I18nKeys.referralCode.tr,
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppTheme.sixColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          _buildCopyRow(
+            valueObs: controller.inviteCode,
+            isCopiedObs: controller.isCopiedCode,
+            onCopy: controller.copyInviteCode,
+          ),
+          const SizedBox(height: 16),
+
+          // ── 社交分享图标 ──
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildShareIcon(ImageAssets.inviteTelegram, controller.shareToTelegram),
+              const SizedBox(width: 24),
+              _buildShareIcon(ImageAssets.inviteWhatsapp, controller.shareToWhatsApp),
+              const SizedBox(width: 24),
+              _buildShareIcon(ImageAssets.inviteFacebook, controller.shareToFacebook),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // ── 邀请收益按钮 ──
+          GestureDetector(
+            onTap: controller.goToValidUsersPage,
+            child: Container(
+              width: double.infinity,
+              height: 46,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                '✦  ${I18nKeys.inviteEarnings.tr}  ✦',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.0,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 带 Copy 胶囊按钮的输入行
+  Widget _buildCopyRow({
+    required RxString valueObs,
+    required RxBool isCopiedObs,
+    required VoidCallback onCopy,
+  }) {
+    return Obx(() => Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppTheme.primaryColor.withValues(alpha: 0.07),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              valueObs.value,
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppTheme.threeColor,
+                fontWeight: FontWeight.w500,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: onCopy,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+              decoration: BoxDecoration(
+                color: isCopiedObs.value
+                    ? AppTheme.primaryColor.withValues(alpha: 0.6)
+                    : AppTheme.primaryColor,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                isCopiedObs.value ? I18nKeys.copied.tr : I18nKeys.copy.tr,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ));
+  }
+
+  /// 社交分享图标按钮
+  Widget _buildShareIcon(String asset, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Image.asset(asset, width: 34, height: 34),
     );
   }
 

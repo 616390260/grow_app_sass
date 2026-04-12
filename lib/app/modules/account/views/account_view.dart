@@ -22,7 +22,7 @@ class AccountView extends BaseView<AccountController> {
         statusBarBrightness: Brightness.light,
       ),
     );
-    final Color primary = const Color(0xFF4A90E2);
+    final Color primary = AppTheme.primaryColor;
     return Obx(
       () => SingleChildScrollView(
         // 为整个滚动视图设置白色背景，确保在暗黑模式下也不会变黑
@@ -34,15 +34,91 @@ class AccountView extends BaseView<AccountController> {
             Stack(
               clipBehavior: Clip.none,
               children: [
-                Container(
+                SizedBox(
                   height: 274,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(ImageAssets.mineBg),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: SafeArea(
+                  child: Stack(
+                    children: [
+                      // ── 主渐变背景（斜角三段色，避免单调）──
+                      Positioned.fill(
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                AppTheme.primaryColor,
+                                AppTheme.primaryGradientMid,
+                                AppTheme.primaryGradientMid2,
+                              ],
+                              stops: [0.0, 0.55, 1.0],
+                            ),
+                          ),
+                        ),
+                      ),
+                      // ── 右上角径向高光（Aurora 光晕）──
+                      Positioned(
+                        top: -70,
+                        right: -50,
+                        child: Container(
+                          width: 240,
+                          height: 240,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: RadialGradient(
+                              colors: [
+                                Colors.white.withValues(alpha: 0.18),
+                                Colors.transparent,
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      // ── 左下装饰圆（深度感）──
+                      Positioned(
+                        bottom: 20,
+                        left: -55,
+                        child: Container(
+                          width: 180,
+                          height: 180,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.06),
+                          ),
+                        ),
+                      ),
+                      // ── 右下小圆点 ──
+                      Positioned(
+                        bottom: -20,
+                        right: 40,
+                        child: Container(
+                          width: 90,
+                          height: 90,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.08),
+                          ),
+                        ),
+                      ),
+                      // ── 顶部中央小亮斑 ──
+                      Positioned(
+                        top: 10,
+                        left: MediaQuery.of(context).size.width * 0.35,
+                        child: Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: RadialGradient(
+                              colors: [
+                                Colors.white.withValues(alpha: 0.10),
+                                Colors.transparent,
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      // ── 内容层 ──
+                      SafeArea(
                     bottom: false,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -193,7 +269,9 @@ class AccountView extends BaseView<AccountController> {
                       ),
                     ),
                   ),
-                ),
+                ],       // Stack children
+              ),         // Stack
+            ),           // SizedBox
                 Positioned(
                   left: 15,
                   right: 15,
@@ -217,7 +295,7 @@ class AccountView extends BaseView<AccountController> {
             _buildActionItem(
               context,
               icon: Icons.assessment_outlined,
-              iconBg: const Color(0xFF427AF2),
+              iconBg: AppTheme.primaryColor,
               title: I18nKeys.incomeDetails.tr,
               imagePath: ImageAssets.mineIncome,
               onTap: controller.onIncomeDetailsTap,
