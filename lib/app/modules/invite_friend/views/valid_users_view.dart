@@ -52,8 +52,8 @@ class ValidUsersView extends BaseView<ValidUsersController> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    const Color(0xFF477DF2), // 20% 位置
-                    const Color(0xFF47ABF2), // 60% 位置
+                    const Color(0xFF4CAF50),
+                    const Color(0xFF81C784),
                     const Color(0xFFF9F9F9), // 100% 位置
                   ],
                   stops: const [0.4, 0.8, 1],

@@ -93,8 +93,8 @@ class VipDetailsView extends ScrollableBaseView<VipDetailsController> {
                 child: Obx(
                   () => LinearProgressIndicator(
                     value: controller.progressValue.value.clamp(0.0, 1.0),
-                    backgroundColor: const Color(0xFFD0DFFF),
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                    backgroundColor: const Color(0xFFC8E6C9),
+                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
                     minHeight: 4,
                     stopIndicatorRadius: 8,
                     borderRadius: BorderRadius.circular(2),

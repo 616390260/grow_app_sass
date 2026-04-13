@@ -22,7 +22,7 @@ class AccountView extends BaseView<AccountController> {
         statusBarBrightness: Brightness.light,
       ),
     );
-    final Color primary = const Color(0xFF4A90E2);
+    final Color primary = const Color(0xFF4CAF50);
     return Obx(
       () => SingleChildScrollView(
         // 为整个滚动视图设置白色背景，确保在暗黑模式下也不会变黑
@@ -36,21 +36,136 @@ class AccountView extends BaseView<AccountController> {
               children: [
                 Container(
                   height: 274,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(ImageAssets.mineBg),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: SafeArea(
-                    bottom: false,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 26,
+                  child: Stack(
+                    children: [
+                      // 深绿渐变底色
+                      Positioned.fill(
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color(0xFF1B5E20),
+                                Color(0xFF2E7D32),
+                                Color(0xFF43A047),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 9, top: 23),
+                      // 斜向光带
+                      Positioned(
+                        top: -50,
+                        left: -60,
+                        child: Transform.rotate(
+                          angle: -0.25,
+                          child: Container(
+                            width: 280,
+                            height: 180,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(90),
+                              gradient: LinearGradient(
+                                colors: [
+                                  const Color(0xFF66BB6A).withValues(alpha: 0.4),
+                                  const Color(0xFF81C784).withValues(alpha: 0.0),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // 右上角高亮
+                      Positioned(
+                        top: -15,
+                        right: -30,
+                        child: Container(
+                          width: 160,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(80),
+                            gradient: RadialGradient(
+                              center: Alignment.center,
+                              radius: 0.8,
+                              colors: [
+                                const Color(0xFFA5D6A7).withValues(alpha: 0.3),
+                                const Color(0xFF66BB6A).withValues(alpha: 0.0),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      // 线框装饰圆
+                      Positioned(
+                        bottom: 35,
+                        left: 15,
+                        child: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.18),
+                              width: 1.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                      // 玻璃质感装饰条
+                      Positioned(
+                        top: 40,
+                        right: -10,
+                        child: Transform.rotate(
+                          angle: 0.45,
+                          child: Container(
+                            width: 90,
+                            height: 26,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(13),
+                              color: Colors.white.withValues(alpha: 0.07),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.12),
+                                width: 1,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // 小圆点点缀
+                      Positioned(
+                        top: 65,
+                        right: 45,
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.08),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 55,
+                        right: 80,
+                        child: Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.22),
+                          ),
+                        ),
+                      ),
+                      // 内容层
+                      SafeArea(
+                        bottom: false,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 26,
+                          ),
+                          child: Container(
+                            margin: const EdgeInsets.only(left: 9, top: 23),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -192,6 +307,8 @@ class AccountView extends BaseView<AccountController> {
                       ),
                     ),
                   ),
+                    ],
+                  ),
                 ),
                 Positioned(
                   left: 15,
@@ -216,7 +333,7 @@ class AccountView extends BaseView<AccountController> {
             _buildActionItem(
               context,
               icon: Icons.assessment_outlined,
-              iconBg: const Color(0xFF427AF2),
+              iconBg: const Color(0xFF4CAF50),
               title: I18nKeys.incomeDetails.tr,
               imagePath: ImageAssets.mineIncome,
               onTap: controller.onIncomeDetailsTap,
@@ -243,7 +360,7 @@ class AccountView extends BaseView<AccountController> {
             _buildActionItem(
               context,
               icon: Icons.language,
-              iconBg: const Color(0xFF002F95),
+              iconBg: const Color(0xFF1B5E20),
               title: I18nKeys.languageSettings.tr,
               imagePath: ImageAssets.mineLanguage,
               onTap: controller.onLanguageSettingsTap,

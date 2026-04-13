@@ -20,14 +20,14 @@ class PromotionBannerWidget extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFF4A90E2), Color(0xFF7BB3F0)],
+            colors: [Color(0xFF4CAF50), Color(0xFF81C784)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF4A90E2).withValues(alpha: 0.3),
+              color: const Color(0xFF4CAF50).withValues(alpha: 0.3),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),

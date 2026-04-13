@@ -41,8 +41,8 @@ class HomeView extends BaseView<HomeController> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color(0xFF477DF2), // #477DF2
-            Color(0xFF47ABF2), // #47ABF2
+            Color(0xFF4CAF50),
+            Color(0xFF81C784),
             Color(0xFFF2F5FA), // #F2F5FA
           ],
           stops: [0.0, 0.2, 0.4],
@@ -123,7 +123,7 @@ class HomeView extends BaseView<HomeController> {
                     text: controller.vipLevel.value.isEmpty
                         ? 'VIP0'
                         : controller.vipLevel.value,
-                    textBackgroundColor: const Color(0xFFA7C3FF),
+                    textBackgroundColor: const Color(0xFFA5D6A7),
                   ),
                 ),
               ],
@@ -150,6 +150,7 @@ class HomeView extends BaseView<HomeController> {
                       ImageAssets.homeDownload,
                       width: 14,
                       height: 14,
+                      color: AppTheme.primaryColor,
                     ),
                     const SizedBox(width: 2),
                     Text(
@@ -275,7 +276,7 @@ class HomeView extends BaseView<HomeController> {
                   title: 'lucky_wheel'.tr,
                   iconPath: ImageAssets.homeWheel,
                   gradient: const LinearGradient(
-                    colors: [Color(0xFFCEDEFF), Color(0xFFF0F5FF)],
+                    colors: [Color(0xFFC8E6C9), Color(0xFFE8F5E9)],
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                   ),

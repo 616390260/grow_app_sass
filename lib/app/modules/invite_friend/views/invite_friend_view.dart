@@ -22,8 +22,8 @@ class InviteFriendView extends BaseView<InviteFriendController> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            const Color(0xFF477DF2), // 20% 位置
-            const Color(0xFF47ABF2), // 60% 位置
+            const Color(0xFF4CAF50),
+            const Color(0xFF81C784),
             const Color(0xFFF9F9F9), // 100% 位置
           ],
           stops: const [0.0, 0.2, 0.6],
@@ -346,7 +346,7 @@ class InviteFriendView extends BaseView<InviteFriendController> {
                 decoration: BoxDecoration(
                   color: rewardList[index].isCanReceived == true
                       ? const Color(0xFFFCEBC7)
-                      : const Color(0xFFE9F0FF),
+                      : const Color(0xFFE8F5E9),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 alignment: Alignment.center,

@@ -59,7 +59,7 @@ class BottomNavigationWidget extends StatelessWidget {
                 width: 20,
                 height: 20,
                 colorFilter: ColorFilter.mode(
-                  isSelected ? const Color(0xFF427AF2) : const Color(0xFFDDDDDD),
+                  isSelected ? const Color(0xFF4CAF50) : const Color(0xFFDDDDDD),
                   BlendMode.srcIn,
                 ),
               ),
@@ -71,7 +71,7 @@ class BottomNavigationWidget extends StatelessWidget {
                   fontSize: 10,
                   overflow: TextOverflow.ellipsis,
                   color: isSelected
-                      ? const Color(0xFF427AF2)
+                      ? const Color(0xFF4CAF50)
                       : const Color(0xFF999999),
                   fontWeight: FontWeight.w500,
                 ),

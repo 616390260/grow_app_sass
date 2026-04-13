@@ -50,7 +50,7 @@ class LanguageSettingsView extends BaseView<LanguageSettingsController> {
                   final selected = selectedLocale.languageCode == opt.locale.languageCode && 
                                   selectedLocale.countryCode == opt.locale.countryCode;
                   return selected
-                      ? const Icon(Icons.check_circle, color: Color(0xFF0B65FF), size: 20)
+                      ? const Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 20)
                       : const SizedBox.shrink();
                 }),
               ],

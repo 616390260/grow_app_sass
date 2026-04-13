@@ -41,12 +41,12 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
           // 状态栏占位空间 - 设置为蓝色背景以匹配顶部区域
           Container(
             height: MediaQuery.of(context).padding.top,
-            color: const Color(0xFF477DF2),
+            color: const Color(0xFF4CAF50),
           ),
           // 导航栏
           Container(
             height: 56, // 导航栏高度
-            color: const Color(0xFF477DF2), // 蓝色背景
+            color: const Color(0xFF4CAF50), // 蓝色背景
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               child: Row(
@@ -91,7 +91,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                       // 上方100px蓝色背景
                       Container(
                         height: 100,
-                        color: const Color(0xFF477DF2), // 蓝色背景
+                        color: const Color(0xFF4CAF50), // 蓝色背景
                       ),
                       // 下方灰色背景
                       Container(
@@ -470,7 +470,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CircularProgressIndicator(color: Colors.blue),
+                      CircularProgressIndicator(color: AppTheme.primaryColor),
                       const SizedBox(height: 8),
                       Text(
                         I18nKeys.videoLoading.tr,
@@ -705,7 +705,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
               width: double.infinity,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF47B9F2), Color(0xFF477DF2)],
+                  colors: [Color(0xFFA5D6A7), Color(0xFF4CAF50)],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                 ),
@@ -1003,8 +1003,8 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                                     ? null
                                     : const LinearGradient(
                                         colors: [
-                                          Color(0xFF47B9F2),
-                                          Color(0xFF477DF2),
+                                          Color(0xFFA5D6A7),
+                                          Color(0xFF4CAF50),
                                         ],
                                         begin: Alignment.centerLeft,
                                         end: Alignment.centerRight,

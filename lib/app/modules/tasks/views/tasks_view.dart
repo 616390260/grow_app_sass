@@ -16,7 +16,7 @@ class TasksView extends BaseView<TasksController> {
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return AppBar(
-      backgroundColor: const Color(0xFF477DF2),
+      backgroundColor: const Color(0xFF4CAF50),
       elevation: 0,
       title: Text(
         I18nKeys.taskCenter.tr,
@@ -37,7 +37,7 @@ class TasksView extends BaseView<TasksController> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           stops: [0.2, 0.4, 0.8],
-          colors: [Color(0xFF477DF2), Color(0xFF47ABF2), Color(0xFFF9F9F9)],
+          colors: [Color(0xFF4CAF50), Color(0xFF81C784), Color(0xFFF9F9F9)],
         ),
       ),
       child: Stack(

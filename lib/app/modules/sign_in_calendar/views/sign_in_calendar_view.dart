@@ -36,7 +36,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF477DF2), Color(0xFF47ABF2), Color(0xFFF9F9F9)],
+          colors: [Color(0xFF4CAF50), Color(0xFF81C784), Color(0xFFF9F9F9)],
           stops: [0.0, 0.4, 0.7],
         ),
       ),
@@ -320,7 +320,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
             decoration: BoxDecoration(
               gradient: !controller.isCheckedIn.value
                   ? const LinearGradient(
-                      colors: [Color(0xFF47B9F2), Color(0xFF477DF2 )],
+                      colors: [Color(0xFFA5D6A7), Color(0xFF4CAF50)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     )
@@ -333,7 +333,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
               boxShadow: !controller.isCheckedIn.value
                   ? [
                       BoxShadow(
-                        color: const Color(0xFF3D8BFF).withValues(alpha: 0.4),
+                        color: const Color(0xFF4CAF50).withValues(alpha: 0.4),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -393,11 +393,11 @@ class _DayCell extends StatelessWidget {
     final Color textColor;
 
     if (isToday||isChecked) {
-      bgColor = const Color(0xFF3D8BFF);
-      borderColor = const Color(0xFF3D8BFF);
+      bgColor = const Color(0xFF4CAF50);
+      borderColor = const Color(0xFF4CAF50);
       textColor = Colors.white;
     } else if (unChecked) {
-      bgColor = const Color(0xFF427AF2).withValues(alpha: 0.1);
+      bgColor = const Color(0xFF4CAF50).withValues(alpha: 0.1);
       borderColor = Colors.transparent;
       textColor = AppTheme.primaryColor;
     } else {
@@ -439,7 +439,7 @@ class _DayCell extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 8,
                           fontWeight: FontWeight.w500,
-                          color: Color(0xFF3D8BFF),
+                          color: Color(0xFF4CAF50),
                         ),
                       ),
                   )

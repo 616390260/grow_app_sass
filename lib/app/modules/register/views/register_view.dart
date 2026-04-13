@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_view.dart';
 import '../../../core/i18n/i18n_keys.dart';
-import '../../../core/constants/image_assets.dart';
 import '../../../core/theme/app_theme.dart';
 import '../controllers/register_controller.dart';
 
@@ -89,12 +88,139 @@ class RegisterView extends BaseView<RegisterController> {
 
   Widget _buildTopSection() {
     return SizedBox(
-      height: 283, // 添加状态栏高度
+      height: 283,
       child: Stack(
         children: [
-          // 背景图片，延伸到状态栏
+          // 深绿渐变底色
           Positioned.fill(
-            child: Image.asset(ImageAssets.loginBg, fit: BoxFit.cover),
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF1B5E20),
+                    Color(0xFF2E7D32),
+                    Color(0xFF43A047),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // 大面积斜向光带
+          Positioned(
+            top: -60,
+            left: -80,
+            child: Transform.rotate(
+              angle: -0.3,
+              child: Container(
+                width: 300,
+                height: 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color(0xFF66BB6A).withValues(alpha: 0.45),
+                      const Color(0xFF81C784).withValues(alpha: 0.0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // 右上角高亮椭圆
+          Positioned(
+            top: -20,
+            right: -40,
+            child: Container(
+              width: 180,
+              height: 140,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(90),
+                gradient: RadialGradient(
+                  center: Alignment.center,
+                  radius: 0.8,
+                  colors: [
+                    const Color(0xFFA5D6A7).withValues(alpha: 0.35),
+                    const Color(0xFF66BB6A).withValues(alpha: 0.0),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // 左下装饰圆
+          Positioned(
+            bottom: 40,
+            left: 20,
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  width: 1.5,
+                ),
+              ),
+            ),
+          ),
+          // 右侧小装饰圆
+          Positioned(
+            top: 70,
+            right: 50,
+            child: Container(
+              width: 35,
+              height: 35,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.1),
+              ),
+            ),
+          ),
+          // 玻璃质感装饰条
+          Positioned(
+            top: 45,
+            right: -15,
+            child: Transform.rotate(
+              angle: 0.5,
+              child: Container(
+                width: 100,
+                height: 30,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.white.withValues(alpha: 0.08),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    width: 1,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // 底部浅色点缀
+          Positioned(
+            bottom: 60,
+            right: 90,
+            child: Container(
+              width: 12,
+              height: 12,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.25),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 80,
+            left: 80,
+            child: Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.2),
+              ),
+            ),
           ),
           // 注册标题
           Positioned(
@@ -105,26 +231,8 @@ class RegisterView extends BaseView<RegisterController> {
               children: [
                 _buildTitle(),
                 const SizedBox(height: 11),
-
-                // 蓝色装饰线
                 _buildDecorationLine(),
               ],
-            ),
-          ),
-          // 状态栏区域的渐变遮罩（可选，增强状态栏图标可见性）
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: MediaQuery.of(Get.context!).padding.top + 20,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.black.withValues(alpha: 0.1), Colors.transparent],
-                ),
-              ),
             ),
           ),
         ],
@@ -138,7 +246,7 @@ class RegisterView extends BaseView<RegisterController> {
       style: const TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
-        color: AppTheme.threeColor,
+        color: Colors.white,
       ),
     );
   }
@@ -148,7 +256,7 @@ class RegisterView extends BaseView<RegisterController> {
       width: 33,
       height: 6,
       decoration: BoxDecoration(
-        color: const Color(0xFF4A90E2),
+        color: Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(22),
       ),
     );
@@ -341,7 +449,7 @@ class RegisterView extends BaseView<RegisterController> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
-            disabledBackgroundColor: const Color(0xFF0B65FF).withValues(alpha: 0.6),
+            disabledBackgroundColor: const Color(0xFF4CAF50).withValues(alpha: 0.6),
           ),
           child: isLoading
               ? const SizedBox(

@@ -19,7 +19,7 @@ class DecoratedTitle extends StatelessWidget {
       color: AppTheme.threeColor,
       fontWeight: FontWeight.w800,
     ),
-    this.underlineColor = const Color(0xFFDDE8FF),
+    this.underlineColor = const Color(0xFFC8E6C9),
     this.underlineWidth = 57,
     this.underlineHeight = 11,
     this.underlineBorderRadius = 5,

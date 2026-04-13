@@ -88,7 +88,7 @@ class ChangePasswordView extends BaseView<ChangePasswordController> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
-                borderSide: const BorderSide(color: Colors.blue, width: 1),
+                borderSide: const BorderSide(color: Color(0xFF4CAF50), width: 1),
               ),
               errorText: controller.oldPasswordError.value.isNotEmpty
                   ? controller.oldPasswordError.value
@@ -146,7 +146,7 @@ class ChangePasswordView extends BaseView<ChangePasswordController> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
-                borderSide: const BorderSide(color: Colors.blue, width: 1),
+                borderSide: const BorderSide(color: Color(0xFF4CAF50), width: 1),
               ),
               errorText: controller.newPasswordError.value.isNotEmpty
                   ? controller.newPasswordError.value

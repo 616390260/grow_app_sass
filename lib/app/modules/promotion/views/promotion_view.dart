@@ -16,7 +16,7 @@ class PromotionView extends BaseView<PromotionController> {
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return LocalizedAppBar(
       titleKey: I18nKeys.cashReward,
-      backgroundColor: Color(0xFF477DF2),
+      backgroundColor: Color(0xFF4CAF50),
       foregroundColor: Colors.white,
     );
   }
@@ -30,7 +30,7 @@ class PromotionView extends BaseView<PromotionController> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             stops: [0.0, 0.2, 0.3],
-            colors: [Color(0xFF477DF2), Color(0xFF47ABF2), Color(0xFFF9F9F9)],
+            colors: [Color(0xFF4CAF50), Color(0xFF81C784), Color(0xFFF9F9F9)],
           ),
         ),
         child: Column(
@@ -485,7 +485,7 @@ class PromotionView extends BaseView<PromotionController> {
                   decoration: BoxDecoration(
                     gradient: hasReceived
                         ? LinearGradient(
-                            colors: [Color(0xFF477DF2), Color(0xFF47B9F2)],
+                            colors: [Color(0xFF4CAF50), Color(0xFFA5D6A7)],
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
                           )
