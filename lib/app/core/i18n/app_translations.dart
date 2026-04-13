@@ -5,7 +5,7 @@ class AppTranslations extends Translations {
   Map<String, Map<String, String>> get keys => {
     'zh_CN': {
       // Message Center
-      "app_title": "WaCash",
+      "app_title": "WorkGo",
       "claim_reward_success": "领取奖励成功",
       'doNotRefresh': '不要刷新页面',
       "select_currency": "选择货币",
@@ -632,7 +632,7 @@ class AppTranslations extends Translations {
     },
 
     'en_US': {
-      'app_title': 'WaCash',
+      'app_title': 'WorkGo',
       // Version update related
       "version_update_found": "New version found",
       "version_update_available": "New version available",
@@ -1421,7 +1421,7 @@ class AppTranslations extends Translations {
       'no_message': 'कोई संदेश नहीं मिला',
       "expand": "पढ़ें",
       "collapse": "छुपाएं",
-      "app_title": "WaCash",
+      "app_title": "WorkGo",
       'commission_calculation_method': 'प्रति घंटा कमाई गणना तरीका',
       "download_app": "ऐप डाउनलोड करें",
       "task_download_app":
@@ -2128,7 +2128,7 @@ class AppTranslations extends Translations {
           "perlukan izin instalasi aplikasi dari sumber tidak dikenal untuk menginstal APK",
       "download_link_invalid": "Link unduh tidak valid",
       "already_received": "Sudah Diterima",
-      "app_title": "WaCash",
+      "app_title": "WorkGo",
       "claim_reward_success": "Pembesaran hadiah berhasil",
       'doNotRefresh': 'Jangan refresh halaman ini',
       "select_currency": "Pilih Mata Uang",
@@ -2823,7 +2823,7 @@ class AppTranslations extends Translations {
       "need_install_permission": "অবশ্যই ইনস্টল অনুমতি প্রয়োজন",
       "download_link_invalid": "ডাউনলোড লিঙ্ক無效",
       "already_received": "এই টাস্কটি আগে থেকে পেয়েছেন",
-      "app_title": "WaCash",
+      "app_title": "WorkGo",
       "claim_reward_success": "রিডিও প্রাপ্ত করা সফল হয়েছে",
       'doNotRefresh': 'দয়া করে পেজ রিফ্রেশ করবেন না',
       "select_currency": "валютা নির্বাচন করুন",
@@ -3511,7 +3511,7 @@ class AppTranslations extends Translations {
           "Precisa de permissão de instalação de aplicativos desconhecidos",
       "download_link_invalid": "Link de download inválido",
       "already_received": "Já recebeu",
-      "app_title": "WaCash",
+      "app_title": "WorkGo",
       "claim_reward_success": "Prêmio claimed successfully",
       'doNotRefresh': 'Não refaça a página',
       "select_currency": "Selecione a moeda",
@@ -4206,7 +4206,7 @@ class AppTranslations extends Translations {
           "Precisa de permissão de instalação de aplicativos desconhecidos",
       "download_link_invalid": "Link de download inválido",
       "already_received": "Ya ha recibido",
-      "app_title": "WaCash",
+      "app_title": "WorkGo",
       "claim_reward_success": "Premio claimed successfully",
       'doNotRefresh': 'No refresque la página',
       "select_currency": "Seleccione la moneda",

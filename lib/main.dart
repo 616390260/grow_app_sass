@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
         : AppPages.initial;
 
     return GetMaterialApp(
-      title: 'WaCash',
+      title: 'WorkGo',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,

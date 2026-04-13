@@ -120,7 +120,7 @@ flutter build apk --dart-define=BASE_URL=https://test-api.yourdomain.com/
 
 ### 生产阶段
 ```bash
-flutter build apk --dart-define=RELEASE_BASE_URL=https://api.wacashsys.com/
+flutter build apk --dart-define=RELEASE_BASE_URL=https://api.WorkGosys.com/
 ```
 
 ### Web版本打包
@@ -131,20 +131,20 @@ flutter build apk --dart-define=RELEASE_BASE_URL=https://api.wacashsys.com/
 flutter run -d chrome --dart-define=BASE_URL=https://dev-api.yourdomain.com/
 
 # 构建Web版本
-flutter build web --dart-define=BASE_URL=https://api.wacashsys.com/
+flutter build web --dart-define=BASE_URL=https://api.WorkGosys.com/
 ```
 
 #### Web版本特定配置
 ```bash
 # 为Web版本指定特定的域名
 flutter build web \
-  --dart-define=BASE_URL=https://api.wacashsys.com/ \
+  --dart-define=BASE_URL=https://api.WorkGosys.com/ \
   --web-renderer html \
-  --dart-define=WEB_BASE_URL=https://api.wacashsys.com/
+  --dart-define=WEB_BASE_URL=https://api.WorkGosys.com/
 
 # 优化构建（生产环境推荐）
 flutter build web \
-  --dart-define=RELEASE_BASE_URL=https://api.wacashsys.com/ \
+  --dart-define=RELEASE_BASE_URL=https://api.WorkGosys.com/ \
   --release \
   --dart-define=flutter.web.disableBuildTimestamp=true
 ```
@@ -156,7 +156,7 @@ flutter build web \
 BUILD_ENV=${1:-production}
 
 if [ "$BUILD_ENV" = "production" ]; then
-  DOMAIN="https://api.wacashsys.com/"
+  DOMAIN="https://api.WorkGosys.com/"
 elif [ "$BUILD_ENV" = "staging" ]; then
   DOMAIN="https://staging-api.yourdomain.com/"
 else
@@ -198,7 +198,7 @@ chmod +x build_web.sh
 #### 1. 构建Web包
 ```bash
 # 构建Web版本
-flutter build web --dart-define=BASE_URL=https://api.wacashsys.com/ --release
+flutter build web --dart-define=BASE_URL=https://api.WorkGosys.com/ --release
 
 # 构建完成后，文件在 build/web 目录下
 ```

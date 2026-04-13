@@ -1,7 +1,7 @@
 /// 应用常量
 class AppConstants {
   // 应用信息
-  static const String appName = 'WaCash';
+  static const String appName = 'WorkGo';
   static const String appVersion = '1.0.0';
   static const String appDescription = 'I18nKeys.appDescription'; // 使用国际化键
 
