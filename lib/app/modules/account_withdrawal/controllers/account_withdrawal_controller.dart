@@ -24,7 +24,7 @@ class AccountWithdrawalController extends BaseController {
   RxString loginPassword = ''.obs;
   // TRX 钱包地址
   RxString payCard = ''.obs;
-  
+
   // 可用余额（从用户信息获取，响应式变量）
   RxInt availableBalance = 0.obs;
   RxInt maxAmount = 0.obs;
@@ -40,12 +40,22 @@ class AccountWithdrawalController extends BaseController {
 
   // 国家列表（响应式）
   RxList<CountryModel> countries = <CountryModel>[].obs;
-  Rx<CountryModel> selectedCountry = CountryModel(id: 0, payName: '', status: '', merchantNo: '', delFlag: '', recommend: '').obs;
+  Rx<CountryModel> selectedCountry = CountryModel(
+    id: 0,
+    payName: '',
+    status: '',
+    merchantNo: '',
+    delFlag: '',
+    recommend: '',
+  ).obs;
 
   // API服务实例
   final CountryApiService _countryApiService = CountryApiService();
   final WithdrawalApiService _withdrawalApiService = WithdrawalApiService();
   final HomeApiService _homeApiService = HomeApiService();
+
+  /// 当前选中是否为印度（金流国家 id = 12）
+  bool get isIndia => selectedCountry.value.id == 12;
 
   @override
   void onInit() {
@@ -67,7 +77,8 @@ class AccountWithdrawalController extends BaseController {
       (HomeInfoModel homeInfo) {
         // 从HomeInfoModel中获取账户积分作为可用余额
         availableBalance.value = (homeInfo.accountPoints?.toInt() ?? 0);
-        maxAmount.value = availableBalance.value - (selectedCountry.value.fee?.toInt()??0);
+        maxAmount.value =
+            availableBalance.value - (selectedCountry.value.fee?.toInt() ?? 0);
         print('获取用户余额成功: ${availableBalance.value}');
         setSuccess();
       },
@@ -117,7 +128,14 @@ class AccountWithdrawalController extends BaseController {
           // 发生异常时确保有默认国家
           if (countries.isEmpty) {
             countries.assignAll([
-              CountryModel(id: 0, payName: I18nKeys.defaultCountry.tr, status: '', merchantNo: '', delFlag: '', recommend: ''),
+              CountryModel(
+                id: 0,
+                payName: I18nKeys.defaultCountry.tr,
+                status: '',
+                merchantNo: '',
+                delFlag: '',
+                recommend: '',
+              ),
             ]);
             selectedCountry.value = countries.first;
           }
@@ -133,7 +151,14 @@ class AccountWithdrawalController extends BaseController {
         // 确保有默认数据
         if (countries.isEmpty) {
           countries.assignAll([
-            CountryModel(id: 0, payName: I18nKeys.defaultCountry.tr, status: '', merchantNo: '', delFlag: '', recommend: ''),
+            CountryModel(
+              id: 0,
+              payName: I18nKeys.defaultCountry.tr,
+              status: '',
+              merchantNo: '',
+              delFlag: '',
+              recommend: '',
+            ),
           ]);
           selectedCountry.value = countries.first;
         }
@@ -145,9 +170,12 @@ class AccountWithdrawalController extends BaseController {
   void selectCountry(CountryModel country) {
     selectedCountry.value = country;
     // 选择国家变化时更新最大提现金额
-    maxAmount.value = availableBalance.value - (selectedCountry.value.fee?.toInt()??0);
-    minWithdrawalAmount.value = selectedCountry.value.minAmount?.toInt()??0;
-    debugPrint('选择国家: ${selectedCountry.value.payName}, 最大提现金额: $maxAmount , min: ${minWithdrawalAmount.value}, fee: ${selectedCountry.value.fee?.toInt()??0}');
+    maxAmount.value =
+        availableBalance.value - (selectedCountry.value.fee?.toInt() ?? 0);
+    minWithdrawalAmount.value = selectedCountry.value.minAmount?.toInt() ?? 0;
+    debugPrint(
+      '选择国家: ${selectedCountry.value.payName}, 最大提现金额: $maxAmount , min: ${minWithdrawalAmount.value}, fee: ${selectedCountry.value.fee?.toInt() ?? 0}',
+    );
     withdrawAmount.value = '';
   }
 
@@ -189,7 +217,7 @@ class AccountWithdrawalController extends BaseController {
     try {
       double amount = double.parse(withdrawAmount.value);
       // 使用配置中的最大提现金额（如果有），否则使用实际可用余额
-      
+
       return amount >= minWithdrawalAmount.value && amount <= maxAmount.value;
     } catch (e) {
       return false;
@@ -236,9 +264,12 @@ class AccountWithdrawalController extends BaseController {
     }
 
     // 构建提现请求参数（TRX 模式用 payCard 作为 account 字段）
-    final requestData = {
+    // 印度：bankId 传用户手输的 IFSC；其他国家：传列表选中的银行数字 id
+    final Object bankIdValue =
+        (!isTrx && isIndia) ? bankName.value : bankCode.value;
+    final requestData = <String, dynamic>{
       "account": isTrx ? payCard.value : accountNumber.value,
-      "bankId": bankCode.value,
+      "bankId": bankIdValue,
       "phone": phone.value,
       "goldenFlowId": selectedCountry.value.id,
       "loginPassword": loginPassword.value,
@@ -270,7 +301,7 @@ class AccountWithdrawalController extends BaseController {
             I18nKeys.withdrawSuccess.tr,
             snackPosition: SnackPosition.TOP,
           );
-          
+
           // 短暂延迟后返回上一页，确保用户能看到成功提示
           Future.delayed(const Duration(seconds: 1), () {
             if (Get.key.currentState!.canPop()) {
@@ -293,6 +324,4 @@ class AccountWithdrawalController extends BaseController {
       },
     );
   }
-
-  
 }

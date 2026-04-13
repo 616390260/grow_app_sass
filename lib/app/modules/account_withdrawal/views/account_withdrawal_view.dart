@@ -98,8 +98,7 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
           spacing: 20,
           runSpacing: 10,
           children: controller.countries.map((country) {
-            bool isSelected =
-                controller.selectedCountry.value == country;
+            bool isSelected = controller.selectedCountry.value == country;
             return ElevatedButton(
               onPressed: () {
                 controller.selectCountry(country);
@@ -161,35 +160,48 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
                   children: [
                     Text(
                       controller.selectedCountry.value.payName,
-                      style: TextStyle(fontSize: 14, color: AppTheme.threeColor),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppTheme.threeColor,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Text(
                       controller.bankName.value,
                       style: TextStyle(fontSize: 14, color: AppTheme.nineColor),
                     ),
-                  ]
+                  ],
                 );
               }),
               GestureDetector(
                 onTap: () async {
                   // 导航到支付方式页面并等待返回结果
-                  dynamic result = await Get.toNamed(Routes.paymentMethod, arguments: {
-                    'country': controller.selectedCountry.value.payName,
-                    'countryId': controller.selectedCountry.value.id,
-                    'minAmount': (controller.selectedCountry.value.minAmount ?? 0).toStringAsFixed(0),
-                    'dailyLimit': controller.withdrawalSetting.value.oneDayNum?.toString() ?? '2',
-                  });
-                  
+                  dynamic result = await Get.toNamed(
+                    Routes.paymentMethod,
+                    arguments: {
+                      'country': controller.selectedCountry.value.payName,
+                      'countryId': controller.selectedCountry.value.id,
+                      'minAmount':
+                          (controller.selectedCountry.value.minAmount ?? 0)
+                              .toStringAsFixed(0),
+                      'dailyLimit':
+                          controller.withdrawalSetting.value.oneDayNum
+                              ?.toString() ??
+                          '2',
+                    },
+                  );
+
                   // 处理返回的数据
                   if (result != null) {
                     print('收到支付方式页面返回数据: $result');
                     controller.bankName.value = result['bankName'] ?? '';
                     controller.phone.value = result['phone'] ?? '';
                     controller.bankCode.value = result['bankCode'] ?? 0;
-                    controller.accountNumber.value = result['accountNumber'] ?? '';
+                    controller.accountNumber.value =
+                        result['accountNumber'] ?? '';
                     controller.accountName.value = result['accountName'] ?? '';
-                    controller.loginPassword.value = result['loginPassword'] ?? '';
+                    controller.loginPassword.value =
+                        result['loginPassword'] ?? '';
                     controller.payCard.value = result['payCard'] ?? '';
                   }
                 },
@@ -227,14 +239,16 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
               ),
             ),
             const SizedBox(width: 10),
-            Obx(() => Text(
-              '${I18nKeys.withdrawFee.tr}${controller.selectedCountry.value.fee?.toStringAsFixed(0)}${I18nKeys.points.tr}',
-              style: TextStyle(
-                fontSize: 14,
-                color: AppTheme.ff6a6aColor,
-                fontWeight: FontWeight.w500,
+            Obx(
+              () => Text(
+                '${I18nKeys.withdrawFee.tr}${controller.selectedCountry.value.fee?.toStringAsFixed(0)}${I18nKeys.points.tr}',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppTheme.ff6a6aColor,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            )),
+            ),
           ],
         ),
         const SizedBox(height: 12),
@@ -247,22 +261,27 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
+            textBaseline: TextBaseline.alphabetic,
             children: [
-              
               Expanded(
-                child: Obx(() => TextField(
-                  controller: TextEditingController(),
-                  onChanged: controller.setWithdrawAmount,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.zero,
-                    hintText: '${I18nKeys.maxWithdraw.tr}${controller.maxAmount.value.toStringAsFixed(0)}',
-                    hintStyle: TextStyle(fontSize: 14, color: AppTheme.nineColor),
+                child: Obx(
+                  () => TextField(
+                    controller: TextEditingController(),
+                    onChanged: controller.setWithdrawAmount,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.zero,
+                      hintText:
+                          '${I18nKeys.maxWithdraw.tr}${controller.maxAmount.value.toStringAsFixed(0)}',
+                      hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: AppTheme.nineColor,
+                      ),
+                    ),
+                    style: TextStyle(fontSize: 14, color: AppTheme.threeColor),
                   ),
-                  style: TextStyle(fontSize: 14, color: AppTheme.threeColor),
-                )),
+                ),
               ),
             ],
           ),
@@ -276,16 +295,20 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
             color: AppTheme.nineColor,
           ),
         ),
-        Obx(() => (controller.withdrawAmount.value.toString().isEmpty || controller.withdrawAmount.value == 0)
-          ? SizedBox()
-          : Text(
-              '${controller.withdrawAmount.value} ${I18nKeys.pointsLabel.tr}=${(double.parse(controller.withdrawAmount.value.toString()) * (controller.selectedCountry.value.exchangeRate ?? 1.0)).toStringAsFixed(2)} ${ controller.selectedCountry.value.code}',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: AppTheme.threeColor,
-              ),
-            ))
+        Obx(
+          () =>
+              (controller.withdrawAmount.value.toString().isEmpty ||
+                  controller.withdrawAmount.value == 0)
+              ? SizedBox()
+              : Text(
+                  '${controller.withdrawAmount.value} ${I18nKeys.pointsLabel.tr}=${(double.parse(controller.withdrawAmount.value.toString()) * (controller.selectedCountry.value.exchangeRate ?? 1.0)).toStringAsFixed(2)} ${controller.selectedCountry.value.code}',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: AppTheme.threeColor,
+                  ),
+                ),
+        ),
       ],
     );
   }
@@ -324,11 +347,17 @@ class AccountWithdrawalView extends BaseView<AccountWithdrawalController> {
           ),
         ),
         const SizedBox(height: 7),
-        Obx(() => Text(
-          '${I18nKeys.minWithdrawAmount.trArgs([(controller.selectedCountry.value.minAmount??0).toStringAsFixed(0)])}'
-          '\n${I18nKeys.dailyWithdrawLimit.trArgs([controller.withdrawalSetting.value.oneDayNum?.toString() ?? '2'])}\n${I18nKeys.withdrawTips.tr}',
-          style: TextStyle(fontSize: 13, color: AppTheme.sixColor,fontWeight: FontWeight.w500),
-        )),
+        Obx(
+          () => Text(
+            '${I18nKeys.minWithdrawAmount.trArgs([(controller.selectedCountry.value.minAmount ?? 0).toStringAsFixed(0)])}'
+            '\n${I18nKeys.dailyWithdrawLimit.trArgs([controller.withdrawalSetting.value.oneDayNum?.toString() ?? '2'])}\n${I18nKeys.withdrawTips.tr}',
+            style: TextStyle(
+              fontSize: 13,
+              color: AppTheme.sixColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
       ],
     );
   }
