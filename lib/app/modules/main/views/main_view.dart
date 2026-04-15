@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_view.dart';
 import '../../../core/services/tenant_service.dart';
+import '../../../core/theme/app_theme.dart';
 import '../controllers/main_controller.dart';
 import '../../home/views/widgets/bottom_navigation_widget.dart';
 import '../../home/views/home_view.dart';
@@ -54,9 +55,11 @@ class MainView extends BaseView<MainController> {
 
   @override
   Widget? buildBottomNavigationBar(BuildContext context) {
-    final isDarkGold = TenantService.to.homeTemplateCode == 'home_dark_gold';
+    final isDarkGoldHome = TenantService.to.homeTemplateCode == 'home_dark_gold';
+    final isDarkLogin = TenantService.to.loginTemplateCode == 'login_dark_gold'
+        && TenantService.to.brandColor == null;
     return Obx(() {
-      if (!isDarkGold) {
+      if (!isDarkGoldHome) {
         return BottomNavigationWidget(
           currentIndex: controller.currentTabIndex.value,
           onTap: controller.onTabChanged,
@@ -65,21 +68,26 @@ class MainView extends BaseView<MainController> {
       final nav = BottomNavigationWidget(
         currentIndex: controller.currentTabIndex.value,
         onTap: controller.onTabChanged,
-        transparent: true,
-        activeColor: const Color(0xFFE8C779),
-        inactiveIconColor: const Color(0xFF888888),
-        inactiveLabelColor: const Color(0xFF999999),
+        transparent: isDarkLogin,
+        activeColor: AppTheme.primaryColor,
+        inactiveIconColor: isDarkLogin ? const Color(0xFF888888) : null,
+        inactiveLabelColor: isDarkLogin ? const Color(0xFF999999) : null,
       );
-      // 黑金模式：毛玻璃底部导航
+      if (!isDarkLogin) return nav;
       return ClipRRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
           child: Container(
             height: 56,
             decoration: BoxDecoration(
-              color: const Color(0xFF1E1E1E).withValues(alpha: 0.75),
-              border: const Border(
-                top: BorderSide(color: Color(0x33E8C779), width: 0.5),
+              color: Color.lerp(
+                const Color(0xFF1E1E1E), AppTheme.primaryColor, 0.06,
+              )!.withValues(alpha: 0.75),
+              border: Border(
+                top: BorderSide(
+                  color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                  width: 0.5,
+                ),
               ),
             ),
             child: nav,

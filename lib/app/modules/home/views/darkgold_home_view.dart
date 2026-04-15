@@ -1,9 +1,8 @@
-import 'dart:ui';
-
 import 'package:do_task_project/app/core/base/base_view.dart';
 import 'package:do_task_project/app/core/constants/image_assets.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:do_task_project/app/core/services/tenant_service.dart';
+import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:do_task_project/app/data/models/activity_model.dart';
 import 'package:do_task_project/app/data/models/home_info_model.dart';
 import 'package:do_task_project/app/modules/home/controllers/home_controller.dart';
@@ -16,74 +15,171 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:html/parser.dart' as htmlParser;
 
-/// 黑金风格首页 —— 深色背景 + 金色强调
+/// 深色/浅色自适应首页
+///
+/// 当 loginTemplateCode == 'login_dark_gold' 时启用深色模式（黑底 + 主题色强调），
+/// 其他登录模板下自动切换为浅色模式（白底 + 主题色强调），布局结构保持一致。
 class DarkGoldHomeView extends BaseView<HomeController> {
   const DarkGoldHomeView({super.key});
 
-  // ── 颜色常量 ──────────
-  static const _bgDark = Color(0xFF1E1E1E);
-  static const _bgCard = Color(0xFF2A2A2A);
-  static const _bgCardLight = Color(0xFF333333);
-  static const _gold = Color(0xFFE8C779);
-  static const _goldDark = Color(0xFFBFA05A);
-  static const _goldLight = Color(0xFFF5DEAA);
-  static const _borderSubtle = Color(0xFF3A3A3A);
-  static const _textLight = Color(0xFFEEEEEE);
+  // ── 深色/浅色模式判断 ──────────
+  /** 仅 login_dark_gold 且未配置 brandColor 时才启用深色背景 */
+  static bool get _isDarkMode =>
+      TenantService.to.loginTemplateCode == 'login_dark_gold' &&
+      TenantService.to.brandColor == null;
+
+  // ── 基础底色 ──────────
+  static Color get _bgDark => _isDarkMode
+      ? Color.lerp(const Color(0xFF1E1E1E), _accent, 0.06)!
+      : AppTheme.primaryColor;
+  static Color get _bgCard => _isDarkMode
+      ? Color.lerp(const Color(0xFF2A2A2A), _accent, 0.06)!
+      : Colors.white;
+  static Color get _textLight => _isDarkMode
+      ? const Color(0xFFEEEEEE)
+      : const Color(0xFF333333);
   static const _textGray = Color(0xFF999999);
-  static const _textMuted = Color(0xFF777777);
+  static Color get _iconWellBlack => _isDarkMode
+      ? Color.lerp(const Color(0xFF0A0A08), _accent, 0.04)!
+      : const Color(0xFFF0F0F0);
+
+  // ── 动态主题色（基于 AppTheme.primaryColor 派生） ──────────
+
+  /** 主强调色 */
+  static Color get _accent => AppTheme.primaryColor;
+
+  /** 深色强调（用于渐变暗端、边框等） */
+  static Color get _accentDark => AppTheme.primaryDark;
+
+  /** 亮色强调（用于渐变亮端、高光） */
+  static Color get _accentLight => AppTheme.primaryGradientLight;
+
+  /** 中间色（用于渐变过渡） */
+  static Color get _accentMid => AppTheme.primaryGradientMid;
+
+  // ── 倒计时条 ──────────
+  static Color get _countdownBarTop => _isDarkMode
+      ? Color.lerp(const Color(0xFF1A1A1A), _accent, 0.08)!
+      : AppTheme.primarySurface;
+  static Color get _countdownBarMid => _isDarkMode
+      ? Color.lerp(const Color(0xFF2D2D2D), _accent, 0.10)!
+      : AppTheme.primaryLightest;
+  static Color get _countdownBarBot => _isDarkMode
+      ? Color.lerp(const Color(0xFF151515), _accent, 0.06)!
+      : AppTheme.primarySurface;
+  static Color get _countdownBorderBronze => _isDarkMode
+      ? Color.lerp(const Color(0xFF636363), _accent, 0.35)!
+      : AppTheme.primaryBorder;
+  static Color get _countdownTextTan => _isDarkMode
+      ? Color.lerp(const Color(0xFFDBDBDB), _accent, 0.40)!
+      : AppTheme.primaryDark;
+  static Color get _digitSegmentStroke =>
+      _countdownTextTan.withValues(alpha: _isDarkMode ? 0.15 : 0.20);
+
+  // ── 活动卡片 ──────────
+  static Color get _activityCardLt => _isDarkMode
+      ? Color.lerp(const Color(0xFF3B3B3B), _accent, 0.15)!
+      : Colors.white;
+  static Color get _activityCardMd => _isDarkMode
+      ? Color.lerp(const Color(0xFF2A2A2A), _accent, 0.10)!
+      : const Color(0xFFFAFAFA);
+  static Color get _activityCardDk => _isDarkMode
+      ? Color.lerp(const Color(0xFF141414), _accent, 0.06)!
+      : const Color(0xFFF5F5F5);
+  static Color get _activityCardStroke => _isDarkMode
+      ? _accent.withValues(alpha: 0.33)
+      : AppTheme.primaryBorder;
+  static Color get _activityTitleGold => _isDarkMode
+      ? HSLColor.fromColor(_accent).withLightness(0.52).withSaturation(0.72).toColor()
+      : AppTheme.primaryDark;
+  static Color get _activitySubtitleGold => _isDarkMode
+      ? HSLColor.fromColor(_accent).withLightness(0.42).withSaturation(0.25).toColor()
+      : const Color(0xFF666666);
+  static Color get _navCircleDark => _isDarkMode
+      ? Color.lerp(const Color(0xFF4A4A4A), _accent, 0.25)!
+      : AppTheme.primarySurface;
+  static Color get _navCircleDeep => _isDarkMode
+      ? Color.lerp(const Color(0xFF2E2E2E), _accent, 0.18)!
+      : AppTheme.primaryLightest;
+
+  /** 倒计时数字样式 */
+  static TextStyle get _countdownDigitStyle => TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w700,
+    color: _countdownTextTan,
+    letterSpacing: 0.5,
+    fontFeatures: const [FontFeature.tabularFigures()],
+  );
 
   @override
   bool get enableRefresh => true;
 
   @override
-  Color? get backgroundColor => _bgDark;
+  Color? get backgroundColor => _isDarkMode ? _bgDark : null;
 
   @override
   Widget buildContent(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
+        statusBarIconBrightness: _isDarkMode ? Brightness.light : Brightness.dark,
+        statusBarBrightness: _isDarkMode ? Brightness.dark : Brightness.light,
       ),
     );
 
+    final scrollContent = SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Column(
+        children: [
+          Obx(() {
+            final pa = controller.popupAnnouncement.value;
+            if (pa != null && !controller.hasPopupShown) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _showPopup(context, pa);
+                controller.markPopupShown();
+              });
+            }
+            return const SizedBox.shrink();
+          }),
+          SizedBox(height: MediaQuery.of(context).padding.top),
+          _buildHeroCard(),
+          const SizedBox(height: 14),
+          _buildFeatureButtons(),
+          Obx(() {
+            return BannerCarouselWidget(
+              bannerImages: controller.announcements
+                  .map((b) => b.image ?? '')
+                  .where((img) => img.isNotEmpty)
+                  .toList(),
+              onBannerTap: (index) => controller.onBannerTap(index),
+            );
+          }),
+          if (TenantService.to.activityEnabled) _buildCompactCountdown(),
+          if (TenantService.to.activityEnabled) const SizedBox(height: 10),
+          if (TenantService.to.activityEnabled) _buildHotActivities(),
+          const SizedBox(height: 75),
+        ],
+      ),
+    );
+
+    if (_isDarkMode) {
+      return Container(color: _bgDark, child: scrollContent);
+    }
+
     return Container(
-      color: _bgDark,
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Column(
-          children: [
-            Obx(() {
-              final pa = controller.popupAnnouncement.value;
-              if (pa != null && !controller.hasPopupShown) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _showPopup(context, pa);
-                  controller.markPopupShown();
-                });
-              }
-              return const SizedBox.shrink();
-            }),
-            SizedBox(height: MediaQuery.of(context).padding.top),
-            _buildHeroCard(),
-            const SizedBox(height: 14),
-            _buildFeatureButtons(),
-            Obx(() {
-              return BannerCarouselWidget(
-                bannerImages: controller.announcements
-                    .map((b) => b.image ?? '')
-                    .where((img) => img.isNotEmpty)
-                    .toList(),
-                onBannerTap: (index) => controller.onBannerTap(index),
-              );
-            }),
-            if (TenantService.to.activityEnabled) _buildCompactCountdown(),
-            if (TenantService.to.activityEnabled) const SizedBox(height: 10),
-            if (TenantService.to.activityEnabled) _buildHotActivities(),
-            const SizedBox(height: 75),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppTheme.primaryColor,
+            AppTheme.primaryGradientMid,
+            AppTheme.primaryLightest,
           ],
+          stops: const [0.0, 0.2, 0.4],
         ),
       ),
+      child: scrollContent,
     );
   }
 
@@ -97,14 +193,14 @@ class DarkGoldHomeView extends BaseView<HomeController> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
-          gradient: const LinearGradient(
-            colors: [_goldDark, _gold, _goldLight, _gold, _goldDark],
+          gradient: LinearGradient(
+            colors: [_accentDark, _accent, _accentLight, _accent, _accentDark],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           boxShadow: [
             BoxShadow(
-              color: _gold.withValues(alpha: 0.12),
+              color: _accent.withValues(alpha: 0.12),
               blurRadius: 20,
               spreadRadius: 1,
               offset: const Offset(0, 4),
@@ -152,7 +248,7 @@ class DarkGoldHomeView extends BaseView<HomeController> {
             children: [
               Text(
                 TenantService.to.appName,
-                style: const TextStyle(
+                style: TextStyle(
                   color: _textLight, fontSize: 16, fontWeight: FontWeight.w700,
                 ),
               ),
@@ -161,8 +257,8 @@ class DarkGoldHomeView extends BaseView<HomeController> {
                 Obx(() => VipBadge(
                   text: controller.vipLevel.value.isEmpty
                       ? 'VIP0' : controller.vipLevel.value,
-                  badgeColor: _gold,
-                  textBackgroundColor: _goldDark,
+                  badgeColor: _accent,
+                  textBackgroundColor: _accentDark,
                 )),
               ],
             ],
@@ -176,14 +272,14 @@ class DarkGoldHomeView extends BaseView<HomeController> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                gradient: const LinearGradient(
-                  colors: [_goldDark, _gold, _goldLight, _gold, _goldDark],
+                gradient: LinearGradient(
+                  colors: [_accentDark, _accent, _accentLight, _accent, _accentDark],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: _gold.withValues(alpha: 0.25),
+                    color: _accent.withValues(alpha: 0.25),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -192,13 +288,14 @@ class DarkGoldHomeView extends BaseView<HomeController> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.download_rounded, size: 16,
-                    color: Color(0xFF2A2A2A)),
+                  Icon(Icons.download_rounded, size: 16,
+                    color: _isDarkMode ? const Color(0xFF2A2A2A) : Colors.white),
                   const SizedBox(width: 6),
                   Text(
                     I18nKeys.downloadApp.tr,
-                    style: const TextStyle(
-                      color: Color(0xFF2A2A2A), fontSize: 14,
+                    style: TextStyle(
+                      color: _isDarkMode ? const Color(0xFF2A2A2A) : Colors.white,
+                      fontSize: 14,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -233,8 +330,8 @@ class DarkGoldHomeView extends BaseView<HomeController> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(value, style: const TextStyle(
-          fontSize: 26, fontWeight: FontWeight.w800, color: _gold,
+        Text(value, style: TextStyle(
+          fontSize: 26, fontWeight: FontWeight.w800, color: _accent,
         )),
         const SizedBox(height: 6),
         Text(label, maxLines: 1, overflow: TextOverflow.ellipsis,
@@ -281,39 +378,45 @@ class DarkGoldHomeView extends BaseView<HomeController> {
         height: 52,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          // 外围金属渐变边框
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFFFFF0C6), // 顶部极亮金
-              Color(0xFFD4A759), // 中部金
-              Color(0xFF8F6B27), // 底部暗金
+              _accentLight,
+              _accent,
+              _accentDark,
             ],
-            stops: [0.0, 0.4, 1.0],
+            stops: const [0.0, 0.4, 1.0],
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.4),
+              color: _isDarkMode
+                  ? Colors.black.withValues(alpha: 0.4)
+                  : _accent.withValues(alpha: 0.18),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Container(
-          margin: const EdgeInsets.all(1.8), // 边框粗细
+          margin: const EdgeInsets.all(1.8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            // 内部底色渐变
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFF45361B), // 顶部微亮橄榄金
-                Color(0xFF241C0C), // 中部深褐
-                Color(0xFF151006), // 底部近黑
-              ],
-              stops: [0.0, 0.5, 1.0],
+              colors: _isDarkMode
+                  ? [
+                      Color.lerp(const Color(0xFF454545), _accent, 0.18)!,
+                      Color.lerp(const Color(0xFF242424), _accent, 0.08)!,
+                      Color.lerp(const Color(0xFF151515), _accent, 0.04)!,
+                    ]
+                  : [
+                      Colors.white,
+                      const Color(0xFFFAFAFA),
+                      const Color(0xFFF5F5F5),
+                    ],
+              stops: const [0.0, 0.5, 1.0],
             ),
           ),
           child: Stack(
@@ -352,18 +455,14 @@ class DarkGoldHomeView extends BaseView<HomeController> {
                           label,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFFFDE5A9), // 明亮金字
+                            color: _isDarkMode ? _accentLight : _accent,
                             letterSpacing: 0.5,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black54,
-                                blurRadius: 2,
-                                offset: Offset(0, 1),
-                              )
-                            ],
+                            shadows: _isDarkMode
+                                ? const [Shadow(color: Colors.black54, blurRadius: 2, offset: Offset(0, 1))]
+                                : null,
                           ),
                         ),
                       ),
@@ -387,39 +486,118 @@ class DarkGoldHomeView extends BaseView<HomeController> {
   //  倒计时条
   // ═══════════════════════════════════════════════
 
+  /// 午夜倒计时条：深褐纵向渐变、哑光铜边、浅金棕字、`HH:mm:ss` 三段数字格
   Widget _buildCompactCountdown() {
     return Obx(() {
       final text = controller.midnightCountdownText.value;
       final tz = controller.activityTimezone.value;
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
         decoration: BoxDecoration(
-          color: _bgCardLight,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: _borderSubtle, width: 1),
+          borderRadius: BorderRadius.circular(999),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [_countdownBarTop, _countdownBarMid, _countdownBarBot],
+            stops: const [0.0, 0.45, 1.0],
+          ),
+          border: Border.all(color: _countdownBorderBronze, width: 1),
         ),
         child: Row(
           children: [
-            const Icon(Icons.hourglass_top_rounded, size: 14, color: _gold),
-            const SizedBox(width: 5),
-            Text(I18nKeys.activityMidnightCountdownLabel.tr,
-              style: const TextStyle(fontSize: 12, color: _textMuted)),
-            const SizedBox(width: 6),
-            Text(text, style: const TextStyle(
-              fontSize: 13, fontWeight: FontWeight.w700,
-              color: _gold, letterSpacing: 1,
-            )),
+            Icon(
+              Icons.hourglass_top_rounded,
+              size: 15,
+              color: _countdownTextTan.withValues(alpha: 0.95),
+            ),
+            const SizedBox(width: 7),
+            Flexible(
+              child: Text(
+                I18nKeys.activityMidnightCountdownLabel.tr,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: _countdownTextTan.withValues(alpha: 0.92),
+                  height: 1.2,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            _buildSegmentedHms(text),
             if (tz.isNotEmpty) ...[
               const Spacer(),
-              const Icon(Icons.public_rounded, size: 11, color: _textGray),
-              const SizedBox(width: 3),
-              Text(tz, style: const TextStyle(fontSize: 11, color: _textGray)),
+              Icon(
+                Icons.public_rounded,
+                size: 14,
+                color: _countdownTextTan.withValues(alpha: 0.95),
+              ),
+              const SizedBox(width: 5),
+              Text(
+                tz,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: _countdownTextTan.withValues(alpha: 0.95),
+                  letterSpacing: 0.2,
+                ),
+              ),
             ],
           ],
         ),
       );
     });
+  }
+
+  /// 将 [hms] 解析为三段数字格；格式异常时退回整串展示
+  Widget _buildSegmentedHms(String hms) {
+    final parts = hms.split(':');
+    if (parts.length != 3) {
+      return Text(
+        hms,
+        style: _countdownDigitStyle.copyWith(letterSpacing: 1),
+      );
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _countdownDigitPair(parts[0]),
+        _countdownColon(),
+        _countdownDigitPair(parts[1]),
+        _countdownColon(),
+        _countdownDigitPair(parts[2]),
+      ],
+    );
+  }
+
+  /// 两位数字半透明底格（电子表风格）
+  Widget _countdownDigitPair(String twoDigits) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: _digitSegmentStroke, width: 0.5),
+      ),
+      child: Text(twoDigits, style: _countdownDigitStyle),
+    );
+  }
+
+  Widget _countdownColon() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: Text(
+        ':',
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w700,
+          color: _countdownTextTan.withValues(alpha: 0.85),
+          height: 1,
+        ),
+      ),
+    );
   }
 
   // ═══════════════════════════════════════════════
@@ -433,7 +611,7 @@ class DarkGoldHomeView extends BaseView<HomeController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            const Text('Hot Activities', style: TextStyle(
+            Text('Hot Activities', style: TextStyle(
               fontSize: 16, fontWeight: FontWeight.w800, color: _textLight,
             )),
             const SizedBox(width: 8),
@@ -458,19 +636,20 @@ class DarkGoldHomeView extends BaseView<HomeController> {
               if (data.taskActivity != null)
                 _buildActivityCard(
                   cardKey: 'task', group: data.taskActivity!,
-                  accentColor: _gold,
+                  accentColor: _accent,
                   iconUrl: 'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Trophy/3D/trophy_3d.png',
                   title: I18nKeys.dailyTaskBonusTitle.tr,
                   subtitle: I18nKeys.dailyTaskBonusSubtitle.tr,
                   milestoneUnit: I18nKeys.activityTaskUnit.tr,
                   milestoneIcon: Icons.check_circle_outline_rounded,
                   onNavigate: () => Get.toNamed(Routes.tasks),
+                  showDeckStack: true,
                 ),
               if (data.commissionActivity != null) ...[
                 const SizedBox(height: 12),
                 _buildActivityCard(
                   cardKey: 'commission', group: data.commissionActivity!,
-                  accentColor: const Color(0xFFD4A04A),
+                  accentColor: _accentDark,
                   iconUrl: 'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Money%20bag/3D/money_bag_3d.png',
                   title: I18nKeys.commissionBonusTitle.tr,
                   subtitle: I18nKeys.commissionBonusSubtitle.tr,
@@ -483,7 +662,7 @@ class DarkGoldHomeView extends BaseView<HomeController> {
                 const SizedBox(height: 12),
                 _buildActivityCard(
                   cardKey: 'subordinate', group: data.subordinateActivity!,
-                  accentColor: const Color(0xFFCDA94E),
+                  accentColor: _accentMid,
                   iconUrl: 'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Handshake/3D/handshake_3d.png',
                   title: I18nKeys.subordinateBonusTitle.tr,
                   subtitle: I18nKeys.subordinateBonusSubtitle.tr,
@@ -500,9 +679,10 @@ class DarkGoldHomeView extends BaseView<HomeController> {
   }
 
   // ═══════════════════════════════════════════════
-  //  活动卡片: 金色渐变边框 + 暗底
+  //  活动卡片: 橄榄金渐变 + 对角高光 + 可选层叠 deck
   // ═══════════════════════════════════════════════
 
+  /// [showDeckStack] 为 true 时在首张卡后叠多层剪影（设计稿层叠感）
   Widget _buildActivityCard({
     required String cardKey,
     required ActivityGroup group,
@@ -513,160 +693,375 @@ class DarkGoldHomeView extends BaseView<HomeController> {
     required String milestoneUnit,
     required IconData milestoneIcon,
     required VoidCallback onNavigate,
+    bool showDeckStack = false,
   }) {
     return Obx(() {
       final isExpanded = controller.isCardExpanded(cardKey);
-      return Container(
+      final surface = Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          gradient: LinearGradient(
-            colors: [
-              _goldDark.withValues(alpha: 0.6),
-              _gold.withValues(alpha: 0.3),
-              _goldDark.withValues(alpha: 0.6),
-            ],
-            begin: Alignment.topLeft, end: Alignment.bottomRight,
-          ),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: _activityCardStroke, width: 1),
+          boxShadow: _isDarkMode
+              ? [
+                  BoxShadow(color: _accent.withValues(alpha: 0.14), blurRadius: 18, offset: const Offset(0, 8)),
+                  BoxShadow(color: Colors.black.withValues(alpha: 0.45), blurRadius: 12, offset: const Offset(0, 4)),
+                ]
+              : [
+                  BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 12, offset: const Offset(0, 4)),
+                ],
         ),
-        child: Container(
-          margin: const EdgeInsets.all(1.2),
-          decoration: BoxDecoration(
-            color: _bgCardLight,
-            borderRadius: BorderRadius.circular(13),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(21),
+          child: Stack(
+            clipBehavior: Clip.hardEdge,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(14, 14, 10, 14),
-                child: Row(children: [
-                  Container(
-                    width: 52, height: 52,
-                    decoration: BoxDecoration(
-                      color: _bgCard,
-                      borderRadius: BorderRadius.circular(13),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(13),
-                      child: Image.network(iconUrl, width: 52, height: 52,
-                        fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) => Icon(
-                          Icons.emoji_events_rounded, size: 28, color: _gold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () => controller.toggleCard(cardKey),
-                      borderRadius: BorderRadius.circular(8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(title, style: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w700,
-                            color: _textLight,
-                          )),
-                          const SizedBox(height: 4),
-                          Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 12, color: _textGray)),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  InkWell(
-                    onTap: onNavigate,
-                    borderRadius: BorderRadius.circular(22),
-                    child: Container(
-                      width: 36, height: 36,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: accentColor.withValues(alpha: 0.15),
-                      ),
-                      child: Icon(Icons.arrow_forward_ios_rounded,
-                        size: 15, color: accentColor),
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  InkWell(
-                    onTap: () => controller.toggleCard(cardKey),
-                    borderRadius: BorderRadius.circular(20),
-                    child: AnimatedRotation(
-                      turns: isExpanded ? 0.5 : 0,
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.easeInOut,
-                      child: Icon(Icons.keyboard_arrow_down_rounded,
-                        color: accentColor, size: 28),
-                    ),
-                  ),
-                ]),
-              ),
-              AnimatedCrossFade(
-                firstChild: const SizedBox(width: double.infinity),
-                secondChild: Column(children: [
-                  Divider(height: 1, thickness: 1,
-                    color: _borderSubtle.withValues(alpha: 0.5)),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 14),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ...group.items.asMap().entries.map((entry) => Column(
-                          children: [
-                            if (entry.key > 0) const SizedBox(height: 8),
-                            _buildMilestoneRow(
-                              item: entry.value,
-                              accentColor: accentColor,
-                              milestoneUnit: milestoneUnit,
-                              milestoneIcon: milestoneIcon,
-                              otherClaimed: group.isSingleClaim &&
-                                  group.isGroupClaimed && !entry.value.claimed,
-                            ),
-                          ],
-                        )),
-                        if (group.description != null &&
-                            group.description!.isNotEmpty) ...[
-                          const SizedBox(height: 12),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 10),
-                            decoration: BoxDecoration(
-                              color: accentColor.withValues(alpha: 0.08),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                  color: accentColor.withValues(alpha: 0.25)),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Icon(Icons.info_rounded,
-                                    size: 16, color: accentColor),
-                                const SizedBox(width: 8),
-                                Expanded(child: Text(group.description!,
-                                  style: const TextStyle(
-                                    fontSize: 12, color: _textGray, height: 1.5,
-                                  ))),
-                              ],
-                            ),
-                          ),
-                        ],
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        _activityCardLt,
+                        _activityCardMd,
+                        _activityCardDk,
                       ],
                     ),
                   ),
-                ]),
-                crossFadeState: isExpanded
-                    ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-                duration: const Duration(milliseconds: 250),
-                sizeCurve: Curves.easeInOut,
+                ),
+              ),
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.topRight,
+                      colors: [
+                        Colors.transparent,
+                        Colors.white.withValues(alpha: 0.09),
+                        Colors.transparent,
+                      ],
+                      stops: const [0.32, 0.5, 0.72],
+                    ),
+                  ),
+                ),
+              ),
+              // 必须保留非 Positioned 子组件，否则在纵向无界约束（ScrollView）下 Stack 会断言失败
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 14, 10, 14),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color: _iconWellBlack,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.06),
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(13),
+                            child: Image.network(
+                              iconUrl,
+                              width: 52,
+                              height: 52,
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, __, ___) => Icon(
+                                Icons.emoji_events_rounded,
+                                size: 28,
+                                color: _activityTitleGold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () => controller.toggleCard(cardKey),
+                            borderRadius: BorderRadius.circular(8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  title,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    color: _activityTitleGold,
+                                    height: 1.25,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  subtitle,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                    color: _activitySubtitleGold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        InkWell(
+                          onTap: onNavigate,
+                          borderRadius: BorderRadius.circular(22),
+                          child: Container(
+                            width: 38,
+                            height: 38,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [_navCircleDark, _navCircleDeep],
+                              ),
+                              border: Border.all(
+                                color: _accent.withValues(alpha: 0.35),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.35),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              size: 15,
+                              color: _accentLight,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        InkWell(
+                          onTap: () => controller.toggleCard(cardKey),
+                          borderRadius: BorderRadius.circular(20),
+                          child: AnimatedRotation(
+                            turns: isExpanded ? 0.5 : 0,
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                            child: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: _activityTitleGold,
+                              size: 26,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  AnimatedCrossFade(
+                    firstChild: const SizedBox(width: double.infinity),
+                    secondChild: Column(
+                      children: [
+                        Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: Colors.white.withValues(alpha: 0.08),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(12, 10, 12, 14),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ...group.items.asMap().entries.map(
+                                    (entry) => Column(
+                                      children: [
+                                        if (entry.key > 0)
+                                          const SizedBox(height: 8),
+                                        _buildMilestoneRow(
+                                          item: entry.value,
+                                          accentColor: accentColor,
+                                          milestoneUnit: milestoneUnit,
+                                          milestoneIcon: milestoneIcon,
+                                          otherClaimed: group.isSingleClaim &&
+                                              group.isGroupClaimed &&
+                                              !entry.value.claimed,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                              if (group.description != null &&
+                                  group.description!.isNotEmpty) ...[
+                                const SizedBox(height: 12),
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: accentColor.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color:
+                                          accentColor.withValues(alpha: 0.28),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Icon(
+                                        Icons.info_rounded,
+                                        size: 16,
+                                        color: accentColor,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          group.description!,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: _activitySubtitleGold,
+                                            height: 1.5,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    crossFadeState: isExpanded
+                        ? CrossFadeState.showSecond
+                        : CrossFadeState.showFirst,
+                    duration: const Duration(milliseconds: 250),
+                    sizeCurve: Curves.easeInOut,
+                  ),
+                ],
               ),
             ],
           ),
         ),
       );
+      if (showDeckStack) {
+        return _buildDeckStack(child: surface);
+      }
+      return surface;
     });
+  }
+
+  /// 首张活动卡背后的层叠剪影 (增加角度旋转，呈现「扇形展开」洗牌效果)
+  Widget _buildDeckStack({required Widget child}) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // 第 3 层（最底层）
+        Positioned(
+          top: 0,
+          left: 18,
+          right: 18,
+          bottom: 15,
+          child: Transform.rotate(
+            angle: -0.045, // 倾斜角度最大
+            alignment: Alignment.bottomLeft,
+            child: _buildCardBg(),
+          ),
+        ),
+        // 第 2 层
+        Positioned(
+          top: 5,
+          left: 12,
+          right: 12,
+          bottom: 10,
+          child: Transform.rotate(
+            angle: -0.030,
+            alignment: Alignment.bottomLeft,
+            child: _buildCardBg(),
+          ),
+        ),
+        // 第 1 层（紧贴主卡）
+        Positioned(
+          top: 10,
+          left: 6,
+          right: 6,
+          bottom: 5,
+          child: Transform.rotate(
+            angle: -0.015,
+            alignment: Alignment.bottomLeft,
+            child: _buildCardBg(),
+          ),
+        ),
+        // 主卡内容
+        Padding(
+          padding: const EdgeInsets.only(top: 15),
+          child: child,
+        ),
+      ],
+    );
+  }
+
+  /// 纯背景（无内容），用于垫在后方形成层叠效果（与主卡背景/高光完全一致）
+  Widget _buildCardBg() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: _activityCardStroke, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.3),
+            blurRadius: 4,
+            offset: const Offset(0, -1),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(21),
+        child: Stack(
+          clipBehavior: Clip.hardEdge,
+          children: [
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      _activityCardLt,
+                      _activityCardMd,
+                      _activityCardDk,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.topRight,
+                    colors: [
+                      Colors.transparent,
+                      Colors.white.withValues(alpha: 0.09),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.32, 0.5, 0.72],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildMilestoneRow({
@@ -677,17 +1072,18 @@ class DarkGoldHomeView extends BaseView<HomeController> {
     bool otherClaimed = false,
   }) {
     final isReached = item.currentCount >= item.needCount;
-    final iconColor = isReached ? accentColor : _textGray;
+    final iconColor =
+        isReached ? accentColor : _activitySubtitleGold;
     final iconBg = isReached
         ? accentColor.withValues(alpha: 0.15)
-        : const Color(0xFF3A3A3A);
+        : Color.lerp(const Color(0xFF1E1E1E), _accent, 0.04)!;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
       decoration: BoxDecoration(
-        color: _bgCard,
+        color: _activityCardDk.withValues(alpha: 0.65),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: accentColor.withValues(alpha: 0.15)),
+        border: Border.all(color: accentColor.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -700,8 +1096,10 @@ class DarkGoldHomeView extends BaseView<HomeController> {
             ),
             const SizedBox(width: 10),
             Expanded(child: Text('${item.needCount} $milestoneUnit',
-              style: const TextStyle(
-                fontSize: 14, fontWeight: FontWeight.w700, color: _textLight,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: _activityTitleGold,
               ))),
             _buildPointsBadge(item, accentColor),
           ]),
@@ -710,7 +1108,10 @@ class DarkGoldHomeView extends BaseView<HomeController> {
           const SizedBox(height: 6),
           Row(children: [
             Text('${item.currentCount} / ${item.needCount}',
-              style: const TextStyle(fontSize: 11, color: _textGray)),
+              style: TextStyle(
+                fontSize: 11,
+                color: _activitySubtitleGold,
+              )),
             const Spacer(),
             Obx(() {
               final isClaiming = controller.claimingId.value == item.id;
@@ -723,7 +1124,7 @@ class DarkGoldHomeView extends BaseView<HomeController> {
                     backgroundColor: item.claimed
                         ? const Color(0xFF2E7D32) : accentColor,
                     disabledBackgroundColor: accentColor.withValues(alpha: 0.3),
-                    foregroundColor: _bgDark,
+                    foregroundColor: _isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
                     padding: const EdgeInsets.symmetric(horizontal: 14),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8)),
@@ -776,12 +1177,14 @@ class DarkGoldHomeView extends BaseView<HomeController> {
         child: LayoutBuilder(builder: (context, constraints) {
           final fillWidth = constraints.maxWidth * progress.clamp(0.0, 1.0);
           return Stack(children: [
-            Container(width: double.infinity, color: const Color(0xFF3A3A3A)),
+            Container(width: double.infinity, color: _isDarkMode
+                ? Color.lerp(const Color(0xFF3A3A3A), _accent, 0.08)
+                : const Color(0xFFE8E8E8)),
             Container(
               width: fillWidth,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [accentColor, _goldLight],
+                  colors: [accentColor, _accentLight],
                 ),
               ),
             ),
@@ -797,12 +1200,16 @@ class DarkGoldHomeView extends BaseView<HomeController> {
 // ═══════════════════════════════════════════════
 
 void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
+  final isDark = DarkGoldHomeView._isDarkMode;
+  final titleColor = DarkGoldHomeView._textLight;
   Get.dialog(Center(child: Container(
     width: MediaQuery.of(context).size.width * 0.82,
     margin: const EdgeInsets.symmetric(horizontal: 30),
     padding: const EdgeInsets.only(left: 19, top: 11, right: 19, bottom: 30),
     decoration: BoxDecoration(
-      color: const Color(0xFF333333),
+      color: isDark
+          ? Color.lerp(const Color(0xFF333333), AppTheme.primaryColor, 0.06)
+          : Colors.white,
       borderRadius: BorderRadius.circular(10),
     ),
     child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -815,16 +1222,16 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
       Center(
         child: (pa.titleIsRichText == '1')
             ? RichText(
-                text: _parseHtmlToTextSpan(pa.title ?? '', const TextStyle(
+                text: _parseHtmlToTextSpan(pa.title ?? '', TextStyle(
                   fontSize: 15, fontWeight: FontWeight.bold,
-                  color: Color(0xFFEEEEEE), decoration: TextDecoration.none,
+                  color: titleColor, decoration: TextDecoration.none,
                 )),
                 maxLines: 2, textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis)
             : RichText(
-                text: TextSpan(text: pa.title ?? '', style: const TextStyle(
+                text: TextSpan(text: pa.title ?? '', style: TextStyle(
                   fontSize: 15, fontWeight: FontWeight.bold,
-                  color: Color(0xFFEEEEEE), decoration: TextDecoration.none,
+                  color: titleColor, decoration: TextDecoration.none,
                 )),
                 maxLines: 2, textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis),
@@ -879,3 +1286,4 @@ TextSpan _parseElement(dynamic element, TextStyle baseStyle) {
   }
   return TextSpan(text: text, style: style);
 }
+
