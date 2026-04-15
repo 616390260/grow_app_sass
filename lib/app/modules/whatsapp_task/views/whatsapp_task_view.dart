@@ -393,23 +393,60 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
               ],
             ),
             child: Obx(() {
+              final url = controller.videoUrl.value;
+
+              // 接口返回的是图片链接，在视频同尺寸框内完整显示
+              if (controller.isMediaImage && url.isNotEmpty) {
+                return SizedBox(
+                  width: double.infinity,
+                  height: 200,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      url,
+                      width: double.infinity,
+                      height: 200,
+                      fit: BoxFit.contain,
+                    loadingBuilder: (context, child, progress) {
+                      if (progress == null) return child;
+                      return Container(
+                        height: 200,
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator(
+                          color: AppTheme.primaryColor,
+                          value: progress.expectedTotalBytes != null
+                              ? progress.cumulativeBytesLoaded /
+                                  progress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    },
+                    errorBuilder: (_, __, ___) => Container(
+                      height: 200,
+                      alignment: Alignment.center,
+                      child: const Icon(Icons.broken_image_rounded,
+                          size: 48, color: Colors.grey),
+                    ),
+                    ),
+                  ),
+                );
+              }
+
+              // 接口返回的是视频链接，使用 Chewie 播放
               if (Get.find<WhatsappTaskController>().isVideoInitialized.value &&
                   controller.chewieController != null) {
                 return SizedBox(
-                  width: double.infinity, // 宽度铺满布局
-                  height: 200, // 高度固定为200
+                  width: double.infinity,
+                  height: 200,
                   child: Stack(
                     children: [
                       Chewie(controller: controller.chewieController!),
-                      // 播放/暂停按钮覆盖层
                       Center(
                         child: AnimatedOpacity(
                           opacity: controller.isPlaying.value ? 0.0 : 1.0,
                           duration: const Duration(milliseconds: 300),
                           child: InkWell(
-                            onTap: () {
-                              controller.togglePlayPause();
-                            },
+                            onTap: () => controller.togglePlayPause(),
                             child: Container(
                               width: 80,
                               height: 80,
@@ -426,40 +463,11 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                           ),
                         ),
                       ),
-                      // 点击整个视频区域也可以播放/暂停
                       Positioned.fill(
                         child: InkWell(
-                          onTap: () {
-                            controller.togglePlayPause();
-                          },
+                          onTap: () => controller.togglePlayPause(),
                         ),
                       ),
-                      // 全屏/退出全屏按钮
-                      // Positioned(
-                      //   bottom: 10,
-                      //   right: 10,
-                      //   child: InkWell(
-                      //     onTap: () {
-                      //       // 使用chewie的全屏功能
-                      //       controller.toggleFullScreen();
-                      //     },
-                      //     child: Container(
-                      //       width: 40,
-                      //       height: 40,
-                      //       decoration: BoxDecoration(
-                      //         shape: BoxShape.circle,
-                      //         color: Colors.black.withOpacity(0.5),
-                      //       ),
-                      //       child: Icon(
-                      //         controller.chewieController != null && controller.chewieController!.isFullScreen
-                      //             ? Icons.fullscreen_exit
-                      //             : Icons.fullscreen,
-                      //         size: 24,
-                      //         color: Colors.white,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 );
@@ -482,14 +490,6 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
               }
             }),
           ),
-          // const SizedBox(height: 8),
-          // Text(
-          //   '点击视频播放/暂停',
-          //   style: TextStyle(
-          //     color: Colors.black54,
-          //     fontSize: 14,
-          //   ),
-          // ),
         ],
       ),
     );

@@ -15,8 +15,19 @@ class WhatsappTaskController extends BaseController {
   final todaySendCount = 0.obs; // 今日发送数量
   final todayPoints = 0.obs; // 今日积分
   final yesterdayPoints = 0.obs; // 昨日积分
-  final videoUrl = ''.obs; // 视频URL
+  final videoUrl = ''.obs; // 视频/媒体URL
   final wsDownloadUrl = ''.obs; // WhatsApp下载URL
+
+  /// 媒体URL是否为图片（根据扩展名判断）
+  bool get isMediaImage {
+    final url = videoUrl.value.toLowerCase().split('?').first;
+    return url.endsWith('.jpg') ||
+        url.endsWith('.jpeg') ||
+        url.endsWith('.png') ||
+        url.endsWith('.gif') ||
+        url.endsWith('.webp') ||
+        url.endsWith('.bmp');
+  }
 
   // 绑定状态
   final phoneNumber = ''.obs;
@@ -73,8 +84,10 @@ class WhatsappTaskController extends BaseController {
     );
   }
 
-  // 初始化视频控制器
+  // 初始化视频控制器（图片链接跳过，由 View 层直接展示）
   void _initVideoController() {
+    if (isMediaImage) return;
+
     if (videoUrl.value.isNotEmpty) {
       try {
         // 确保先释放旧的控制器资源
