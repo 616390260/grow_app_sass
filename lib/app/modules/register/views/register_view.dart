@@ -1,4 +1,4 @@
-import 'package:do_task_project/app/core/config/environment_config.dart';
+import 'package:do_task_project/app/core/services/tenant_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -96,7 +96,7 @@ class RegisterView extends BaseView<RegisterController> {
           // 绿色渐变背景
           Positioned.fill(
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -177,12 +177,15 @@ class RegisterView extends BaseView<RegisterController> {
             ],
           ),
           child: ClipOval(
-            child: Image.asset(ImageAssets.logo, fit: BoxFit.cover),
+            child: TenantService.to.brandLogo != null
+                ? Image.network(TenantService.to.brandLogo!, fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Image.asset(ImageAssets.logo, fit: BoxFit.cover))
+                : Image.asset(ImageAssets.logo, fit: BoxFit.cover),
           ),
         ),
         const SizedBox(height: 12),
         Text(
-          EnvironmentConfig.instance.brandName,
+          TenantService.to.appName,
           style: const TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.w700,
@@ -455,7 +458,7 @@ class RegisterView extends BaseView<RegisterController> {
           onTap: controller.goToLogin,
           child: Text(
             I18nKeys.login.tr,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               color: AppTheme.loginColor,
               fontWeight: FontWeight.w500,

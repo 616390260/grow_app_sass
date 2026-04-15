@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import '../modules/change_password/views/change_password_view.dart';
 import '../modules/vip_details/bindings/vip_details_binding.dart';
 import '../modules/vip_details/views/vip_details_view.dart';
@@ -16,6 +17,8 @@ import '../modules/main/bindings/main_binding.dart';
 import '../modules/main/views/main_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/home/views/workgo_home_view.dart';
+import '../modules/home/views/darkgold_home_view.dart';
 import '../modules/promotion/bindings/promotion_binding.dart';
 import '../modules/promotion/views/promotion_view.dart';
 import '../modules/tasks/bindings/tasks_binding.dart';
@@ -29,7 +32,10 @@ import '../modules/language_settings/views/language_settings_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/register/views/register_view.dart';
 import '../modules/login/bindings/login_binding.dart';
-import '../modules/login/views/login_view.dart';
+import '../modules/login/views/taskgo_gold_login_view.dart';
+import '../modules/login/views/taskgo_login_view.dart';
+import '../modules/login/views/taskgo_replicate_login_view.dart';
+import '../../app/core/services/tenant_service.dart';
 import '../modules/lucky_wheel/bindings/lucky_wheel_binding.dart';
 import '../modules/lucky_wheel/views/lucky_wheel_view.dart';
 import '../modules/sign_in_calendar/bindings/sign_in_calendar_binding.dart';
@@ -46,6 +52,43 @@ import '../modules/activities/bindings/activities_binding.dart';
 import '../modules/activities/views/activities_view.dart';
 
 part 'app_routes.dart';
+
+/// 根据租户配置的 templateCode 返回对应首页
+Widget _buildHomeView() {
+  try {
+    final code = TenantService.to.homeTemplateCode;
+    switch (code) {
+      case 'home_classic_blue':
+        return const WorkgoHomeView();
+      case 'home_dark_gold':
+        return const DarkGoldHomeView();
+      case 'home_minimal_green':
+      default:
+        return const HomeView();
+    }
+  } catch (_) {
+    return const HomeView();
+  }
+}
+
+/// 根据租户配置的 templateCode 返回对应登录页
+Widget _buildLoginView() {
+  try {
+    final code = TenantService.to.loginTemplateCode;
+    switch (code) {
+      case 'login_classic_blue':
+        return const TaskgoLoginView();
+      case 'login_minimal_green':
+        return const TaskgoReplicateLoginView();
+      case 'login_dark_gold':
+        return const TaskgoGoldLoginView();
+      default:
+        return const TaskgoLoginView();
+    }
+  } catch (_) {
+    return const TaskgoLoginView();
+  }
+}
 
 /// GetX 应用路由配置
 class AppPages {
@@ -75,7 +118,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.home,
-      page: () => const HomeView(),
+      page: () => _buildHomeView(),
       binding: HomeBinding(),
     ),
     GetPage(
@@ -110,7 +153,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.login,
-      page: () => const LoginView(),
+      page: () => _buildLoginView(),
       binding: LoginBinding(),
     ),
     GetPage(
@@ -126,10 +169,10 @@ class AppPages {
     ),
     // 修改密码页
     GetPage(
-        name: Routes.changePassword,
-        page: () => const ChangePasswordView(),
-        binding: ChangePasswordBinding(),
-      ),
+      name: Routes.changePassword,
+      page: () => const ChangePasswordView(),
+      binding: ChangePasswordBinding(),
+    ),
     // VIP详情页
     GetPage(
       name: Routes.vipDetails,

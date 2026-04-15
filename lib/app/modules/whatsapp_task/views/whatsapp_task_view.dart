@@ -521,7 +521,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
               children: [
                 Text(
                   I18nKeys.downloadWhatsapp.tr + controller.wsDownloadUrl.value,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppTheme.primaryColor,
                     fontSize: 12,
                   ),
@@ -551,7 +551,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
             ),
             child: Text(
               I18nKeys.continueBindingSteps.tr,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppTheme.primaryColor,
                 fontSize: 12,
               ),
@@ -704,7 +704,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
               margin: const EdgeInsets.symmetric(horizontal: 50),
               width: double.infinity,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   colors: [AppTheme.primaryGradientMid2, AppTheme.primaryColor],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
@@ -1001,7 +1001,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                                     : null,
                                 gradient: onlineNumber.canSendMsg == false
                                     ? null
-                                    : const LinearGradient(
+                                    : LinearGradient(
                                         colors: [
                                           AppTheme.primaryGradientMid2,
                                           AppTheme.primaryColor,

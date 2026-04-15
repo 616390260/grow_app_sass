@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import '../services/http_service.dart';
 import '../config/environment_config.dart';
 import '../services/auth_service.dart';
+import '../services/tenant_service.dart';
 
 /// 全局依赖绑定
 /// 注册应用程序启动时需要的核心服务
@@ -16,5 +17,8 @@ class GlobalBinding extends Bindings {
     
     // 注册认证服务（单例，应用启动时立即创建）
     Get.put<AuthService>(AuthService(), permanent: true);
+
+    // 注册租户服务（单例，应用启动时立即创建）
+    Get.put<TenantService>(TenantService(), permanent: true);
   }
 }

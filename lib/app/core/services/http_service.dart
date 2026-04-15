@@ -11,6 +11,7 @@ import '../constants/app_constants.dart';
 import '../utils/json_convert.dart';
 import '../i18n/i18n_keys.dart';
 import 'error_handler_center.dart';
+import 'tenant_service.dart';
 
 /// HTTP服务类 - 重构后的统一版本
 class HttpService extends getx.GetxService {
@@ -84,6 +85,15 @@ class HttpService extends getx.GetxService {
         // 添加app-type请求头：Web平台传2，Android/iOS平台传1
         final appType = kIsWeb ? '2' : '1';
         options.headers['app-type'] = appType;
+
+        // 注入租户ID到请求头（多租户隔离）
+        try {
+          final tenantService = getx.Get.find<TenantService>();
+          final tenantId = tenantService.tenantId;
+          if (tenantId != null && tenantId.isNotEmpty) {
+            options.headers['X-Tenant-Id'] = tenantId;
+          }
+        } catch (_) {}
         try {
           final box = GetStorage();
           final appVersion = box.read<String>(

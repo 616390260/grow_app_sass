@@ -28,7 +28,7 @@ class PromotionView extends BaseView<PromotionController> {
   Widget buildContent(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,

@@ -3,12 +3,11 @@ import 'package:do_task_project/app/core/constants/image_assets.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import 'package:do_task_project/app/core/services/tenant_service.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
+import 'package:do_task_project/app/data/models/activity_model.dart';
+import 'package:do_task_project/app/data/models/home_info_model.dart';
 import 'package:do_task_project/app/modules/home/controllers/home_controller.dart';
 import 'package:do_task_project/app/modules/home/views/widgets/banner_carousel_widget.dart';
-import 'package:do_task_project/app/modules/home/views/widgets/feature_card_widget.dart';
 import 'package:do_task_project/app/modules/vip_details/components/vip_badge.dart';
-import 'package:do_task_project/app/data/models/home_info_model.dart';
-import 'package:do_task_project/app/data/models/activity_model.dart';
 import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +15,24 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:html/parser.dart' as htmlParser;
 
-class HomeView extends BaseView<HomeController> {
-  const HomeView({super.key});
+/// WorkGo 品牌首页 —— 主题色跟随租户 brandColor 配置
+class WorkgoHomeView extends BaseView<HomeController> {
+  const WorkgoHomeView({super.key});
+
+  // ── 主题色：跟随 AppTheme（由 brandColor 动态生成） ──────────
+
+  static Color get _primary => AppTheme.primaryColor;
+  static Color get _bgPrimary => AppTheme.primaryColor;
+  static Color get _bgGradientMid => AppTheme.primaryGradientMid;
+  static Color get _pageBg => AppTheme.primaryLightest;
+  static Color get _iconCircleBg => AppTheme.primarySurface;
+  static Color get _iconCircleColor => AppTheme.primaryColor;
+  static Color get _cardBorder => AppTheme.primaryBorder;
+
+  // ── 中性色 ──────────
+  static const _textDark = Color(0xFF1A1C2E);
+  static const _textGray = Color(0xFF999999);
+  static const _textMuted = Color(0xFF666666);
 
   @override
   bool get enableRefresh => true;
@@ -27,7 +42,6 @@ class HomeView extends BaseView<HomeController> {
 
   @override
   Widget buildContent(BuildContext context) {
-    // 设置沉浸式状态栏
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -36,75 +50,104 @@ class HomeView extends BaseView<HomeController> {
       ),
     );
 
+    final statusBarH = MediaQuery.of(context).padding.top;
+    // 弧形背景止于统计卡片上沿附近，不能超出卡片两侧
+    final arcHeight = 180.0 + statusBarH;
+
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            AppTheme.primaryColor,
-            AppTheme.primaryGradientMid,
-            AppTheme.primaryLightest,
-          ],
-          stops: [0.0, 0.2, 0.4],
-        ),
-      ),
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Column(
-          children: [
-            Obx(() {
-              final pa = controller.popupAnnouncement.value;
-              if (pa != null && !controller.hasPopupShown) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _showPopup(context, pa);
-                  controller.markPopupShown();
-                });
-              }
-              return const SizedBox.shrink();
-            }),
-            // 添加状态栏高度的间距
-            SizedBox(height: MediaQuery.of(context).padding.top),
-            _buildHeader(),
-            _buildStatisticsCards(),
-            // 使用Obx包装BannerCarouselWidget以响应数据变化
-            Obx(() {
-              return BannerCarouselWidget(
-                bannerImages: controller.announcements
-                    .map((banner) => banner.image ?? '')
-                    .where((image) => image.isNotEmpty)
-                    .toList(),
-                onBannerTap: (index) {
-                  controller.onBannerTap(index);
-                },
-              );
-            }),
-            if (TenantService.to.activityEnabled) _buildCompactCountdown(),
-            if (TenantService.to.activityEnabled) const SizedBox(height: 8),
-            if (TenantService.to.activityEnabled) _buildHotActivities(),
-            const SizedBox(height: 55),
-          ],
-        ),
+      color: _pageBg,
+      child: Stack(
+        children: [
+          // ── 弧形深色背景 ──
+          ClipPath(
+            clipper: _ArcClipper(),
+            child: Container(
+              height: arcHeight,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [_bgPrimary, _bgGradientMid],
+                ),
+              ),
+            ),
+          ),
+          // ── 滚动内容 ──
+          SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              children: [
+                // 弹窗公告监听
+                Obx(() {
+                  final pa = controller.popupAnnouncement.value;
+                  if (pa != null && !controller.hasPopupShown) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      _showPopup(context, pa);
+                      controller.markPopupShown();
+                    });
+                  }
+                  return const SizedBox.shrink();
+                }),
+                SizedBox(height: statusBarH),
+                _buildHeader(),
+                _buildStatisticsCard(),
+                const SizedBox(height: 12),
+                _buildFeatureButtons(),
+                // Banner 轮播
+                Obx(() {
+                  return BannerCarouselWidget(
+                    bannerImages: controller.announcements
+                        .map((b) => b.image ?? '')
+                        .where((img) => img.isNotEmpty)
+                        .toList(),
+                    onBannerTap: (index) => controller.onBannerTap(index),
+                  );
+                }),
+                if (TenantService.to.activityEnabled) _buildCompactCountdown(),
+                if (TenantService.to.activityEnabled)
+                  const SizedBox(height: 8),
+                if (TenantService.to.activityEnabled) _buildHotActivities(),
+                const SizedBox(height: 55),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  /// 构建头部信息
+  // ═══════════════════════════════════════════════
+  //  Header: Logo + 品牌名 + VIP 徽章 + 下载按钮
+  // ═══════════════════════════════════════════════
+
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
       child: Row(
         children: [
-          // 应用图标
           ClipRRect(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
             child: TenantService.to.brandLogo != null
-                ? Image.network(TenantService.to.brandLogo!, width: 50, height: 50, fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Image.asset(ImageAssets.logo, width: 50, height: 50, fit: BoxFit.cover))
-                : Image.asset(ImageAssets.logo, width: 50, height: 50, fit: BoxFit.cover),
+                ? Image.network(
+                    TenantService.to.brandLogo!,
+                    width: 48,
+                    height: 48,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Image.asset(
+                      ImageAssets.logo,
+                      width: 48,
+                      height: 48,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : Image.asset(
+                    ImageAssets.logo,
+                    width: 48,
+                    height: 48,
+                    fit: BoxFit.cover,
+                  ),
           ),
-          const SizedBox(width: 14),
-          // 应用名称 + VIP 徽章
+          const SizedBox(width: 12),
           GestureDetector(
             onTap: TenantService.to.vipEnabled
                 ? controller.onVipDetailsTap
@@ -116,12 +159,12 @@ class HomeView extends BaseView<HomeController> {
                   TenantService.to.appName,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 if (TenantService.to.vipEnabled) ...[
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 3),
                   Obx(
                     () => VipBadge(
                       text: controller.vipLevel.value.isEmpty
@@ -135,222 +178,250 @@ class HomeView extends BaseView<HomeController> {
             ),
           ),
           const Spacer(),
-          if (kIsWeb) ...[
-            // 下载APP按钮
+          if (kIsWeb)
             GestureDetector(
               onTap: controller.onDownloadAppTap,
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 7,
+                  horizontal: 16,
+                  vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryBorder,
-                  borderRadius: BorderRadius.circular(25),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      ImageAssets.homeDownload,
-                      width: 14,
-                      height: 14,
-                      color: AppTheme.primaryColor,
-                      colorBlendMode: BlendMode.srcIn,
-                    ),
-                    const SizedBox(width: 2),
-                    Text(
-                      I18nKeys.downloadApp.tr,
-                      style: TextStyle(
-                        color: AppTheme.primaryColor,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  I18nKeys.downloadApp.tr,
+                  style: TextStyle(
+                    color: _primary,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════
+  //  统计区域
+  // ═══════════════════════════════════════════════
+
+  Widget _buildStatisticsCard() {
+    return Container(
+      margin: const EdgeInsets.only(left: 16, right: 16, top: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _cardBorder, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: _primary.withValues(alpha: 0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Obx(
+        () => Row(
+          children: [
+            Expanded(
+              child: _buildStatColumn(
+                icon: Icons.account_balance_wallet_rounded,
+                label: I18nKeys.accountBalance.tr,
+                value: controller.accountBalance.value.toString(),
+              ),
+            ),
+            Expanded(
+              child: _buildStatColumn(
+                icon: Icons.currency_rupee_rounded,
+                label: I18nKeys.todayEarnings.tr,
+                value: controller.dailyEarnings.value.toString(),
+              ),
+            ),
+            Expanded(
+              child: _buildStatColumn(
+                icon: Icons.currency_yen_rounded,
+                label: I18nKeys.todayPromotionEarnings.tr,
+                value: controller.promotionEarnings.value.toString(),
               ),
             ),
           ],
-        ],
+        ),
       ),
     );
   }
 
-  /// 构建统计卡片
-  Widget _buildStatisticsCards() {
-    return Container(
-      margin: const EdgeInsets.only(left: 15, right: 15, top: 15),
-      padding: const EdgeInsets.symmetric(horizontal: 19, vertical: 17),
-      decoration: BoxDecoration(
-        color: AppTheme.primarySurface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.primaryBorder, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primaryGradientMid.withValues(alpha: 0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
+  /// 单个统计列: icon → label → number → description
+  Widget _buildStatColumn({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 42,
+          height: 42,
+          decoration: BoxDecoration(
+            color: _iconCircleBg,
+            shape: BoxShape.circle,
           ),
-        ],
-      ),
-      child: Column(
+          child: Icon(icon, size: 22, color: _iconCircleColor),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontSize: 11,
+            color: _textGray,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            color: _textDark,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontSize: 11,
+            color: _textGray,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ═══════════════════════════════════════════════
+  //  功能按钮行: Lucky Spin / Daily Check-in / Invite Friends
+  // ═══════════════════════════════════════════════
+
+  Widget _buildFeatureButtons() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
         children: [
-          // 顶部三项统计
-          Obx(
-            () => Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      Text(
-                        controller.accountBalance.value.toString(),
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: AppTheme.primaryColor,
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        I18nKeys.accountBalance.tr,
-                        maxLines: 1,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppTheme.nineColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Text(
-                        controller.dailyEarnings.value.toString(),
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: AppTheme.primaryColor,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        I18nKeys.todayEarnings.tr,
-                        maxLines: 1,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppTheme.nineColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Text(
-                        controller.promotionEarnings.value.toString(),
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: AppTheme.primaryColor,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        I18nKeys.todayPromotionEarnings.tr,
-                        maxLines: 1,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppTheme.nineColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+          Expanded(
+            child: _buildPillButton(
+              label: 'lucky_wheel'.tr,
+              emoji: '🎯',
+              onTap: controller.onLuckyWheelTap,
             ),
           ),
-          const SizedBox(height: 21),
-          // 三项快捷功能一排
-          Row(
-            children: [
-              Expanded(
-                child: FeatureCardWidget(
-                  title: 'lucky_wheel'.tr,
-                  iconPath: ImageAssets.homeWheel,
-                  gradient: LinearGradient(
-                    colors: [AppTheme.primaryGradientLight, AppTheme.primaryBorder],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                  onTap: controller.onLuckyWheelTap,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: FeatureCardWidget(
-                  title: 'sign_in_calendar'.tr,
-                  iconPath: ImageAssets.homeSign,
-                  gradient: LinearGradient(
-                    colors: [AppTheme.primaryGradientMid2, AppTheme.primaryLight],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                  onTap: controller.onSignInCalendarTap,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: FeatureCardWidget(
-                  title: I18nKeys.inviteFriend.tr,
-                  iconPath: ImageAssets.homeInvite,
-                  gradient: LinearGradient(
-                    colors: [AppTheme.primaryGradientMid, AppTheme.primaryGradientLight],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                  onTap: controller.onInviteFriendTap,
-                ),
-              ),
-            ],
+          const SizedBox(width: 10),
+          Expanded(
+            child: _buildPillButton(
+              label: 'sign_in_calendar'.tr,
+              emoji: '📋',
+              onTap: controller.onSignInCalendarTap,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: _buildPillButton(
+              label: I18nKeys.inviteFriend.tr,
+              emoji: '👋',
+              onTap: controller.onInviteFriendTap,
+            ),
           ),
         ],
       ),
     );
   }
 
-  /// 构建推荐任务
-  /// 紧凑型倒计时条（单行，极小占位）
+  /// 胶囊按钮
+  Widget _buildPillButton({
+    required String label,
+    required String emoji,
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 44,
+        decoration: BoxDecoration(
+          color: _primary,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: _primary.withValues(alpha: 0.3),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 4),
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Text(emoji, style: const TextStyle(fontSize: 16)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════
+  //  倒计时条
+  // ═══════════════════════════════════════════════
+
   Widget _buildCompactCountdown() {
     return Obx(() {
       final text = controller.midnightCountdownText.value;
       final tz = controller.activityTimezone.value;
       return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 15),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: AppTheme.primarySurface,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppTheme.primaryBorder, width: 1),
+          border: Border.all(color: _cardBorder, width: 1),
         ),
         child: Row(
           children: [
             Icon(
               Icons.hourglass_top_rounded,
-              size: 13,
-              color: AppTheme.primaryColor,
+              size: 14,
+              color: _primary,
             ),
             const SizedBox(width: 5),
             Text(
               I18nKeys.activityMidnightCountdownLabel.tr,
-              style: const TextStyle(
-                fontSize: 12,
-                color: AppTheme.sixColor,
-              ),
+              style: const TextStyle(fontSize: 12, color: _textMuted),
             ),
             const SizedBox(width: 6),
             Text(
@@ -358,17 +429,17 @@ class HomeView extends BaseView<HomeController> {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: AppTheme.primaryColor,
+                color: _primary,
                 letterSpacing: 1,
               ),
             ),
             if (tz.isNotEmpty) ...[
               const Spacer(),
-              Icon(Icons.public_rounded, size: 11, color: AppTheme.nineColor),
+              const Icon(Icons.public_rounded, size: 11, color: _textGray),
               const SizedBox(width: 3),
               Text(
                 tz,
-                style: const TextStyle(fontSize: 11, color: AppTheme.nineColor),
+                style: const TextStyle(fontSize: 11, color: _textGray),
               ),
             ],
           ],
@@ -377,10 +448,13 @@ class HomeView extends BaseView<HomeController> {
     });
   }
 
-  /// 构建热门活动（可展开，支持领取）
+  // ═══════════════════════════════════════════════
+  //  热门活动
+  // ═══════════════════════════════════════════════
+
   Widget _buildHotActivities() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -388,11 +462,11 @@ class HomeView extends BaseView<HomeController> {
           Row(
             children: [
               Text(
-                I18nKeys.hotActivities.tr,
+                'Hot Activities',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
-                  color: AppTheme.primaryColor,
+                  color: _textDark,
                 ),
               ),
               const SizedBox(width: 8),
@@ -422,11 +496,12 @@ class HomeView extends BaseView<HomeController> {
             return Column(
               children: [
                 if (data.taskActivity != null)
-                  _buildHomeActivityCard(
+                  _buildActivityCard(
                     cardKey: 'task',
                     group: data.taskActivity!,
-                    accentColor: AppTheme.primaryColor,
-                    iconUrl: 'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Trophy/3D/trophy_3d.png',
+                    accentColor: _primary,
+                    iconUrl:
+                        'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Trophy/3D/trophy_3d.png',
                     title: I18nKeys.dailyTaskBonusTitle.tr,
                     subtitle: I18nKeys.dailyTaskBonusSubtitle.tr,
                     milestoneUnit: I18nKeys.activityTaskUnit.tr,
@@ -435,11 +510,12 @@ class HomeView extends BaseView<HomeController> {
                   ),
                 if (data.commissionActivity != null) ...[
                   const SizedBox(height: 12),
-                  _buildHomeActivityCard(
+                  _buildActivityCard(
                     cardKey: 'commission',
                     group: data.commissionActivity!,
                     accentColor: const Color(0xFFB84A00),
-                    iconUrl: 'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Money%20bag/3D/money_bag_3d.png',
+                    iconUrl:
+                        'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Money%20bag/3D/money_bag_3d.png',
                     title: I18nKeys.commissionBonusTitle.tr,
                     subtitle: I18nKeys.commissionBonusSubtitle.tr,
                     milestoneUnit: I18nKeys.activityGoalUnit.tr,
@@ -449,11 +525,12 @@ class HomeView extends BaseView<HomeController> {
                 ],
                 if (data.subordinateActivity != null) ...[
                   const SizedBox(height: 12),
-                  _buildHomeActivityCard(
+                  _buildActivityCard(
                     cardKey: 'subordinate',
                     group: data.subordinateActivity!,
                     accentColor: const Color(0xFF2E7D32),
-                    iconUrl: 'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Handshake/3D/handshake_3d.png',
+                    iconUrl:
+                        'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Handshake/3D/handshake_3d.png',
                     title: I18nKeys.subordinateBonusTitle.tr,
                     subtitle: I18nKeys.subordinateBonusSubtitle.tr,
                     milestoneUnit: I18nKeys.activityMemberUnit.tr,
@@ -469,7 +546,8 @@ class HomeView extends BaseView<HomeController> {
     );
   }
 
-  Widget _buildHomeActivityCard({
+  /// 活动卡片：图标 + 标题/副标题(点击展开) + 跳转箭头 + 展开/收起箭头
+  Widget _buildActivityCard({
     required String cardKey,
     required ActivityGroup group,
     required Color accentColor,
@@ -482,24 +560,25 @@ class HomeView extends BaseView<HomeController> {
   }) {
     return Obx(() {
       final isExpanded = controller.isCardExpanded(cardKey);
+
       return AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeInOut,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
-              color: accentColor.withValues(alpha: 0.10),
-              blurRadius: 14,
-              offset: const Offset(0, 5),
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 头部：左侧点击展开，右侧按钮跳转
+            // 头部行
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 14, 10, 14),
               child: Row(
@@ -509,7 +588,7 @@ class HomeView extends BaseView<HomeController> {
                     width: 52,
                     height: 52,
                     decoration: BoxDecoration(
-                      color: accentColor.withValues(alpha: 0.08),
+                      color: _iconCircleBg,
                       borderRadius: BorderRadius.circular(13),
                     ),
                     child: ClipRRect(
@@ -519,16 +598,16 @@ class HomeView extends BaseView<HomeController> {
                         width: 52,
                         height: 52,
                         fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) => Icon(
-                          Icons.emoji_events_rounded,
-                          size: 28,
-                          color: accentColor,
-                        ),
+                  errorBuilder: (_, __, ___) => Icon(
+                    Icons.emoji_events_rounded,
+                    size: 28,
+                    color: _primary,
+                  ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 12),
-                  // 标题+副标题（点击展开）
+                  // 标题 + 副标题（点击展开）
                   Expanded(
                     child: InkWell(
                       onTap: () => controller.toggleCard(cardKey),
@@ -536,38 +615,43 @@ class HomeView extends BaseView<HomeController> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            title,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFF1A1C1E),
-                            ),
-                          ),
-                          const SizedBox(height: 3),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: _textDark,
+                    ),
+                  ),
+                          const SizedBox(height: 4),
                           Text(
                             subtitle,
-                            style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: _textGray,
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
-                  // 跳转按钮（在展开箭头前面）
+                  // 跳转箭头
                   InkWell(
                     onTap: onNavigate,
                     borderRadius: BorderRadius.circular(22),
                     child: Container(
-                      width: 38,
-                      height: 38,
+                      width: 36,
+                      height: 36,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: accentColor.withValues(alpha: 0.12),
+                        color: accentColor.withValues(alpha: 0.10),
                       ),
                       child: Icon(
                         Icons.arrow_forward_ios_rounded,
-                        size: 16,
+                        size: 15,
                         color: accentColor,
                       ),
                     ),
@@ -584,7 +668,7 @@ class HomeView extends BaseView<HomeController> {
                       child: Icon(
                         Icons.keyboard_arrow_down_rounded,
                         color: accentColor,
-                        size: 30,
+                        size: 28,
                       ),
                     ),
                   ),
@@ -597,7 +681,11 @@ class HomeView extends BaseView<HomeController> {
               firstChild: const SizedBox(width: double.infinity),
               secondChild: Column(
                 children: [
-                  Divider(height: 1, thickness: 1, color: Colors.grey.withValues(alpha: 0.1)),
+                  Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: Colors.grey.withValues(alpha: 0.1),
+                  ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 10, 12, 14),
                     child: Column(
@@ -607,7 +695,7 @@ class HomeView extends BaseView<HomeController> {
                           return Column(
                             children: [
                               if (entry.key > 0) const SizedBox(height: 8),
-                              _buildHomeMilestoneRow(
+                              _buildMilestoneRow(
                                 item: entry.value,
                                 accentColor: accentColor,
                                 milestoneUnit: milestoneUnit,
@@ -619,20 +707,24 @@ class HomeView extends BaseView<HomeController> {
                             ],
                           );
                         }),
-                        if (group.description != null && group.description!.isNotEmpty) ...[
+                        if (group.description != null &&
+                            group.description!.isNotEmpty) ...[
                           const SizedBox(height: 12),
                           Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 10),
                             decoration: BoxDecoration(
                               color: accentColor.withValues(alpha: 0.06),
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: accentColor.withValues(alpha: 0.2)),
+                              border: Border.all(
+                                  color: accentColor.withValues(alpha: 0.2)),
                             ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.info_rounded, size: 16, color: accentColor),
+                                Icon(Icons.info_rounded,
+                                    size: 16, color: accentColor),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
@@ -653,7 +745,9 @@ class HomeView extends BaseView<HomeController> {
                   ),
                 ],
               ),
-              crossFadeState: isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+              crossFadeState: isExpanded
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
               duration: const Duration(milliseconds: 250),
               sizeCurve: Curves.easeInOut,
             ),
@@ -663,7 +757,8 @@ class HomeView extends BaseView<HomeController> {
     });
   }
 
-  Widget _buildHomeMilestoneRow({
+  /// 里程碑行
+  Widget _buildMilestoneRow({
     required ActivityItem item,
     required Color accentColor,
     required String milestoneUnit,
@@ -691,25 +786,26 @@ class HomeView extends BaseView<HomeController> {
               Container(
                 width: 34,
                 height: 34,
-                decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
+                decoration:
+                    BoxDecoration(color: iconBg, shape: BoxShape.circle),
                 child: Icon(milestoneIcon, color: iconColor, size: 20),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   '${item.needCount} $milestoneUnit',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF1A1C1E),
+                    color: _textDark,
                   ),
                 ),
               ),
-              _buildHomePointsBadge(item, accentColor),
+              _buildPointsBadge(item, accentColor),
             ],
           ),
           const SizedBox(height: 8),
-          _buildHomeProgressBar(item.progress, accentColor),
+          _buildProgressBar(item.progress, accentColor),
           const SizedBox(height: 6),
           Row(
             children: [
@@ -723,17 +819,19 @@ class HomeView extends BaseView<HomeController> {
                 return SizedBox(
                   height: 30,
                   child: ElevatedButton(
-                    onPressed: (!otherClaimed && item.canClaim && !isClaiming)
-                        ? () => controller.claim(item.id)
-                        : null,
+                    onPressed:
+                        (!otherClaimed && item.canClaim && !isClaiming)
+                            ? () => controller.claim(item.id)
+                            : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: item.claimed
-                          ? const Color(0xFF2E7D32)
-                          : accentColor,
-                      disabledBackgroundColor: accentColor.withValues(alpha: 0.3),
+                      backgroundColor:
+                          item.claimed ? const Color(0xFF2E7D32) : accentColor,
+                      disabledBackgroundColor:
+                          accentColor.withValues(alpha: 0.3),
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
                       elevation: 0,
                     ),
                     child: isClaiming
@@ -749,11 +847,12 @@ class HomeView extends BaseView<HomeController> {
                             item.claimed
                                 ? I18nKeys.activityClaimed.tr
                                 : otherClaimed
-                                ? I18nKeys.activityNotClaimable.tr
-                                : item.canClaim
-                                ? I18nKeys.activityClaim.tr
-                                : I18nKeys.activityNotReached.tr,
-                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+                                    ? I18nKeys.activityNotClaimable.tr
+                                    : item.canClaim
+                                        ? I18nKeys.activityClaim.tr
+                                        : I18nKeys.activityNotReached.tr,
+                            style: const TextStyle(
+                                fontSize: 11, fontWeight: FontWeight.w700),
                           ),
                   ),
                 );
@@ -765,8 +864,10 @@ class HomeView extends BaseView<HomeController> {
     );
   }
 
-  Widget _buildHomePointsBadge(ActivityItem item, Color accentColor) {
-    final text = I18nKeys.activityPoints.tr.replaceAll('@points', '${item.rewardPoints}');
+  /// 积分徽章
+  Widget _buildPointsBadge(ActivityItem item, Color accentColor) {
+    final text = I18nKeys.activityPoints.tr
+        .replaceAll('@points', '${item.rewardPoints}');
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
@@ -775,17 +876,19 @@ class HomeView extends BaseView<HomeController> {
       ),
       child: Text(
         text,
-        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: accentColor),
+        style: TextStyle(
+            fontSize: 12, fontWeight: FontWeight.w700, color: accentColor),
       ),
     );
   }
 
-  Widget _buildHomeProgressBar(double progress, Color accentColor) {
-    final endColor = accentColor == AppTheme.primaryColor
+  /// 进度条
+  Widget _buildProgressBar(double progress, Color accentColor) {
+    final endColor = accentColor == _primary
         ? const Color(0xFF64B5F6)
         : accentColor == const Color(0xFFB84A00)
-        ? const Color(0xFFFFAB76)
-        : const Color(0xFF81C784);
+            ? const Color(0xFFFFAB76)
+            : const Color(0xFF81C784);
 
     return Container(
       height: 12,
@@ -794,21 +897,29 @@ class HomeView extends BaseView<HomeController> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(99),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 3, offset: const Offset(0, 1)),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 3,
+            offset: const Offset(0, 1),
+          ),
         ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(99),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final fillWidth = constraints.maxWidth * progress.clamp(0.0, 1.0);
+            final fillWidth =
+                constraints.maxWidth * progress.clamp(0.0, 1.0);
             return Stack(
               children: [
-                Container(width: double.infinity, color: const Color(0xFFE8ECF0)),
+                Container(
+                    width: double.infinity,
+                    color: const Color(0xFFE8ECF0)),
                 Container(
                   width: fillWidth,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [accentColor, endColor]),
+                    gradient:
+                        LinearGradient(colors: [accentColor, endColor]),
                   ),
                 ),
               ],
@@ -820,47 +931,9 @@ class HomeView extends BaseView<HomeController> {
   }
 }
 
-// 解析HTML内容为TextSpan
-TextSpan _parseHtmlToTextSpan(String html, TextStyle defaultStyle) {
-  try {
-    final document = htmlParser.parse(html);
-    final children = document.body?.children ?? [];
-    final spans = <TextSpan>[];
-
-    if (children.isEmpty) {
-      // 如果没有HTML标签，直接返回普通文本
-      return TextSpan(text: document.body?.text ?? html, style: defaultStyle);
-    }
-
-    for (var element in children) {
-      spans.add(_parseElement(element, defaultStyle));
-    }
-
-    return TextSpan(children: spans);
-  } catch (e) {
-    // 如果解析失败，返回原始文本
-    return TextSpan(text: html, style: defaultStyle);
-  }
-}
-
-// 解析单个HTML元素
-TextSpan _parseElement(var element, TextStyle baseStyle) {
-  TextStyle style = baseStyle;
-  String text = element.text ?? '';
-
-  // 处理常见的格式化标签
-  if (element.localName == 'strong' || element.localName == 'b') {
-    style = style.copyWith(fontWeight: FontWeight.bold);
-  } else if (element.localName == 'em' || element.localName == 'i') {
-    style = style.copyWith(fontStyle: FontStyle.italic);
-  } else if (element.localName == 'u') {
-    style = style.copyWith(decoration: TextDecoration.underline);
-  } else if (element.localName == 's' || element.localName == 'strike') {
-    style = style.copyWith(decoration: TextDecoration.lineThrough);
-  }
-
-  return TextSpan(text: text, style: style);
-}
+// ═══════════════════════════════════════════════
+//  弹窗公告
+// ═══════════════════════════════════════════════
 
 void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
   Get.dialog(
@@ -868,12 +941,7 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
       child: Container(
         width: MediaQuery.of(context).size.width * 0.82,
         margin: const EdgeInsets.symmetric(horizontal: 30),
-        padding: const EdgeInsets.only(
-          left: 19,
-          top: 11,
-          right: 19,
-          bottom: 30,
-        ),
+        padding: const EdgeInsets.only(left: 19, top: 11, right: 19, bottom: 30),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
@@ -881,14 +949,13 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // 关闭按钮 - 靠右对齐
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 GestureDetector(
-                  onTap: () => {
-                    Get.back(),
-                    Get.find<HomeController>().markPopupClose(),
+                  onTap: () {
+                    Get.back();
+                    Get.find<HomeController>().markPopupClose();
                   },
                   child: const Icon(
                     Icons.close,
@@ -898,8 +965,6 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
                 ),
               ],
             ),
-
-            // 标题 - 左对齐
             Center(
               child: (pa.titleIsRichText == '1')
                   ? RichText(
@@ -932,7 +997,6 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
                     ),
             ),
             const SizedBox(height: 16),
-            // 内容 - 左对齐
             ConstrainedBox(
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * 0.6,
@@ -971,4 +1035,63 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
       ),
     ),
   );
+}
+
+TextSpan _parseHtmlToTextSpan(String html, TextStyle defaultStyle) {
+  try {
+    final document = htmlParser.parse(html);
+    final children = document.body?.children ?? [];
+    final spans = <TextSpan>[];
+
+    if (children.isEmpty) {
+      return TextSpan(text: document.body?.text ?? html, style: defaultStyle);
+    }
+
+    for (var element in children) {
+      spans.add(_parseElement(element, defaultStyle));
+    }
+
+    return TextSpan(children: spans);
+  } catch (e) {
+    return TextSpan(text: html, style: defaultStyle);
+  }
+}
+
+TextSpan _parseElement(dynamic element, TextStyle baseStyle) {
+  TextStyle style = baseStyle;
+  String text = element.text ?? '';
+
+  if (element.localName == 'strong' || element.localName == 'b') {
+    style = style.copyWith(fontWeight: FontWeight.bold);
+  } else if (element.localName == 'em' || element.localName == 'i') {
+    style = style.copyWith(fontStyle: FontStyle.italic);
+  } else if (element.localName == 'u') {
+    style = style.copyWith(decoration: TextDecoration.underline);
+  } else if (element.localName == 's' || element.localName == 'strike') {
+    style = style.copyWith(decoration: TextDecoration.lineThrough);
+  }
+
+  return TextSpan(text: text, style: style);
+}
+
+/// 底部弧形裁切器 —— 极浅弧度，丝滑过渡
+class _ArcClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    // 两侧起点稍微上抬，中间微微下凸，形成非常平缓的弧
+    final curveDepth = size.height * 0.08;
+    path.lineTo(0, size.height - curveDepth);
+    path.cubicTo(
+      size.width * 0.3, size.height,
+      size.width * 0.7, size.height,
+      size.width, size.height - curveDepth,
+    );
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }

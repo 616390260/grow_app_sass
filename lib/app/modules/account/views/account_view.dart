@@ -9,6 +9,7 @@ import '../controllers/account_controller.dart';
 import '../../../core/base/base_view.dart';
 import 'package:do_task_project/app/core/i18n/i18n_keys.dart';
 import '../../../core/constants/image_assets.dart';
+import 'package:do_task_project/app/core/services/tenant_service.dart';
 
 class AccountView extends BaseView<AccountController> {
   const AccountView({super.key});
@@ -41,7 +42,7 @@ class AccountView extends BaseView<AccountController> {
                       // ── 主渐变背景（斜角三段色，避免单调）──
                       Positioned.fill(
                         child: Container(
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             gradient: LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -146,13 +147,22 @@ class AccountView extends BaseView<AccountController> {
                                     ),
                                     child: ClipOval(
                                       child: Image.network(
-                                        controller.avatar.value ,
+                                        controller.avatar.value,
                                         width: 64,
                                         height: 64,
                                         fit: BoxFit.cover,
                                         errorBuilder:
                                             (context, error, stackTrace) =>
-                                                Image.asset(ImageAssets.error),
+                                                TenantService.to.brandLogo != null
+                                                    ? Image.network(
+                                                        TenantService.to.brandLogo!,
+                                                        width: 64,
+                                                        height: 64,
+                                                        fit: BoxFit.cover,
+                                                        errorBuilder: (_, __, ___) =>
+                                                            Image.asset(ImageAssets.error),
+                                                      )
+                                                    : Image.asset(ImageAssets.error),
                                       ),
                                     ),
                                   ),

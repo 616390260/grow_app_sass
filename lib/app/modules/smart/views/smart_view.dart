@@ -23,7 +23,7 @@ class SmartView extends BaseView<SmartController> {
   @override
   Widget buildContent(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -200,7 +200,7 @@ class SmartView extends BaseView<SmartController> {
                 Expanded(
                   child: Text(
                     service.link ?? '',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       color: AppTheme.primaryColor,
                       decoration: TextDecoration.underline,

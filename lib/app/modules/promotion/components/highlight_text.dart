@@ -10,16 +10,16 @@ class HighlightText extends StatelessWidget {
   final double highlightRadius;
   final double spacing;
 
-  const HighlightText({
+  HighlightText({
     super.key,
     required this.text,
-    this.highlightColor = AppTheme.primaryColor,
+    Color? highlightColor,
     this.textStyle,
     this.highlightWidth = 3,
     this.highlightHeight = 13,
     this.highlightRadius = 3,
     this.spacing = 4,
-  });
+  }) : highlightColor = highlightColor ?? AppTheme.primaryColor;
 
   @override
   Widget build(BuildContext context) {

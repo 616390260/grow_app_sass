@@ -32,7 +32,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
   @override
   Widget buildContent(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -319,7 +319,7 @@ class SignInCalendarView extends BaseView<SignInCalendarController> {
             height: 44,
             decoration: BoxDecoration(
               gradient: !controller.isCheckedIn.value
-                  ? const LinearGradient(
+                  ? LinearGradient(
                       colors: [AppTheme.primaryGradientMid2, AppTheme.primaryColor],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -436,7 +436,7 @@ class _DayCell extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 2),
                     child: Text(
                         I18nKeys.today.tr,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 8,
                           fontWeight: FontWeight.w500,
                           color: AppTheme.primaryColor,

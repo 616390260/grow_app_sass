@@ -10,6 +10,7 @@ import 'app/core/bindings/global_binding.dart';
 import 'app/core/i18n/app_translations.dart';
 import 'app/core/i18n/locale_config.dart';
 import 'app/core/services/auth_service.dart';
+import 'app/core/services/tenant_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +24,13 @@ void main() async {
 
   // 初始化全局依赖
   GlobalBinding().dependencies();
+
+  // 根据域名获取租户信息（Web 端自动读取浏览器域名）
+  await TenantService.to.init();
+
+  // 根据租户 brandColor 初始化主题色阶
+  // 优先取 brandColor，无配置时 login_dark_gold 回退金色，其他保持默认
+  AppTheme.init(brandColor: TenantService.to.effectiveBrandColor);
 
   runApp(const MyApp());
 }
@@ -42,7 +50,7 @@ class MyApp extends StatelessWidget {
         : AppPages.initial;
 
     return GetMaterialApp(
-      title: 'Taskgo',
+      title: TenantService.to.appName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,

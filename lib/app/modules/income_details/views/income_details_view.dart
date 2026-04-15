@@ -259,7 +259,7 @@ class IncomeDetailsPage extends BaseView<IncomeDetailsController> {
               style: TextStyle(fontSize: 14, color: AppTheme.threeColor),
             ),
             if (title == currentValue)
-              const Icon(Icons.check, color: AppTheme.primaryColor),
+              Icon(Icons.check, color: AppTheme.primaryColor),
           ],
         ),
       ),

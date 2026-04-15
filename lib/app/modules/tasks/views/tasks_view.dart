@@ -32,7 +32,7 @@ class TasksView extends BaseView<TasksController> {
   @override
   Widget buildContent(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -135,7 +135,7 @@ class TasksView extends BaseView<TasksController> {
                             const SizedBox(width: 2),
                             Text(
                               I18nKeys.taskDownloadApp.tr,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppTheme.primaryColor,
                                 fontSize: 12,
                               ),

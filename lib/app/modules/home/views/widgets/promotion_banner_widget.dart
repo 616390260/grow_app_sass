@@ -20,7 +20,7 @@ class PromotionBannerWidget extends StatelessWidget {
         height: 200,
         margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             colors: [AppTheme.primaryColor, AppTheme.primaryGradientMid],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,

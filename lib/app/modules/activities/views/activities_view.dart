@@ -28,12 +28,12 @@ class ActivitiesView extends BaseView<ActivitiesController> {
   @override
   Widget buildContent(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          stops: [0.0, 0.38, 0.58],
-          colors: [AppTheme.primaryColor, AppTheme.primaryGradientMid, Color(0xFFF9F9F9)],
+          stops: const [0.0, 0.38, 0.58],
+          colors: [AppTheme.primaryColor, AppTheme.primaryGradientMid, const Color(0xFFF9F9F9)],
         ),
       ),
       child: Obx(() {
