@@ -7,6 +7,7 @@ import 'package:do_task_project/app/data/models/activity_model.dart';
 import 'package:do_task_project/app/data/models/home_info_model.dart';
 import 'package:do_task_project/app/modules/home/controllers/home_controller.dart';
 import 'package:do_task_project/app/modules/home/views/widgets/banner_carousel_widget.dart';
+import 'package:do_task_project/app/modules/home/views/widgets/task_card_widget.dart';
 import 'package:do_task_project/app/modules/vip_details/components/vip_badge.dart';
 import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/foundation.dart';
@@ -157,6 +158,7 @@ class DarkGoldHomeView extends BaseView<HomeController> {
           if (TenantService.to.activityEnabled) _buildCompactCountdown(),
           if (TenantService.to.activityEnabled) const SizedBox(height: 10),
           if (TenantService.to.activityEnabled) _buildHotActivities(),
+          if (!TenantService.to.activityEnabled) _buildRecommendTasks(),
           const SizedBox(height: 75),
         ],
       ),
@@ -611,7 +613,7 @@ class DarkGoldHomeView extends BaseView<HomeController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            Text('Hot Activities', style: TextStyle(
+            Text(I18nKeys.hotActivities.tr, style: TextStyle(
               fontSize: 16, fontWeight: FontWeight.w800, color: _textLight,
             )),
             const SizedBox(width: 8),
@@ -676,6 +678,41 @@ class DarkGoldHomeView extends BaseView<HomeController> {
         ],
       ),
     );
+  }
+
+  /// 构建推荐任务列表（活动未启用时替代热门活动显示）
+  Widget _buildRecommendTasks() {
+    return Obx(() {
+      final tasks = controller.recommendTasks;
+      if (tasks.isEmpty) return const SizedBox.shrink();
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 8),
+            Text(
+              I18nKeys.recommendedTasks.tr,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: _textLight,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ...tasks.asMap().entries.map((entry) {
+              final task = entry.value;
+              return TaskCardWidget(
+                title: task.title ?? '',
+                description: task.description ?? '',
+                buttonText: I18nKeys.startTask.tr,
+                onTap: () => controller.onRecommendTaskTap(entry.key),
+              );
+            }),
+          ],
+        ),
+      );
+    });
   }
 
   // ═══════════════════════════════════════════════

@@ -22,6 +22,11 @@ class AppTheme {
   static Color primaryLightest      = const Color(0xFFF0FDF4);
   static Color primaryGradientEnd   = const Color(0xFFF9F9F9);
 
+  /// 极深色变体，用于深色横幅背景
+  static Color primaryDarkest       = const Color(0xFF022C22);
+  static Color primaryDarker        = const Color(0xFF064E3B);
+  static Color primaryDarkMid       = const Color(0xFF065F46);
+
   /// 根据 brandColor 生成完整色阶
   static void init({Color? brandColor}) {
     if (brandColor == null) return;
@@ -37,6 +42,10 @@ class AppTheme {
     primarySurface       = hsl.withLightness(0.95).withSaturation(0.40).toColor();
     primaryLightest      = hsl.withLightness(0.97).withSaturation(0.35).toColor();
     primaryGradientEnd   = const Color(0xFFF9F9F9);
+
+    primaryDarkest       = hsl.withLightness(0.09).toColor();
+    primaryDarker        = hsl.withLightness(0.16).toColor();
+    primaryDarkMid       = hsl.withLightness(0.20).toColor();
 
     // 同步兼容别名
     primaryColorDark = primaryDark;

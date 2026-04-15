@@ -73,12 +73,12 @@ class PromotionView extends BaseView<PromotionController> {
   Widget _buildCashRewardBanner() {
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF022C22), Color(0xFF064E3B), Color(0xFF065F46)],
-          stops: [0.0, 0.5, 1.0],
+          colors: [AppTheme.primaryDarkest, AppTheme.primaryDarker, AppTheme.primaryDarkMid],
+          stops: const [0.0, 0.5, 1.0],
         ),
       ),
       child: Stack(
@@ -103,24 +103,22 @@ class PromotionView extends BaseView<PromotionController> {
                       margin: const EdgeInsets.only(right: 8),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF6EE7B7), Color(0xFF059669)],
+                        gradient: LinearGradient(
+                          colors: [AppTheme.primaryGradientLight, AppTheme.primaryColor],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(
-                              0xFF10B981,
-                            ).withValues(alpha: 0.40),
+                            color: AppTheme.primaryGradientMid.withValues(alpha: 0.40),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
                         ],
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.monetization_on_outlined,
-                        color: Color(0xFF022C22),
+                        color: AppTheme.primaryDarkest,
                         size: 15,
                       ),
                     ),
@@ -262,21 +260,19 @@ class PromotionView extends BaseView<PromotionController> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: isPrimary
-                    ? const [
-                        Color(0xFF6EE7B7),
-                        Color(0xFF34D399),
-                        Color(0xFF10B981),
+                    ? [
+                        AppTheme.primaryGradientLight,
+                        AppTheme.primaryGradientMid2,
+                        AppTheme.primaryGradientMid,
                       ]
-                    : const [Color(0xFF6EE7B7), Color(0xFF34D399)],
+                    : [AppTheme.primaryGradientLight, AppTheme.primaryGradientMid2],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(19),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(
-                    0xFF10B981,
-                  ).withValues(alpha: isPrimary ? 0.50 : 0.28),
+                  color: AppTheme.primaryGradientMid.withValues(alpha: isPrimary ? 0.50 : 0.28),
                   blurRadius: 14,
                   spreadRadius: -4,
                   offset: const Offset(0, 5),
@@ -286,8 +282,8 @@ class PromotionView extends BaseView<PromotionController> {
             alignment: Alignment.center,
             child: Text(
               pct,
-              style: const TextStyle(
-                color: Color(0xFF022C22),
+              style: TextStyle(
+                color: AppTheme.primaryDarkest,
                 fontWeight: FontWeight.w900,
                 fontSize: 17,
                 letterSpacing: -0.6,
@@ -318,7 +314,7 @@ class PromotionView extends BaseView<PromotionController> {
                       height: 3,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: const Color(0xFF34D399).withValues(alpha: 0.8),
+                        color: AppTheme.primaryGradientMid2.withValues(alpha: 0.8),
                       ),
                     ),
                     const SizedBox(width: 4),
@@ -511,7 +507,7 @@ class PromotionView extends BaseView<PromotionController> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: const Color(0xFF1A3D2C), // 与背景相近的深色
+            color: AppTheme.primaryDarker,
             borderRadius: BorderRadius.circular(6),
             border: Border.all(color: Colors.white, width: 1.5),
           ),
@@ -589,8 +585,8 @@ class PromotionView extends BaseView<PromotionController> {
             height: sb,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: const LinearGradient(
-                colors: [Color(0xFF4DB6AC), Color(0xFF48BB78)],
+              gradient: LinearGradient(
+                colors: [AppTheme.primaryGradientMid2, AppTheme.primaryGradientMid],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),

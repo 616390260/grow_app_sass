@@ -7,6 +7,7 @@ import 'package:do_task_project/app/data/models/activity_model.dart';
 import 'package:do_task_project/app/data/models/home_info_model.dart';
 import 'package:do_task_project/app/modules/home/controllers/home_controller.dart';
 import 'package:do_task_project/app/modules/home/views/widgets/banner_carousel_widget.dart';
+import 'package:do_task_project/app/modules/home/views/widgets/task_card_widget.dart';
 import 'package:do_task_project/app/modules/vip_details/components/vip_badge.dart';
 import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/foundation.dart';
@@ -107,6 +108,7 @@ class WorkgoHomeView extends BaseView<HomeController> {
                 if (TenantService.to.activityEnabled)
                   const SizedBox(height: 8),
                 if (TenantService.to.activityEnabled) _buildHotActivities(),
+                if (!TenantService.to.activityEnabled) _buildRecommendTasks(),
                 const SizedBox(height: 55),
               ],
             ),
@@ -462,7 +464,7 @@ class WorkgoHomeView extends BaseView<HomeController> {
           Row(
             children: [
               Text(
-                'Hot Activities',
+                I18nKeys.hotActivities.tr,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
@@ -544,6 +546,41 @@ class WorkgoHomeView extends BaseView<HomeController> {
         ],
       ),
     );
+  }
+
+  /// 构建推荐任务列表（活动未启用时替代热门活动显示）
+  Widget _buildRecommendTasks() {
+    return Obx(() {
+      final tasks = controller.recommendTasks;
+      if (tasks.isEmpty) return const SizedBox.shrink();
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 8),
+            Text(
+              I18nKeys.recommendedTasks.tr,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: _textDark,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ...tasks.asMap().entries.map((entry) {
+              final task = entry.value;
+              return TaskCardWidget(
+                title: task.title ?? '',
+                description: task.description ?? '',
+                buttonText: I18nKeys.startTask.tr,
+                onTap: () => controller.onRecommendTaskTap(entry.key),
+              );
+            }),
+          ],
+        ),
+      );
+    });
   }
 
   /// 活动卡片：图标 + 标题/副标题(点击展开) + 跳转箭头 + 展开/收起箭头
