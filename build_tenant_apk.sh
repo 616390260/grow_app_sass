@@ -110,8 +110,10 @@ fi
 # 6. 替换启动器图标（实际图标文件为 logo.jpg，AndroidManifest 引用 @mipmap/logo）
 if [ -n "$LOGO_URL" ] && [ "$LOGO_URL" != "" ]; then
     echo ">>> 下载并替换App图标..."
+    # 将外网IP替换为localhost（同一台服务器本地访问更快更可靠）
+    LOCAL_LOGO_URL=$(echo "$LOGO_URL" | sed -E 's|http://[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:|http://127.0.0.1:|')
     # 对URL中的空格等特殊字符进行编码
-    ENCODED_LOGO_URL=$(echo "$LOGO_URL" | sed 's/ /%20/g')
+    ENCODED_LOGO_URL=$(echo "$LOCAL_LOGO_URL" | sed 's/ /%20/g')
     echo "Logo URL: ${ENCODED_LOGO_URL}"
     LOGO_TEMP="/tmp/tenant_${TENANT_ID}_logo.png"
 
