@@ -338,6 +338,8 @@ class AccountView extends BaseView<AccountController> {
               onTap: controller.onLanguageSettingsTap,
             ),
             _buildDivider(),
+            _buildVersionItem(),
+            _buildDivider(),
             const SizedBox(height: 43),
             Center(
               child: TextButton(
@@ -541,6 +543,43 @@ class AccountView extends BaseView<AccountController> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// 版本号列表项：左侧图标+标题，右侧显示版本号
+  Widget _buildVersionItem() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 21, vertical: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: const Color(0xFF8E8E93),
+              borderRadius: BorderRadius.circular(17),
+            ),
+            child: const Icon(Icons.info_outline, color: Colors.white, size: 18),
+          ),
+          const SizedBox(width: 11),
+          Expanded(
+            child: Text(
+              I18nKeys.version.tr,
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppTheme.threeColor,
+              ),
+            ),
+          ),
+          Obx(() => Text(
+            controller.appVersion.value,
+            style: TextStyle(
+              fontSize: 13,
+              color: AppTheme.nineColor,
+            ),
+          )),
+        ],
       ),
     );
   }

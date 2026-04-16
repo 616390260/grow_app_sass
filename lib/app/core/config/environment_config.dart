@@ -42,7 +42,7 @@ class EnvironmentConfig {
         // return 'http://34.150.117.135:8083/'; // 测试环境API地址
         // return 'http://192.168.3.206:8083/'; // 测试环境API地址
         // return 'https://api.wacashsys.com/'; // 测试环境API地址
-        return 'http://192.168.1.145:8083/'; // 本地测试API地址
+        return 'http://34.92.229.229:8084/'; // 本地测试API地址
       // return 'https://api.eiorjgoiej.com/'; // 线上API地址
       case EnvironmentType.release:
         // return 'http://47.243.76.157:8083/'; // 生产环境API地址
@@ -125,12 +125,10 @@ class EnvironmentConfig {
   }
 
   /// 编译期注入的租户 ID（--dart-define=TENANT_ID=xxx）
-  static const String compileTenantId =
-      String.fromEnvironment('TENANT_ID');
+  static const String compileTenantId = String.fromEnvironment('TENANT_ID');
 
   /// 编译期注入的 App 名称（--dart-define=APP_NAME=xxx）
-  static const String compileAppName =
-      String.fromEnvironment('APP_NAME');
+  static const String compileAppName = String.fromEnvironment('APP_NAME');
 
   /// 应用基础名称（硬编码默认值）
   static const String _baseName = 'Taskgo';

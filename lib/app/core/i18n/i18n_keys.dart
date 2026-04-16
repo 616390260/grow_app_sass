@@ -597,6 +597,9 @@ class I18nKeys {
   static const insufficientPermissionsPleaseLoginAgain = 'insufficient_permissions_please_login_again';
   static const errorInvalidParams = 'error_invalid_params';
   
+  // Version
+  static const version = 'version';
+
   // Version update related
   static const versionUpdateFound = 'version_update_found';
   static const versionUpdateAvailable = 'version_update_available';

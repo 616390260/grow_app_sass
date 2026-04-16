@@ -31,6 +31,7 @@ class AppTranslations extends Translations {
       "summit_2024": "2024数字应用峰会",
       "explore_digital_transformation": "探索数字转型新机遇",
 
+      "version": "版本号",
       // Version update related
       "version_update_found": "发现新版本",
       "version_update_available": "有新版本可用，建议立即更新",
@@ -667,6 +668,7 @@ class AppTranslations extends Translations {
 
     'en_US': {
       'app_title': 'Taskgo',
+      "version": "Version",
       // Version update related
       "version_update_found": "New version found",
       "version_update_available": "New version available",
@@ -1464,6 +1466,7 @@ class AppTranslations extends Translations {
     },
 
     "hi_IN": {
+      "version": "संस्करण",
       // Version update related
       "version_update_found": "नया संस्करण उपलब्ध",
       "version_update_available":
@@ -2218,6 +2221,7 @@ class AppTranslations extends Translations {
     },
 
     "id_ID": {
+      "version": "Versi",
       // Version update related
       "version_update_found": "Temukan Versi Baru",
       "version_update_available": "Temukan Versi Baru, Saran Imporan Update",
@@ -2953,6 +2957,7 @@ class AppTranslations extends Translations {
     },
 
     "bn_BD": {
+      "version": "সংস্করণ",
       // Version update related
       "version_update_found": "নতুন ভার্সন পাওয়া গেছে",
       "version_update_available":
@@ -3677,6 +3682,7 @@ class AppTranslations extends Translations {
     },
 
     "pt_BR": {
+      "version": "Versão",
       // Version update related
       "version_update_found": "Nova versão disponível",
       "version_update_available":
@@ -4412,6 +4418,7 @@ class AppTranslations extends Translations {
     },
 
     "es_MX": {
+      "version": "Versión",
       // Version update related
       "version_update_found": "Nueva versión disponible",
       "version_update_available":

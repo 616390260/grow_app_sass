@@ -11,6 +11,7 @@ import 'package:do_task_project/app/core/services/auth_service.dart';
 import 'package:do_task_project/app/modules/main/controllers/main_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../routes/app_pages.dart';
 
@@ -22,6 +23,9 @@ class AccountController extends BaseController {
   final referralCode = 'ILKBWU94'.obs;
   /// 推荐码是否可见，默认隐藏
   final isReferralCodeVisible = false.obs;
+
+  /// 应用版本号
+  final appVersion = ''.obs;
 
   /// 切换推荐码显示/隐藏
   void toggleReferralCodeVisibility() {
@@ -81,7 +85,14 @@ class AccountController extends BaseController {
   void onInit() {
     super.onInit();
     loadCountries();
+    _loadAppVersion();
     // 懒加载：不在这里自动加载数据，等待tab切换时由MainController加载
+  }
+
+  /// 加载应用版本号
+  Future<void> _loadAppVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    appVersion.value = 'v${info.version}';
   }
 
   void loadUserInfo() async {
