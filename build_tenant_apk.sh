@@ -110,23 +110,35 @@ fi
 # 6. 替换启动器图标（实际图标文件为 logo.jpg，AndroidManifest 引用 @mipmap/logo）
 if [ -n "$LOGO_URL" ] && [ "$LOGO_URL" != "" ]; then
     echo ">>> 下载并替换App图标..."
+    # 对URL中的空格等特殊字符进行编码
+    ENCODED_LOGO_URL=$(echo "$LOGO_URL" | sed 's/ /%20/g')
+    echo "Logo URL: ${ENCODED_LOGO_URL}"
     LOGO_TEMP="/tmp/tenant_${TENANT_ID}_logo.png"
 
-    if curl -sS -o "$LOGO_TEMP" "$LOGO_URL" 2>/dev/null; then
-        if command -v convert &> /dev/null; then
-            echo "使用ImageMagick生成各分辨率图标..."
-            convert "$LOGO_TEMP" -resize 48x48   "android/app/src/main/res/mipmap-mdpi/logo.jpg" 2>/dev/null || true
-            convert "$LOGO_TEMP" -resize 72x72   "android/app/src/main/res/mipmap-hdpi/logo.jpg" 2>/dev/null || true
-            convert "$LOGO_TEMP" -resize 96x96   "android/app/src/main/res/mipmap-xhdpi/logo.jpg" 2>/dev/null || true
-            convert "$LOGO_TEMP" -resize 144x144 "android/app/src/main/res/mipmap-xxhdpi/logo.jpg" 2>/dev/null || true
-            convert "$LOGO_TEMP" -resize 192x192 "android/app/src/main/res/mipmap-xxxhdpi/logo.jpg" 2>/dev/null || true
-            echo "图标替换完成"
+    # -L 跟随重定向, --retry 重试3次, --connect-timeout 连接超时30s
+    if curl -L --retry 3 --connect-timeout 30 --max-time 120 -f -o "$LOGO_TEMP" "$ENCODED_LOGO_URL"; then
+        LOGO_SIZE=$(stat -c%s "$LOGO_TEMP" 2>/dev/null || stat -f%z "$LOGO_TEMP" 2>/dev/null || echo "0")
+        echo "Logo下载成功，文件大小: ${LOGO_SIZE} bytes"
+
+        if [ "$LOGO_SIZE" -gt 0 ] 2>/dev/null; then
+            if command -v convert &> /dev/null; then
+                echo "使用ImageMagick生成各分辨率图标..."
+                convert "$LOGO_TEMP" -resize 48x48   "android/app/src/main/res/mipmap-mdpi/logo.jpg"
+                convert "$LOGO_TEMP" -resize 72x72   "android/app/src/main/res/mipmap-hdpi/logo.jpg"
+                convert "$LOGO_TEMP" -resize 96x96   "android/app/src/main/res/mipmap-xhdpi/logo.jpg"
+                convert "$LOGO_TEMP" -resize 144x144 "android/app/src/main/res/mipmap-xxhdpi/logo.jpg"
+                convert "$LOGO_TEMP" -resize 192x192 "android/app/src/main/res/mipmap-xxxhdpi/logo.jpg"
+                echo "图标替换完成"
+            else
+                echo "警告: 未安装ImageMagick，跳过图标替换。请安装: apt-get install imagemagick"
+            fi
         else
-            echo "警告: 未安装ImageMagick，跳过图标替换。请安装: apt-get install imagemagick"
+            echo "警告: 下载的Logo文件为空，跳过图标替换"
         fi
         rm -f "$LOGO_TEMP"
     else
-        echo "警告: 下载Logo失败，跳过图标替换"
+        echo "警告: 下载Logo失败 (curl exit code: $?)，跳过图标替换"
+        echo "请检查: 1) URL是否正确  2) 服务器是否能访问该地址  3) URL是否需要登录认证"
     fi
 fi
 
