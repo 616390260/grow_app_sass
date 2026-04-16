@@ -27,8 +27,10 @@ class TenantService extends GetxService {
     return id?.toString();
   }
 
-  /// 应用名称（优先取租户配置，回退到默认）
-  String get appName => brandInfo.value?.brand?.appName ?? 'Taskgo';
+  /// 应用名称（优先接口 → 编译期注入 → 硬编码默认值）
+  String get appName =>
+      brandInfo.value?.brand?.appName ??
+      EnvironmentConfig.compileAppName.ifEmpty(() => 'Taskgo');
 
   /// 品牌 Logo 完整 URL（相对路径自动拼接 baseUrl）
   String? get brandLogo {
@@ -106,13 +108,25 @@ class TenantService extends GetxService {
   bool get hasBrand => brandInfo.value != null;
 
   /// 初始化租户信息
-  /// 仅 Web/H5 端生效，从浏览器地址栏获取当前域名
+  ///
+  /// - Web 端：从浏览器地址栏获取域名 → 查接口获取 tenantId → 拉品牌配置
+  /// - APK 端：从编译期常量 [EnvironmentConfig.compileTenantId] 获取 tenantId
+  ///           → 设置 tenantInfo → 拉品牌配置
   Future<TenantService> init() async {
     if (kIsWeb) {
       final domain = Uri.base.host;
       debugPrint('[TenantService] Web端域名: $domain');
       if (domain.isNotEmpty) {
         await fetchTenant(domain);
+      }
+    } else {
+      final tid = EnvironmentConfig.compileTenantId;
+      if (tid.isNotEmpty) {
+        debugPrint('[TenantService] APK端编译期tenantId: $tid');
+        tenantInfo.value = TenantInfoModel(tenantId: int.tryParse(tid));
+        if (tenantInfo.value?.tenantId != null) {
+          await fetchBrand();
+        }
       }
     }
     return this;

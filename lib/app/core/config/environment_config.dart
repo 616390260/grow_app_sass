@@ -124,21 +124,33 @@ class EnvironmentConfig {
     }
   }
 
-  /// 应用基础名称（修改此处即可全局更改品牌名）
+  /// 编译期注入的租户 ID（--dart-define=TENANT_ID=xxx）
+  static const String compileTenantId =
+      String.fromEnvironment('TENANT_ID');
+
+  /// 编译期注入的 App 名称（--dart-define=APP_NAME=xxx）
+  static const String compileAppName =
+      String.fromEnvironment('APP_NAME');
+
+  /// 应用基础名称（硬编码默认值）
   static const String _baseName = 'Taskgo';
+
+  /// 有效名称：优先取编译期注入值，其次硬编码默认值
+  static String get _effectiveName =>
+      compileAppName.isNotEmpty ? compileAppName : _baseName;
 
   /// 获取应用名称（含调试标记，用于内部日志/标题栏）
   String get appName {
     switch (currentEnvironment) {
       case EnvironmentType.debug:
-        return '$_baseName (Debug)';
+        return '$_effectiveName (Debug)';
       case EnvironmentType.release:
-        return _baseName;
+        return _effectiveName;
     }
   }
 
   /// 品牌展示名称：不含调试标记，用于登录页等用户可见区域
-  String get brandName => _baseName;
+  String get brandName => _effectiveName;
 
   /// 获取应用版本后缀
   String get versionSuffix {
