@@ -110,13 +110,33 @@ fi
 # 6. 替换启动器图标（实际图标文件为 logo.jpg，AndroidManifest 引用 @mipmap/logo）
 if [ -n "$LOGO_URL" ] && [ "$LOGO_URL" != "" ]; then
     echo ">>> 下载并替换App图标..."
-    # 对URL中的空格等特殊字符进行编码
-    ENCODED_LOGO_URL=$(echo "$LOGO_URL" | sed 's/ /%20/g')
-    echo "Logo URL: ${ENCODED_LOGO_URL}"
+    echo "Logo URL: ${LOGO_URL}"
     LOGO_TEMP="/tmp/tenant_${TENANT_ID}_logo.png"
 
-    # -L 跟随重定向, --retry 重试3次, --connect-timeout 连接超时30s
-    if curl -L --retry 3 --connect-timeout 30 --max-time 120 -f -o "$LOGO_TEMP" "$ENCODED_LOGO_URL"; then
+    # 优先从本地文件路径读取（URL中/profile/对应本地磁盘目录，避免外网IP curl不通）
+    PROFILE_DIR="/www/wwwroot/file/gows-saas"
+    LOGO_OBTAINED=false
+    if echo "$LOGO_URL" | grep -q "/profile/"; then
+        RELATIVE_PATH=$(echo "$LOGO_URL" | sed 's|.*/profile/||')
+        LOCAL_FILE="${PROFILE_DIR}/${RELATIVE_PATH}"
+        echo "尝试本地文件路径: ${LOCAL_FILE}"
+        if [ -f "$LOCAL_FILE" ]; then
+            cp "$LOCAL_FILE" "$LOGO_TEMP"
+            LOGO_OBTAINED=true
+            echo "从本地文件复制Logo成功"
+        else
+            echo "本地文件不存在，回退到HTTP下载"
+        fi
+    fi
+    # 本地文件不存在时回退到HTTP下载
+    if [ "$LOGO_OBTAINED" = false ]; then
+        if curl -L --retry 3 --connect-timeout 30 --max-time 120 -f -o "$LOGO_TEMP" "$LOGO_URL"; then
+            LOGO_OBTAINED=true
+            echo "HTTP下载Logo成功"
+        fi
+    fi
+
+    if [ "$LOGO_OBTAINED" = true ]; then
         LOGO_SIZE=$(stat -c%s "$LOGO_TEMP" 2>/dev/null || stat -f%z "$LOGO_TEMP" 2>/dev/null || echo "0")
         echo "Logo下载成功，文件大小: ${LOGO_SIZE} bytes"
 
@@ -137,8 +157,8 @@ if [ -n "$LOGO_URL" ] && [ "$LOGO_URL" != "" ]; then
         fi
         rm -f "$LOGO_TEMP"
     else
-        echo "警告: 下载Logo失败 (curl exit code: $?)，跳过图标替换"
-        echo "请检查: 1) URL是否正确  2) 服务器是否能访问该地址  3) URL是否需要登录认证"
+        echo "警告: 获取Logo失败（本地文件和HTTP下载均失败），跳过图标替换"
+        echo "请检查: 1) URL是否正确  2) 服务器是否能访问该地址  3) 本地文件是否存在"
     fi
 fi
 
