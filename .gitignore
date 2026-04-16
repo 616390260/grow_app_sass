@@ -45,6 +45,6 @@ app.*.map.json
 /android/app/release
 
 # 签名文件保护
-android/app/*.jks
-android/app/*.keystore
-android/keystore.properties
+# android/app/*.jks
+# android/app/*.keystore
+# android/keystore.properties
