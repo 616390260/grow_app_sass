@@ -6,6 +6,36 @@
 
 set -e
 
+# ============ 低内存服务器保护 ============
+
+# 检查可用内存（MB），低于 1.5GB 时拒绝打包，防止 OOM 影响其他服务
+AVAIL_MEM_MB=$(awk '/MemAvailable/ {printf "%d", $2/1024}' /proc/meminfo 2>/dev/null || echo "0")
+if [ "$AVAIL_MEM_MB" -gt 0 ] && [ "$AVAIL_MEM_MB" -lt 1500 ]; then
+    echo "错误: 可用内存仅 ${AVAIL_MEM_MB}MB，低于 1500MB 安全阈值，请稍后再试"
+    exit 1
+fi
+echo "当前可用内存: ${AVAIL_MEM_MB}MB"
+
+# 检查 swap，没有则提示
+SWAP_TOTAL=$(awk '/SwapTotal/ {printf "%d", $2/1024}' /proc/meminfo 2>/dev/null || echo "0")
+if [ "$SWAP_TOTAL" -lt 1024 ]; then
+    echo "警告: Swap仅 ${SWAP_TOTAL}MB，建议至少 4GB swap 防止 OOM"
+    echo "  创建方法: fallocate -l 4G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile"
+fi
+
+# 防止并发打包：用文件锁确保同一时刻只有一个打包任务
+LOCK_FILE="/tmp/flutter_build.lock"
+exec 200>"$LOCK_FILE"
+if ! flock -n 200; then
+    echo "错误: 另一个打包任务正在运行，请等待完成后再试"
+    exit 1
+fi
+
+# 限制 Gradle/Java 进程内存
+export GRADLE_OPTS="-Xmx2g -XX:MaxMetaspaceSize=512m"
+
+# ============ 环境变量 ============
+
 # 设置环境变量（Java进程执行时PATH可能不包含这些路径）
 export PATH="/opt/flutter/bin:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:$PATH"
 export ANDROID_HOME="/opt/android-sdk"
@@ -134,6 +164,11 @@ fi
 echo ">>> 还原项目文件..."
 git checkout -- android/app/src/main/res/values/strings.xml 2>/dev/null || true
 git checkout -- android/app/src/main/res/ 2>/dev/null || true
+
+# 10. 清理构建缓存（低磁盘服务器防止撑满）
+echo ">>> 清理构建缓存..."
+rm -rf build/app/intermediates 2>/dev/null || true
+rm -rf build/app/tmp 2>/dev/null || true
 
 echo "============================================================"
 echo "租户 ${TENANT_ID} APK打包完成!"
