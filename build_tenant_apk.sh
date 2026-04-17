@@ -162,19 +162,26 @@ if [ -n "$LOGO_URL" ] && [ "$LOGO_URL" != "" ]; then
     fi
 fi
 
+# 清除Gradle资源缓存，确保图标等资源文件使用最新版本
+rm -rf build/app/intermediates/res 2>/dev/null || true
+rm -rf build/app/intermediates/merged_res 2>/dev/null || true
+
 # 7. Flutter打包
 #    --build-name  覆盖 pubspec.yaml 中的 version（versionName）
 #    --build-number 覆盖 versionCode（递增整数，默认1）
 #    --dart-define=TENANT_ID   → EnvironmentConfig.compileTenantId → TenantService 自动初始化
 #    --dart-define=APP_NAME    → EnvironmentConfig.compileAppName  → Flutter内部名称回退值
 #    --dart-define=BASE_URL    → EnvironmentConfig._getRuntimeUrl  → API基础地址
+APP_PACKAGE_ID="com.dotask.tenant${TENANT_ID}"
 echo ">>> 开始Flutter打包..."
+echo "应用包名: ${APP_PACKAGE_ID}"
 flutter build apk --release \
     --build-name="${VERSION_NAME}" \
     --build-number="${BUILD_NUMBER:-1}" \
     --dart-define=TENANT_ID=${TENANT_ID} \
     --dart-define=APP_NAME="${APP_NAME}" \
-    --dart-define=BASE_URL="${API_BASE_URL}"
+    --dart-define=BASE_URL="${API_BASE_URL}" \
+    -PAPP_ID="${APP_PACKAGE_ID}"
 
 # 8. 复制产物
 echo ">>> 复制APK产物..."

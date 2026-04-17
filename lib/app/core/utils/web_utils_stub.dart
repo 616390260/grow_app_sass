@@ -2,3 +2,5 @@
 void updateFavicon(String url) {}
 
 void updateDocumentTitle(String title) {}
+
+void removeLoadingOverlay() {}

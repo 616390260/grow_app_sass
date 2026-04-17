@@ -26,6 +26,7 @@ abstract class Routes {
   static const validUsers = _Paths.validUsers;
   static const messageCenter = _Paths.messageCenter;
   static const activities = _Paths.activities;
+  static const splash = _Paths.splash;
 }
 
 /// 路由路径定义
@@ -55,6 +56,7 @@ abstract class _Paths {
   static const validUsers = '/valid-users';
   static const messageCenter = '/message-center';
   static const activities = '/activities';
+  static const splash = '/splash';
   // customerServiceList路径暂未使用，保留定义供后续使用
   // static const customerServiceList = '/customer-service-list';
 }

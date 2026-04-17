@@ -32,10 +32,77 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>taskgo</title>
+  <title>Loading...</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    #loading {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, #0A0F1E 0%, #0F172A 50%, #162033 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    .gold-spinner {
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+    .gold-spinner .arc {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      border-top-color: #CA8A04;
+      animation: gold-spin 2.4s linear infinite;
+      filter: drop-shadow(0 0 6px rgba(202,138,4,0.4));
+    }
+    .gold-spinner .arc:nth-child(2) {
+      inset: 10px;
+      border-top-color: transparent;
+      border-right-color: rgba(232,185,74,0.5);
+      animation-duration: 3.2s;
+      animation-direction: reverse;
+      border-width: 1.5px;
+    }
+    .gold-spinner .core {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 8px; height: 8px;
+      margin: -4px 0 0 -4px;
+      background: #E8B94A;
+      border-radius: 50%;
+      box-shadow: 0 0 16px rgba(202,138,4,0.4), 0 0 32px rgba(232,185,74,0.2);
+      animation: gold-pulse 1.8s ease-in-out infinite alternate;
+    }
+    @keyframes gold-spin { to { transform: rotate(360deg); } }
+    @keyframes gold-pulse {
+      from { transform: scale(0.8); opacity: 0.6; }
+      to   { transform: scale(1.2); opacity: 1; }
+    }
+    .loading-text {
+      margin-top: 40px;
+      font-size: 11px;
+      color: #6B7280;
+      letter-spacing: 2px;
+      font-weight: 300;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+  </style>
 </head>
 <body>
+  <div id="loading">
+    <div class="gold-spinner">
+      <div class="arc"></div>
+      <div class="arc"></div>
+      <div class="core"></div>
+    </div>
+    <div class="loading-text">Loading...</div>
+  </div>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

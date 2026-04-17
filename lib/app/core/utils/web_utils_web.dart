@@ -12,3 +12,8 @@ void updateFavicon(String url) {
 void updateDocumentTitle(String title) {
   web.document.title = title;
 }
+
+/// 移除 Web 端 HTML loading 遮罩
+void removeLoadingOverlay() {
+  web.document.getElementById('loading')?.remove();
+}

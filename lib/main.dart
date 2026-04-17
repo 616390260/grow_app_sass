@@ -9,8 +9,7 @@ import 'app/core/theme/responsive.dart';
 import 'app/core/bindings/global_binding.dart';
 import 'app/core/i18n/app_translations.dart';
 import 'app/core/i18n/locale_config.dart';
-import 'app/core/services/auth_service.dart';
-import 'app/core/services/tenant_service.dart';
+import 'app/core/utils/web_utils.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,12 +24,10 @@ void main() async {
   // 初始化全局依赖
   GlobalBinding().dependencies();
 
-  // 根据域名获取租户信息（Web 端自动读取浏览器域名）
-  await TenantService.to.init();
+  // 租户配置和主题初始化已移至 SplashController，闪屏页异步加载
 
-  // 根据租户 brandColor 初始化主题色阶
-  // 优先取 brandColor，无配置时 login_dark_gold 回退金色，其他保持默认
-  AppTheme.init(brandColor: TenantService.to.effectiveBrandColor);
+  // 移除 Web 端 HTML loading 遮罩
+  removeLoadingOverlay();
 
   runApp(const MyApp());
 }
@@ -43,18 +40,12 @@ class MyApp extends StatelessWidget {
     // 从URL参数获取并保存邀请码（在决定路由之前）
     _saveInviteCodeFromUrl();
 
-    // 根据认证状态确定初始路由
-    final authService = Get.find<AuthService>();
-    final initialRoute = authService.needLogin
-        ? Routes.login
-        : AppPages.initial;
-
     return GetMaterialApp(
-      title: TenantService.to.appName,
+      title: 'Loading...',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
-      initialRoute: initialRoute,
+      initialRoute: AppPages.initial,
       getPages: AppPages.routes,
       translations: AppTranslations(),
       locale: LocaleConfig.getInitialLocale(),
