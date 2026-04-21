@@ -10,7 +10,8 @@ class LanguageOption {
 }
 
 class LanguageSettingsController extends BaseController {
-  final Rx<Locale> selected = (Get.locale ?? LocaleConfig.getInitialLocale()).obs;
+  final Rx<Locale> selected =
+      (Get.locale ?? LocaleConfig.getInitialLocale()).obs;
 
   final List<LanguageOption> options = const [
     LanguageOption(label: '简体中文', locale: Locale('zh', 'CN')),
@@ -20,11 +21,13 @@ class LanguageSettingsController extends BaseController {
     LanguageOption(label: 'Brazil', locale: Locale('pt', 'BR')),
     LanguageOption(label: 'India', locale: Locale('hi', 'IN')),
     LanguageOption(label: 'Mexico', locale: Locale('es', 'MX')),
+    LanguageOption(label: 'Spanish', locale: Locale('es', 'ES')),
   ];
 
   bool isSelected(Locale locale) {
     final s = selected.value;
-    return s.languageCode == locale.languageCode && s.countryCode == locale.countryCode;
+    return s.languageCode == locale.languageCode &&
+        s.countryCode == locale.countryCode;
   }
 
   Future<void> select(Locale locale) async {

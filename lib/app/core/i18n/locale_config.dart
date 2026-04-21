@@ -11,6 +11,7 @@ class LocaleConfig {
     Locale('pt', 'BR'),
     Locale('hi', 'IN'),
     Locale('es', 'MX'),
+    Locale('es', 'ES'),
   ];
 
   static const Locale fallbackLocale = Locale('en', 'US');
@@ -24,7 +25,9 @@ class LocaleConfig {
     if (saved is String && saved.isNotEmpty) {
       final parts = saved.split('_');
       final languageCode = parts.isNotEmpty ? parts[0] : 'en';
-      final countryCode = parts.length > 1 && parts[1].isNotEmpty ? parts[1] : null;
+      final countryCode = parts.length > 1 && parts[1].isNotEmpty
+          ? parts[1]
+          : null;
       final locale = Locale(languageCode, countryCode);
       if (isSupported(locale)) return locale;
     }
@@ -35,11 +38,18 @@ class LocaleConfig {
 
   static Future<void> updateLocale(Locale locale) async {
     if (!isSupported(locale)) return;
-    await _box.write(_storageKey, '${locale.languageCode}_${locale.countryCode ?? ''}');
+    await _box.write(
+      _storageKey,
+      '${locale.languageCode}_${locale.countryCode ?? ''}',
+    );
     Get.updateLocale(locale);
   }
 
   static bool isSupported(Locale locale) {
-    return supportedLocales.any((l) => l.languageCode == locale.languageCode && l.countryCode == locale.countryCode);
+    return supportedLocales.any(
+      (l) =>
+          l.languageCode == locale.languageCode &&
+          l.countryCode == locale.countryCode,
+    );
   }
 }
