@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../controllers/login_controller.dart';
 import '../../../core/base/base_view.dart';
 import '../../../core/i18n/i18n_keys.dart';
+import '../../../core/widgets/language_switcher.dart';
 
 class LoginView extends BaseView<LoginController> {
   // 不再使用FocusNode，改为通过FocusScope管理焦点
@@ -143,6 +144,12 @@ class LoginView extends BaseView<LoginController> {
                 ),
               ),
             ),
+          ),
+          // 右上角语言切换入口
+          Positioned(
+            top: MediaQuery.of(Get.context!).padding.top + 8,
+            right: 16,
+            child: const LanguageSwitcherButton(),
           ),
         ],
       ),
