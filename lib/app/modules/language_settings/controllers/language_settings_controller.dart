@@ -20,6 +20,7 @@ class LanguageSettingsController extends BaseController {
     LanguageOption(label: 'Brazil', locale: Locale('pt', 'BR')),
     LanguageOption(label: 'India', locale: Locale('hi', 'IN')),
     LanguageOption(label: 'Mexico', locale: Locale('es', 'MX')),
+    LanguageOption(label: 'Spanish', locale: Locale('es', 'ES')),
   ];
 
   bool isSelected(Locale locale) {

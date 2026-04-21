@@ -11,6 +11,7 @@ class LocaleConfig {
     Locale('pt', 'BR'),
     Locale('hi', 'IN'),
     Locale('es', 'MX'),
+    Locale('es', 'ES'),
   ];
 
   static const Locale fallbackLocale = Locale('en', 'US');
