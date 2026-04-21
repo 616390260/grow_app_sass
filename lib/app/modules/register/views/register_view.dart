@@ -6,6 +6,7 @@ import '../../../core/base/base_view.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../../../core/constants/image_assets.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/language_switcher.dart';
 import '../controllers/register_controller.dart';
 
 class RegisterView extends BaseView<RegisterController> {
@@ -147,6 +148,12 @@ class RegisterView extends BaseView<RegisterController> {
                 ],
               ),
             ),
+          ),
+          // 右上角语言切换入口
+          Positioned(
+            top: MediaQuery.of(Get.context!).padding.top + 8,
+            right: 16,
+            child: const LanguageSwitcherButton(),
           ),
         ],
       ),
