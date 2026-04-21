@@ -86,76 +86,95 @@ class LanguageSwitcherButton extends StatelessWidget {
 }
 
 /// 弹出底部语言选择抽屉。
+///
+/// 关键点：
+/// - 使用 [isScrollControlled] = true 取消默认 ~56% 屏高限制，避免语言项过多时底部被裁掉；
+/// - 通过 [ConstrainedBox] 限制最大高度为屏幕的 80%，并将语言列表放入 [ListView]，
+///   保证项目超出可视区时仍可滚动选择。
 void showLanguagePicker(BuildContext context) {
   final currentLocale = Get.locale ?? LocaleConfig.getInitialLocale();
   showModalBottomSheet(
     context: context,
+    isScrollControlled: true,
     backgroundColor: Colors.white,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
     builder: (ctx) {
+      final maxHeight = MediaQuery.of(ctx).size.height * 0.8;
       return SafeArea(
         top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              child: Text(
-                I18nKeys.languageSettings.tr,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.threeColor,
-                ),
-              ),
-            ),
-            const Divider(height: 1, color: Color(0xFFEDEDED)),
-            ...kLanguageOptions.map((opt) {
-              final selected =
-                  currentLocale.languageCode == opt.locale.languageCode &&
-                  currentLocale.countryCode == opt.locale.countryCode;
-              return InkWell(
-                onTap: () async {
-                  Navigator.of(ctx).pop();
-                  if (!selected) {
-                    await LocaleConfig.updateLocale(opt.locale);
-                  }
-                },
-                child: Container(
-                  height: 48,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          opt.label,
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: selected
-                                ? const Color(0xFF0B65FF)
-                                : Colors.black87,
-                            fontWeight: selected
-                                ? FontWeight.w600
-                                : FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                      if (selected)
-                        const Icon(
-                          Icons.check_circle,
-                          color: Color(0xFF0B65FF),
-                          size: 20,
-                        ),
-                    ],
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: maxHeight),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                child: Text(
+                  I18nKeys.languageSettings.tr,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.threeColor,
                   ),
                 ),
-              );
-            }),
-            const SizedBox(height: 8),
-          ],
+              ),
+              const Divider(height: 1, color: Color(0xFFEDEDED)),
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: kLanguageOptions.length,
+                  itemBuilder: (context, index) {
+                    final opt = kLanguageOptions[index];
+                    final selected =
+                        currentLocale.languageCode == opt.locale.languageCode &&
+                            currentLocale.countryCode == opt.locale.countryCode;
+                    return InkWell(
+                      onTap: () async {
+                        Navigator.of(ctx).pop();
+                        if (!selected) {
+                          await LocaleConfig.updateLocale(opt.locale);
+                        }
+                      },
+                      child: Container(
+                        height: 48,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                opt.label,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: selected
+                                      ? const Color(0xFF0B65FF)
+                                      : Colors.black87,
+                                  fontWeight: selected
+                                      ? FontWeight.w600
+                                      : FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            if (selected)
+                              const Icon(
+                                Icons.check_circle,
+                                color: Color(0xFF0B65FF),
+                                size: 20,
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
         ),
       );
     },
