@@ -25,13 +25,13 @@ import 'package:do_task_project/app/core/utils/localized_assets.dart';
 String imagePath = LocalizedAssets.getImagePath('welcome_banner.png');
 
 // 直接获取AssetImage对象
-AssetImage image = LocalizedAssets.getLocalizedImage('logo.jpg');
+AssetImage image = LocalizedAssets.getLocalizedImage('logo.png');
 
 // 在Widget中使用
 Image.asset(LocalizedAssets.getImagePath('welcome_banner.png'))
 
 // 或者
-Image(image: LocalizedAssets.getLocalizedImage('logo.jpg'))
+Image(image: LocalizedAssets.getLocalizedImage('logo.png'))
 ```
 
 ### 2. 使用扩展方法
@@ -41,7 +41,7 @@ Image(image: LocalizedAssets.getLocalizedImage('logo.jpg'))
 Image.asset('welcome_banner.png'.localizedImagePath)
 
 // 或者
-Image(image: 'logo.jpg'.localizedImage)
+Image(image: 'logo.png'.localizedImage)
 ```
 
 ### 3. 带回退机制的使用

@@ -97,6 +97,7 @@ dev_dependencies:
   # JSON Code Generation
   build_runner: ^2.4.6
   json_serializable: ^6.7.1
+  flutter_launcher_icons: ^0.14.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -140,3 +141,12 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# 打包前执行 `dart run flutter_launcher_icons`，从 [image_path] 生成 Android/iOS/Web 图标（与 App 内 logo 同源）。
+flutter_launcher_icons:
+  image_path: assets/images/logo.png
+  android: true
+  ios: true
+  min_sdk_android: 21
+  web:
+    generate: true

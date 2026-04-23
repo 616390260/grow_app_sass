@@ -23,9 +23,9 @@ class LocalizedAssets {
     bool isWeb = kIsWeb;
     String basePath = isWeb ? 'assets/assets' : 'assets';
     
-    // 特殊处理logo.png，直接使用根目录下的版本
-    if (imageName == 'logo.jpg') {
-      return '$basePath/images/logo.jpg';
+    // 特殊处理 logo：统一使用 images 根目录下的品牌图
+    if (imageName == 'logo.png') {
+      return '$basePath/images/logo.png';
     }
     
     final locale = Get.locale ?? const Locale('zh', 'CN');
@@ -53,9 +53,9 @@ class LocalizedAssets {
     bool isWeb = kIsWeb;
     String basePath = isWeb ? 'assets/assets' : 'assets';
     
-    // 特殊处理logo.png，直接使用根目录下的版本
-    if (imageName == 'logo.jpg') {
-      return '$basePath/images/logo.jpg';
+    // 特殊处理 logo：统一使用 images 根目录下的品牌图
+    if (imageName == 'logo.png') {
+      return '$basePath/images/logo.png';
     }
     
     languageCode ??= Get.locale?.languageCode ?? 'zh';
@@ -90,9 +90,9 @@ extension LocalizedAssetString on String {
     bool isWeb = kIsWeb;
     String basePath = isWeb ? 'assets/assets' : 'assets';
     
-    // 特殊处理logo.png，直接使用根目录下的版本
-    if (this == 'logo.jpg') {
-      return '$basePath/images/logo.jpg';
+    // 特殊处理 logo：统一使用 images 根目录下的品牌图
+    if (this == 'logo.png') {
+      return '$basePath/images/logo.png';
     }
     
     return LocalizedAssets.getImagePath(this);
@@ -104,9 +104,9 @@ extension LocalizedAssetString on String {
     bool isWeb = kIsWeb;
     String basePath = isWeb ? 'assets/assets' : 'assets';
     
-    // 特殊处理logo.png，直接使用根目录下的版本
-    if (this == 'logo.jpg') {
-      return AssetImage('$basePath/images/logo.jpg');
+    // 特殊处理 logo：统一使用 images 根目录下的品牌图
+    if (this == 'logo.png') {
+      return AssetImage('$basePath/images/logo.png');
     }
     
     return LocalizedAssets.getLocalizedImage(this);

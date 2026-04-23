@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         : AppPages.initial;
 
     return GetMaterialApp(
-      title: 'WorkGo',
+      title: 'TaskGo',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
