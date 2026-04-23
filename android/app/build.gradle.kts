@@ -39,20 +39,26 @@ android {
         versionName = flutter.versionName
     }
 
-    // 临时测试签名
+    // 若存在 android/app/key.jks 则用正式 release 签名；否则沿用 debug 签名（与之前「缺密钥也能打 release APK」一致）。
+    val releaseKeystore = file("key.jks")
     signingConfigs {
-        create("release") {
-            keyAlias = "key"
-            keyPassword = "android123"
-            storeFile = file("key.jks")
-            storePassword = "android123"
+        if (releaseKeystore.exists()) {
+            create("release") {
+                keyAlias = "key"
+                keyPassword = "android123"
+                storeFile = releaseKeystore
+                storePassword = "android123"
+            }
         }
     }
 
     buildTypes {
         release {
-            // 使用发布签名配置
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = if (releaseKeystore.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
             // 启用代码压缩
             // isMinifyEnabled = true
             // 启用资源压缩

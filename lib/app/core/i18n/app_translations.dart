@@ -5,7 +5,7 @@ class AppTranslations extends Translations {
   Map<String, Map<String, String>> get keys => {
     'zh_CN': {
       // Message Center
-      "app_title": "Taskgo",
+      "app_title": "WorkGo",
       "claim_reward_success": "领取奖励成功",
       'doNotRefresh': '不要刷新页面',
       "select_currency": "选择货币",
@@ -367,6 +367,7 @@ class AppTranslations extends Translations {
       "please_complete_registration": "请先完成注册，再继续绑定",
       "loading_online_numbers_failed": "加载在线号码失败",
       "video_loading": "视频加载中...",
+      "video_unavailable": "视频暂时无法播放，可继续完成下方绑定步骤",
       "lucky_wheel_cash": "现金",
       "vip_details_more": "VIP详情 >",
       "status_pending": "待处理",
@@ -678,7 +679,7 @@ class AppTranslations extends Translations {
     },
 
     'en_US': {
-      'app_title': 'Taskgo',
+      'app_title': 'WorkGo',
       // Version update related
       "version_update_found": "New version found",
       "version_update_available": "New version available",
@@ -1101,6 +1102,8 @@ class AppTranslations extends Translations {
           'Please Complete Registration Before Continuing Binding',
       'loading_online_numbers_failed': 'Failed to Load Online Numbers',
       'video_loading': 'Video Loading...',
+      'video_unavailable':
+          'Video cannot be played right now. You can continue with the steps below.',
       'lucky_wheel_cash': 'Cash',
       'vip_details_more': 'VIP Details >',
       'status_pending': 'Pending',
@@ -1518,7 +1521,7 @@ class AppTranslations extends Translations {
       'no_message': 'कोई संदेश नहीं मिला',
       "expand": "पढ़ें",
       "collapse": "छुपाएं",
-      "app_title": "टास्कगो8",
+      "app_title": "WorkGo",
       'commission_calculation_method': 'प्रति घंटा कमाई गणना तरीका',
       "download_app": "ऐप डाउनलोड करें",
       "task_download_app":
@@ -1892,6 +1895,7 @@ class AppTranslations extends Translations {
           "बाइंडिंग जारी रखने से पहले कृपया पंजीकरण पूरा करें",
       "loading_online_numbers_failed": "ऑनलाइन नंबर लोड करने में विफल",
       "video_loading": "वीडियो लोड हो रहा है...",
+      "video_unavailable": "वीडियो अभी नहीं चलाया जा सकता, नीचे बाइंडिंग जारी रखें",
       "lucky_wheel_cash": "कैश",
       "vip_details_more": "वीआईपी विवरण >",
       "status_pending": "पेंडिंग",
@@ -2274,7 +2278,7 @@ class AppTranslations extends Translations {
           "perlukan izin instalasi aplikasi dari sumber tidak dikenal untuk menginstal APK",
       "download_link_invalid": "Link unduh tidak valid",
       "already_received": "Sudah Diterima",
-      "app_title": "Taskgo",
+      "app_title": "WorkGo",
       "claim_reward_success": "Pembesaran hadiah berhasil",
       'doNotRefresh': 'Jangan refresh halaman ini',
       "select_currency": "Pilih Mata Uang",
@@ -2663,6 +2667,8 @@ class AppTranslations extends Translations {
           "Silakan selesaikan pendaftaran terlebih dahulu sebelum melanjutkan binding",
       "loading_online_numbers_failed": "Gagal memuat nomor online",
       "video_loading": "Video sedang dimuat...",
+      "video_unavailable":
+          "Video tidak dapat diputar sekarang, lanjutkan langkah pengikatan di bawah",
       "lucky_wheel_cash": "Tunai",
       "vip_details_more": "Detail VIP >",
       "status_pending": "Menunggu Diproses",
@@ -3020,7 +3026,7 @@ class AppTranslations extends Translations {
       "need_install_permission": "অবশ্যই ইনস্টল অনুমতি প্রয়োজন",
       "download_link_invalid": "ডাউনলোড লিঙ্ক無效",
       "already_received": "এই টাস্কটি আগে থেকে পেয়েছেন",
-      "app_title": "টাস্কগো8",
+      "app_title": "WorkGo",
       "claim_reward_success": "রিডিও প্রাপ্ত করা সফল হয়েছে",
       'doNotRefresh': 'দয়া করে পেজ রিফ্রেশ করবেন না',
       "select_currency": "валютা নির্বাচন করুন",
@@ -3404,6 +3410,8 @@ class AppTranslations extends Translations {
           "বাইন্ডিং চালিয়ে যাওয়ার আগে রেজিস্ট্রেশন সম্পন্ন করুন",
       "loading_online_numbers_failed": "অনলাইন নাম্বার লোড করা ব্যর্থ",
       "video_loading": "ভিডিও লোড হচ্ছে...",
+      "video_unavailable":
+          "ভিডিও এখন চালানো যাচ্ছে না, নিচের বাঁধনের ধাপ চালিয়ে যান",
       "lucky_wheel_cash": "ক্যাশ",
       "vip_details_more": "VIP বিবরণ >",
       "status_pending": "প্রক্রিয়াধীন",
@@ -3756,7 +3764,7 @@ class AppTranslations extends Translations {
           "Precisa de permissão de instalação de aplicativos desconhecidos",
       "download_link_invalid": "Link de download inválido",
       "already_received": "Já recebeu",
-      "app_title": "Taskgo",
+      "app_title": "WorkGo",
       "claim_reward_success": "Prêmio claimed successfully",
       'doNotRefresh': 'Não refaça a página',
       "select_currency": "Selecione a moeda",
@@ -4144,6 +4152,8 @@ class AppTranslations extends Translations {
           "Complete o cadastro primeiro antes de continuar a vinculação",
       "loading_online_numbers_failed": "Falha ao carregar números online",
       "video_loading": "Carregando vídeo...",
+      "video_unavailable":
+          "Não foi possível reproduzir o vídeo agora; continue com os passos abaixo",
       "lucky_wheel_cash": "Dinheiro",
       "vip_details_more": "Detalhes do VIP >",
       "status_pending": "Pendente",
@@ -4503,7 +4513,7 @@ class AppTranslations extends Translations {
           "Precisa de permissão de instalação de aplicativos desconhecidos",
       "download_link_invalid": "Link de download inválido",
       "already_received": "Ya ha recibido",
-      "app_title": "Taskgo",
+      "app_title": "WorkGo",
       "claim_reward_success": "Premio claimed successfully",
       'doNotRefresh': 'No refresque la página',
       "select_currency": "Seleccione la moneda",
@@ -4894,6 +4904,8 @@ class AppTranslations extends Translations {
           "Completa el registro primero antes de continuar con la vinculación",
       "loading_online_numbers_failed": "Error al cargar los números en línea",
       "video_loading": "Cargando video...",
+      "video_unavailable":
+          "No se puede reproducir el video ahora; continúa con los pasos de abajo",
       "lucky_wheel_cash": "Efectivo",
       "vip_details_more": "Detalles VIP >",
       "status_pending": "Pendiente",
@@ -5237,7 +5249,7 @@ class AppTranslations extends Translations {
 
     "es_ES": {
       // Message Center
-      "app_title": "Taskgo",
+      "app_title": "WorkGo",
       "claim_reward_success": "Recompensa reclamada con éxito",
       "doNotRefresh": "No actualices la página",
       "select_currency": "Seleccionar moneda",
@@ -5599,6 +5611,8 @@ class AppTranslations extends Translations {
       "please_complete_registration": "Completa primero el registro antes de continuar con la vinculación",
       "loading_online_numbers_failed": "No se pudieron cargar los números en línea",
       "video_loading": "Cargando vídeo...",
+      "video_unavailable":
+          "No se puede reproducir el vídeo ahora; sigue con los pasos de abajo",
       "lucky_wheel_cash": "Efectivo",
       "vip_details_more": "Detalles VIP >",
       "status_pending": "Pendiente",

@@ -39,15 +39,26 @@ class ErrorHandlerCenter {
   }
 
   /// 处理错误码 - 直接抛出异常
+  ///
+  /// [responseBody] 为完整业务 JSON（如 `{ code, msg, data }`）时，会从中解析 [ApiException.retryAfterSeconds]。
   ApiException handleErrorCodeException(
     int? errorCode,
     String? message, {
     bool skipSpecialHandling = false,
     bool showNotification = true,
+    Map<String, dynamic>? responseBody,
   }) {
     // 直接使用传入的message
     final errorMessage = message ?? I18nKeys.errorUnknown.tr;
     final code = errorCode ?? 500;
+    int? retryAfter;
+    if (responseBody != null) {
+      retryAfter = parseRetryAfterSecondsFromMap(responseBody);
+      final inner = responseBody['data'];
+      if (inner is Map<String, dynamic>) {
+        retryAfter ??= parseRetryAfterSecondsFromMap(inner);
+      }
+    }
     if (EnvironmentConfig.instance.enableLogging) {
       debugPrint('错误码: $code, 错误信息: $errorMessage');
     }
@@ -62,7 +73,55 @@ class ErrorHandlerCenter {
       MessageUtils.showError(errorMessage);
     }
 
-    return ApiException(code: code, message: errorMessage);
+    return ApiException(
+      code: code,
+      message: errorMessage,
+      retryAfterSeconds: retryAfter,
+    );
+  }
+
+  /// 从业务 JSON 或 HTTP 头解析「多少秒后可重试」。
+  static int? parseRetryAfterSecondsFromMap(Map<String, dynamic> m) {
+    const keys = <String>[
+      'retryAfter',
+      'retrySeconds',
+      'waitSeconds',
+      'wait',
+      'cooldown',
+      'coolDown',
+      'nextRefreshIn',
+      'nextRequestIn',
+    ];
+    for (final key in keys) {
+      final v = m[key];
+      if (v is int && v > 0) return v.clamp(1, 3600);
+      if (v is num && v > 0) return v.toInt().clamp(1, 3600);
+      if (v is String) {
+        final p = int.tryParse(v.trim());
+        if (p != null && p > 0) return p.clamp(1, 3600);
+      }
+    }
+    return null;
+  }
+
+  int? _parseRetryAfterFromDio(DioException e) {
+    final resp = e.response;
+    if (resp == null) return null;
+    int? out;
+    final ra = resp.headers.value('retry-after');
+    if (ra != null && ra.trim().isNotEmpty) {
+      final v = int.tryParse(ra.trim());
+      if (v != null && v > 0) out = v.clamp(1, 3600);
+    }
+    final data = resp.data;
+    if (data is Map<String, dynamic>) {
+      out ??= parseRetryAfterSecondsFromMap(data);
+      final inner = data['data'];
+      if (inner is Map<String, dynamic>) {
+        out ??= parseRetryAfterSecondsFromMap(inner);
+      }
+    }
+    return out;
   }
 
   /// 处理异常
@@ -159,33 +218,38 @@ class ErrorHandlerCenter {
 
       case DioExceptionType.badResponse:
         final responseData = e.response?.data;
-        
+        final retryAfter = _parseRetryAfterFromDio(e);
+
         // 直接从业务响应中获取错误信息
         String message;
         int? businessCode;
-        
+
         if (responseData is Map<String, dynamic>) {
           // 优先从msg字段获取错误信息（标准API响应格式）
-          message = responseData['msg'] as String? ?? 
-                   responseData['message'] as String? ?? 
-                   e.message ??
-                   I18nKeys.errorUnknown.tr;
+          message = responseData['msg'] as String? ??
+              responseData['message'] as String? ??
+              e.message ??
+              I18nKeys.errorUnknown.tr;
           // 获取业务错误码
           businessCode = responseData['code'] as int?;
         } else {
           message = e.message ?? I18nKeys.errorUnknown.tr;
         }
-        
+
         final finalErrorCode = businessCode ?? e.response?.statusCode ?? 500;
-        
+
         // 401特殊处理
         if (finalErrorCode == 401) {
           _handleSpecialErrorCode(finalErrorCode);
         } else if (showNotification) {
           MessageUtils.showError(message);
         }
-        
-        return ApiException(code: finalErrorCode, message: message);
+
+        return ApiException(
+          code: finalErrorCode,
+          message: message,
+          retryAfterSeconds: retryAfter,
+        );
 
       case DioExceptionType.cancel:
         final message = I18nKeys.errorCancel.tr;

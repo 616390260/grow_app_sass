@@ -517,6 +517,7 @@ class I18nKeys {
   static const vipDetailsMore = 'vip_details_more';
   static const videoLoading = 'video_loading';
   static const videoLoadingPleaseWait = 'video_loading_please_wait';
+  static const videoUnavailable = 'video_unavailable';
   static const noOnlineNumbers = 'no_online_numbers';
   
   // Payment related

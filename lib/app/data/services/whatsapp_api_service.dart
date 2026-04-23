@@ -1,6 +1,20 @@
 import '../../core/services/http_service.dart';
+import '../../core/services/error_handler_center.dart';
 import 'package:flutter/foundation.dart';
 import 'package:do_task_project/app/domain/entities/online_number.dart';
+
+/// 扫码登录二维码接口的解析结果（含可选的冷却秒数，与后端限流对齐）。
+class LoginQrCodeResult {
+  /// 二维码内容（用于渲染 QR）。
+  final String content;
+  /// 服务端建议的下次可请求间隔（秒）；无则前端仅在成功时用默认兜底。
+  final int? cooldownSeconds;
+
+  const LoginQrCodeResult({
+    required this.content,
+    this.cooldownSeconds,
+  });
+}
 
 /// WhatsApp API服务类
 class WhatsappApiService {
@@ -37,26 +51,48 @@ class WhatsappApiService {
     }
   }
 
-  /// 获取扫码绑定二维码内容
+  /// 获取扫码绑定二维码（内容与可选冷却秒数）
   ///
   /// - 对应后端接口: `app/wsNumber/getLoginQrCode`
-  /// - 返回值为二维码内容字符串（用于渲染为 QR 图像）
-  Future<String> getLoginQrCode() async {
+  Future<LoginQrCodeResult> getLoginQrCodeResult() async {
     try {
       final data = await _httpService.get<dynamic>(_getLoginQrCodeEndpoint);
-      if (data == null) return '';
-      if (data is String) return data;
-      if (data is Map<String, dynamic>) {
-        final inner = data['data'] ?? data['qrCode'] ?? data['content'];
-        if (inner is String) return inner;
-        if (inner != null) return inner.toString();
-        return '';
-      }
-      return data.toString();
+      return _parseLoginQrResponse(data);
     } catch (e) {
       debugPrint('Error fetching login QR code: $e');
       rethrow;
     }
+  }
+
+  /// 仅返回二维码字符串；冷却信息见 [getLoginQrCodeResult]。
+  Future<String> getLoginQrCode() async {
+    final r = await getLoginQrCodeResult();
+    return r.content;
+  }
+
+  LoginQrCodeResult _parseLoginQrResponse(dynamic data) {
+    if (data == null) {
+      return const LoginQrCodeResult(content: '');
+    }
+    if (data is String) {
+      return LoginQrCodeResult(content: data.trim());
+    }
+    if (data is Map<String, dynamic>) {
+      int? cd = ErrorHandlerCenter.parseRetryAfterSecondsFromMap(data);
+      final rawData = data['data'];
+      if (rawData is Map<String, dynamic>) {
+        cd ??= ErrorHandlerCenter.parseRetryAfterSecondsFromMap(rawData);
+      }
+      final inner = data['data'] ?? data['qrCode'] ?? data['content'];
+      String content = '';
+      if (inner is String) {
+        content = inner;
+      } else if (inner != null) {
+        content = inner.toString();
+      }
+      return LoginQrCodeResult(content: content, cooldownSeconds: cd);
+    }
+    return LoginQrCodeResult(content: data.toString());
   }
 
   /// 获取在线号码列表

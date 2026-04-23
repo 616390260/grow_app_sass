@@ -37,17 +37,17 @@ class EnvironmentConfig {
 
     switch (currentEnvironment) {
       case EnvironmentType.debug:
-        // return 'http://192.168.3.46:8081/'; // 开发环境API地址
+        // return 'http://35.220.235.61:8083/'; // 开发环境API地址
         // return 'http://47.243.76.157:8083/'; // 测试环境API地址
         // return 'http://34.150.117.135:8083/'; // 测试环境API地址
         // return 'http://192.168.3.206:8083/'; // 测试环境API地址
         // return 'https://api.wacashsys.com/'; // 测试环境API地址
         // return 'http://192.168.1.104:8083/'; // 本地测试API地址
-        return 'https://api.eiorjgoiej.com/'; // 线上API地址
+        return 'https://api.workgo1.com/'; // 线上API地址
       case EnvironmentType.release:
         // return 'http://47.243.76.157:8083/'; // 生产环境API地址
         // return 'http://34.150.117.135:8083/'; // 生产环境API地址
-        return 'https://api.eiorjgoiej.com/'; // 生产环境API地址
+        return 'https://api.workgo1.com/'; // 生产环境API地址
       // return 'https://api.wacashsys.com/'; // 生产环境API地址
     }
   }
@@ -125,7 +125,7 @@ class EnvironmentConfig {
   }
 
   /// 应用基础名称（修改此处即可全局更改品牌名）
-  static const String _baseName = 'Taskgo';
+  static const String _baseName = 'WorkGo';
 
   /// 获取应用名称（含调试标记，用于内部日志/标题栏）
   String get appName {

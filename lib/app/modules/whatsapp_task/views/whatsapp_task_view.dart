@@ -396,11 +396,61 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
               ],
             ),
             child: Obx(() {
-              if (Get.find<WhatsappTaskController>().isVideoInitialized.value &&
+              const double mediaH = WhatsappTaskController.kTutorialMediaHeight;
+              if (controller.mediaKind.value == 'image' &&
+                  controller.tutorialImageUrl.value.isNotEmpty) {
+                return SizedBox(
+                  width: double.infinity,
+                  height: mediaH,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: ColoredBox(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      child: Image.network(
+                        controller.tutorialImageUrl.value,
+                        width: double.infinity,
+                        height: mediaH,
+                        fit: BoxFit.contain,
+                        alignment: Alignment.center,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: SizedBox(
+                              width: 28,
+                              height: 28,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            ),
+                          );
+                        },
+                        errorBuilder: (_, __, ___) => Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              I18nKeys.videoUnavailable.tr,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.black.withValues(alpha: 0.5),
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }
+              if (controller.isVideoInitialized.value &&
                   controller.chewieController != null) {
                 return SizedBox(
                   width: double.infinity, // 宽度铺满布局
-                  height: 200, // 高度固定为200
+                  height: mediaH,
                   child: Stack(
                     children: [
                       Chewie(controller: controller.chewieController!),
@@ -466,23 +516,49 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                     ],
                   ),
                 );
-              } else {
+              }
+              if (controller.videoLoadFinished.value) {
                 return Container(
-                  height: 180,
+                  height: mediaH,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   alignment: Alignment.center,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CircularProgressIndicator(color: Colors.blue),
-                      const SizedBox(height: 8),
+                      Icon(
+                        Icons.video_library_outlined,
+                        size: 40,
+                        color: Colors.black.withValues(alpha: 0.35),
+                      ),
+                      const SizedBox(height: 10),
                       Text(
-                        I18nKeys.videoLoading.tr,
-                        style: TextStyle(color: Colors.black54, fontSize: 14),
+                        I18nKeys.videoUnavailable.tr,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.black.withValues(alpha: 0.55),
+                          fontSize: 13,
+                          height: 1.35,
+                        ),
                       ),
                     ],
                   ),
                 );
               }
+              return Container(
+                height: mediaH,
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircularProgressIndicator(color: Colors.blue),
+                    const SizedBox(height: 8),
+                    Text(
+                      I18nKeys.videoLoading.tr,
+                      style: const TextStyle(color: Colors.black54, fontSize: 14),
+                    ),
+                  ],
+                ),
+              );
             }),
           ),
           // const SizedBox(height: 8),

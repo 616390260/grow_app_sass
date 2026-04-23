@@ -8,6 +8,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/base/base_controller.dart';
+import '../../../core/exceptions/api_exception.dart';
 import '../../../data/services/whatsapp_api_service.dart';
 import '../../../core/i18n/i18n_keys.dart';
 
@@ -17,8 +18,16 @@ class WhatsappTaskController extends BaseController {
   final todaySendCount = 0.obs; // 今日发送数量
   final todayPoints = 0.obs; // 今日积分
   final yesterdayPoints = 0.obs; // 昨日积分
-  final videoUrl = ''.obs; // 视频URL
+  final videoUrl = ''.obs; // 视频URL（接口原始字段，可能为视频或图片地址）
   final wsDownloadUrl = ''.obs; // WhatsApp下载URL
+
+  /// 教程区展示类型：与视频同一占位尺寸
+  final mediaKind = 'video'.obs; // 'video' | 'image'
+  /// 教程图片地址（来自 `imageUrl` / `guideImageUrl` 等，或由 `videoUrl` 识别为图片时复用）
+  final tutorialImageUrl = ''.obs;
+
+  /// 教程区媒体高度（与视频播放器一致）
+  static const double kTutorialMediaHeight = 200;
 
   // 绑定状态
   final phoneNumber = ''.obs;
@@ -35,9 +44,11 @@ class WhatsappTaskController extends BaseController {
   /// 二维码刷新冷却剩余秒数（0 表示可刷新，>0 表示冷却中）
   final qrCooldownRemaining = 0.obs;
 
-  /// 二维码刷新冷却时长（秒）—— 需求：2 分钟内不可重复请求
-  static const int _qrCooldownSeconds = 120;
-  /// 上次二维码成功请求的时间戳
+  /// 成功取码后，若接口未返回冷却秒数时的兜底间隔（秒）。
+  static const int _defaultQrCooldownSeconds = 120;
+  /// 当前这一轮冷却的总秒数（与倒计时展示一致）。
+  int _cooldownTotalSeconds = _defaultQrCooldownSeconds;
+  /// 上次启动二维码冷却的时间戳
   DateTime? _lastQrRefreshAt;
   /// 冷却倒计时定时器
   Timer? _qrCooldownTimer;
@@ -52,11 +63,21 @@ class WhatsappTaskController extends BaseController {
   // 搜索关键词
   var searchKeyword = ''.obs;
 
-  // 视频播放器控制器
-  late VideoPlayerController videoController;
+  /// 教程视频地址（接口失败或 Web 跨域时的兜底）
+  static const String _kDefaultTutorialVideoUrl =
+      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4';
+
+  // 视频播放器控制器（可为 null：尚未就绪或加载失败）
+  VideoPlayerController? _videoPlayer;
   ChewieController? chewieController;
   final isVideoInitialized = false.obs;
+  /// 视频初始化已结束（成功或放弃），用于结束「加载中」占位，避免 Web 上 `initialize()` 永不返回导致页面卡死。
+  final videoLoadFinished = false.obs;
   final isPlaying = false.obs;
+  int _videoBootstrapGeneration = 0;
+
+  /// 供 Chewie / 播放控制使用；仅在 [isVideoInitialized] 为 true 时安全。
+  VideoPlayerController get videoController => _videoPlayer!;
 
   @override
   void onInit() {
@@ -81,133 +102,185 @@ class WhatsappTaskController extends BaseController {
         todayPoints.value = taskInfo['todayPoints'] ?? 0;
         todaySendCount.value = taskInfo['todaySendNum'] ?? 0;
         yesterdayPoints.value = taskInfo['yesterdayPoints'] ?? 0;
-        videoUrl.value = taskInfo['videoUrl'] ?? '';
         wsDownloadUrl.value = taskInfo['wsDownloadUrl'] ?? '';
 
-        // 初始化视频控制器
+        _applyTaskInfoMedia(taskInfo);
+      },
+      onError: () {
+        // 任务信息拉取失败时仍结束视频占位：仅尝试默认教程视频，避免整页卡在加载圈
+        videoUrl.value = '';
+        tutorialImageUrl.value = '';
+        mediaKind.value = 'video';
         _initVideoController();
       },
       errorMessage: I18nKeys.loadingFailed.tr,
     );
   }
 
-  // 初始化视频控制器
-  void _initVideoController() {
-    if (videoUrl.value.isNotEmpty) {
+  /// 根据任务信息决定教程区展示图片或视频（同一占位尺寸）。
+  void _applyTaskInfoMedia(Map<String, dynamic> taskInfo) {
+    _videoBootstrapGeneration++;
+    final rawVideo = (taskInfo['videoUrl'] ?? '').toString().trim();
+    videoUrl.value = rawVideo;
+
+    final explicitImage = (taskInfo['imageUrl'] ??
+            taskInfo['guideImageUrl'] ??
+            taskInfo['guideImage'] ??
+            '')
+        .toString()
+        .trim();
+
+    String? image;
+    if (explicitImage.isNotEmpty) {
+      image = explicitImage;
+    } else if (rawVideo.isNotEmpty && _looksLikeImageUrl(rawVideo)) {
+      image = rawVideo;
+    }
+
+    if (image != null && image.isNotEmpty) {
+      mediaKind.value = 'image';
+      tutorialImageUrl.value = image;
+      isVideoInitialized.value = false;
+      isPlaying.value = false;
       try {
-        // 确保先释放旧的控制器资源
-        _disposeVideoResources();
+        chewieController?.dispose();
+      } catch (_) {}
+      chewieController = null;
+      unawaited(_disposeCurrentVideoPlayer());
+      videoLoadFinished.value = true;
+      return;
+    }
 
-        videoController = VideoPlayerController.networkUrl(
-          Uri.parse(videoUrl.value),
-          videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
-        );
+    mediaKind.value = 'video';
+    tutorialImageUrl.value = '';
+    _initVideoController();
+  }
 
-        // 延迟初始化以避免lifecycle消息问题
-        Future.delayed(const Duration(milliseconds: 100), () {
-          try {
-            videoController.initialize().then((_) {
-              isVideoInitialized.value = true;
-              _setupChewieController();
-            });
+  /// 判断 [url] 是否应按图片展示（含 `data:image/...` 与常见后缀）。
+  static bool _looksLikeImageUrl(String url) {
+    if (url.isEmpty) return false;
+    final lower = url.toLowerCase().trim();
+    if (lower.startsWith('data:image/')) return true;
+    final path = lower.split('?').first.split('#').first;
+    return path.endsWith('.png') ||
+        path.endsWith('.jpg') ||
+        path.endsWith('.jpeg') ||
+        path.endsWith('.gif') ||
+        path.endsWith('.webp') ||
+        path.endsWith('.bmp') ||
+        path.endsWith('.svg');
+  }
 
-            videoController.addListener(() {
-              try {
-                isPlaying.value = videoController.value.isPlaying;
-              } catch (e) {
-                // 避免在控制器已释放时访问
-                isPlaying.value = false;
-              }
-            });
-          } catch (e) {
-            Get.log('Error initializing video: $e');
-            _initDefaultVideoController();
-          }
-        });
-      } catch (e) {
-        Get.log('Error setting up video controller: $e');
-        // 如果视频URL无效，使用默认视频
-        _initDefaultVideoController();
-      }
-    } else {
-      // 如果没有视频URL，使用默认视频
-      _initDefaultVideoController();
+  /// 启动异步视频加载链（接口 URL → 兜底 MP4），带 [timeout] 与代际取消，防止悬挂 Future。
+  void _initVideoController() {
+    unawaited(_bootstrapVideoPlayback());
+  }
+
+  void _onVideoPlayingTick() {
+    try {
+      if (_videoPlayer == null) return;
+      isPlaying.value = _videoPlayer!.value.isPlaying;
+    } catch (_) {
+      isPlaying.value = false;
     }
   }
 
-  // 初始化默认视频控制器
-  void _initDefaultVideoController() {
-    // 确保先释放旧的控制器资源
-    _disposeVideoResources();
-
-    videoController = VideoPlayerController.networkUrl(
-      Uri.parse(
-        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
-      ),
-      videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
-    );
-
-    // 延迟初始化以避免lifecycle消息问题
-    Future.delayed(const Duration(milliseconds: 100), () {
-      try {
-        videoController.initialize().then((_) {
-          isVideoInitialized.value = true;
-          _setupChewieController();
-        });
-
-        videoController.addListener(() {
-          try {
-            isPlaying.value = videoController.value.isPlaying;
-          } catch (e) {
-            // 避免在控制器已释放时访问
-            isPlaying.value = false;
-          }
-        });
-      } catch (e) {
-        Get.log('Error initializing default video: $e');
-      }
-    });
+  Future<void> _disposeCurrentVideoPlayer() async {
+    try {
+      _videoPlayer?.removeListener(_onVideoPlayingTick);
+    } catch (_) {}
+    try {
+      await _videoPlayer?.dispose();
+    } catch (e) {
+      Get.log('dispose video: $e');
+    }
+    _videoPlayer = null;
   }
 
-  // 释放视频相关资源
-  void _disposeVideoResources() {
+  Future<void> _bootstrapVideoPlayback() async {
+    final gen = ++_videoBootstrapGeneration;
+    videoLoadFinished.value = false;
+    isVideoInitialized.value = false;
+    isPlaying.value = false;
+
     try {
       chewieController?.dispose();
-      // 不要在这里dispose videoController，因为我们会重新赋值
-    } catch (e) {
-      Get.log('Error disposing video resources: $e');
+    } catch (_) {}
+    chewieController = null;
+
+    await _disposeCurrentVideoPlayer();
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+    if (gen != _videoBootstrapGeneration) return;
+
+    final primary = videoUrl.value.trim();
+    final urls = <String>[
+      if (primary.isNotEmpty && !_looksLikeImageUrl(primary)) primary,
+      _kDefaultTutorialVideoUrl,
+    ];
+
+    for (final url in urls) {
+      if (gen != _videoBootstrapGeneration) return;
+      VideoPlayerController? vc;
+      try {
+        vc = VideoPlayerController.networkUrl(
+          Uri.parse(url),
+          videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+        );
+        await vc.initialize().timeout(const Duration(seconds: 18));
+        if (gen != _videoBootstrapGeneration) {
+          await vc.dispose();
+          return;
+        }
+        if (!vc.value.isInitialized) {
+          await vc.dispose();
+          continue;
+        }
+        _videoPlayer = vc;
+        _videoPlayer!.addListener(_onVideoPlayingTick);
+        isVideoInitialized.value = true;
+        _setupChewieController();
+        videoLoadFinished.value = true;
+        return;
+      } catch (e, st) {
+        Get.log('WhatsappTaskController: video init failed for $url: $e\n$st');
+        if (vc != null) {
+          try {
+            await vc.dispose();
+          } catch (_) {}
+        }
+      }
     }
+
+    if (gen != _videoBootstrapGeneration) return;
+    isVideoInitialized.value = false;
+    videoLoadFinished.value = true;
   }
 
   // 设置Chewie控制器
   void _setupChewieController() {
+    final player = _videoPlayer;
+    if (player == null || !player.value.isInitialized) return;
     try {
-      if (videoController.value.isInitialized) {
-        // 确保先释放旧的控制器
-        if (chewieController != null) {
-          chewieController!.dispose();
-        }
+      chewieController?.dispose();
 
-        chewieController = ChewieController(
-          videoPlayerController: videoController,
-          autoPlay: false,
-          looping: false,
-          aspectRatio: videoController.value.aspectRatio,
-          showControls: false, // 隐藏默认控件，使用自定义控件
-          allowFullScreen: true,
-          allowPlaybackSpeedChanging: false,
-          errorBuilder: (context, errorMessage) {
-            return Center(
-              child: Text(
-                'Video playback error',
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-              ),
-            );
-          },
-        );
-      }
+      chewieController = ChewieController(
+        videoPlayerController: player,
+        autoPlay: false,
+        looping: false,
+        aspectRatio: player.value.aspectRatio,
+        showControls: false, // 隐藏默认控件，使用自定义控件
+        allowFullScreen: true,
+        allowPlaybackSpeedChanging: false,
+        errorBuilder: (context, errorMessage) {
+          return Center(
+            child: Text(
+              'Video playback error',
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+            ),
+          );
+        },
+      );
     } catch (e) {
-      // 捕获任何初始化错误
       Get.log('Error setting up Chewie controller: $e');
     }
   }
@@ -215,11 +288,14 @@ class WhatsappTaskController extends BaseController {
   @override
   void onClose() {
     try {
+      _videoBootstrapGeneration++;
       _qrCooldownTimer?.cancel();
       _qrCooldownTimer = null;
-      // 安全释放视频资源
       chewieController?.dispose();
-      videoController.dispose();
+      chewieController = null;
+      _videoPlayer?.removeListener(_onVideoPlayingTick);
+      _videoPlayer?.dispose();
+      _videoPlayer = null;
     } catch (e) {
       Get.log('Error disposing resources on close: $e');
     }
@@ -349,7 +425,9 @@ class WhatsappTaskController extends BaseController {
   ///
   /// 业务规则：
   /// - 切换到扫码 Tab 时不会自动触发，必须由用户主动点击按钮调用本方法；
-  /// - 无论请求成功或失败，点击后立即进入 2 分钟冷却期，冷却期内再次点击会被前端拦截并本地化提示；
+  /// - 不在点击时固定启动 120s 本地冷却，避免与后端限流窗口错位；仅在成功拿到二维码
+  ///   （使用接口返回的 [LoginQrCodeResult.cooldownSeconds]，缺省则用 [_defaultQrCooldownSeconds]）
+  ///   或捕获到带 [ApiException.retryAfterSeconds] 的限流响应时再启动倒计时；
   /// - 业务错误由 `HttpService` 统一 toast 展示，此处不再重复弹错误提示。
   Future<void> refreshQrCode() async {
     if (isQrLoading.value) return;
@@ -363,25 +441,34 @@ class WhatsappTaskController extends BaseController {
     }
 
     isQrLoading.value = true;
-    // 点击后立刻启动本地冷却：避免反复点击触发后端限流文案
-    _startQrCooldown();
     try {
-      final content = await _whatsappApiService.getLoginQrCode();
-      if (content.isNotEmpty) {
-        qrCodeContent.value = content;
+      final result = await _whatsappApiService.getLoginQrCodeResult();
+      if (result.content.isNotEmpty) {
+        qrCodeContent.value = result.content;
+        final sec = result.cooldownSeconds ?? _defaultQrCooldownSeconds;
+        _startQrCooldown(seconds: sec);
       }
       // 若内容为空/请求失败：错误提示已由全局 HttpService 处理，这里不重复弹 toast。
+    } on ApiException catch (e) {
+      final wait = e.retryAfterSeconds;
+      if (wait != null && wait > 0) {
+        _startQrCooldown(seconds: wait);
+      }
     } catch (_) {
-      // 忽略：统一由全局错误拦截展示
+      // 其它异常不启动本地冷却，避免后端已放行时按钮仍被锁死
     } finally {
       isQrLoading.value = false;
     }
   }
 
   /// 启动二维码冷却倒计时（每秒更新一次剩余秒数）
-  void _startQrCooldown() {
+  ///
+  /// @param seconds 本轮冷却总时长（秒），与后端返回或成功响应中的间隔一致
+  void _startQrCooldown({required int seconds}) {
+    final total = seconds.clamp(1, 3600);
+    _cooldownTotalSeconds = total;
     _lastQrRefreshAt = DateTime.now();
-    qrCooldownRemaining.value = _qrCooldownSeconds;
+    qrCooldownRemaining.value = total;
     _qrCooldownTimer?.cancel();
     _qrCooldownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final startedAt = _lastQrRefreshAt;
@@ -391,7 +478,7 @@ class WhatsappTaskController extends BaseController {
         return;
       }
       final passed = DateTime.now().difference(startedAt).inSeconds;
-      final remaining = _qrCooldownSeconds - passed;
+      final remaining = _cooldownTotalSeconds - passed;
       if (remaining <= 0) {
         qrCooldownRemaining.value = 0;
         timer.cancel();

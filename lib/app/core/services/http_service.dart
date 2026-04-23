@@ -165,6 +165,7 @@ class HttpService extends getx.GetxService {
                 businessCode,
                 message,
                 showNotification: false,
+                responseBody: data,
               );
             }
           }
@@ -372,6 +373,7 @@ class HttpService extends getx.GetxService {
           code,
           message,
           showNotification: true,
+          responseBody: responseData,
         );
       }
     }

@@ -1,6 +1,6 @@
 {
-    "name": "taskgo",
-    "short_name": "taskgo",
+    "name": "WorkGo",
+    "short_name": "WorkGo",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
