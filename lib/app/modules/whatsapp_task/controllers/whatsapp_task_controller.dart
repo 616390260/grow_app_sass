@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:do_task_project/app/domain/entities/online_number.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +25,22 @@ class WhatsappTaskController extends BaseController {
   final verificationCode = ''.obs;
   final isCodeSent = false.obs;
   final selectedCountryCode = '+00'.obs; // 默认阿尔及利亚区号
+
+  /// 绑定方式：'code' = 验证码绑定；'qr' = 扫码绑定
+  final bindMode = 'code'.obs;
+  /// 扫码绑定使用的二维码内容（由 `app/wsNumber/getLoginQrCode` 返回）
+  final qrCodeContent = ''.obs;
+  /// 二维码刷新状态
+  final isQrLoading = false.obs;
+  /// 二维码刷新冷却剩余秒数（0 表示可刷新，>0 表示冷却中）
+  final qrCooldownRemaining = 0.obs;
+
+  /// 二维码刷新冷却时长（秒）—— 需求：2 分钟内不可重复请求
+  static const int _qrCooldownSeconds = 120;
+  /// 上次二维码成功请求的时间戳
+  DateTime? _lastQrRefreshAt;
+  /// 冷却倒计时定时器
+  Timer? _qrCooldownTimer;
 
   // 在线号码列表 - 使用正确的类型
   final onlineNumbers = <OnlineNumber>[].obs;
@@ -197,6 +215,8 @@ class WhatsappTaskController extends BaseController {
   @override
   void onClose() {
     try {
+      _qrCooldownTimer?.cancel();
+      _qrCooldownTimer = null;
       // 安全释放视频资源
       chewieController?.dispose();
       videoController.dispose();
@@ -242,7 +262,10 @@ class WhatsappTaskController extends BaseController {
     final fullPhoneNumber = '$countryCodeWithoutPlus${phoneNumber.value}';
 
     await safeApiCall<String>(
-      () => _whatsappApiService.getLoginCode(fullPhoneNumber),
+      () => _whatsappApiService.getLoginCode(
+        fullPhoneNumber,
+        areaCode: countryCodeWithoutPlus,
+      ),
       (result) {
         if (result.isNotEmpty) {
           showSuccessMessage(I18nKeys.verificationCodeSent.tr);
@@ -313,6 +336,69 @@ class WhatsappTaskController extends BaseController {
   void bindWhatsapp() {
     // 这里可以添加实际的绑定逻辑
     showSuccessMessage(I18nKeys.pleaseCompleteRegistration.tr);
+  }
+
+  /// 切换绑定方式
+  /// @param mode 'code' | 'qr'
+  void setBindMode(String mode) {
+    if (mode != 'code' && mode != 'qr') return;
+    bindMode.value = mode;
+  }
+
+  /// 获取/刷新二维码
+  ///
+  /// 业务规则：
+  /// - 切换到扫码 Tab 时不会自动触发，必须由用户主动点击按钮调用本方法；
+  /// - 无论请求成功或失败，点击后立即进入 2 分钟冷却期，冷却期内再次点击会被前端拦截并本地化提示；
+  /// - 业务错误由 `HttpService` 统一 toast 展示，此处不再重复弹错误提示。
+  Future<void> refreshQrCode() async {
+    if (isQrLoading.value) return;
+    if (qrCooldownRemaining.value > 0) {
+      showErrorMessage(
+        I18nKeys.scanQrCooldown.trParams({
+          's': qrCooldownRemaining.value.toString(),
+        }),
+      );
+      return;
+    }
+
+    isQrLoading.value = true;
+    // 点击后立刻启动本地冷却：避免反复点击触发后端限流文案
+    _startQrCooldown();
+    try {
+      final content = await _whatsappApiService.getLoginQrCode();
+      if (content.isNotEmpty) {
+        qrCodeContent.value = content;
+      }
+      // 若内容为空/请求失败：错误提示已由全局 HttpService 处理，这里不重复弹 toast。
+    } catch (_) {
+      // 忽略：统一由全局错误拦截展示
+    } finally {
+      isQrLoading.value = false;
+    }
+  }
+
+  /// 启动二维码冷却倒计时（每秒更新一次剩余秒数）
+  void _startQrCooldown() {
+    _lastQrRefreshAt = DateTime.now();
+    qrCooldownRemaining.value = _qrCooldownSeconds;
+    _qrCooldownTimer?.cancel();
+    _qrCooldownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final startedAt = _lastQrRefreshAt;
+      if (startedAt == null) {
+        timer.cancel();
+        qrCooldownRemaining.value = 0;
+        return;
+      }
+      final passed = DateTime.now().difference(startedAt).inSeconds;
+      final remaining = _qrCooldownSeconds - passed;
+      if (remaining <= 0) {
+        qrCooldownRemaining.value = 0;
+        timer.cancel();
+      } else {
+        qrCooldownRemaining.value = remaining;
+      }
+    });
   }
 
   // 加载在线号码列表 - 使用safeApiCall方法

@@ -170,6 +170,21 @@ class I18nKeys {
   static const getVerificationCode = 'getVerificationCode';
   static const doNotRefresh = 'doNotRefresh';
   static const verificationCodeTip = 'verification_code_tip';
+
+  /// 绑定方式 - Tab
+  static const bindMethodCode = 'bind_method_code';
+  static const bindMethodQr = 'bind_method_qr';
+  /// 扫码绑定
+  static const scanQrTitle = 'scan_qr_title';
+  static const scanQrStep1 = 'scan_qr_step_1';
+  static const scanQrStep2 = 'scan_qr_step_2';
+  static const scanQrStep3 = 'scan_qr_step_3';
+  static const scanQrRefresh = 'scan_qr_refresh';
+  static const scanQrUnavailable = 'scan_qr_unavailable';
+  static const scanQrExpiresTip = 'scan_qr_expires_tip';
+  static const scanQrFetch = 'scan_qr_fetch';
+  static const scanQrCooldown = 'scan_qr_cooldown';
+  static const scanQrTapToFetch = 'scan_qr_tap_to_fetch';
   static const onlineNumbers = 'online_numbers';
   static const noData = 'noData';
   static const phoneNumberTip = 'phoneNumberTip';

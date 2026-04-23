@@ -5,6 +5,7 @@ import 'package:do_task_project/app/core/theme/app_theme.dart';
 import 'package:do_task_project/app/modules/home/controllers/home_controller.dart';
 import 'package:do_task_project/app/modules/home/views/widgets/banner_carousel_widget.dart';
 import 'package:do_task_project/app/modules/home/views/widgets/feature_card_widget.dart';
+import 'package:do_task_project/app/modules/home/views/widgets/task_card_widget.dart';
 import 'package:do_task_project/app/data/models/home_info_model.dart';
 import 'package:do_task_project/app/data/models/activity_model.dart';
 import 'package:do_task_project/app/routes/app_pages.dart';
@@ -77,9 +78,10 @@ class HomeView extends BaseView<HomeController> {
                 },
               );
             }),
-            _buildCompactCountdown(),
-            const SizedBox(height: 8),
-            _buildHotActivities(),
+            // _buildCompactCountdown(),
+            // const SizedBox(height: 8),
+            // _buildHotActivities(),
+            _buildRecommendedTasks(),
             const SizedBox(height: 55),
           ],
         ),
@@ -311,7 +313,50 @@ class HomeView extends BaseView<HomeController> {
   }
 
   /// 构建推荐任务
+  Widget _buildRecommendedTasks() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 15),
+      padding: const EdgeInsets.only(left: 12, top: 17, right: 14, bottom: 9),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            I18nKeys.recommendedTasks.tr,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.threeColor,
+            ),
+          ),
+          const SizedBox(height: 13),
+          Obx(() {
+            return ListView.builder(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: controller.recommendTasks.length,
+              itemBuilder: (context, index) {
+                final task = controller.recommendTasks[index];
+                return TaskCardWidget(
+                  title: task.title ?? '',
+                  description: task.description ?? '',
+                  buttonText: I18nKeys.startTask.tr,
+                  onTap: () => controller.onRecommendTaskTap(index),
+                );
+              },
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
   /// 紧凑型倒计时条（单行，极小占位）
+  // ignore: unused_element
   Widget _buildCompactCountdown() {
     return Obx(() {
       final text = controller.midnightCountdownText.value;
@@ -365,6 +410,7 @@ class HomeView extends BaseView<HomeController> {
   }
 
   /// 构建热门活动（可展开，支持领取）
+  // ignore: unused_element
   Widget _buildHotActivities() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),

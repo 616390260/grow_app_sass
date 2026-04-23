@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import '../controllers/login_controller.dart';
 import '../../../core/base/base_view.dart';
 import '../../../core/i18n/i18n_keys.dart';
+import '../../../core/widgets/language_switcher.dart';
 
 class LoginView extends BaseView<LoginController> {
   // 不再使用FocusNode，改为通过FocusScope管理焦点
@@ -77,7 +78,6 @@ class LoginView extends BaseView<LoginController> {
                         child: Column(
                           children: [
                             const SizedBox(height: 26), // 顶部间距
-
                             // 登录表单
                             _buildLoginForm(),
 
@@ -105,11 +105,39 @@ class LoginView extends BaseView<LoginController> {
                 ),
               ),
             ),
-            
+
             // 跨界漂浮金币（一半在绿色背景，一半在白色卡片）
-            _build3DCoin(size: 80, top: 220, right: 20, angle: -0.5, tiltX: 0.6, tiltY: 0.4, opacity: 1.0, coinType: 0),
-            _build3DCoin(size: 45, top: 240, left: 30, angle: 0.6, tiltX: 0.9, tiltY: -0.3, opacity: 0.95, isDark: true, coinType: 2),
-            _build3DCoin(size: 35, top: 210, right: 80, angle: 0.2, tiltX: 1.1, tiltY: 0.1, opacity: 0.8, coinType: 3),
+            _build3DCoin(
+              size: 80,
+              top: 220,
+              right: 20,
+              angle: -0.5,
+              tiltX: 0.6,
+              tiltY: 0.4,
+              opacity: 1.0,
+              coinType: 0,
+            ),
+            _build3DCoin(
+              size: 45,
+              top: 240,
+              left: 30,
+              angle: 0.6,
+              tiltX: 0.9,
+              tiltY: -0.3,
+              opacity: 0.95,
+              isDark: true,
+              coinType: 2,
+            ),
+            _build3DCoin(
+              size: 35,
+              top: 210,
+              right: 80,
+              angle: 0.2,
+              tiltX: 1.1,
+              tiltY: 0.1,
+              opacity: 0.8,
+              coinType: 3,
+            ),
           ],
         ),
       ),
@@ -128,14 +156,59 @@ class LoginView extends BaseView<LoginController> {
           clipBehavior: Clip.none,
           children: [
             // 底层散落
-            _build3DCoin(size: 90, bottom: 10, left: 20, tiltX: 1.0, angle: 0.2, isDark: true, coinType: 1),
-            _build3DCoin(size: 85, bottom: 30, left: 80, tiltX: 1.2, angle: -0.4, coinType: 2),
+            _build3DCoin(
+              size: 90,
+              bottom: 10,
+              left: 20,
+              tiltX: 1.0,
+              angle: 0.2,
+              isDark: true,
+              coinType: 1,
+            ),
+            _build3DCoin(
+              size: 85,
+              bottom: 30,
+              left: 80,
+              tiltX: 1.2,
+              angle: -0.4,
+              coinType: 2,
+            ),
             // 中层堆叠
-            _build3DCoin(size: 95, bottom: 40, left: 30, tiltX: 1.1, angle: 0.5, coinType: 0),
-            _build3DCoin(size: 90, bottom: 65, left: 45, tiltX: 0.9, angle: 0.1, isDark: true, coinType: 1),
+            _build3DCoin(
+              size: 95,
+              bottom: 40,
+              left: 30,
+              tiltX: 1.1,
+              angle: 0.5,
+              coinType: 0,
+            ),
+            _build3DCoin(
+              size: 90,
+              bottom: 65,
+              left: 45,
+              tiltX: 0.9,
+              angle: 0.1,
+              isDark: true,
+              coinType: 1,
+            ),
             // 顶层倾斜靠着
-            _build3DCoin(size: 100, bottom: 50, left: 90, tiltX: 0.4, tiltY: 0.6, angle: -0.2, coinType: 0),
-            _build3DCoin(size: 80, bottom: 90, left: 60, tiltX: 0.8, angle: 0.3, coinType: 2),
+            _build3DCoin(
+              size: 100,
+              bottom: 50,
+              left: 90,
+              tiltX: 0.4,
+              tiltY: 0.6,
+              angle: -0.2,
+              coinType: 0,
+            ),
+            _build3DCoin(
+              size: 80,
+              bottom: 90,
+              left: 60,
+              tiltX: 0.8,
+              angle: 0.3,
+              coinType: 2,
+            ),
           ],
         ),
       ),
@@ -153,9 +226,32 @@ class LoginView extends BaseView<LoginController> {
         child: Stack(
           clipBehavior: Clip.none,
           children: [
-            _build3DCoin(size: 70, bottom: 10, right: 20, tiltX: 1.1, angle: -0.3, isDark: true, coinType: 1),
-            _build3DCoin(size: 75, bottom: 35, right: 30, tiltX: 0.9, angle: 0.2, coinType: 0),
-            _build3DCoin(size: 65, bottom: 20, right: 70, tiltX: 0.6, tiltY: -0.5, angle: 0.4, coinType: 2),
+            _build3DCoin(
+              size: 70,
+              bottom: 10,
+              right: 20,
+              tiltX: 1.1,
+              angle: -0.3,
+              isDark: true,
+              coinType: 1,
+            ),
+            _build3DCoin(
+              size: 75,
+              bottom: 35,
+              right: 30,
+              tiltX: 0.9,
+              angle: 0.2,
+              coinType: 0,
+            ),
+            _build3DCoin(
+              size: 65,
+              bottom: 20,
+              right: 70,
+              tiltX: 0.6,
+              tiltY: -0.5,
+              angle: 0.4,
+              coinType: 2,
+            ),
           ],
         ),
       ),
@@ -206,8 +302,27 @@ class LoginView extends BaseView<LoginController> {
             ),
           ),
           // 漂浮的 3D 金币装饰 (顶部背景) - 减少元素
-          _build3DCoin(size: 60, top: 40, right: 10, angle: 0.4, tiltX: 0.5, tiltY: 0.3, opacity: 0.9, coinType: 0),
-          _build3DCoin(size: 35, top: 110, left: 30, angle: -0.3, tiltX: 0.8, tiltY: -0.2, opacity: 0.7, isDark: true, coinType: 1),
+          _build3DCoin(
+            size: 60,
+            top: 40,
+            right: 10,
+            angle: 0.4,
+            tiltX: 0.5,
+            tiltY: 0.3,
+            opacity: 0.9,
+            coinType: 0,
+          ),
+          _build3DCoin(
+            size: 35,
+            top: 110,
+            left: 30,
+            angle: -0.3,
+            tiltX: 0.8,
+            tiltY: -0.2,
+            opacity: 0.7,
+            isDark: true,
+            coinType: 1,
+          ),
           // Logo + 平台名 + 登录标题
           Positioned.fill(
             child: SafeArea(
@@ -222,6 +337,18 @@ class LoginView extends BaseView<LoginController> {
                   const SizedBox(height: 10),
                   _buildDecorationLine(),
                 ],
+              ),
+            ),
+          ),
+          // 右上角语言切换入口
+          Positioned(
+            top: 0,
+            right: 14,
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: const LanguageSwitcher(),
               ),
             ),
           ),
@@ -245,10 +372,18 @@ class LoginView extends BaseView<LoginController> {
     int coinType = 0, // 0: 星星, 1: 同心圆, 2: 钻石, 3: 闪光空白
   }) {
     // 根据图2调整金币颜色：更偏向真实的黄铜/黄金色，对比度更强
-    final baseColor = isDark ? const Color(0xFFB45309) : const Color(0xFFF59E0B);
-    final lightColor = isDark ? const Color(0xFFF59E0B) : const Color(0xFFFFD700);
-    final darkColor = isDark ? const Color(0xFF78350F) : const Color(0xFFB45309);
-    final borderColor = isDark ? const Color(0xFFD97706) : const Color(0xFFFEF08A);
+    final baseColor = isDark
+        ? const Color(0xFFB45309)
+        : const Color(0xFFF59E0B);
+    final lightColor = isDark
+        ? const Color(0xFFF59E0B)
+        : const Color(0xFFFFD700);
+    final darkColor = isDark
+        ? const Color(0xFF78350F)
+        : const Color(0xFFB45309);
+    final borderColor = isDark
+        ? const Color(0xFFD97706)
+        : const Color(0xFFFEF08A);
 
     return Positioned(
       top: top,
@@ -682,8 +817,11 @@ class LoginView extends BaseView<LoginController> {
             onTap: controller.goToService,
             child: Image.network(
               controller.customerService.value?.icon ?? '',
-              errorBuilder: (context, error, stackTrace) =>
-                  Image.asset(ImageAssets.inviteTelegram,width: 30,height: 30,),
+              errorBuilder: (context, error, stackTrace) => Image.asset(
+                ImageAssets.inviteTelegram,
+                width: 30,
+                height: 30,
+              ),
               width: 30,
               height: 30,
             ),

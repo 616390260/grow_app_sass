@@ -8,21 +8,53 @@ class WhatsappApiService {
 
   /// API端点
   static const String _getLoginCodeEndpoint = 'app/wsNumber/getLoginCode';
+  static const String _getLoginQrCodeEndpoint = 'app/wsNumber/getLoginQrCode';
   static const String _getOnlineNumbersEndpoint = 'app/wsNumber/online';
   static const String _getTaskInfoEndpoint = 'app/wsNumber/getTaskInfo';
   static const String _sendMsgEndpoint = 'app/wsNumber/sendMsg';
   static const String _getAreaCodesEndpoint = 'app/wsNumber/areaCodeList';
 
   /// 获取登录验证码
-  Future<String> getLoginCode(String phoneNumber) async {
+  ///
+  /// @param phoneNumber 完整号码（已拼接区号+手机号，无 `+`）
+  /// @param areaCode 国家区号（纯数字，无 `+`），作为独立参数传给后端
+  Future<String> getLoginCode(
+    String phoneNumber, {
+    required String areaCode,
+  }) async {
     try {
       final data = await _httpService.get<String>(
         _getLoginCodeEndpoint,
-        queryParameters: {'phone': phoneNumber},
+        queryParameters: {
+          'phone': phoneNumber,
+          'areaCode': areaCode,
+        },
       );
 
       return data;
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// 获取扫码绑定二维码内容
+  ///
+  /// - 对应后端接口: `app/wsNumber/getLoginQrCode`
+  /// - 返回值为二维码内容字符串（用于渲染为 QR 图像）
+  Future<String> getLoginQrCode() async {
+    try {
+      final data = await _httpService.get<dynamic>(_getLoginQrCodeEndpoint);
+      if (data == null) return '';
+      if (data is String) return data;
+      if (data is Map<String, dynamic>) {
+        final inner = data['data'] ?? data['qrCode'] ?? data['content'];
+        if (inner is String) return inner;
+        if (inner != null) return inner.toString();
+        return '';
+      }
+      return data.toString();
+    } catch (e) {
+      debugPrint('Error fetching login QR code: $e');
       rethrow;
     }
   }

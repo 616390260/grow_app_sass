@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:do_task_project/app/core/constants/image_assets.dart';
 import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -5,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:chewie/chewie.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import '../../../core/base/base_view.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/i18n/i18n_keys.dart';
@@ -573,187 +576,648 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                I18nKeys.bindWhatsapp.tr,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.threeColor,
+          Text(
+            I18nKeys.bindWhatsapp.tr,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.threeColor,
+            ),
+          ),
+          const SizedBox(height: 14),
+          _buildBindModeTabs(),
+          const SizedBox(height: 20),
+          Obx(() {
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 220),
+              switchInCurve: Curves.easeOut,
+              switchOutCurve: Curves.easeIn,
+              transitionBuilder: (child, animation) => FadeTransition(
+                opacity: animation,
+                child: SizeTransition(
+                  sizeFactor: animation,
+                  axisAlignment: -1,
+                  child: child,
                 ),
               ),
-              // GestureDetector(
-              //   onTap: () {
-              //     // 收起逻辑
-              //   },
-              //   child: Text(
-              //     I18nKeys.collapse.tr,
-              //     style: const TextStyle(
-              //       color: AppTheme.nineColor,
-              //       fontSize: 12,
-              //     ),
-              //   ),
-              // ),
+              child: controller.bindMode.value == 'qr'
+                  ? KeyedSubtree(
+                      key: const ValueKey('qr'),
+                      child: _buildQrBindingBody(),
+                    )
+                  : KeyedSubtree(
+                      key: const ValueKey('code'),
+                      child: _buildCodeBindingBody(),
+                    ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  /// 绑定方式 Tab 切换（胶囊分段控件）
+  Widget _buildBindModeTabs() {
+    return Container(
+      height: 38,
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: AppTheme.f9f9f9Color,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppTheme.dddColor, width: 0.5),
+      ),
+      child: Obx(() {
+        final mode = controller.bindMode.value;
+        return Row(
+          children: [
+            _buildBindTabItem(
+              label: I18nKeys.bindMethodCode.tr,
+              icon: Icons.sms_outlined,
+              selected: mode == 'code',
+              onTap: () => controller.setBindMode('code'),
+            ),
+            _buildBindTabItem(
+              label: I18nKeys.bindMethodQr.tr,
+              icon: Icons.qr_code_rounded,
+              selected: mode == 'qr',
+              onTap: () {
+                // 切换到扫码 Tab 时不主动请求二维码，
+                // 由用户点击「获取二维码 / 刷新」按钮触发。
+                controller.setBindMode('qr');
+              },
+            ),
+          ],
+        );
+      }),
+    );
+  }
+
+  Widget _buildBindTabItem({
+    required String label,
+    required IconData icon,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: selected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 15,
+                color: selected ? AppTheme.primaryColor : AppTheme.nineColor,
+              ),
+              const SizedBox(width: 5),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                  color: selected ? AppTheme.primaryColor : AppTheme.sixColor,
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 28),
-          Center(
-            child: Text(
-              I18nKeys.enterVerificationCode.tr,
-              style: const TextStyle(fontSize: 13, color: AppTheme.threeColor),
-            ),
-          ),
-          const SizedBox(height: 18),
-          Center(
-            child: Text(
-              I18nKeys.onlyActiveUsers.tr,
-              style: const TextStyle(fontSize: 13, color: AppTheme.ff6a6aColor),
-            ),
-          ),
-          const SizedBox(height: 15),
+        ),
+      ),
+    );
+  }
 
-          Container(
-            height: 48,
-            padding: const EdgeInsets.symmetric(horizontal: 21),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppTheme.f9f9f9Color,
-              border: Border.all(color: AppTheme.dddColor, width: 0.5),
-              borderRadius: const BorderRadius.all(Radius.circular(5)),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // 国家代码选择器
-                GestureDetector(
-                  onTap: () => _showCountryCodePicker(),
-                  child: Row(
-                    children: [
-                      Obx(
-                        () => Text(
-                          controller.selectedCountryCode.value,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: AppTheme.threeColor,
-                          ),
+  /// 验证码绑定内容
+  Widget _buildCodeBindingBody() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 8),
+        Center(
+          child: Text(
+            I18nKeys.enterVerificationCode.tr,
+            style: const TextStyle(fontSize: 13, color: AppTheme.threeColor),
+          ),
+        ),
+        const SizedBox(height: 18),
+        Center(
+          child: Text(
+            I18nKeys.onlyActiveUsers.tr,
+            style: const TextStyle(fontSize: 13, color: AppTheme.ff6a6aColor),
+          ),
+        ),
+        const SizedBox(height: 15),
+        Container(
+          height: 48,
+          padding: const EdgeInsets.symmetric(horizontal: 21),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: AppTheme.f9f9f9Color,
+            border: Border.all(color: AppTheme.dddColor, width: 0.5),
+            borderRadius: const BorderRadius.all(Radius.circular(5)),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () => _showCountryCodePicker(),
+                child: Row(
+                  children: [
+                    Obx(
+                      () => Text(
+                        controller.selectedCountryCode.value,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          color: AppTheme.threeColor,
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      const Icon(
-                        Icons.arrow_drop_down,
-                        size: 16,
-                        color: AppTheme.threeColor,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Container(width: 1, height: 20, color: AppTheme.dddColor),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: TextField(
-                    textAlignVertical: TextAlignVertical.center, // 垂直居中对齐
-                    textAlign: TextAlign.left,
-                    controller:
-                        TextEditingController(
-                            text: controller.phoneNumber.value,
-                          )
-                          ..selection = TextSelection.collapsed(
-                            offset: controller.phoneNumber.value.length,
-                          ),
-                    onChanged: (value) {
-                      // 过滤非数字字符，并移除开头的所有0
-                      final validValue = value
-                          .replaceAll(RegExp(r'[^\d]'), '')
-                          .replaceAll(RegExp(r'^0+'), '');
-                      controller.phoneNumber.value = validValue;
-                    },
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      isDense: true, // 减少输入框的默认padding
-                      contentPadding: EdgeInsets.zero, // 移除内容padding
-                      hintText: I18nKeys.enterPhoneNumber.tr,
-                      hintStyle: TextStyle(
-                        color: AppTheme.nineColor,
-                        fontSize: 13,
-                      ),
                     ),
-                    style: const TextStyle(
-                      fontSize: 13,
+                    const SizedBox(width: 4),
+                    const Icon(
+                      Icons.arrow_drop_down,
+                      size: 16,
                       color: AppTheme.threeColor,
                     ),
-                    keyboardType: TextInputType.phone, // 数字键盘
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly, // 只允许输入数字
-                      LengthLimitingTextInputFormatter(15), // 限制最大长度15位
-                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(width: 4),
+              Container(width: 1, height: 20, color: AppTheme.dddColor),
+              const SizedBox(width: 20),
+              Expanded(
+                child: TextField(
+                  textAlignVertical: TextAlignVertical.center,
+                  textAlign: TextAlign.left,
+                  controller:
+                      TextEditingController(
+                          text: controller.phoneNumber.value,
+                        )
+                        ..selection = TextSelection.collapsed(
+                          offset: controller.phoneNumber.value.length,
+                        ),
+                  onChanged: (value) {
+                    final validValue = value
+                        .replaceAll(RegExp(r'[^\d]'), '')
+                        .replaceAll(RegExp(r'^0+'), '');
+                    controller.phoneNumber.value = validValue;
+                  },
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                    hintText: I18nKeys.enterPhoneNumber.tr,
+                    hintStyle: TextStyle(
+                      color: AppTheme.nineColor,
+                      fontSize: 13,
+                    ),
+                  ),
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: AppTheme.threeColor,
+                  ),
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(15),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        GestureDetector(
+          onTap: () => Get.find<WhatsappTaskController>().getVerificationCode(),
+          child: Container(
+            height: 44,
+            alignment: Alignment.center,
+            margin: const EdgeInsets.symmetric(horizontal: 50),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [AppTheme.primaryGradientMid2, AppTheme.primaryColor],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+              borderRadius: BorderRadius.circular(22),
+            ),
+            child: Text(
+              I18nKeys.getVerificationCode.tr,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 18),
+        Center(
+          child: Text(
+            I18nKeys.doNotRefresh.tr,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppTheme.ff6a6aColor,
+            ),
+          ),
+        ),
+        const SizedBox(height: 15),
+        _buildVerificationCodeWithCopy(),
+        const SizedBox(height: 11),
+        Center(
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 30),
+            child: Text(
+              textAlign: TextAlign.center,
+              I18nKeys.verificationCodeTip.tr,
+              style: const TextStyle(fontSize: 11, color: AppTheme.nineColor),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 扫码绑定内容
+  Widget _buildQrBindingBody() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(height: 4),
+        Text(
+          I18nKeys.scanQrTitle.tr,
+          style: const TextStyle(
+            fontSize: 13,
+            color: AppTheme.threeColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 14),
+        _buildQrCard(),
+        const SizedBox(height: 12),
+        // 操作区：空态显示「获取二维码」主按钮；有二维码后显示「刷新」链接按钮（冷却期灰化 + 倒计时）
+        Obx(() {
+          final hasQr = controller.qrCodeContent.value.isNotEmpty;
+          final loading = controller.isQrLoading.value;
+          final remaining = controller.qrCooldownRemaining.value;
+          if (!hasQr) {
+            return _buildFetchQrButton(loading: loading);
+          }
+          return _buildRefreshQrButton(loading: loading, remaining: remaining);
+        }),
+        const SizedBox(height: 14),
+        _buildQrSteps(),
+        const SizedBox(height: 12),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          child: Text(
+            I18nKeys.scanQrExpiresTip.tr,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 11, color: AppTheme.nineColor),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 空态主按钮：点击后去请求二维码
+  Widget _buildFetchQrButton({required bool loading}) {
+    return GestureDetector(
+      onTap: loading ? null : controller.refreshQrCode,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 11),
+        decoration: BoxDecoration(
+          color: AppTheme.primaryColor,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primaryColor.withValues(alpha: 0.25),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (loading)
+              const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+            else
+              const Icon(
+                Icons.qr_code_scanner_rounded,
+                size: 18,
+                color: Colors.white,
+              ),
+            const SizedBox(width: 6),
+            Text(
+              I18nKeys.scanQrFetch.tr,
+              style: const TextStyle(
+                fontSize: 13,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 刷新按钮（冷却期间灰化 + 显示剩余秒数）
+  Widget _buildRefreshQrButton({
+    required bool loading,
+    required int remaining,
+  }) {
+    final disabled = loading || remaining > 0;
+    final color = disabled ? AppTheme.nineColor : AppTheme.primaryColor;
+    final label = remaining > 0
+        ? I18nKeys.scanQrCooldown.trParams({'s': remaining.toString()})
+        : I18nKeys.scanQrRefresh.tr;
+    return GestureDetector(
+      onTap: disabled ? null : controller.refreshQrCode,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (loading)
+              SizedBox(
+                width: 14,
+                height: 14,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: color,
+                ),
+              )
+            else
+              Icon(
+                remaining > 0
+                    ? Icons.timer_outlined
+                    : Icons.refresh_rounded,
+                size: 16,
+                color: color,
+              ),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 二维码卡片（柔和渐变 + 四角扫描线装饰）
+  ///
+  /// 支持渲染三种来源的二维码：
+  /// 1. 后端返回的 `data:image/...;base64,xxx` 或纯 base64 → 用 `Image.memory`
+  /// 2. 后端返回的 http(s) URL → 用 `Image.network`
+  /// 3. 普通可编码字符串（兜底） → 用 `QrImageView`
+  Widget _buildQrCard() {
+    const double qrSize = 200;
+    const double cardPadding = 20;
+    return Container(
+      padding: const EdgeInsets.all(cardPadding),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.primaryColor.withValues(alpha: 0.06),
+            Colors.white,
+          ],
+        ),
+        border: Border.all(
+          color: AppTheme.primaryColor.withValues(alpha: 0.12),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryColor.withValues(alpha: 0.08),
+            blurRadius: 22,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: SizedBox(
+        width: qrSize,
+        height: qrSize,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Obx(() {
+              final content = controller.qrCodeContent.value;
+              final loading = controller.isQrLoading.value;
+              if (loading) {
+                return const _QrStateView(
+                  icon: Icons.hourglass_top_rounded,
+                  showSpinner: true,
+                );
+              }
+              if (content.isEmpty) {
+                return _QrStateView(
+                  icon: Icons.qr_code_2_rounded,
+                  text: I18nKeys.scanQrTapToFetch.tr,
+                );
+              }
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: _buildQrVisual(content, qrSize),
+              );
+            }),
+            // 四角扫描框装饰
+            const Positioned.fill(child: _QrCornerDecor()),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 依据后端返回内容选择合适的渲染方式
+  ///
+  /// - `data:image/...;base64,xxx` → 解析 dataURI 后用 `Image.memory`
+  /// - 纯 base64（长字符串 + 仅 base64 字符集） → `Image.memory`
+  /// - http(s) 链接 → `Image.network`
+  /// - 其它 → 兜底走 `QrImageView`
+  Widget _buildQrVisual(String content, double size) {
+    final trimmed = content.trim();
+
+    // 情况 1：data URI
+    if (trimmed.startsWith('data:image')) {
+      final commaIdx = trimmed.indexOf(',');
+      final payload = commaIdx >= 0 ? trimmed.substring(commaIdx + 1) : trimmed;
+      final bytes = _tryDecodeBase64(payload);
+      if (bytes != null) {
+        return Image.memory(
+          bytes,
+          width: size,
+          height: size,
+          fit: BoxFit.contain,
+          gaplessPlayback: true,
+          errorBuilder: (_, __, ___) => _buildQrFallbackError(size),
+        );
+      }
+    }
+
+    // 情况 2：http(s) URL
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return Image.network(
+        trimmed,
+        width: size,
+        height: size,
+        fit: BoxFit.contain,
+        gaplessPlayback: true,
+        loadingBuilder: (_, child, progress) {
+          if (progress == null) return child;
+          return const _QrStateView(
+            icon: Icons.hourglass_top_rounded,
+            showSpinner: true,
+          );
+        },
+        errorBuilder: (_, __, ___) => _buildQrFallbackError(size),
+      );
+    }
+
+    // 情况 3：疑似 base64 纯字符串（避免长文本被误当作 QR 内容重编码）
+    final base64Pattern = RegExp(r'^[A-Za-z0-9+/=\s]+$');
+    if (trimmed.length > 120 && base64Pattern.hasMatch(trimmed)) {
+      final bytes = _tryDecodeBase64(trimmed.replaceAll(RegExp(r'\s'), ''));
+      if (bytes != null) {
+        return Image.memory(
+          bytes,
+          width: size,
+          height: size,
+          fit: BoxFit.contain,
+          gaplessPlayback: true,
+          errorBuilder: (_, __, ___) => _buildQrFallbackError(size),
+        );
+      }
+    }
+
+    // 情况 4：普通字符串，按二维码内容本地编码生成
+    return QrImageView(
+      data: trimmed,
+      version: QrVersions.auto,
+      size: size,
+      backgroundColor: Colors.white,
+      eyeStyle: const QrEyeStyle(
+        eyeShape: QrEyeShape.square,
+        color: AppTheme.threeColor,
+      ),
+      dataModuleStyle: const QrDataModuleStyle(
+        dataModuleShape: QrDataModuleShape.square,
+        color: AppTheme.threeColor,
+      ),
+    );
+  }
+
+  Uint8List? _tryDecodeBase64(String raw) {
+    try {
+      return base64Decode(raw);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Widget _buildQrFallbackError(double size) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: _QrStateView(
+        icon: Icons.broken_image_rounded,
+        text: I18nKeys.scanQrUnavailable.tr,
+      ),
+    );
+  }
+
+  /// 扫码 3 步引导
+  Widget _buildQrSteps() {
+    final steps = <String>[
+      I18nKeys.scanQrStep1.tr,
+      I18nKeys.scanQrStep2.tr,
+      I18nKeys.scanQrStep3.tr,
+    ];
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppTheme.primaryColor.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: List.generate(steps.length, (index) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: index == steps.length - 1 ? 0 : 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 18,
+                  height: 18,
+                  margin: const EdgeInsets.only(top: 1),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor,
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                  child: Text(
+                    '${index + 1}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    steps[index],
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppTheme.sixColor,
+                      height: 1.5,
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 10),
-          GestureDetector(
-            onTap: () =>
-                Get.find<WhatsappTaskController>().getVerificationCode(),
-            child: Container(
-              height: 44,
-              alignment: Alignment.center,
-              margin: const EdgeInsets.symmetric(horizontal: 50),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppTheme.primaryGradientMid2, AppTheme.primaryColor],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-                borderRadius: BorderRadius.circular(22),
-              ),
-              child: Text(
-                I18nKeys.getVerificationCode.tr,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 18),
-          Stack(
-            children: [
-              Center(
-                child: Text(
-                  I18nKeys.doNotRefresh.tr,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: AppTheme.ff6a6aColor,
-                  ),
-                ),
-              ),
-
-              // 复制按钮
-            ],
-          ),
-          const SizedBox(height: 15),
-          // _buildVerificationCodeInput(),
-          _buildVerificationCodeWithCopy(),
-
-          const SizedBox(height: 11),
-          Center(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 30),
-              child: Text(
-                textAlign: TextAlign.center,
-                I18nKeys.verificationCodeTip.tr,
-                style: const TextStyle(fontSize: 11, color: AppTheme.nineColor),
-              ),
-            ),
-          ),
-        ],
+          );
+        }),
       ),
     );
   }
@@ -1046,6 +1510,118 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
             );
           }),
         ],
+      ),
+    );
+  }
+}
+
+/// 二维码占位态（加载 / 不可用）
+class _QrStateView extends StatelessWidget {
+  const _QrStateView({
+    required this.icon,
+    this.text,
+    this.showSpinner = false,
+  });
+
+  final IconData icon;
+  final String? text;
+  final bool showSpinner;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (showSpinner)
+          const SizedBox(
+            width: 32,
+            height: 32,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.5,
+              color: AppTheme.primaryColor,
+            ),
+          )
+        else
+          Icon(icon, size: 46, color: AppTheme.nineColor),
+        if (text != null) ...[
+          const SizedBox(height: 10),
+          Text(
+            text!,
+            style: const TextStyle(fontSize: 12, color: AppTheme.nineColor),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// 二维码四角扫描线装饰
+class _QrCornerDecor extends StatelessWidget {
+  const _QrCornerDecor();
+
+  @override
+  Widget build(BuildContext context) {
+    const Color color = AppTheme.primaryColor;
+    const double len = 16;
+    const double thickness = 2.5;
+    return IgnorePointer(
+      child: Stack(
+        children: [
+          Positioned(
+            left: -6,
+            top: -6,
+            child: _corner(color, thickness, len, topLeft: true),
+          ),
+          Positioned(
+            right: -6,
+            top: -6,
+            child: _corner(color, thickness, len, topRight: true),
+          ),
+          Positioned(
+            left: -6,
+            bottom: -6,
+            child: _corner(color, thickness, len, bottomLeft: true),
+          ),
+          Positioned(
+            right: -6,
+            bottom: -6,
+            child: _corner(color, thickness, len, bottomRight: true),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _corner(
+    Color color,
+    double thickness,
+    double len, {
+    bool topLeft = false,
+    bool topRight = false,
+    bool bottomLeft = false,
+    bool bottomRight = false,
+  }) {
+    BorderSide side(bool active) => active
+        ? BorderSide(color: color, width: thickness)
+        : BorderSide.none;
+    return SizedBox(
+      width: len,
+      height: len,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border(
+            top: side(topLeft || topRight),
+            left: side(topLeft || bottomLeft),
+            right: side(topRight || bottomRight),
+            bottom: side(bottomLeft || bottomRight),
+          ),
+          borderRadius: BorderRadius.only(
+            topLeft: topLeft ? const Radius.circular(6) : Radius.zero,
+            topRight: topRight ? const Radius.circular(6) : Radius.zero,
+            bottomLeft: bottomLeft ? const Radius.circular(6) : Radius.zero,
+            bottomRight: bottomRight ? const Radius.circular(6) : Radius.zero,
+          ),
+        ),
       ),
     );
   }

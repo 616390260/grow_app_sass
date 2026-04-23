@@ -57,6 +57,7 @@ dependencies:
   flutter_svg: ^2.0.10
   carousel_slider: ^5.1.1
   pull_to_refresh: ^2.0.0
+  qr_flutter: ^4.1.0
   
   # Utilities
   clipboard: ^0.1.3

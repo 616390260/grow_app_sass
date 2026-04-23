@@ -37,9 +37,10 @@ class BottomNavigationWidget extends StatelessWidget {
           _buildSvgNavItem(0, ImageAssets.home, I18nKeys.home.tr),
           _buildSvgNavItem(1, ImageAssets.promotion, I18nKeys.promotion.tr),
           _buildSvgNavItem(2, ImageAssets.tasks, I18nKeys.tasks.tr),
-          _buildIconNavItem(3, Icons.local_activity_rounded, I18nKeys.activities.tr),
-          _buildSvgNavItem(4, ImageAssets.service, I18nKeys.service.tr),
-          _buildSvgNavItem(5, ImageAssets.account, I18nKeys.account.tr),
+          // 活动菜单已隐藏，如需恢复请还原下面这行：
+          // _buildIconNavItem(?, Icons.local_activity_rounded, I18nKeys.activities.tr),
+          _buildSvgNavItem(3, ImageAssets.service, I18nKeys.service.tr),
+          _buildSvgNavItem(4, ImageAssets.account, I18nKeys.account.tr),
         ],
       ),
     );
@@ -75,6 +76,7 @@ class BottomNavigationWidget extends StatelessWidget {
   }
 
   /// Material Icon 导航项（用于没有 SVG 资源的 tab）
+  // ignore: unused_element
   Widget _buildIconNavItem(int index, IconData iconData, String label) {
     final isSelected = currentIndex == index;
     return Expanded(

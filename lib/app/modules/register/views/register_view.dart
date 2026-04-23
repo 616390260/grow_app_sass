@@ -6,6 +6,7 @@ import '../../../core/base/base_view.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../../../core/constants/image_assets.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/language_switcher.dart';
 import '../controllers/register_controller.dart';
 
 class RegisterView extends BaseView<RegisterController> {
@@ -28,7 +29,7 @@ class RegisterView extends BaseView<RegisterController> {
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
-    
+
     // 从URL参数获取邀请码并自动填充（适用于所有平台）
     controller.getInviteCodeFromUrl();
 
@@ -145,6 +146,18 @@ class RegisterView extends BaseView<RegisterController> {
                   const SizedBox(height: 10),
                   _buildDecorationLine(),
                 ],
+              ),
+            ),
+          ),
+          // 右上角语言切换入口
+          Positioned(
+            top: 0,
+            right: 14,
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: const LanguageSwitcher(),
               ),
             ),
           ),
@@ -410,7 +423,9 @@ class RegisterView extends BaseView<RegisterController> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
-            disabledBackgroundColor: const Color(0xFF0B65FF).withValues(alpha: 0.6),
+            disabledBackgroundColor: const Color(
+              0xFF0B65FF,
+            ).withValues(alpha: 0.6),
           ),
           child: isLoading
               ? const SizedBox(
@@ -465,5 +480,4 @@ class RegisterView extends BaseView<RegisterController> {
       ],
     );
   }
-
 }
