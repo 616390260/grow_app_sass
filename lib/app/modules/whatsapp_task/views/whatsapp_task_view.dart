@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:do_task_project/app/core/constants/image_assets.dart';
 import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -5,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:chewie/chewie.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import '../../../core/base/base_view.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/i18n/i18n_keys.dart';
@@ -381,6 +384,7 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               color: Colors.grey.shade200,
@@ -393,29 +397,39 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
               ],
             ),
             child: Obx(() {
-              if (Get.find<WhatsappTaskController>().isVideoInitialized.value &&
+              // 图片型教程：服务器返回的是图片 URL / data URI
+              if (controller.mediaKind.value == 'image' &&
+                  controller.tutorialImageUrl.value.isNotEmpty) {
+                return SizedBox(
+                  width: double.infinity,
+                  height: WhatsappTaskController.kTutorialMediaHeight,
+                  child: _buildTutorialImage(
+                    controller.tutorialImageUrl.value,
+                  ),
+                );
+              }
+
+              // 视频型教程：已就绪，渲染 Chewie + 播放覆盖层
+              if (controller.isVideoInitialized.value &&
                   controller.chewieController != null) {
                 return SizedBox(
-                  width: double.infinity, // 宽度铺满布局
-                  height: 200, // 高度固定为200
+                  width: double.infinity,
+                  height: WhatsappTaskController.kTutorialMediaHeight,
                   child: Stack(
                     children: [
                       Chewie(controller: controller.chewieController!),
-                      // 播放/暂停按钮覆盖层
                       Center(
                         child: AnimatedOpacity(
                           opacity: controller.isPlaying.value ? 0.0 : 1.0,
                           duration: const Duration(milliseconds: 300),
                           child: InkWell(
-                            onTap: () {
-                              controller.togglePlayPause();
-                            },
+                            onTap: controller.togglePlayPause,
                             child: Container(
                               width: 80,
                               height: 80,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.black.withOpacity(0.5),
+                                color: Colors.black.withValues(alpha: 0.5),
                               ),
                               child: const Icon(
                                 Icons.play_arrow,
@@ -426,70 +440,109 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                           ),
                         ),
                       ),
-                      // 点击整个视频区域也可以播放/暂停
                       Positioned.fill(
-                        child: InkWell(
-                          onTap: () {
-                            controller.togglePlayPause();
-                          },
-                        ),
-                      ),
-                      // 全屏/退出全屏按钮
-                      // Positioned(
-                      //   bottom: 10,
-                      //   right: 10,
-                      //   child: InkWell(
-                      //     onTap: () {
-                      //       // 使用chewie的全屏功能
-                      //       controller.toggleFullScreen();
-                      //     },
-                      //     child: Container(
-                      //       width: 40,
-                      //       height: 40,
-                      //       decoration: BoxDecoration(
-                      //         shape: BoxShape.circle,
-                      //         color: Colors.black.withOpacity(0.5),
-                      //       ),
-                      //       child: Icon(
-                      //         controller.chewieController != null && controller.chewieController!.isFullScreen
-                      //             ? Icons.fullscreen_exit
-                      //             : Icons.fullscreen,
-                      //         size: 24,
-                      //         color: Colors.white,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                );
-              } else {
-                return Container(
-                  height: 180,
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(color: Colors.blue),
-                      const SizedBox(height: 8),
-                      Text(
-                        I18nKeys.videoLoading.tr,
-                        style: TextStyle(color: Colors.black54, fontSize: 14),
+                        child: InkWell(onTap: controller.togglePlayPause),
                       ),
                     ],
                   ),
                 );
               }
+
+              // 视频加载结束但不可用：展示「视频不可用」占位，避免永远转圈。
+              if (controller.videoLoadFinished.value) {
+                return Container(
+                  height: WhatsappTaskController.kTutorialMediaHeight,
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.videocam_off_outlined,
+                        size: 40,
+                        color: AppTheme.nineColor,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        I18nKeys.videoUnavailable.tr,
+                        style: const TextStyle(
+                          color: Colors.black54,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              // 加载中占位
+              return Container(
+                height: WhatsappTaskController.kTutorialMediaHeight,
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircularProgressIndicator(color: Colors.blue),
+                    const SizedBox(height: 8),
+                    Text(
+                      I18nKeys.videoLoading.tr,
+                      style: const TextStyle(
+                        color: Colors.black54,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              );
             }),
           ),
-          // const SizedBox(height: 8),
-          // Text(
-          //   '点击视频播放/暂停',
-          //   style: TextStyle(
-          //     color: Colors.black54,
-          //     fontSize: 14,
-          //   ),
-          // ),
+        ],
+      ),
+    );
+  }
+
+  /// 渲染教程图片：支持 `data:image/...;base64,...` 与普通 http(s) 网络图。
+  Widget _buildTutorialImage(String src) {
+    final trimmed = src.trim();
+    if (trimmed.startsWith('data:image/')) {
+      try {
+        final comma = trimmed.indexOf(',');
+        final b64 = comma >= 0 ? trimmed.substring(comma + 1) : trimmed;
+        final bytes = base64Decode(b64);
+        return Image.memory(bytes, fit: BoxFit.cover);
+      } catch (_) {
+        return _buildImagePlaceholder();
+      }
+    }
+    return Image.network(
+      trimmed,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => _buildImagePlaceholder(),
+      loadingBuilder: (_, child, progress) {
+        if (progress == null) return child;
+        return const Center(
+          child: CircularProgressIndicator(color: Colors.blue),
+        );
+      },
+    );
+  }
+
+  Widget _buildImagePlaceholder() {
+    return Container(
+      alignment: Alignment.center,
+      color: Colors.grey.shade100,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.image_not_supported_outlined,
+            size: 36,
+            color: AppTheme.nineColor,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            I18nKeys.videoUnavailable.tr,
+            style: const TextStyle(color: Colors.black54, fontSize: 12),
+          ),
         ],
       ),
     );
@@ -584,21 +637,88 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                   color: AppTheme.threeColor,
                 ),
               ),
-              // GestureDetector(
-              //   onTap: () {
-              //     // 收起逻辑
-              //   },
-              //   child: Text(
-              //     I18nKeys.collapse.tr,
-              //     style: const TextStyle(
-              //       color: AppTheme.nineColor,
-              //       fontSize: 12,
-              //     ),
-              //   ),
-              // ),
             ],
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: 16),
+          _buildBindModeTabs(),
+          const SizedBox(height: 16),
+          Obx(() {
+            if (controller.bindMode.value == 'qr') {
+              return _buildQrBindPanel();
+            }
+            return _buildCodeBindPanel(context);
+          }),
+        ],
+      ),
+    );
+  }
+
+  /// 绑定方式切换 Tab：验证码绑定 / 扫码绑定。
+  Widget _buildBindModeTabs() {
+    return Obx(() {
+      final mode = controller.bindMode.value;
+      return Container(
+        height: 40,
+        decoration: BoxDecoration(
+          color: AppTheme.f9f9f9Color,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppTheme.dddColor, width: 0.5),
+        ),
+        child: Row(
+          children: [
+            _buildBindModeTab(I18nKeys.bindMethodCode.tr, 'code', mode),
+            _buildBindModeTab(I18nKeys.bindMethodQr.tr, 'qr', mode),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildBindModeTab(String label, String value, String current) {
+    final selected = current == value;
+    return Expanded(
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () => controller.setBindMode(value),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOut,
+            alignment: Alignment.center,
+            margin: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: selected ? AppTheme.primaryColor : Colors.transparent,
+              borderRadius: BorderRadius.circular(17),
+              boxShadow: selected
+                  ? [
+                      BoxShadow(
+                        color: AppTheme.primaryColor.withValues(alpha: 0.25),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                color: selected ? Colors.white : AppTheme.sixColor,
+                letterSpacing: 0.2,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 验证码绑定面板（原有逻辑，仅迁移到独立方法）。
+  Widget _buildCodeBindPanel(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
           Center(
             child: Text(
               I18nKeys.enterVerificationCode.tr,
@@ -754,8 +874,427 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
             ),
           ),
         ],
+      );
+  }
+
+  // —— 扫码绑定面板尺寸规范（保持一处改全局生效） ——
+  static const double _kQrFrameSize = 232;
+  static const double _kQrCodeSize = 188;
+  static const double _kQrCornerSize = 22;
+  static const double _kQrCornerThickness = 3;
+
+  /// 扫码绑定面板：标题 + 扫描框（带四角定位标）+ 过期提示 + 步骤 + 刷新/获取按钮。
+  Widget _buildQrBindPanel() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Center(
+          child: Text(
+            I18nKeys.scanQrTitle.tr,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.threeColor,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Center(child: _buildQrScanFrame()),
+        const SizedBox(height: 12),
+        Center(
+          child: Obx(() {
+            final cd = controller.qrCooldownRemaining.value;
+            if (cd > 0 && controller.qrCodeContent.value.isNotEmpty) {
+              return _buildCountdownPill(cd);
+            }
+            return Text(
+              I18nKeys.scanQrExpiresTip.tr,
+              style: const TextStyle(fontSize: 11, color: AppTheme.nineColor),
+            );
+          }),
+        ),
+        const SizedBox(height: 20),
+        _buildQrSteps(),
+        const SizedBox(height: 20),
+        _buildQrRefreshButton(),
+      ],
+    );
+  }
+
+  /// 扫描框：白色底 + 四角定位标 + 内部 QR / 占位。
+  Widget _buildQrScanFrame() {
+    return Container(
+      width: _kQrFrameSize,
+      height: _kQrFrameSize,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppTheme.dddColor, width: 0.5),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryColor.withValues(alpha: 0.06),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Center(
+            child: SizedBox(
+              width: _kQrCodeSize,
+              height: _kQrCodeSize,
+              child: Obx(() => _buildQrCodeDisplay()),
+            ),
+          ),
+          Positioned(
+            left: 10,
+            top: 10,
+            child: _QrCornerMark(
+              color: AppTheme.primaryColor,
+              size: _kQrCornerSize,
+              thickness: _kQrCornerThickness,
+              position: _QrCornerPosition.topLeft,
+            ),
+          ),
+          Positioned(
+            right: 10,
+            top: 10,
+            child: _QrCornerMark(
+              color: AppTheme.primaryColor,
+              size: _kQrCornerSize,
+              thickness: _kQrCornerThickness,
+              position: _QrCornerPosition.topRight,
+            ),
+          ),
+          Positioned(
+            left: 10,
+            bottom: 10,
+            child: _QrCornerMark(
+              color: AppTheme.primaryColor,
+              size: _kQrCornerSize,
+              thickness: _kQrCornerThickness,
+              position: _QrCornerPosition.bottomLeft,
+            ),
+          ),
+          Positioned(
+            right: 10,
+            bottom: 10,
+            child: _QrCornerMark(
+              color: AppTheme.primaryColor,
+              size: _kQrCornerSize,
+              thickness: _kQrCornerThickness,
+              position: _QrCornerPosition.bottomRight,
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  /// 冷却中的胶囊小标签：强调"还剩多少秒可刷新"。
+  Widget _buildCountdownPill(int remainingSeconds) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppTheme.primaryColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.access_time_rounded,
+            size: 12,
+            color: AppTheme.primaryColor,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            I18nKeys.scanQrCooldown.trParams({
+              's': remainingSeconds.toString(),
+            }),
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.primaryColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 根据 [WhatsappTaskController.qrCodeContent] 决定渲染方式：
+  /// - 空：提示点击下方按钮获取
+  /// - `data:image/...;base64,`：内嵌图片
+  /// - http(s) 图片 URL：网络图
+  /// - 其它：用 QrImageView 直接生成二维码
+  Widget _buildQrCodeDisplay() {
+    if (controller.isQrLoading.value) {
+      return Center(
+        child: SizedBox(
+          width: 36,
+          height: 36,
+          child: CircularProgressIndicator(
+            strokeWidth: 3,
+            valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+          ),
+        ),
+      );
+    }
+    final content = controller.qrCodeContent.value.trim();
+    if (content.isEmpty) {
+      return _qrEmptyStatePlaceholder();
+    }
+
+    if (content.startsWith('data:image/')) {
+      try {
+        final comma = content.indexOf(',');
+        final b64 = comma >= 0 ? content.substring(comma + 1) : content;
+        return Image.memory(base64Decode(b64), fit: BoxFit.contain);
+      } catch (_) {
+        return _qrUnavailablePlaceholder();
+      }
+    }
+
+    final lower = content.toLowerCase();
+    final isImageUrl =
+        (lower.startsWith('http://') || lower.startsWith('https://')) &&
+            (lower.endsWith('.png') ||
+                lower.endsWith('.jpg') ||
+                lower.endsWith('.jpeg') ||
+                lower.endsWith('.webp') ||
+                lower.endsWith('.gif'));
+    if (isImageUrl) {
+      return Image.network(
+        content,
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) => _qrUnavailablePlaceholder(),
+      );
+    }
+
+    return QrImageView(
+      data: content,
+      version: QrVersions.auto,
+      size: _kQrCodeSize,
+      backgroundColor: Colors.white,
+      eyeStyle: QrEyeStyle(
+        eyeShape: QrEyeShape.square,
+        color: AppTheme.threeColor,
+      ),
+      dataModuleStyle: QrDataModuleStyle(
+        dataModuleShape: QrDataModuleShape.square,
+        color: AppTheme.threeColor,
+      ),
+      errorStateBuilder: (_, __) => _qrUnavailablePlaceholder(),
+    );
+  }
+
+  Widget _qrEmptyStatePlaceholder() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 54,
+            height: 54,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: AppTheme.primaryColor.withValues(alpha: 0.08),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.qr_code_scanner_rounded,
+              size: 28,
+              color: AppTheme.primaryColor,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              I18nKeys.scanQrTapToFetch.tr,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12, color: AppTheme.sixColor),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _qrUnavailablePlaceholder() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.qr_code_2_outlined,
+            size: 36,
+            color: AppTheme.nineColor,
+          ),
+          const SizedBox(height: 6),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              I18nKeys.scanQrUnavailable.tr,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12, color: AppTheme.nineColor),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQrSteps() {
+    final steps = <String>[
+      I18nKeys.scanQrStep1.tr,
+      I18nKeys.scanQrStep2.tr,
+      I18nKeys.scanQrStep3.tr,
+    ];
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppTheme.f9f9f9Color,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: List.generate(steps.length, (i) {
+          final isLast = i == steps.length - 1;
+          return Padding(
+            padding: EdgeInsets.only(bottom: isLast ? 0 : 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 20,
+                  height: 20,
+                  alignment: Alignment.center,
+                  margin: const EdgeInsets.only(top: 1, right: 10),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppTheme.primaryColor.withValues(alpha: 0.14),
+                  ),
+                  child: Text(
+                    '${i + 1}',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.primaryColor,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    steps[i],
+                    style: const TextStyle(
+                      fontSize: 12.5,
+                      height: 1.5,
+                      color: AppTheme.sixColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildQrRefreshButton() {
+    return Obx(() {
+      final loading = controller.isQrLoading.value;
+      final cooldown = controller.qrCooldownRemaining.value;
+      final hasContent = controller.qrCodeContent.value.isNotEmpty;
+      final disabled = loading || cooldown > 0;
+
+      final String label;
+      final IconData icon;
+      if (loading) {
+        label = I18nKeys.videoLoading.tr;
+        icon = Icons.refresh_rounded;
+      } else if (cooldown > 0) {
+        label = I18nKeys.scanQrCooldown.trParams({'s': cooldown.toString()});
+        icon = Icons.timer_outlined;
+      } else if (hasContent) {
+        label = I18nKeys.scanQrRefresh.tr;
+        icon = Icons.refresh_rounded;
+      } else {
+        label = I18nKeys.scanQrFetch.tr;
+        icon = Icons.qr_code_rounded;
+      }
+
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 40),
+        child: MouseRegion(
+          cursor: disabled
+              ? SystemMouseCursors.forbidden
+              : SystemMouseCursors.click,
+          child: GestureDetector(
+            onTap: disabled ? null : controller.refreshQrCode,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              height: 46,
+              alignment: Alignment.center,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: disabled
+                    ? null
+                    : LinearGradient(
+                        colors: [
+                          AppTheme.primaryGradientMid2,
+                          AppTheme.primaryColor,
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                color: disabled
+                    ? AppTheme.primaryColor.withValues(alpha: 0.35)
+                    : null,
+                borderRadius: BorderRadius.circular(23),
+                boxShadow: disabled
+                    ? null
+                    : [
+                        BoxShadow(
+                          color: AppTheme.primaryColor.withValues(alpha: 0.25),
+                          blurRadius: 14,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+              ),
+              child: loading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(icon, size: 18, color: Colors.white),
+                        const SizedBox(width: 6),
+                        Text(
+                          label,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.2,
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ),
+        ),
+      );
+    });
   }
 
   // 验证码输入区域和复制按钮
@@ -1049,4 +1588,87 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
       ),
     );
   }
+}
+
+/// 扫描框四角定位标的朝向。
+enum _QrCornerPosition { topLeft, topRight, bottomLeft, bottomRight }
+
+/// 扫描器风格的 L 形角标：用 [CustomPaint] 画两条短线构成 "⌐" 形。
+/// 不做连续动画（遵循 ui-ux-pro-max：装饰性元素避免 infinite animation）。
+class _QrCornerMark extends StatelessWidget {
+  const _QrCornerMark({
+    required this.color,
+    required this.size,
+    required this.thickness,
+    required this.position,
+  });
+
+  final Color color;
+  final double size;
+  final double thickness;
+  final _QrCornerPosition position;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: CustomPaint(
+        painter: _QrCornerPainter(
+          color: color,
+          thickness: thickness,
+          position: position,
+        ),
+      ),
+    );
+  }
+}
+
+class _QrCornerPainter extends CustomPainter {
+  _QrCornerPainter({
+    required this.color,
+    required this.thickness,
+    required this.position,
+  });
+
+  final Color color;
+  final double thickness;
+  final _QrCornerPosition position;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = thickness
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+
+    final w = size.width;
+    final h = size.height;
+
+    switch (position) {
+      case _QrCornerPosition.topLeft:
+        canvas.drawLine(Offset(0, thickness / 2), Offset(w, thickness / 2), paint);
+        canvas.drawLine(Offset(thickness / 2, 0), Offset(thickness / 2, h), paint);
+        break;
+      case _QrCornerPosition.topRight:
+        canvas.drawLine(Offset(0, thickness / 2), Offset(w, thickness / 2), paint);
+        canvas.drawLine(Offset(w - thickness / 2, 0), Offset(w - thickness / 2, h), paint);
+        break;
+      case _QrCornerPosition.bottomLeft:
+        canvas.drawLine(Offset(0, h - thickness / 2), Offset(w, h - thickness / 2), paint);
+        canvas.drawLine(Offset(thickness / 2, 0), Offset(thickness / 2, h), paint);
+        break;
+      case _QrCornerPosition.bottomRight:
+        canvas.drawLine(Offset(0, h - thickness / 2), Offset(w, h - thickness / 2), paint);
+        canvas.drawLine(Offset(w - thickness / 2, 0), Offset(w - thickness / 2, h), paint);
+        break;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _QrCornerPainter oldDelegate) =>
+      oldDelegate.color != color ||
+      oldDelegate.thickness != thickness ||
+      oldDelegate.position != position;
 }

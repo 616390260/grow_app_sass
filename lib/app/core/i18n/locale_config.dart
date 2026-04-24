@@ -20,7 +20,12 @@ class LocaleConfig {
   static const String _storageKey = 'app_locale';
   static final GetStorage _box = GetStorage();
 
-  static Locale getInitialLocale() {
+  /// 当前应用语言（全局广播）。业务 Controller 可通过
+  /// `ever<Locale>(LocaleConfig.currentLocale, (_) => loadData())`
+  /// 监听变化并重新请求接口，以同步服务端按 `accept-language` 返回的多语言数据。
+  static final Rx<Locale> currentLocale = Rx<Locale>(_readInitialLocale());
+
+  static Locale _readInitialLocale() {
     final saved = _box.read(_storageKey);
     if (saved is String && saved.isNotEmpty) {
       final parts = saved.split('_');
@@ -31,10 +36,11 @@ class LocaleConfig {
       final locale = Locale(languageCode, countryCode);
       if (isSupported(locale)) return locale;
     }
-    // return defaultLocale;
     final device = Get.deviceLocale;
     return device != null && isSupported(device) ? device : defaultLocale;
   }
+
+  static Locale getInitialLocale() => currentLocale.value;
 
   static Future<void> updateLocale(Locale locale) async {
     if (!isSupported(locale)) return;
@@ -43,6 +49,8 @@ class LocaleConfig {
       '${locale.languageCode}_${locale.countryCode ?? ''}',
     );
     Get.updateLocale(locale);
+    // 广播语言变更，供业务 Controller 监听重新拉取接口数据。
+    currentLocale.value = locale;
   }
 
   static bool isSupported(Locale locale) {

@@ -1,8 +1,10 @@
 import 'package:do_task_project/app/data/services/home_api_service.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../core/i18n/i18n_keys.dart';
+import '../../../core/i18n/locale_config.dart';
 import '../../../data/services/task_center_api_service.dart';
 import '../../../data/models/home_info_model.dart';
 class TasksController extends BaseController {
@@ -17,7 +19,14 @@ class TasksController extends BaseController {
   bool _isLoading = false;
 
   @override
-  void initData() => loadTasks();
+  void initData() {
+    loadTasks(isRefresh: true);
+    // 语言切换后从第 1 页重拉：避免把新语言的数据追加在旧语言数据后面，
+    // 让后端按 accept-language 返回的标题/描述全部切换为当前语言。
+    ever<Locale>(LocaleConfig.currentLocale, (_) {
+      loadTasks(isRefresh: true);
+    });
+  }
 
   /// 加载任务列表（支持分页）
   Future<void> loadTasks({bool isRefresh = false}) async {

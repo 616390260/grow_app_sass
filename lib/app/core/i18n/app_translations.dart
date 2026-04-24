@@ -175,6 +175,18 @@ class AppTranslations extends Translations {
       "enterPhoneNumber": "请输入手机号码",
       "getVerificationCode": "获取验证码",
       "verification_code_tip": "在WhatsApp输入验证码后，请确保绑定成功，再返回平台验证（下方将显示账户绑定状态）",
+      "bind_method_code": "验证码绑定",
+      "bind_method_qr": "扫码绑定",
+      "scan_qr_title": "使用 WhatsApp 扫描二维码",
+      "scan_qr_step_1": "打开手机上的 WhatsApp",
+      "scan_qr_step_2": "进入 设置 > 已链接的设备",
+      "scan_qr_step_3": "点击「链接设备」，扫描上方二维码",
+      "scan_qr_refresh": "刷新二维码",
+      "scan_qr_unavailable": "二维码暂时不可用",
+      "scan_qr_expires_tip": "请在 2 分钟内完成扫码，过期请刷新",
+      "scan_qr_fetch": "获取二维码",
+      "scan_qr_cooldown": "@s 秒后可刷新",
+      "scan_qr_tap_to_fetch": "点击下方按钮获取二维码",
       "online_numbers": "在线号码",
       "phoneNumberTip": "输入手机号码，获取验证码并在WhatsApp验证",
       "enter_valid_phone_number": "请输入有效的手机号码（6-15位）",
@@ -375,6 +387,7 @@ class AppTranslations extends Translations {
       "second_level_invitation_rule":
           "二、间接邀请：你的直属下级邀请的用户为“二级下级”，他们完成指定任务后，你可获得50-150积分",
       "video_loading_please_wait": "视频加载中，请稍后重试",
+      "video_unavailable": "视频暂不可用",
       "no_online_numbers": "暂无在线号码可用",
       "refresh": "刷新",
       "please_select_bank_placeholder": "请选择发卡银行",
@@ -858,6 +871,19 @@ class AppTranslations extends Translations {
       // Using standard version: do_not_refresh
       'verification_code_tip':
           'After entering the verification code in WhatsApp, please ensure the linking is successful and return to the platform for verification (the account binding status will be displayed below)',
+      'bind_method_code': 'Bind by Code',
+      'bind_method_qr': 'Bind by QR',
+      'scan_qr_title': 'Scan the QR code with WhatsApp',
+      'scan_qr_step_1': 'Open WhatsApp on your phone',
+      'scan_qr_step_2': 'Go to Settings > Linked Devices',
+      'scan_qr_step_3': 'Tap "Link a device" and scan the QR above',
+      'scan_qr_refresh': 'Refresh QR code',
+      'scan_qr_unavailable': 'QR code is temporarily unavailable',
+      'scan_qr_expires_tip':
+          'Please finish scanning within 2 minutes; refresh if expired',
+      'scan_qr_fetch': 'Get QR code',
+      'scan_qr_cooldown': 'Refresh in @s s',
+      'scan_qr_tap_to_fetch': 'Tap the button below to fetch the QR code',
       'online_numbers': 'Online Numbers',
       'phoneNumberTip':
           'Enter your phone number, get the verification code, and verify in WhatsApp',
@@ -1107,6 +1133,7 @@ class AppTranslations extends Translations {
       'second_level_invitation_rule':
           'II. Secondary Invitation: Users invited by your direct subordinates are called "Secondary Subordinates". You will get 50-150 points after they complete the specified task.',
       'video_loading_please_wait': 'Video Loading, please try again later',
+      'video_unavailable': 'Video unavailable',
       'no_online_numbers': 'No Online Numbers Available',
       'refresh': 'Refresh',
       'please_select_bank_placeholder': 'Please Select Issuing Bank',
@@ -1653,6 +1680,19 @@ class AppTranslations extends Translations {
       "getVerificationCode": "सत्यापन कोड प्राप्त करें",
       "verification_code_tip":
           "व्हाट्सएप में सत्यापन कोड दर्ज करने के बाद, कृपया सुनिश्चित करें कि बाइंडिंग सफल हुई है, फिर प्लेटफॉर्म पर वापस सत्यापन करें (नीचे खाता बाइंडिंग स्थिति दिखाई जाएगी)",
+      "bind_method_code": "कोड से बाइंड करें",
+      "bind_method_qr": "QR से बाइंड करें",
+      "scan_qr_title": "WhatsApp से QR कोड स्कैन करें",
+      "scan_qr_step_1": "अपने फ़ोन पर WhatsApp खोलें",
+      "scan_qr_step_2": "सेटिंग्स > लिंक किए गए डिवाइस पर जाएँ",
+      "scan_qr_step_3": "\"डिवाइस लिंक करें\" टैप करें और ऊपर का QR स्कैन करें",
+      "scan_qr_refresh": "QR कोड रीफ़्रेश करें",
+      "scan_qr_unavailable": "QR कोड अभी उपलब्ध नहीं है",
+      "scan_qr_expires_tip":
+          "कृपया 2 मिनट के भीतर स्कैन पूरा करें; समाप्त होने पर रीफ़्रेश करें",
+      "scan_qr_fetch": "QR कोड प्राप्त करें",
+      "scan_qr_cooldown": "@s सेकंड में रीफ़्रेश",
+      "scan_qr_tap_to_fetch": "QR कोड पाने के लिए नीचे का बटन दबाएँ",
       "online_numbers": "ऑनलाइन नंबर",
       "phoneNumberTip":
           "मोबाइल नंबर दर्ज करें, सत्यापन कोड प्राप्त करें और व्हाट्सएप में सत्यापित करें",
@@ -1889,6 +1929,7 @@ class AppTranslations extends Translations {
           "II. द्वितीयक आमंत्रण: आपके सीधे अधीनस्थों द्वारा आमंत्रित किए गए उपयोगकर्ताओं को \"द्वितीयक अधीनस्थ\" कहा जाता है। वे निर्दिष्ट कार्य पूरा करने के बाद आपको 50-150 पॉइंट्स मिलेंगे।",
       "video_loading_please_wait":
           "वीडियो लोड हो रहा है, कृपया बाद में पुनः प्रयास करें",
+      "video_unavailable": "वीडियो उपलब्ध नहीं है",
       "no_online_numbers": "कोई ऑनलाइन नंबर उपलब्ध नहीं",
       "refresh": "रिफ्रेश करें",
       "please_select_bank_placeholder": "कृपया जारीकर्ता बैंक चुनें",
@@ -2410,6 +2451,20 @@ class AppTranslations extends Translations {
       "getVerificationCode": "Dapatkan Kode Verifikasi",
       "verification_code_tip":
           "Setelah memasukkan kode verifikasi di WhatsApp, pastikan binding berhasil sebelum kembali ke platform untuk verifikasi (status binding akun akan ditampilkan di bawah)",
+      "bind_method_code": "Bind via Kode",
+      "bind_method_qr": "Bind via QR",
+      "scan_qr_title": "Pindai kode QR dengan WhatsApp",
+      "scan_qr_step_1": "Buka WhatsApp di ponsel Anda",
+      "scan_qr_step_2": "Masuk ke Pengaturan > Perangkat Tertaut",
+      "scan_qr_step_3":
+          "Ketuk \"Tautkan perangkat\" dan pindai QR di atas",
+      "scan_qr_refresh": "Segarkan QR",
+      "scan_qr_unavailable": "QR tidak tersedia untuk sementara",
+      "scan_qr_expires_tip":
+          "Selesaikan pemindaian dalam 2 menit; segarkan jika kedaluwarsa",
+      "scan_qr_fetch": "Dapatkan QR",
+      "scan_qr_cooldown": "Segarkan dalam @s dtk",
+      "scan_qr_tap_to_fetch": "Tekan tombol di bawah untuk mendapatkan QR",
       "online_numbers": "Nomor Online",
       "phoneNumberTip":
           "Masukkan nomor telepon, dapatkan kode verifikasi dan verifikasi di WhatsApp",
@@ -2647,6 +2702,7 @@ class AppTranslations extends Translations {
           "II. Undangan Tidak Langsung: Pengguna yang diundang oleh anak bawah langsung Anda adalah \"anak bawah level 2\", setelah mereka menyelesaikan tugas tertentu, Anda dapat mendapatkan 50-150 poin",
       "video_loading_please_wait":
           "Video sedang dimuat, silakan coba lagi nanti",
+      "video_unavailable": "Video tidak tersedia",
       "no_online_numbers":
           "Tidak ada nomor online yang tersedia untuk sementara",
       "refresh": "Refresh",
@@ -3144,6 +3200,20 @@ class AppTranslations extends Translations {
       "getVerificationCode": "ভেরিফিকেশন কোড প্রাপ্ত করুন",
       "verification_code_tip":
           "ওয়াটসঅ্যাপে ভেরিফিকেশন কোড ইনপুট করার পর, বাইন্ডিং সফল হয়েছে কিনা নিশ্চিত করুন, তারপর প্ল্যাটফর্মে ফিরে আসুন যাচাই করুন（নিচে অ্যাকাউন্ট বাইন্ডিং স্ট্যাটাস দেখানো হবে）",
+      "bind_method_code": "কোড দিয়ে বাইন্ড",
+      "bind_method_qr": "QR দিয়ে বাইন্ড",
+      "scan_qr_title": "WhatsApp দিয়ে QR কোড স্ক্যান করুন",
+      "scan_qr_step_1": "ফোনে WhatsApp খুলুন",
+      "scan_qr_step_2": "সেটিংস > লিঙ্কড ডিভাইস-এ যান",
+      "scan_qr_step_3":
+          "\"লিঙ্ক এ ডিভাইস\" ট্যাপ করে উপরের QR স্ক্যান করুন",
+      "scan_qr_refresh": "QR রিফ্রেশ করুন",
+      "scan_qr_unavailable": "QR আপাতত উপলব্ধ নয়",
+      "scan_qr_expires_tip":
+          "২ মিনিটের মধ্যে স্ক্যান শেষ করুন; মেয়াদ শেষ হলে রিফ্রেশ করুন",
+      "scan_qr_fetch": "QR নিন",
+      "scan_qr_cooldown": "@s সেকেন্ডে রিফ্রেশ",
+      "scan_qr_tap_to_fetch": "QR পেতে নিচের বোতামে ট্যাপ করুন",
       "online_numbers": "অনলাইন নাম্বার",
       "phoneNumberTip":
           "মোবাইল নাম্বার ইনপুট করুন, ভেরিফিকেশন কোড প্রাপ্ত করুন এবং ওয়াটসঅ্যাপে যাচাই করুন",
@@ -3376,6 +3446,7 @@ class AppTranslations extends Translations {
       "second_level_invitation_rule":
           "দুই、পরোক্ষ আমন্ত্রণ：আপনার সরাসরি সাবর্ডিনেটের আমন্ত্রণে রেজিস্টার করা ব্যবহারকারী \"সেকেন্ড লেভেল সাবর্ডিনেট\"，তারা নির্দিষ্ট টাস্ক সম্পন্ন করলে, আপনি 50-150 পয়েন্ট পেতে পারেন",
       "video_loading_please_wait": "ভিডিও লোড হচ্ছে, পরে পুনরায় চেষ্টা করুন",
+      "video_unavailable": "ভিডিও উপলব্ধ নেই",
       "no_online_numbers": "অনলাইন নাম্বার উপলব্ধ নেই",
       "refresh": "রিফ্রেশ করুন",
       "please_select_bank_placeholder": "অনুগ্রহ করে ব্যাংক নির্বাচন করুন",
@@ -3871,6 +3942,20 @@ class AppTranslations extends Translations {
       "getVerificationCode": "Obter código de verificação",
       "verification_code_tip":
           "Após digitar o código de verificação no WhatsApp, certifique-se de que a vinculação foi bem-sucedida antes de retornar à plataforma para verificar (o status da vinculação da conta será exibido abaixo)",
+      "bind_method_code": "Vincular por código",
+      "bind_method_qr": "Vincular por QR",
+      "scan_qr_title": "Escaneie o QR code com o WhatsApp",
+      "scan_qr_step_1": "Abra o WhatsApp no seu celular",
+      "scan_qr_step_2": "Acesse Configurações > Aparelhos conectados",
+      "scan_qr_step_3":
+          "Toque em \"Conectar um aparelho\" e escaneie o QR acima",
+      "scan_qr_refresh": "Atualizar QR",
+      "scan_qr_unavailable": "QR indisponível no momento",
+      "scan_qr_expires_tip":
+          "Escaneie em até 2 minutos; atualize se expirar",
+      "scan_qr_fetch": "Obter QR",
+      "scan_qr_cooldown": "Atualizar em @s s",
+      "scan_qr_tap_to_fetch": "Toque no botão abaixo para obter o QR",
       "online_numbers": "Números online",
       "phoneNumberTip":
           "Digite o número de telefone, obtenha o código de verificação e verifique no WhatsApp",
@@ -4108,6 +4193,7 @@ class AppTranslations extends Translations {
           "II. Convite indireto: Usuários convidados por seus subordinados diretos são \"subordinados de nível 2\". Após eles concluirem tarefas designadas, você ganhará 50-150 pontos",
       "video_loading_please_wait":
           "Carregando vídeo, tente novamente mais tarde",
+      "video_unavailable": "Vídeo indisponível",
       "no_online_numbers": "Nenhum número online disponível",
       "refresh": "Atualizar",
       "please_select_bank_placeholder": "Selecione o banco emissor",
@@ -4609,6 +4695,20 @@ class AppTranslations extends Translations {
       "getVerificationCode": "Obtener código de verificación",
       "verification_code_tip":
           "Después de ingresar el código de verificación en WhatsApp, asegúrate de que la vinculación se haya realizado con éxito antes de volver a la plataforma para verificar (el estado de vinculación de la cuenta se mostrará a continuación)",
+      "bind_method_code": "Vincular por código",
+      "bind_method_qr": "Vincular por QR",
+      "scan_qr_title": "Escanea el código QR con WhatsApp",
+      "scan_qr_step_1": "Abre WhatsApp en tu teléfono",
+      "scan_qr_step_2": "Ve a Configuración > Dispositivos vinculados",
+      "scan_qr_step_3":
+          "Toca \"Vincular un dispositivo\" y escanea el QR de arriba",
+      "scan_qr_refresh": "Actualizar QR",
+      "scan_qr_unavailable": "El QR no está disponible por ahora",
+      "scan_qr_expires_tip":
+          "Termina el escaneo en 2 minutos; actualiza si expira",
+      "scan_qr_fetch": "Obtener QR",
+      "scan_qr_cooldown": "Actualizar en @s s",
+      "scan_qr_tap_to_fetch": "Toca el botón de abajo para obtener el QR",
       "online_numbers": "Números en línea",
       "phoneNumberTip":
           "Ingresa tu número de teléfono para obtener el código de verificación y verificarlo en WhatsApp",
@@ -4848,6 +4948,7 @@ class AppTranslations extends Translations {
           "II. Invitación indirecta: Los usuarios invitados por tus subordinados directos son \"subordinados de nivel 2\", y obtendrás 50-150 puntos después de que completen las tareas designadas",
       "video_loading_please_wait":
           "Cargando video, intenta nuevamente más tarde",
+      "video_unavailable": "Video no disponible",
       "no_online_numbers": "No hay números en línea disponibles",
       "refresh": "Actualizar",
       "please_select_bank_placeholder": "Selecciona el banco emisor",
@@ -5353,6 +5454,20 @@ class AppTranslations extends Translations {
       "getVerificationCode": "Obtener código de verificación",
       "verification_code_tip":
           "Tras introducir el código en WhatsApp, confirma que la vinculación se ha completado antes de volver a la plataforma (el estado de vinculación aparecerá abajo)",
+      "bind_method_code": "Vincular con código",
+      "bind_method_qr": "Vincular con QR",
+      "scan_qr_title": "Escanea el QR con WhatsApp",
+      "scan_qr_step_1": "Abre WhatsApp en tu móvil",
+      "scan_qr_step_2": "Entra en Ajustes > Dispositivos vinculados",
+      "scan_qr_step_3":
+          "Pulsa \"Vincular un dispositivo\" y escanea el QR de arriba",
+      "scan_qr_refresh": "Actualizar QR",
+      "scan_qr_unavailable": "El QR no está disponible ahora mismo",
+      "scan_qr_expires_tip":
+          "Escanéalo en 2 minutos; actualiza si caduca",
+      "scan_qr_fetch": "Obtener QR",
+      "scan_qr_cooldown": "Actualizar en @s s",
+      "scan_qr_tap_to_fetch": "Pulsa el botón inferior para obtener el QR",
       "online_numbers": "Números en línea",
       "phoneNumberTip":
           "Introduce tu número de móvil para recibir el código y verificarlo en WhatsApp",
@@ -5619,6 +5734,7 @@ class AppTranslations extends Translations {
           "II. Invitación indirecta: los usuarios invitados por tus subordinados directos son \"subordinados de nivel 2\"; obtendrás 50-150 puntos cuando completen las tareas designadas",
       "video_loading_please_wait":
           "Cargando vídeo, inténtalo más tarde",
+      "video_unavailable": "Vídeo no disponible",
       "no_online_numbers": "No hay números en línea disponibles",
       "refresh": "Actualizar",
       "please_select_bank_placeholder": "Selecciona el banco emisor",

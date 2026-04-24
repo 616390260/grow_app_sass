@@ -18,6 +18,7 @@ import '../../../data/services/configuration_api_service.dart';
 import '../../../data/models/home_info_model.dart';
 import '../../../data/models/activity_model.dart';
 import '../../../core/i18n/i18n_keys.dart';
+import '../../../core/i18n/locale_config.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../../core/constants/app_constants.dart';
 
@@ -108,6 +109,9 @@ class HomeController extends BaseController {
     super.onInit();
     _tickMidnight();
     _startTimer();
+    // 语言切换后静默刷新首页数据，让接口返回的文案（公告/推荐任务等）跟随当前语言。
+    // 使用 silent: true，避免在语言设置页等非首页路由上弹出公告/版本更新对话框。
+    ever<Locale>(LocaleConfig.currentLocale, (_) => loadData(silent: true));
   }
 
   @override
@@ -132,9 +136,15 @@ class HomeController extends BaseController {
   }
 
   // 加载数据
-  void loadData() {
-    // 重新加载数据时重置弹窗状态，允许再次显示弹窗
-    resetPopupShown();
+  ///
+  /// @param silent 静默刷新：true 时不重置弹窗标记、不触发版本检查弹窗、不展示 loading，
+  ///                仅用于跟随语言变化等"后台刷新数据"的场景，避免跨页面弹出公告/版本对话框。
+  void loadData({bool silent = false}) {
+    // 正常进入/下拉刷新才允许再次显示弹窗；语言切换等静默刷新不重置弹窗状态，
+    // 避免在语言设置页等非首页路由上意外弹出公告。
+    if (!silent) {
+      resetPopupShown();
+    }
 
     safeApiCall(
       // API调用函数
@@ -150,6 +160,10 @@ class HomeController extends BaseController {
         announcements.value = homeInfo.announcements ?? [];
         recommendTasks.value = homeInfo.recommendTasks ?? [];
 
+        // 静默刷新：保持弹窗已关闭状态，避免跨页面（如语言设置页）意外弹出公告。
+        if (silent) {
+          markPopupShown();
+        }
         popupAnnouncement.value = homeInfo.popupAnnouncement;
         sysAnnouncement.value = homeInfo.sysAnnouncements ?? [];
 
@@ -158,16 +172,15 @@ class HomeController extends BaseController {
 
         setSuccess();
 
-        // Android端第一次进入首页时检查版本更新
-        // if (GetPlatform.isAndroid && !_isVersionChecked) {
-        if (GetPlatform.isAndroid) {
+        // 静默刷新不做版本检查弹窗，避免切语言时触发更新提示。
+        if (!silent && GetPlatform.isAndroid) {
           checkVersionUpdate();
         }
       },
       // 自定义错误消息
       errorMessage: I18nKeys.loadDataFailed.tr,
-      // 显示加载状态
-      showLoading: true,
+      // 显示加载状态：静默模式不展示 loading，避免打断当前页面交互。
+      showLoading: !silent,
     );
 
     // 加载活动数据（同步拉取时区配置）

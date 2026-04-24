@@ -10,7 +10,7 @@ import '../../account/controllers/account_controller.dart';
 class MainController extends BaseController {
   final currentTabIndex = 0.obs;
   final inviteCode = ''.obs; // 存储邀请码
-  
+
   // 标记是否已经加载过各个tab的数据
   final _hasLoaded = <int, bool>{
     0: false, // home
@@ -24,10 +24,10 @@ class MainController extends BaseController {
   void onInit() {
     super.onInit();
     setSuccess();
-    
+
     // 从URL参数获取邀请码（跨平台）
     _getInviteCodeFromUrl();
-    
+
     // 首页默认加载
     _loadTabData(0);
   }
@@ -37,10 +37,10 @@ class MainController extends BaseController {
     // 切换tab时加载数据（如果还没加载过）
     _loadTabData(index);
   }
-  
+
   void _loadTabData(int index) {
     if (_hasLoaded[index] == true) return;
-    
+
     switch (index) {
       case 0:
         final homeController = Get.find<HomeController>();
@@ -64,7 +64,7 @@ class MainController extends BaseController {
         accountController.loadUserInfo();
         break;
     }
-    
+
     // 标记为已加载
     _hasLoaded[index] = true;
   }

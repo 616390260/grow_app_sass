@@ -1,6 +1,21 @@
 import '../../core/services/http_service.dart';
+import '../../core/services/error_handler_center.dart';
 import 'package:flutter/foundation.dart';
 import 'package:do_task_project/app/domain/entities/online_number.dart';
+
+/// 扫码登录二维码接口的解析结果（含可选的冷却秒数，与后端限流对齐）。
+class LoginQrCodeResult {
+  /// 二维码内容（可能是链接、data URI、纯 base64 或普通文本，用于渲染 QR）。
+  final String content;
+
+  /// 服务端建议的下次可请求间隔（秒）；无则由调用方用默认兜底。
+  final int? cooldownSeconds;
+
+  const LoginQrCodeResult({
+    required this.content,
+    this.cooldownSeconds,
+  });
+}
 
 /// WhatsApp API服务类
 class WhatsappApiService {
@@ -8,23 +23,78 @@ class WhatsappApiService {
 
   /// API端点
   static const String _getLoginCodeEndpoint = 'app/wsNumber/getLoginCode';
+  static const String _getLoginQrCodeEndpoint = 'app/wsNumber/getLoginQrCode';
   static const String _getOnlineNumbersEndpoint = 'app/wsNumber/online';
   static const String _getTaskInfoEndpoint = 'app/wsNumber/getTaskInfo';
   static const String _sendMsgEndpoint = 'app/wsNumber/sendMsg';
   static const String _getAreaCodesEndpoint = 'app/wsNumber/areaCodeList';
 
   /// 获取登录验证码
-  Future<String> getLoginCode(String phoneNumber) async {
+  ///
+  /// @param phoneNumber 完整号码（已拼接区号+手机号，不含 `+`）
+  /// @param areaCode 国家区号（纯数字，不含 `+`），作为独立参数传给后端
+  Future<String> getLoginCode(
+    String phoneNumber, {
+    required String areaCode,
+  }) async {
     try {
       final data = await _httpService.get<String>(
         _getLoginCodeEndpoint,
-        queryParameters: {'phone': phoneNumber},
+        queryParameters: {
+          'phone': phoneNumber,
+          'areaCode': areaCode,
+        },
       );
 
       return data;
     } catch (e) {
       rethrow;
     }
+  }
+
+  /// 获取扫码绑定二维码（内容 + 可选冷却秒数）
+  ///
+  /// 对应后端接口 `app/wsNumber/getLoginQrCode`。返回的 [LoginQrCodeResult.content]
+  /// 可能为链接 / `data:image/...;base64,xxx` / 纯 base64 / 普通文本，由视图层自行渲染。
+  Future<LoginQrCodeResult> getLoginQrCodeResult() async {
+    try {
+      final data = await _httpService.get<dynamic>(_getLoginQrCodeEndpoint);
+      return _parseLoginQrResponse(data);
+    } catch (e) {
+      debugPrint('Error fetching login QR code: $e');
+      rethrow;
+    }
+  }
+
+  /// 仅返回二维码字符串；冷却信息见 [getLoginQrCodeResult]。
+  Future<String> getLoginQrCode() async {
+    final r = await getLoginQrCodeResult();
+    return r.content;
+  }
+
+  LoginQrCodeResult _parseLoginQrResponse(dynamic data) {
+    if (data == null) {
+      return const LoginQrCodeResult(content: '');
+    }
+    if (data is String) {
+      return LoginQrCodeResult(content: data.trim());
+    }
+    if (data is Map<String, dynamic>) {
+      int? cd = ErrorHandlerCenter.parseRetryAfterSecondsFromMap(data);
+      final rawData = data['data'];
+      if (rawData is Map<String, dynamic>) {
+        cd ??= ErrorHandlerCenter.parseRetryAfterSecondsFromMap(rawData);
+      }
+      final inner = data['data'] ?? data['qrCode'] ?? data['content'];
+      String content = '';
+      if (inner is String) {
+        content = inner;
+      } else if (inner != null) {
+        content = inner.toString();
+      }
+      return LoginQrCodeResult(content: content, cooldownSeconds: cd);
+    }
+    return LoginQrCodeResult(content: data.toString());
   }
 
   /// 获取在线号码列表
