@@ -52,6 +52,7 @@ TenantBrand _$TenantBrandFromJson(Map<String, dynamic> json) => TenantBrand(
   brandColor: json['brand_color'] as String?,
   activityFunction: json['activity_function'],
   vipFun: json['vip_fun'],
+  siteTimeZone: json['site_time_zone'] as String?,
 );
 
 Map<String, dynamic> _$TenantBrandToJson(TenantBrand instance) =>
@@ -61,4 +62,5 @@ Map<String, dynamic> _$TenantBrandToJson(TenantBrand instance) =>
       'brand_color': instance.brandColor,
       'activity_function': instance.activityFunction,
       'vip_fun': instance.vipFun,
+      'site_time_zone': instance.siteTimeZone,
     };

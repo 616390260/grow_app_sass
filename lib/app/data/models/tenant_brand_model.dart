@@ -87,7 +87,20 @@ class TenantBrand {
   @JsonKey(name: 'vip_fun')
   final dynamic vipFun;
 
-  TenantBrand({this.appName, this.brandLogo, this.brandColor, this.activityFunction, this.vipFun});
+  /// 站点使用的时区（IANA 时区名，如 `Asia/Tokyo`，或 UTC±X 偏移格式，如 `UTC+4`）
+  ///
+  /// 用于「活动页距 0 点」倒计时等场景，替代独立的时区配置接口
+  @JsonKey(name: 'site_time_zone')
+  final String? siteTimeZone;
+
+  TenantBrand({
+    this.appName,
+    this.brandLogo,
+    this.brandColor,
+    this.activityFunction,
+    this.vipFun,
+    this.siteTimeZone,
+  });
 
   factory TenantBrand.fromJson(Map<String, dynamic> json) =>
       _$TenantBrandFromJson(json);

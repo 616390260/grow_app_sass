@@ -93,6 +93,13 @@ class TenantService extends GetxService {
     return str == '1' || str == 'true';
   }
 
+  /// 站点时区（来自 `/app/tenant/template` → `brand.site_time_zone`）
+  ///
+  /// 取值示例：`Asia/Tokyo`、`Etc/UTC`、`UTC+4`、`UTC+5:30`；
+  /// 用于活动倒计时等需要按站点时区显示的场景。无配置时返回空串。
+  String get siteTimeZone =>
+      brandInfo.value?.brand?.siteTimeZone?.trim() ?? '';
+
   /// 登录页模板编码
   String? get loginTemplateCode =>
       brandInfo.value?.templates?.login?.templateCode;

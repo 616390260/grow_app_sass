@@ -10,13 +10,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/base/base_controller.dart';
+import '../../../core/services/tenant_service.dart';
 import '../../../core/utils/midnight_countdown_util.dart';
 import '../../../routes/app_pages.dart';
 import '../../../data/services/home_api_service.dart';
 import '../../../data/services/activity_api_service.dart';
-import '../../../data/services/configuration_api_service.dart';
 import '../../../data/models/home_info_model.dart';
 import '../../../data/models/activity_model.dart';
+import '../../../data/models/tenant_brand_model.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../../../core/i18n/locale_config.dart';
 import 'package:get_storage/get_storage.dart';
@@ -42,6 +43,7 @@ class HomeController extends BaseController {
 
   final HomeApiService _homeApiService = HomeApiService();
 
+
   // 底部导航当前索引
   final currentTabIndex = 0.obs;
 
@@ -49,7 +51,6 @@ class HomeController extends BaseController {
   // 热门活动数据（从活动接口获取）
   final Rx<ActivityAllData?> activityData = Rx<ActivityAllData?>(null);
   final ActivityApiService _activityApiService = ActivityApiService();
-  final ConfigurationApiService _configurationApiService = ConfigurationApiService();
 
   // 活动卡片展开状态
   final RxSet<String> expandedCards = <String>{}.obs;
@@ -99,7 +100,8 @@ class HomeController extends BaseController {
   }
 
   // 倒计时
-  static const int _timezoneConfigurationId = 24;
+  /// 当前活动倒计时使用的时区字符串，来源于 `/app/tenant/template`
+  /// 返回的 `brand.site_time_zone`，未配置时为空，回退本机时区。
   final RxString activityTimezone = ''.obs;
   final RxString midnightCountdownText = '00:00:00'.obs;
   Timer? _midnightTimer;
@@ -107,11 +109,24 @@ class HomeController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    _syncTimezoneFromTenant();
     _tickMidnight();
     _startTimer();
+
+    // 租户品牌配置可能在 HomeController 初始化后才到达，监听后同步时区
+    ever<TenantBrandModel?>(TenantService.to.brandInfo, (_) {
+      _syncTimezoneFromTenant();
+      _tickMidnight();
+    });
+
     // 语言切换后静默刷新首页数据，让接口返回的文案（公告/推荐任务等）跟随当前语言。
     // 使用 silent: true，避免在语言设置页等非首页路由上弹出公告/版本更新对话框。
     ever<Locale>(LocaleConfig.currentLocale, (_) => loadData(silent: true));
+  }
+
+  /// 从 `TenantService` 同步站点时区到本地响应式变量
+  void _syncTimezoneFromTenant() {
+    activityTimezone.value = TenantService.to.siteTimeZone;
   }
 
   @override
@@ -183,21 +198,13 @@ class HomeController extends BaseController {
       showLoading: !silent,
     );
 
-    // 加载活动数据（同步拉取时区配置）
+    // 加载活动数据
+    // 时区不再单独请求接口，统一从 `TenantService.siteTimeZone`
+    // （即 `/app/tenant/template` 返回的 `brand.site_time_zone`）读取。
+    _syncTimezoneFromTenant();
+    _tickMidnight();
     safeApiCall<ActivityAllData>(
-      () async {
-        final cfgFuture =
-            _configurationApiService.getById(_timezoneConfigurationId);
-        final actFuture = _activityApiService.getAll();
-        try {
-          final cfg = await cfgFuture;
-          activityTimezone.value = cfg.content?.trim() ?? '';
-        } catch (_) {
-          activityTimezone.value = '';
-        }
-        _tickMidnight();
-        return await actFuture;
-      },
+      () => _activityApiService.getAll(),
       (result) {
         activityData.value = result;
       },

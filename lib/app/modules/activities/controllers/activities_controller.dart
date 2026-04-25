@@ -3,25 +3,23 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/base/base_controller.dart';
+import '../../../core/services/tenant_service.dart';
 import '../../../core/utils/midnight_countdown_util.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../../../data/models/activity_model.dart';
+import '../../../data/models/tenant_brand_model.dart';
 import '../../../data/services/activity_api_service.dart';
-import '../../../data/services/configuration_api_service.dart';
 import '../../main/controllers/main_controller.dart';
 
 /// 活动页面控制器
 class ActivitiesController extends BaseController {
   final _apiService = ActivityApiService();
-  final _configurationApiService = ConfigurationApiService();
-
-  /// 网站使用时区（配置 id=24，`content` 为 IANA 时区名）
-  static const int _timezoneConfigurationId = 24;
 
   /// 全部活动数据
   final Rx<ActivityAllData?> activityData = Rx<ActivityAllData?>(null);
 
-  /// 当前活动页使用的时区字符串，如 Asia/Tokyo；接口失败时为空
+  /// 当前活动页使用的时区字符串（来自 `/app/tenant/template` 的 `brand.site_time_zone`），
+  /// 形如 `Asia/Tokyo`、`UTC+4`；未配置时为空，回退本机时区。
   final RxString activityTimezone = ''.obs;
 
   /// 距「网站时区」下一日 0 点的倒计时 HH:mm:ss
@@ -60,8 +58,15 @@ class ActivitiesController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    _syncTimezoneFromTenant();
     _tickMidnight();
     _startTimer();
+
+    // 租户品牌配置可能在控制器初始化后才到达，监听后同步时区
+    ever<TenantBrandModel?>(TenantService.to.brandInfo, (_) {
+      _syncTimezoneFromTenant();
+      _tickMidnight();
+    });
 
     // 监听主页 tab 变化：离开 Activities tab 时暂停，切回来时恢复
     ever(Get.find<MainController>().currentTabIndex, (int index) {
@@ -72,6 +77,11 @@ class ActivitiesController extends BaseController {
         _stopTimer();
       }
     });
+  }
+
+  /// 从 `TenantService` 同步站点时区到本地响应式变量
+  void _syncTimezoneFromTenant() {
+    activityTimezone.value = TenantService.to.siteTimeZone;
   }
 
   @override
@@ -111,21 +121,14 @@ class ActivitiesController extends BaseController {
     loadData();
   }
 
-  /// 加载活动数据（并行拉取时区配置 + 活动列表）
+  /// 加载活动数据
+  ///
+  /// 时区不再单独请求接口，统一从 `TenantService.siteTimeZone`（即
+  /// `/app/tenant/template` 返回的 `brand.site_time_zone`）读取。
   void loadData() {
+    _syncTimezoneFromTenant();
     safeApiCall<ActivityAllData>(
-      () async {
-        final cfgFuture =
-            _configurationApiService.getById(_timezoneConfigurationId);
-        final actFuture = _apiService.getAll();
-        try {
-          final cfg = await cfgFuture;
-          activityTimezone.value = cfg.content?.trim() ?? '';
-        } catch (_) {
-          activityTimezone.value = '';
-        }
-        return await actFuture;
-      },
+      () => _apiService.getAll(),
       (result) {
         activityData.value = result;
         _tickMidnight();
