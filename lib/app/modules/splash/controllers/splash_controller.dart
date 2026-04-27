@@ -9,11 +9,29 @@ import '../../../routes/app_pages.dart';
 /// 闪屏页控制器 —— 循环加载租户配置，成功后播放品牌揭示动画再跳转
 class SplashController extends GetxController
     with GetTickerProviderStateMixin {
+  /// 最大自动重试次数（达到上限后停下来等待用户手动触发）
+  static const int _maxRetry = 5;
+
+  /// 单次请求超时
+  static const Duration _requestTimeout = Duration(seconds: 8);
+
   /// 租户配置是否加载完成
   final isLoaded = false.obs;
 
+  /// 加载失败状态（用于 UI 展示重试按钮 / 错误提示）
+  final loadFailed = false.obs;
+
+  /// 失败提示文本
+  final failureMessage = ''.obs;
+
   /// 退场淡出进度 0→1
   final exitProgress = 0.0.obs;
+
+  /// 是否已经在加载中，避免并发触发
+  bool _loading = false;
+
+  /// 是否已经成功加载过（单例复用时避免再走一次成功流程）
+  bool _hasSucceeded = false;
 
   /// 品牌揭示动画主控制器（1800ms 总时长）
   late final AnimationController revealCtrl;
@@ -63,6 +81,7 @@ class SplashController extends GetxController
   void onInit() {
     super.onInit();
     _setupAnimations();
+    // permanent 单例：onInit 只会触发一次，启动期统一拉取一次
     _loadUntilSuccess();
   }
 
@@ -134,21 +153,51 @@ class SplashController extends GetxController
     ));
   }
 
-  /// 循环尝试加载租户配置，失败后间隔 3 秒自动重试
+  /// 有限次重试加载租户配置：
+  /// - 单次请求 8s 超时；
+  /// - 指数退避 1s/2s/4s/8s/8s，最多 [_maxRetry] 次；
+  /// - 全部失败后置 [loadFailed] = true，停止循环，等用户点重试；
+  /// - 全程仅在「首次失败」与「最终失败」时打印日志，避免刷屏。
   Future<void> _loadUntilSuccess() async {
-    while (true) {
+    if (_loading || _hasSucceeded) return;
+    _loading = true;
+    loadFailed.value = false;
+    failureMessage.value = '';
+
+    Object? lastError;
+    var firstErrorLogged = false;
+
+    for (var attempt = 0; attempt < _maxRetry; attempt++) {
       try {
-        await TenantService.to.init().timeout(const Duration(seconds: 5));
+        await TenantService.to.init().timeout(_requestTimeout);
       } catch (e) {
-        debugPrint('[Splash] 租户配置加载失败: $e');
+        lastError = e;
+        if (!firstErrorLogged) {
+          debugPrint('[Splash] 加载失败，将自动重试($_maxRetry 次): $e');
+          firstErrorLogged = true;
+        }
       }
 
-      if (TenantService.to.hasTenant) break;
+      if (TenantService.to.hasTenant) {
+        _loading = false;
+        _hasSucceeded = true;
+        await _onLoadSuccess();
+        return;
+      }
 
-      debugPrint('[Splash] 未获取到租户信息，3 秒后重试...');
-      await Future.delayed(const Duration(seconds: 3));
+      if (attempt == _maxRetry - 1) break;
+      final waitMs = 1000 * (1 << attempt).clamp(1, 8);
+      await Future.delayed(Duration(milliseconds: waitMs));
     }
 
+    _loading = false;
+    failureMessage.value = lastError?.toString() ?? '租户信息获取失败';
+    loadFailed.value = true;
+    debugPrint('[Splash] 自动重试均失败，等待用户手动触发');
+  }
+
+  /// 加载成功后的动画与路由跳转
+  Future<void> _onLoadSuccess() async {
     AppTheme.init(brandColor: TenantService.to.effectiveBrandColor);
     isLoaded.value = true;
 
@@ -163,6 +212,12 @@ class SplashController extends GetxController
     final auth = Get.find<AuthService>();
     final target = auth.needLogin ? Routes.login : Routes.root;
     Get.offAllNamed(target);
+  }
+
+  /// 用户点击「重试」按钮时调用
+  void retryLoad() {
+    if (_loading) return;
+    _loadUntilSuccess();
   }
 
   @override

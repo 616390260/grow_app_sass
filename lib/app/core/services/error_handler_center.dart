@@ -64,7 +64,9 @@ class ErrorHandlerCenter {
       debugPrint('错误码: $code, 错误信息: $errorMessage');
     }
     // 特殊错误码处理（可选择跳过）- 目前只有401需要特殊处理
-    if (!skipSpecialHandling && code == 401) {
+    // showNotification=false 时（启动期 silent 调用）也跳过自动跳登录页，
+    // 由调用方自行处理，避免触发"启动期循环重定向"。
+    if (!skipSpecialHandling && showNotification && code == 401) {
       _handleSpecialErrorCode(code);
     } else if (showNotification) {
       // 除401外的其他错误直接显示提示

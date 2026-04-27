@@ -233,11 +233,14 @@ class HttpService extends getx.GetxService {
   }
 
   /// GET请求
+  ///
+  /// [silent] 为 true 时，业务码非 200 不弹全局错误提示（用于启动期租户拉取等静默场景）
   Future<T> get<T>(
     String path, {
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
+    bool silent = false,
   }) async {
     try {
       final response = await _dio.get(
@@ -246,7 +249,7 @@ class HttpService extends getx.GetxService {
         options: options,
         cancelToken: cancelToken,
       );
-      return _handleResponseData<T>(response);
+      return _handleResponseData<T>(response, silent: silent);
     } on DioException catch (e) {
       throw _errorHandler.handleExceptionException(e, showNotification: false);
     } catch (e) {
@@ -351,10 +354,14 @@ class HttpService extends getx.GetxService {
 
   /// 处理响应 - 使用JsonConvert进行类型转换
   /// 增强对json_serializable注解的模型类的支持
-  T _handleResponseData<T>(Response response) {
-    debugPrint('=== HttpService._handleResponseData 开始 ===');
-    debugPrint('HTTP状态码: ${response.statusCode}');
-    debugPrint('响应数据: ${response.data}');
+  ///
+  /// [silent] 为 true 时，业务码非 200 不弹全局通知（仍然抛异常供调用方处理）
+  T _handleResponseData<T>(Response response, {bool silent = false}) {
+    if (enableLogging && !silent) {
+      debugPrint('=== HttpService._handleResponseData 开始 ===');
+      debugPrint('HTTP状态码: ${response.statusCode}');
+      debugPrint('响应数据: ${response.data}');
+    }
 
     final responseData = response.data;
 
@@ -378,12 +385,15 @@ class HttpService extends getx.GetxService {
         return _convertDataToType<T>(businessData ?? responseData);
       } else {
         // 业务逻辑失败，统一抛出ApiException，确保错误能够被上层捕获处理
-        debugPrint('业务逻辑失败，抛出异常: code=$code, message=$message');
+        if (enableLogging && !silent) {
+          debugPrint('业务逻辑失败，抛出异常: code=$code, message=$message');
+        }
         throw _errorHandler.handleErrorCodeException(
           code,
           message,
-          showNotification: true,
+          showNotification: !silent,
           responseBody: responseData,
+          skipSpecialHandling: silent,
         );
       }
     }

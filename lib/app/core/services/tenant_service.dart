@@ -114,6 +114,11 @@ class TenantService extends GetxService {
   /// 是否已成功加载品牌配置
   bool get hasBrand => brandInfo.value != null;
 
+  /// 启动期日志只打印一次（避免重试刷屏）
+  bool _bootLogPrinted = false;
+  bool _fetchTenantLogPrinted = false;
+  bool _fetchBrandLogPrinted = false;
+
   /// 初始化租户信息
   ///
   /// - Web 端：从浏览器地址栏获取域名 → 查接口获取 tenantId → 拉品牌配置
@@ -122,14 +127,20 @@ class TenantService extends GetxService {
   Future<TenantService> init() async {
     if (kIsWeb) {
       final domain = Uri.base.host;
-      debugPrint('[TenantService] Web端域名: $domain');
+      if (!_bootLogPrinted) {
+        debugPrint('[TenantService] Web端域名: $domain');
+        _bootLogPrinted = true;
+      }
       if (domain.isNotEmpty) {
         await fetchTenant(domain);
       }
     } else {
       final tid = EnvironmentConfig.compileTenantId;
       if (tid.isNotEmpty) {
-        debugPrint('[TenantService] APK端编译期tenantId: $tid');
+        if (!_bootLogPrinted) {
+          debugPrint('[TenantService] APK端编译期tenantId: $tid');
+          _bootLogPrinted = true;
+        }
         tenantInfo.value = TenantInfoModel(tenantId: int.tryParse(tid));
         if (tenantInfo.value?.tenantId != null) {
           await fetchBrand();
@@ -142,7 +153,10 @@ class TenantService extends GetxService {
   /// 根据域名拉取租户信息，成功后自动获取品牌配置
   Future<void> fetchTenant(String domain) async {
     try {
-      debugPrint('[TenantService] 正在获取租户信息, domain=$domain');
+      if (!_fetchTenantLogPrinted) {
+        debugPrint('[TenantService] 正在获取租户信息, domain=$domain');
+        _fetchTenantLogPrinted = true;
+      }
       final api = TenantApiService();
       final info = await api.getTenantByDomain(domain);
       tenantInfo.value = info;
@@ -153,14 +167,17 @@ class TenantService extends GetxService {
         await fetchBrand();
       }
     } catch (e) {
-      debugPrint('[TenantService] 获取租户信息失败: $e');
+      // 静默：由 SplashController 统一聚合一次性日志，避免刷屏
     }
   }
 
   /// 获取租户品牌配置（依赖 X-Tenant-Id 请求头）
   Future<void> fetchBrand() async {
     try {
-      debugPrint('[TenantService] 正在获取租户品牌配置...');
+      if (!_fetchBrandLogPrinted) {
+        debugPrint('[TenantService] 正在获取租户品牌配置...');
+        _fetchBrandLogPrinted = true;
+      }
       final api = TenantApiService();
       final brand = await api.getTenantBrand();
       brandInfo.value = brand;
@@ -173,7 +190,7 @@ class TenantService extends GetxService {
         if (logo != null) updateFavicon(logo);
       }
     } catch (e) {
-      debugPrint('[TenantService] 获取品牌配置失败: $e');
+      // 静默：由 SplashController 统一聚合一次性日志，避免刷屏
     }
   }
 }

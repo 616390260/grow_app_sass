@@ -74,7 +74,10 @@ class SplashView extends GetView<SplashController> {
                       left: 0,
                       right: 0,
                       bottom: MediaQuery.of(context).padding.bottom + 48,
-                      child: _BottomStatus(loaded: loaded),
+                      child: _BottomStatus(
+                        loaded: loaded,
+                        controller: controller,
+                      ),
                     ),
                   ],
                 ),
@@ -552,26 +555,88 @@ class _AccentLine extends StatelessWidget {
   }
 }
 
-/// 底部状态
+/// 底部状态：加载中显示 Loading，失败时显示错误文案 + 重试按钮
 class _BottomStatus extends StatelessWidget {
   final bool loaded;
-  const _BottomStatus({required this.loaded});
+  final SplashController controller;
+  const _BottomStatus({required this.loaded, required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedOpacity(
-      opacity: loaded ? 0.0 : 1.0,
-      duration: const Duration(milliseconds: 400),
-      child: const Center(
-        child: Text(
-          'Loading...',
-          style: TextStyle(
-            fontSize: 11,
-            color: Color(0xFF6B7280),
-            letterSpacing: 2,
-            fontWeight: FontWeight.w300,
-          ),
+    return Obx(() {
+      final failed = controller.loadFailed.value;
+      final msg = controller.failureMessage.value;
+
+      return AnimatedOpacity(
+        opacity: loaded ? 0.0 : 1.0,
+        duration: const Duration(milliseconds: 400),
+        child: Center(
+          child: failed
+              ? _buildFailure(msg)
+              : const Text(
+                  'Loading...',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Color(0xFF6B7280),
+                    letterSpacing: 2,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
         ),
+      );
+    });
+  }
+
+  Widget _buildFailure(String msg) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            '无法连接服务器',
+            style: TextStyle(
+              fontSize: 14,
+              color: Color(0xFFE5E7EB),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            msg,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 11,
+              color: Color(0xFF6B7280),
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 16),
+          GestureDetector(
+            onTap: controller.retryLoad,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: SplashView._gold.withValues(alpha: 0.6),
+                  width: 1,
+                ),
+              ),
+              child: const Text(
+                '重试',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: SplashView._goldLight,
+                  letterSpacing: 4,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
