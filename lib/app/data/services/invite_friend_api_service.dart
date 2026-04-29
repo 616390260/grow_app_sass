@@ -1,4 +1,3 @@
-
 import '../../core/services/http_service.dart';
 import '../../modules/invite_friend/models/box_product_model.dart';
 
@@ -6,25 +5,23 @@ import '../../modules/invite_friend/models/box_product_model.dart';
 class InviteFriendApiService {
   final HttpService _httpService = HttpService.to;
 
-  static const String _getReferralLinkEndpoint = 'app/user/getInviteFriends';
+  static const String _getInviteHomeEndpoint = 'app/user/getInviteHome';
   static const String _getBoxProductListEndpoint = 'app/user/getBoxProductList';
   static const String _receiveBoxEndpoint = 'app/user/receiveBox';
 
-  /// 获取推荐链接
-  Future<String> getReferralLink() async {
+  /// 获取邀请信息
+  Future<Map<String, dynamic>> getInviteInfo() async {
     try {
-      final responseData = await _httpService.get<String>(
-        _getReferralLinkEndpoint,
+      final responseData = await _httpService.get<Map<String, dynamic>>(
+        _getInviteHomeEndpoint,
       );
-      
-      // 提取推荐链接
+
       if (responseData.isEmpty) {
-        throw Exception('推荐链接为空');
+        throw Exception('邀请信息为空');
       }
-      
+
       return responseData;
     } catch (e) {
-      // 错误处理
       rethrow;
     }
   }
@@ -35,7 +32,7 @@ class InviteFriendApiService {
       final responseData = await _httpService.get<List<dynamic>>(
         _getBoxProductListEndpoint,
       );
-      
+
       // 解析数据并创建模型列表，兼容null值
       final List<BoxProductModel> boxProducts = [];
       for (var item in responseData) {
@@ -46,7 +43,7 @@ class InviteFriendApiService {
           boxProducts.add(BoxProductModel());
         }
       }
-      
+
       return boxProducts;
     } catch (e) {
       // 错误处理
@@ -62,7 +59,7 @@ class InviteFriendApiService {
         _receiveBoxEndpoint,
         queryParameters: {'boxId': boxId},
       );
-      
+
       return responseData;
     } catch (e) {
       // 错误处理

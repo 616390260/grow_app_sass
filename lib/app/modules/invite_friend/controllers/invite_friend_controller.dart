@@ -11,9 +11,8 @@ import 'package:do_task_project/app/modules/invite_friend/models/box_product_mod
 import 'dart:async';
 
 class InviteFriendController extends BaseController {
-  // 推荐链接
+  // 邀请信息
   final referralLink = ''.obs;
-  // 邀请码（从推荐链接 URL 参数 ?i= 提取）
   final inviteCode = ''.obs;
 
   // 推荐链接复制状态
@@ -40,8 +39,8 @@ class InviteFriendController extends BaseController {
   @override
   void onInit() {
     super.onInit();
-    // 初始化时从API获取真实的推荐链接
-    fetchReferralLink();
+    // 初始化时从API获取真实的邀请信息
+    fetchInviteInfo();
     // 初始化时获取宝箱产品列表
     fetchBoxProductList();
   }
@@ -95,21 +94,13 @@ class InviteFriendController extends BaseController {
     }
   }
 
-  /// 从API获取推荐链接
-  Future<void> fetchReferralLink() async {
-    await safeApiCall<String>(
-      () => _inviteFriendApiService.getReferralLink(),
-      (link) {
-        referralLink.value = link;
-        // 从 URL 参数 ?i= 提取邀请码
-        final uri = Uri.tryParse(link);
-        if (uri != null) {
-          final code = uri.queryParameters['i'] ?? '';
-          inviteCode.value = code;
-        } else {
-          final idx = link.lastIndexOf('=');
-          if (idx != -1) inviteCode.value = link.substring(idx + 1);
-        }
+  /// 从API获取邀请信息
+  Future<void> fetchInviteInfo() async {
+    await safeApiCall<Map<String, dynamic>>(
+      () => _inviteFriendApiService.getInviteInfo(),
+      (data) {
+        referralLink.value = data['inviteUrl']?.toString() ?? '';
+        inviteCode.value = data['inviteCode']?.toString() ?? '';
         setSuccess();
       },
       errorMessage: I18nKeys.processingFailed.tr,
