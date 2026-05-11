@@ -522,6 +522,7 @@ class I18nKeys {
   
   // Payment related
   static const pleaseSelectBankPlaceholder = 'please_select_bank_placeholder';
+  static const pleaseEnterIfsc = 'please_enter_ifsc';
   static const pleaseEnterAccountNumberPlaceholder = 'please_enter_account_number_placeholder';
   static const pleaseEnterAccountNamePlaceholder = 'please_enter_account_name_placeholder';
   static const pleaseEnterWalletAddressPlaceholder = 'please_enter_wallet_address_placeholder';

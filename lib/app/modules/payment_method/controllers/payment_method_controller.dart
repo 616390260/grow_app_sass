@@ -47,14 +47,16 @@ class PaymentMethodController extends BaseController {
   // TRX 钱包地址（字段名 payCard）
   RxString payCard = ''.obs;
   
-  // 国家/地区（从上个页面传递）
-  String country = Get.arguments?['country'] ?? '';
-  int countryId = Get.arguments?['countryId'] ?? 0;
-  // 银行信息对象
-  BankInfo? bankInfo = Get.arguments?['bankInfo'];
+  /// 国家/地区（在 onInit 中从跳转参数读取，避免控制器复用时拿到旧值）
+  String country = '';
+  int countryId = 0;
+  BankInfo? bankInfo;
 
   /// 是否为TRX支付方式
   bool get isTrx => country.toUpperCase() == 'TRX';
+
+  /// 是否为印度（金流国家 id = 12，不依赖多语言展示名）
+  bool get isIndia => countryId == 12;
   
   // 银行列表
   RxList<BankModel> bankList = <BankModel>[].obs;
@@ -111,16 +113,13 @@ class PaymentMethodController extends BaseController {
   @override
   void onInit() {
     super.onInit();
-    // 打印接收到的bankInfo信息
-    if (bankInfo != null) {
-      print('成功接收到bankInfo: $bankInfo');
-    } else {
-      print('未接收到bankInfo');
-    }
-    // 打印接收到的国家ID
+    /// 在 onInit 中读取参数，保证每次进入页面都拿到最新值
+    country = Get.arguments?['country'] ?? '';
+    countryId = (Get.arguments?['countryId'] as int?) ?? 0;
+    bankInfo = Get.arguments?['bankInfo'] as BankInfo?;
     print('接收到的国家ID: $countryId');
     print('接收到的国家名称: $country');
-    // 初始化数据
+    print('isIndia: $isIndia');
     loadBankList();
   }
   
@@ -166,7 +165,11 @@ class PaymentMethodController extends BaseController {
     } else {
       // 普通模式：验证银行、账号、姓名
       if (bankName.value.isEmpty) {
-        showErrorMessage(I18nKeys.pleaseSelectBankPlaceholder.tr);
+        showErrorMessage(
+          isIndia
+              ? I18nKeys.pleaseEnterIfsc.tr
+              : I18nKeys.pleaseSelectBankPlaceholder.tr,
+        );
         return false;
       }
       if (accountNumber.value.isEmpty) {

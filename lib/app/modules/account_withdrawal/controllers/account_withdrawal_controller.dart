@@ -47,6 +47,9 @@ class AccountWithdrawalController extends BaseController {
   final WithdrawalApiService _withdrawalApiService = WithdrawalApiService();
   final HomeApiService _homeApiService = HomeApiService();
 
+  /// 当前选中是否为印度（金流国家 id = 12）
+  bool get isIndia => selectedCountry.value.id == 12;
+
   @override
   void onInit() {
     super.onInit();
@@ -235,10 +238,13 @@ class AccountWithdrawalController extends BaseController {
       }
     }
 
-    // 构建提现请求参数（TRX 模式用 payCard 作为 account 字段）
-    final requestData = {
+    /// 构建提现请求参数（TRX 模式用 payCard 作为 account 字段）
+    /// 印度：bankId 传用户手输的 IFSC（字符串）；其他国家：传列表选中的银行数字 id
+    final Object bankIdValue =
+        (!isTrx && isIndia) ? bankName.value : bankCode.value;
+    final requestData = <String, dynamic>{
       "account": isTrx ? payCard.value : accountNumber.value,
-      "bankId": bankCode.value,
+      "bankId": bankIdValue,
       "phone": phone.value,
       "goldenFlowId": selectedCountry.value.id,
       "loginPassword": loginPassword.value,
