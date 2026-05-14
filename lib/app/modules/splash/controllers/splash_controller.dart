@@ -1,5 +1,4 @@
-import 'package:flutter/animation.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import '../../../core/services/tenant_service.dart';
 import '../../../core/services/auth_service.dart';
@@ -199,6 +198,11 @@ class SplashController extends GetxController
   /// 加载成功后的动画与路由跳转
   Future<void> _onLoadSuccess() async {
     AppTheme.init(brandColor: TenantService.to.effectiveBrandColor);
+
+    // 预下载品牌 logo，避免揭示动画播放时网络图还没加载完导致 logo 区域空白。
+    // 失败 / 超时不阻塞启动，揭示动画照常播放（与 H5 行为对齐）。
+    await _precacheBrandLogo();
+
     isLoaded.value = true;
 
     revealCtrl.forward();
@@ -212,6 +216,20 @@ class SplashController extends GetxController
     final auth = Get.find<AuthService>();
     final target = auth.needLogin ? Routes.login : Routes.root;
     Get.offAllNamed(target);
+  }
+
+  /// 预下载品牌 logo（最多等待 3s），让揭示动画一开始就能显示完整 logo
+  Future<void> _precacheBrandLogo() async {
+    final url = TenantService.to.brandLogo;
+    if (url == null || url.isEmpty) return;
+    final ctx = Get.context;
+    if (ctx == null) return;
+    try {
+      await precacheImage(NetworkImage(url), ctx)
+          .timeout(const Duration(seconds: 3));
+    } catch (_) {
+      // 预下载失败或超时：不阻塞启动流程
+    }
   }
 
   /// 用户点击「重试」按钮时调用

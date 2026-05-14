@@ -415,15 +415,8 @@ class _BrandLogo extends StatelessWidget {
   }
 
   Widget _buildImage() {
-    if (!kIsWeb) {
-      return Image.asset(
-        'assets/images/logo.jpg',
-        width: 96,
-        height: 96,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => _placeholder(),
-      );
-    }
+    // 与 H5 完全一致：有租户配置下发的 brand_logo 就用网络图，
+    // 未就绪 / 加载失败时显示灰色占位（不再回落到打包内置的本地 logo）。
     final url = TenantService.to.brandLogo;
     if (url != null && url.isNotEmpty) {
       return Image.network(
