@@ -33,7 +33,11 @@ class EnvironmentConfig {
   String get baseUrl {
     // 优先使用运行时配置，如果没有则使用默认配置
     final customUrl = _getRuntimeUrl();
-    if (customUrl != null) return customUrl;
+    if (customUrl != null) {
+      // 确保以 / 结尾：通过 --dart-define 传入的 URL 可能没有结尾斜杠，
+      // 否则 Dio 拼接时会得到 https://host.compath/... 这种坏地址导致请求全部失败
+      return customUrl.endsWith('/') ? customUrl : '$customUrl/';
+    }
 
     switch (currentEnvironment) {
       case EnvironmentType.debug:
