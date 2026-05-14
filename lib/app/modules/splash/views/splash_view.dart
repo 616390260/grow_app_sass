@@ -362,6 +362,9 @@ class _ArcPainter extends CustomPainter {
 }
 
 /// Logo 区域
+///
+/// logo 来源统一为租户配置接口下发的 `brand_logo`（Web / APK 行为一致）：
+/// 配置就绪前显示灰色占位，就绪后由 [SplashController] 预下载完成再随揭示动画淡入。
 class _BrandLogo extends StatelessWidget {
   final SplashController controller;
   final Color brandColor;
