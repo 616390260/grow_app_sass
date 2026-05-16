@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -H \"Authorization: fa3d8bd4-a613-4dd3-8b99-86863e3759a3\" \"https://api.eiorjgoiej.com/app/getNewVersion\")",
+      "Bash(curl -s -H \"APP-TOKEN: fa3d8bd4-a613-4dd3-8b99-86863e3759a3\" -H \"app-type: 2\" -H \"App-Version: 1.0.16\" \"https://api.eiorjgoiej.com/app/getNewVersion\")",
+      "Bash(curl -sL \"https://api.eiorjgoiej.com/profile/upload/apk/taskgo.apk\" -o backend_taskgo.apk)",
+      "Bash(unzip -p backend_taskgo.apk AndroidManifest.xml)",
+      "Bash(~/Library/Android/sdk/build-tools/35.0.1/aapt dump *)"
+    ]
+  }
+}

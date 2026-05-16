@@ -169,6 +169,7 @@ class WhatsappApiService {
       return {
         'todayPoints': 0,
         'todaySendNum': 0,
+        'todaySendFailNum': 0,
         'videoUrl': '',
         'wsDownloadUrl': '',
         'yesterdayPoints': 0,

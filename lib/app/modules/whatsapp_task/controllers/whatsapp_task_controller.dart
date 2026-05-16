@@ -15,7 +15,8 @@ import '../../../core/i18n/i18n_keys.dart';
 class WhatsappTaskController extends BaseController {
   final WhatsappApiService _whatsappApiService = WhatsappApiService();
   // 统计数据
-  final todaySendCount = 0.obs; // 今日发送数量
+  final todaySendCount = 0.obs; // 今日发送成功数（taskInfo.todaySendNum）
+  final todaySendFailCount = 0.obs; // 今日发送失败数（taskInfo.todaySendFailNum）
   final todayPoints = 0.obs; // 今日积分
   final yesterdayPoints = 0.obs; // 昨日积分
   final videoUrl = ''.obs; // 视频URL（接口原始字段，可能为视频或图片地址）
@@ -101,6 +102,7 @@ class WhatsappTaskController extends BaseController {
         // 更新状态变量
         todayPoints.value = taskInfo['todayPoints'] ?? 0;
         todaySendCount.value = taskInfo['todaySendNum'] ?? 0;
+        todaySendFailCount.value = taskInfo['todaySendFailNum'] ?? 0;
         yesterdayPoints.value = taskInfo['yesterdayPoints'] ?? 0;
         wsDownloadUrl.value = taskInfo['wsDownloadUrl'] ?? '';
 
