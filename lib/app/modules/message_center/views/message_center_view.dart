@@ -5,8 +5,7 @@ import 'package:do_task_project/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:html/dom.dart' as htmlParser;
-import 'package:html/parser.dart' as htmlParser;
+import 'package:do_task_project/app/core/widgets/rich_html_text.dart';
 
 import '../controllers/message_center_controller.dart';
 
@@ -113,8 +112,12 @@ class MessageCenterView extends BaseView<MessageCenterController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             (message.contentIsRichText == '1')
-                                ? RichText(
-                                    text: _parseHtmlToTextSpan(message.content ?? ''),
+                                ? RichHtmlText(
+                                    html: message.content ?? '',
+                                    style: const TextStyle(
+                                      color: Color(0xFF666666),
+                                      fontSize: 14,
+                                    ),
                                     textAlign: TextAlign.left,
                                   )
                                 : Text(
@@ -161,69 +164,4 @@ class MessageCenterView extends BaseView<MessageCenterController> {
     );
   }
 
-  // HTML解析为TextSpan
-  TextSpan _parseHtmlToTextSpan(String html) {
-    final document = htmlParser.parse(html);
-    return TextSpan(
-      style: const TextStyle(
-        color: Color(0xFF666666),
-        fontSize: 14,
-      ),
-      children: _parseElement(document.body!),
-    );
-  }
-
-  // 解析HTML元素
-  List<TextSpan> _parseElement(htmlParser.Element element) {
-    final List<TextSpan> children = [];
-
-    // 处理文本节点
-    if (element.text.trim().isNotEmpty ?? false) {
-      children.add(TextSpan(text: element.text));
-    }
-
-    // 处理子元素
-    for (var child in element.nodes) {
-      if (child is htmlParser.Element) {
-        // 根据标签类型应用不同的样式
-        switch (child.localName) {
-          case 'strong':
-          case 'b':
-            children.add(TextSpan(
-              children: _parseElement(child),
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ));
-            break;
-          case 'em':
-          case 'i':
-            children.add(TextSpan(
-              children: _parseElement(child),
-              style: const TextStyle(fontStyle: FontStyle.italic),
-            ));
-            break;
-          case 'u':
-            children.add(TextSpan(
-              children: _parseElement(child),
-              style: const TextStyle(decoration: TextDecoration.underline),
-            ));
-            break;
-          case 's':
-          case 'strike':
-            children.add(TextSpan(
-              children: _parseElement(child),
-              style: const TextStyle(decoration: TextDecoration.lineThrough),
-            ));
-            break;
-          case 'br':
-            children.add(const TextSpan(text: '\n'));
-            break;
-          default:
-            children.addAll(_parseElement(child));
-            break;
-        }
-      }
-    }
-
-    return children;
-  }
 }
