@@ -15,7 +15,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:html/parser.dart' as htmlParser;
+import 'package:do_task_project/app/core/widgets/rich_html_text.dart';
 
 class HomeView extends BaseView<HomeController> {
   const HomeView({super.key});
@@ -858,47 +858,6 @@ class HomeView extends BaseView<HomeController> {
 }
 
 // 解析HTML内容为TextSpan
-TextSpan _parseHtmlToTextSpan(String html, TextStyle defaultStyle) {
-  try {
-    final document = htmlParser.parse(html);
-    final children = document.body?.children ?? [];
-    final spans = <TextSpan>[];
-
-    if (children.isEmpty) {
-      // 如果没有HTML标签，直接返回普通文本
-      return TextSpan(text: document.body?.text ?? html, style: defaultStyle);
-    }
-
-    for (var element in children) {
-      spans.add(_parseElement(element, defaultStyle));
-    }
-
-    return TextSpan(children: spans);
-  } catch (e) {
-    // 如果解析失败，返回原始文本
-    return TextSpan(text: html, style: defaultStyle);
-  }
-}
-
-// 解析单个HTML元素
-TextSpan _parseElement(var element, TextStyle baseStyle) {
-  TextStyle style = baseStyle;
-  String text = element.text ?? '';
-
-  // 处理常见的格式化标签
-  if (element.localName == 'strong' || element.localName == 'b') {
-    style = style.copyWith(fontWeight: FontWeight.bold);
-  } else if (element.localName == 'em' || element.localName == 'i') {
-    style = style.copyWith(fontStyle: FontStyle.italic);
-  } else if (element.localName == 'u') {
-    style = style.copyWith(decoration: TextDecoration.underline);
-  } else if (element.localName == 's' || element.localName == 'strike') {
-    style = style.copyWith(decoration: TextDecoration.lineThrough);
-  }
-
-  return TextSpan(text: text, style: style);
-}
-
 void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
   Get.dialog(
     Center(
@@ -939,15 +898,13 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
             // 标题 - 左对齐
             Center(
               child: (pa.titleIsRichText == '1')
-                  ? RichText(
-                      text: _parseHtmlToTextSpan(
-                        pa.title ?? '',
-                        const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.threeColor,
-                          decoration: TextDecoration.none,
-                        ),
+                  ? RichHtmlText(
+                      html: pa.title ?? '',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.threeColor,
+                        decoration: TextDecoration.none,
                       ),
                       maxLines: 2,
                       textAlign: TextAlign.center,
@@ -978,16 +935,14 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: (pa.contentIsRichText == '1')
-                      ? RichText(
-                          text: _parseHtmlToTextSpan(
-                            pa.content ?? '',
-                            const TextStyle(
-                              fontSize: 12,
-                              height: 1.5,
-                              fontWeight: FontWeight.w500,
-                              color: AppTheme.sixColor,
-                              decoration: TextDecoration.none,
-                            ),
+                      ? RichHtmlText(
+                          html: pa.content ?? '',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            height: 1.5,
+                            fontWeight: FontWeight.w500,
+                            color: AppTheme.sixColor,
+                            decoration: TextDecoration.none,
                           ),
                         )
                       : Text(

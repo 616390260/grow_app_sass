@@ -14,7 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:html/parser.dart' as htmlParser;
+import 'package:do_task_project/app/core/widgets/rich_html_text.dart';
 
 /// 深色/浅色自适应首页
 ///
@@ -1258,11 +1258,12 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
       ]),
       Center(
         child: (pa.titleIsRichText == '1')
-            ? RichText(
-                text: _parseHtmlToTextSpan(pa.title ?? '', TextStyle(
+            ? RichHtmlText(
+                html: pa.title ?? '',
+                style: TextStyle(
                   fontSize: 15, fontWeight: FontWeight.bold,
                   color: titleColor, decoration: TextDecoration.none,
-                )),
+                ),
                 maxLines: 2, textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis)
             : RichText(
@@ -1281,10 +1282,10 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
         child: SingleChildScrollView(child: Align(
           alignment: Alignment.centerLeft,
           child: (pa.contentIsRichText == '1')
-              ? RichText(text: _parseHtmlToTextSpan(pa.content ?? '',
-                  const TextStyle(fontSize: 12, height: 1.5,
+              ? RichHtmlText(html: pa.content ?? '',
+                  style: const TextStyle(fontSize: 12, height: 1.5,
                     fontWeight: FontWeight.w500, color: Color(0xFF999999),
-                    decoration: TextDecoration.none)))
+                    decoration: TextDecoration.none))
               : Text(pa.content ?? '', style: const TextStyle(
                   fontSize: 12, height: 1.5, fontWeight: FontWeight.w500,
                   color: Color(0xFF999999), decoration: TextDecoration.none)),
@@ -1294,33 +1295,4 @@ void _showPopup(BuildContext context, PopupAnnouncementModel pa) {
   )));
 }
 
-TextSpan _parseHtmlToTextSpan(String html, TextStyle defaultStyle) {
-  try {
-    final document = htmlParser.parse(html);
-    final children = document.body?.children ?? [];
-    if (children.isEmpty) {
-      return TextSpan(text: document.body?.text ?? html, style: defaultStyle);
-    }
-    return TextSpan(
-      children: children.map((e) => _parseElement(e, defaultStyle)).toList(),
-    );
-  } catch (e) {
-    return TextSpan(text: html, style: defaultStyle);
-  }
-}
-
-TextSpan _parseElement(dynamic element, TextStyle baseStyle) {
-  TextStyle style = baseStyle;
-  String text = element.text ?? '';
-  if (element.localName == 'strong' || element.localName == 'b') {
-    style = style.copyWith(fontWeight: FontWeight.bold);
-  } else if (element.localName == 'em' || element.localName == 'i') {
-    style = style.copyWith(fontStyle: FontStyle.italic);
-  } else if (element.localName == 'u') {
-    style = style.copyWith(decoration: TextDecoration.underline);
-  } else if (element.localName == 's' || element.localName == 'strike') {
-    style = style.copyWith(decoration: TextDecoration.lineThrough);
-  }
-  return TextSpan(text: text, style: style);
-}
 
