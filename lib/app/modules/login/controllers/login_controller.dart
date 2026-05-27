@@ -24,6 +24,16 @@ class LoginController extends BaseController {
   bool _isDisposed = false; // 标记控制器是否已被dispose
 
   final Rxn<SocialLink> customerService = Rxn<SocialLink>();
+
+  /// 登录页打开瞬间的可用屏幕高度（logical pixels）。
+  /// 用于在键盘弹起 / Web 端 visualViewport 收缩时，反算"键盘吃掉的高度"。
+  /// 详见 LoginView 中的 keyboardSpace 计算注释。
+  double? _initialScreenHeight;
+  double get initialScreenHeight => _initialScreenHeight ?? 0;
+  void ensureInitialScreenHeight(double current) {
+    _initialScreenHeight ??= current;
+  }
+
   // 认证服务（包含用户凭据管理和邀请码管理）
   final _authService = AuthService.to;
 

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter devices *)",
+      "Bash(flutter run *)",
+      "Bash(xargs kill -9)",
+      "Bash(python3 -m http.server 8765)",
+      "Bash(ipconfig getifaddr *)",
+      "Bash(python3 -m http.server 8765 --bind 0.0.0.0)"
+    ]
+  }
+}

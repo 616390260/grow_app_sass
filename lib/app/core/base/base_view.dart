@@ -38,6 +38,12 @@ abstract class BaseView<T extends BaseController> extends GetView<T> {
   /// 背景颜色
   Color? get backgroundColor => null;
 
+  /// 键盘弹起时是否自动调整 body 高度（默认 true，与 Scaffold 一致）。
+  /// 子页若有固定背景 / 装饰元素需要保持位置不被键盘推动，可重写为 false，
+  /// 并在内部 ScrollView 上补 `padding: EdgeInsets.only(bottom: viewInsets.bottom)`
+  /// 以保证焦点输入框仍能滚动到可见区域。
+  bool get resizeToAvoidBottomInset => true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,6 +53,7 @@ abstract class BaseView<T extends BaseController> extends GetView<T> {
       floatingActionButton: buildFloatingActionButton(context),
       bottomNavigationBar: buildBottomNavigationBar(context),
       drawer: buildDrawer(context),
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
     );
   }
 

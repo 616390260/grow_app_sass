@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:do_task_project/app/core/config/environment_config.dart';
 import 'package:do_task_project/app/core/constants/image_assets.dart';
 import 'package:do_task_project/app/core/theme/app_theme.dart';
@@ -9,6 +11,9 @@ import '../../../core/base/base_view.dart';
 import '../../../core/i18n/i18n_keys.dart';
 import '../../../core/widgets/language_switcher.dart';
 
+/// 白卡顶部距屏幕顶的偏移：跟下面 `Positioned(top: 265)` 必须一致。
+const double _whiteCardTopOffset = 265;
+
 class LoginView extends BaseView<LoginController> {
   // 不再使用FocusNode，改为通过FocusScope管理焦点
 
@@ -18,6 +23,12 @@ class LoginView extends BaseView<LoginController> {
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return null;
   }
+
+  /// 禁用键盘对 body 高度的调整：登录页用 Positioned(bottom) 锚定的金币装饰
+  /// 不能随键盘一起被推上去（会挡住输入框 / 登录按钮）。
+  /// 输入框获焦后的可见性由内部 SingleChildScrollView 的 viewInsets padding 处理。
+  @override
+  bool get resizeToAvoidBottomInset => false;
 
   @override
   Widget buildContent(BuildContext context) {
@@ -32,122 +43,131 @@ class LoginView extends BaseView<LoginController> {
       ),
     );
 
-    // 不再使用FocusNode，改为通过FocusScope管理焦点
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   if (accountFocusNode.hasFocus) {
-    //     accountFocusNode.unfocus();
-    //   }
-    //   if (passwordFocusNode.hasFocus) {
-    //     passwordFocusNode.unfocus();
-    //   }
-    // });
+    // 计算"键盘吃掉的空间"——必须同时兼容两种平台行为：
+    //   - App (iOS/Android)：键盘弹起表现为 `viewInsets.bottom` 变大，`size.height` 不变
+    //   - Web / h5：Flutter Web Engine 把 visualViewport 收缩当作 `size.height` 变小，
+    //     `viewInsets` 始终是 0（实测）
+    // 所以同时取两者：第一次 build 时记录初始可见高，之后用 (initial - current) 反算键盘
+    // 占用，再与 viewInsets.bottom 取 max 兜底 App 端。
+    final mq = MediaQuery.of(context);
+    controller.ensureInitialScreenHeight(mq.size.height);
+    final keyboardSpace = math.max(
+      mq.viewInsets.bottom,
+      math.max(0.0, controller.initialScreenHeight - mq.size.height),
+    );
+    // 白卡的"初始"高度（不被键盘影响），用来给金币算绝对 top，避免它们跟着白卡底部走。
+    final whiteCardInitialHeight =
+        controller.initialScreenHeight - _whiteCardTopOffset;
 
-    return Scaffold(
-      extendBodyBehindAppBar: true, // 让body延伸到AppBar后面
-      body: SizedBox(
-        height: MediaQuery.of(context).size.height,
-        child: Stack(
-          children: [
-            // 顶部图标区域（背景层）
-            _buildTopSection(),
+    return SizedBox(
+      height: mq.size.height,
+      child: Stack(
+        children: [
+          // 顶部图标区域（背景层）
+          _buildTopSection(),
 
-            // 表单容器区域（覆盖层，带圆角和白色背景）
-            Positioned(
-              top: 265,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(22),
-                    topRight: Radius.circular(22),
-                  ),
-                ),
-                child: Stack(
-                  children: [
-                    // 底部白色区域的金币堆叠效果
-                    _buildLeftCoinPile(),
-                    _buildRightCoinPile(),
-
-                    SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 26), // 顶部间距
-                            // 登录表单
-                            _buildLoginForm(),
-
-                            const SizedBox(height: 17),
-
-                            // 记住密码
-                            _buildRememberPassword(),
-
-                            const SizedBox(height: 40),
-
-                            // 登录按钮
-                            _buildLoginButton(),
-
-                            const SizedBox(height: 22),
-
-                            // 底部注册链接
-                            _buildBottomSection(),
-
-                            const SizedBox(height: 40), // 底部额外间距
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+          // 表单容器区域（覆盖层，带圆角和白色背景）
+          Positioned(
+            top: _whiteCardTopOffset,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(22),
+                  topRight: Radius.circular(22),
                 ),
               ),
-            ),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  // 底部白色区域的金币堆叠效果（用绝对 top 定位，键盘弹起时不上移）
+                  _buildLeftCoinPile(whiteCardInitialHeight),
+                  _buildRightCoinPile(whiteCardInitialHeight),
 
-            // 跨界漂浮金币（一半在绿色背景，一半在白色卡片）
-            _build3DCoin(
-              size: 80,
-              top: 220,
-              right: 20,
-              angle: -0.5,
-              tiltX: 0.6,
-              tiltY: 0.4,
-              opacity: 1.0,
-              coinType: 0,
+                  SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: keyboardSpace),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 26), // 顶部间距
+                          // 登录表单
+                          _buildLoginForm(),
+
+                          const SizedBox(height: 17),
+
+                          // 记住密码
+                          _buildRememberPassword(),
+
+                          const SizedBox(height: 40),
+
+                          // 登录按钮
+                          _buildLoginButton(),
+
+                          const SizedBox(height: 22),
+
+                          // 底部注册链接
+                          _buildBottomSection(),
+
+                          const SizedBox(height: 40), // 底部额外间距
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            _build3DCoin(
-              size: 45,
-              top: 240,
-              left: 30,
-              angle: 0.6,
-              tiltX: 0.9,
-              tiltY: -0.3,
-              opacity: 0.95,
-              isDark: true,
-              coinType: 2,
-            ),
-            _build3DCoin(
-              size: 35,
-              top: 210,
-              right: 80,
-              angle: 0.2,
-              tiltX: 1.1,
-              tiltY: 0.1,
-              opacity: 0.8,
-              coinType: 3,
-            ),
-          ],
-        ),
+          ),
+
+          // 跨界漂浮金币（一半在绿色背景，一半在白色卡片）
+          _build3DCoin(
+            size: 80,
+            top: 220,
+            right: 20,
+            angle: -0.5,
+            tiltX: 0.6,
+            tiltY: 0.4,
+            opacity: 1.0,
+            coinType: 0,
+          ),
+          _build3DCoin(
+            size: 45,
+            top: 240,
+            left: 30,
+            angle: 0.6,
+            tiltX: 0.9,
+            tiltY: -0.3,
+            opacity: 0.95,
+            isDark: true,
+            coinType: 2,
+          ),
+          _build3DCoin(
+            size: 35,
+            top: 210,
+            right: 80,
+            angle: 0.2,
+            tiltX: 1.1,
+            tiltY: 0.1,
+            opacity: 0.8,
+            coinType: 3,
+          ),
+        ],
       ),
     );
   }
 
-  /// 底部左侧金币堆叠
-  Widget _buildLeftCoinPile() {
+  /// 底部左侧金币堆叠。
+  /// 用绝对 `top` 而非 `bottom`，使金币始终锚定到"页面打开瞬间"的屏幕底部，
+  /// 而不是当前可能被键盘缩窄的白卡底部。
+  /// 视觉等价于原来的 `bottom: -30`（SizedBox 200 高）：
+  ///   top = whiteCardInitialHeight - 200 + 30
+  Widget _buildLeftCoinPile(double whiteCardInitialHeight) {
     return Positioned(
-      bottom: -30,
+      top: whiteCardInitialHeight - 200 + 30,
       left: -40,
       child: SizedBox(
         width: 200,
@@ -215,10 +235,11 @@ class LoginView extends BaseView<LoginController> {
     );
   }
 
-  /// 底部右侧金币堆叠
-  Widget _buildRightCoinPile() {
+  /// 底部右侧金币堆叠（绝对 top 定位，原因见 _buildLeftCoinPile）。
+  /// 视觉等价 `bottom: -20`（SizedBox 120 高）：top = whiteCardInitialHeight - 120 + 20
+  Widget _buildRightCoinPile(double whiteCardInitialHeight) {
     return Positioned(
-      bottom: -20,
+      top: whiteCardInitialHeight - 120 + 20,
       right: -20,
       child: SizedBox(
         width: 120,
