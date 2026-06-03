@@ -12,6 +12,18 @@
 .swiftpm/
 migrate_working_dir/
 
+# Claude worktrees
+.claude/
+
+# Qoder
+.qoder/
+
+# Cursor
+.cursor/
+
+# Playwright MCP
+.playwright-mcp/
+
 # IntelliJ related
 *.iml
 *.ipr
