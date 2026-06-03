@@ -156,6 +156,7 @@ class I18nKeys {
   static const whatsappTaskTitle = 'whatsapp_task_title';
   static const taskStatistics = 'task_statistics';
   static const todaySendCount = 'today_send_count';
+  static const todaySendFailCount = 'today_send_fail_count';
   static const todayPoints = 'today_points';
   static const yesterdayPoints = 'yesterday_points';
   static const tutorialVideo = 'tutorial_video';

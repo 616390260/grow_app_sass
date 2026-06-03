@@ -338,6 +338,10 @@ class WhatsappTaskView extends BaseView<WhatsappTaskController> {
                 controller.todaySendCount.value.toString(),
               ),
               _buildStatItem(
+                I18nKeys.todaySendFailCount.tr,
+                controller.todaySendFailCount.value.toString(),
+              ),
+              _buildStatItem(
                 I18nKeys.todayPoints.tr,
                 controller.todayPoints.value.toString(),
               ),
